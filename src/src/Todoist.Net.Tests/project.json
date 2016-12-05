@@ -1,0 +1,29 @@
+﻿{
+  "version": "1.0.0-*",
+  "testRunner": "xunit",
+  "dependencies": {
+    "xunit": "2.2.0-beta2-build3300",
+    "Todoist.Net": "1.0.0-*",
+    "dotnet-test-xunit": "2.2.0-preview2-build1029",
+    "Microsoft.Extensions.Configuration.UserSecrets": "1.1.0"
+  },
+  "userSecretsId": "Todoist.Net.Tests-d07bf9a7-7afe-4c8b-acc6-1bae017434b4",
+  "frameworks": {
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.0"
+        }
+      }
+    }
+  },
+  "tools": {
+    "Microsoft.Extensions.SecretManager.Tools": {
+      "version": "1.0.0-preview4-final"
+    }
+  },
+  "buildOptions": {
+    "copyToOutput": "project.json"
+  }
+}
