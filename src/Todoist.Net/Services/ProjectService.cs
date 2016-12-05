@@ -8,7 +8,7 @@ using Todoist.Net.Models.Types;
 
 namespace Todoist.Net.Services
 {
-    public sealed class ProjectService : ServiceBase
+    public sealed class ProjectService : ServiceBase, IProjectService
     {
         internal ProjectService(ITodoistClient todoistClient)
             : base(todoistClient)

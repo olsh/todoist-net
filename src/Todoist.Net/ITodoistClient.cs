@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using Todoist.Net.Models;
 using Todoist.Net.Services;
 
-using Task = System.Threading.Tasks.Task;
-
 namespace Todoist.Net
 {
     public interface ITodoistClient
     {
-        ProjectService Projects { get; }
+        INotesServices Notes { get; }
+
+        IProjectService Projects { get; }
 
         void Dispose();
 
@@ -27,18 +27,6 @@ namespace Todoist.Net
         Task ExecuteCommandsAsync(params Command[] commands);
 
         /// <summary>
-        /// Gets the resources asynchronous.
-        /// </summary>
-        /// <param name="resourceTypes">The resource types.</param>
-        /// <returns>
-        /// All resources.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="resourceTypes"/> is <see langword="null"/></exception>
-        /// <exception cref="ArgumentException">Value cannot be an empty collection.</exception>
-        Task<Resources> GetResourcesAsync(params ResourceType[] resourceTypes);
-
-        /// <summary>
         /// Gets the asynchronous.
         /// </summary>
         /// <typeparam name="T">Type of the result.</typeparam>
@@ -49,5 +37,17 @@ namespace Todoist.Net
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task<T> GetAsync<T>(string resource, ICollection<KeyValuePair<string, string>> parameters);
+
+        /// <summary>
+        /// Gets the resources asynchronous.
+        /// </summary>
+        /// <param name="resourceTypes">The resource types.</param>
+        /// <returns>
+        /// All resources.
+        /// </returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="resourceTypes"/> is <see langword="null"/></exception>
+        /// <exception cref="ArgumentException">Value cannot be an empty collection.</exception>
+        Task<Resources> GetResourcesAsync(params ResourceType[] resourceTypes);
     }
 }

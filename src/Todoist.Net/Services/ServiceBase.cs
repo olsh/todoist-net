@@ -24,7 +24,7 @@ namespace Todoist.Net.Services
 
         protected ITodoistClient TodoistClient { get; }
 
-        public Command CreateAddCommand<T>(CommandType commandType, T entity) where T : BaseEntity
+        protected Command CreateAddCommand<T>(CommandType commandType, T entity) where T : BaseEntity
         {
             var tempId = Guid.NewGuid();
             entity.Id = tempId;

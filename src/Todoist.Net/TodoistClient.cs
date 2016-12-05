@@ -68,9 +68,9 @@ namespace Todoist.Net
         {
         }
 
-        public NotesServices Notes { get; }
+        public INotesServices Notes { get; }
 
-        public ProjectService Projects { get; }
+        public IProjectService Projects { get; }
 
         /// <summary>
         /// Creates the transaction.

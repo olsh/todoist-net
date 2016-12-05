@@ -19,7 +19,8 @@ namespace Todoist.Net.Tests.Services
 
             var project = new Project(Guid.NewGuid().ToString());
             var projectId = transaction.Project.AddAsync(project).Result;
-            var noteId = transaction.Notes.AddToProjectAsync(new Note("Demo note"), projectId).Result;
+            var note = new Note("Demo note");
+            var noteId = transaction.Notes.AddToProjectAsync(note, projectId).Result;
 
             transaction.CommitAsync().Wait();
 
@@ -27,7 +28,12 @@ namespace Todoist.Net.Tests.Services
 
             Assert.True(projectInfo.Notes.Count > 0);
 
-            client.Notes.DeleteAsync(project.Id).Wait();
+            var deleteTransaction = client.CreateTransaction();
+
+            deleteTransaction.Notes.DeleteAsync(note.Id).Wait();
+            deleteTransaction.Project.DeleteAsync(project.Id).Wait();
+
+            deleteTransaction.CommitAsync().Wait();
         }
 
         public TodoistClient CreateClient()

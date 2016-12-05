@@ -27,9 +27,9 @@ namespace Todoist.Net.Services
             Notes = new NotesServices(_commands);
         }
 
-        public NotesServices Notes { get; }
+        public INotesCommandServices Notes { get; }
 
-        public ProjectService Project { get; }
+        public IProjectCommandService Project { get; }
 
         /// <summary>
         /// Commits the transaction asynchronous.
