@@ -4,18 +4,22 @@ using System.Net.Http;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
-using Todoist.Net.Models.Types;
 
 namespace Todoist.Net.Services
 {
-    public sealed class ProjectService : ServiceBase, IProjectService
+    /// <summary>
+    /// Contains methods for projects management which can be executed in a transaction.
+    /// </summary>
+    /// <seealso cref="CommandServiceBase" />
+    /// <seealso cref="Todoist.Net.Services.IProjectCommandService" />
+    internal class ProjectsCommandService : CommandServiceBase, IProjectCommandService
     {
-        internal ProjectService(ITodoistClient todoistClient)
+        internal ProjectsCommandService(IAdvancedTodoistClient todoistClient)
             : base(todoistClient)
         {
         }
 
-        internal ProjectService(ICollection<Command> queue)
+        internal ProjectsCommandService(ICollection<Command> queue)
             : base(queue)
         {
         }
@@ -24,7 +28,7 @@ namespace Todoist.Net.Services
         /// Adds a new project.
         /// </summary>
         /// <param name="project">The project.</param>
-        /// <returns>The task.</returns>
+        /// <returns>The ID of the project.</returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="project"/> is <see langword="null"/></exception>
@@ -42,15 +46,14 @@ namespace Todoist.Net.Services
         }
 
         /// <summary>
-        /// Archive project and its children. Only available for Premium users.
+        /// Archives the project and its children.
         /// </summary>
         /// <param name="ids">The ids.</param>
-        /// <returns>
-        /// The task.
-        /// </returns>
+        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
+        /// <remarks>Only available for Todoist Premium users.</remarks>
         public async Task ArchiveAsync(params ComplexId[] ids)
         {
             var command = CreateCollectionCommand(ids, CommandType.ArchiveProject);
@@ -60,10 +63,8 @@ namespace Todoist.Net.Services
         /// <summary>
         /// Deletes existing projects.
         /// </summary>
-        /// <param name="ids">The ids.</param>
-        /// <returns>
-        /// The task.
-        /// </returns>
+        /// <param name="ids">The IDs.</param>
+        /// <returns> Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation. </returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
@@ -74,47 +75,14 @@ namespace Todoist.Net.Services
         }
 
         /// <summary>
-        /// Gets all projects.
-        /// </summary>
-        /// <returns>The projects.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<IEnumerable<Project>> GetAsync()
-        {
-            var response = await TodoistClient.GetResourcesAsync(ResourceType.Projects).ConfigureAwait(false);
-
-            return response.Projects;
-        }
-
-        /// <summary>
-        /// Gets project by ID.
-        /// </summary>
-        /// <param name="id">The ID of the project.</param>
-        /// <returns>
-        /// The project.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<ProjectInfo> GetAsync(ComplexId id)
-        {
-            return
-                await
-                    TodoistClient.GetAsync<ProjectInfo>(
-                        "projects/get",
-                        new List<KeyValuePair<string, string>>
-                            {
-                                new KeyValuePair<string, string>("project_id", id.ToString())
-                            }).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Un archive project and its children. Only available for Premium users.
+        /// Un archive project and its children.
         /// </summary>
         /// <param name="ids">The ids.</param>
-        /// <returns>
-        /// The task.
-        /// </returns>
+        /// <returns> Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation. </returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
+        /// <remarks>Only available for Todoist Premium users.</remarks>
         public async Task UnarchiveAsync(params ComplexId[] ids)
         {
             var command = CreateCollectionCommand(ids, CommandType.ArchiveProject);
@@ -122,10 +90,10 @@ namespace Todoist.Net.Services
         }
 
         /// <summary>
-        /// Updates an existing project.
+        /// Updates the project.
         /// </summary>
         /// <param name="project">The project.</param>
-        /// <returns>The task.</returns>
+        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="project"/> is <see langword="null"/></exception>
@@ -137,6 +105,28 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.UpdateProject, project, null);
+            await ExecuteCommandAsync(command).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Updates the multiple orders indents asynchronous.
+        /// </summary>
+        /// <param name="idsToOrderIndents">The ids to order indents.</param>
+        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="idsToOrderIndents"/> is <see langword="null"/></exception>
+        public async Task UpdateMultipleOrdersIndentsAsync(params OrderIndentEntry[] idsToOrderIndents)
+        {
+            if (idsToOrderIndents == null)
+            {
+                throw new ArgumentNullException(nameof(idsToOrderIndents));
+            }
+
+            var command = new Command(
+                              CommandType.UpdateOrderIndentsProject,
+                              new IdsToOrderIndentsArgument(idsToOrderIndents),
+                              null);
             await ExecuteCommandAsync(command).ConfigureAwait(false);
         }
     }

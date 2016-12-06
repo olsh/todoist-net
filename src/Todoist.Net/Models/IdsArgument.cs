@@ -3,34 +3,13 @@ using System.Collections.Generic;
 
 using Newtonsoft.Json;
 
-using Todoist.Net.Models.Types;
-
 namespace Todoist.Net.Models
 {
-    public class IdsArgument : ICommandArgument
+    internal class IdsArgument : ICommandArgument
     {
         public IdsArgument()
         {
             Ids = new List<ComplexId>();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="IdsArgument"/> class.
-        /// </summary>
-        /// <param name="ids">The ids.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
-        public IdsArgument(IEnumerable<int> ids)
-        {
-            if (ids == null)
-            {
-                throw new ArgumentNullException(nameof(ids));
-            }
-
-            Ids = new List<ComplexId>();
-            foreach (var id in ids)
-            {
-                Ids.Add(id);
-            }
         }
 
         /// <summary>
@@ -53,6 +32,6 @@ namespace Todoist.Net.Models
         }
 
         [JsonProperty("ids")]
-        public ICollection<ComplexId> Ids { get; internal set; }
+        public ICollection<ComplexId> Ids { get; }
     }
 }

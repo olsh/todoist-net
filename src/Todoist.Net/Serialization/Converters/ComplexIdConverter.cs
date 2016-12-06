@@ -2,7 +2,7 @@
 
 using Newtonsoft.Json;
 
-using Todoist.Net.Models.Types;
+using Todoist.Net.Models;
 
 namespace Todoist.Net.Serialization.Converters
 {

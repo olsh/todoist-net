@@ -8,33 +8,46 @@ using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
 {
-    public class Transaction
+    /// <summary>
+    /// Represents a Transaction
+    /// </summary>
+    /// <seealso cref="Todoist.Net.Services.ITransaction" />
+    internal class Transaction : ITransaction
     {
         private readonly LinkedList<Command> _commands;
 
-        private readonly ITodoistClient _todoistClient;
+        private readonly IAdvancedTodoistClient _todoistClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Transaction"/> class.
         /// </summary>
         /// <param name="todoistClient">The client.</param>
-        internal Transaction(ITodoistClient todoistClient)
+        internal Transaction(IAdvancedTodoistClient todoistClient)
         {
             _todoistClient = todoistClient;
             _commands = new LinkedList<Command>();
 
-            Project = new ProjectService(_commands);
-            Notes = new NotesServices(_commands);
+            Project = new ProjectsCommandService(_commands);
+            Notes = new NotesCommandService(_commands);
+            Items = new ItemsCommandService(_commands);
+            Labels = new LabelsCommandService(_commands);
+            Notifications = new NotificationsCommandService(_commands);
         }
 
+        public IItemsCommandService Items { get; }
+
+        public ILabelsCommandService Labels { get; }
+
         public INotesCommandServices Notes { get; }
+
+        public INotificationsCommandService Notifications { get; }
 
         public IProjectCommandService Project { get; }
 
         /// <summary>
         /// Commits the transaction asynchronous.
         /// </summary>
-        /// <returns>The task.</returns>
+        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         public async Task CommitAsync()

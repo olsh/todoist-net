@@ -1,9 +1,8 @@
-﻿{
+{
   "version": "1.0.0-*",
   "dependencies": {
     "Newtonsoft.Json": "9.0.1"
   },
-
   "frameworks": {
     "netstandard1.1": {
       "dependencies": {
@@ -12,8 +11,11 @@
     },
     "net45": {
       "frameworkAssemblies": {
-        "System.Net.Http": "4.0.0.0" 
+        "System.Net.Http": "4.0.0.0"
       }
     }
+  },
+  "buildOptions": {
+    "xmlDoc": true
   }
 }

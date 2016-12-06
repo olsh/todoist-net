@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Todoist.Net.Models
 {
-    public interface IWithRelationsArgument
+    internal interface IWithRelationsArgument
     {
         void UpdateRelatedTempIds(IDictionary<Guid, int> map);
     }

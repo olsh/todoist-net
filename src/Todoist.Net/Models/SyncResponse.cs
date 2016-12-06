@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Todoist.Net.Models
 {
-    public class SyncResponse
+    internal class SyncResponse
     {
         [JsonProperty("sync_status")]
         public Dictionary<Guid, dynamic> SyncStatus { get; set; }

@@ -1,24 +1,31 @@
 ﻿using Newtonsoft.Json;
 
-using Todoist.Net.Models.Types;
-
 namespace Todoist.Net.Models
 {
+    /// <summary>
+    /// Represents a base entity.
+    /// </summary>
     public class BaseEntity : ICommandArgument
     {
-        public BaseEntity()
-        {
-        }
-
-        public BaseEntity(ComplexId id)
+        internal BaseEntity(ComplexId id)
         {
             Id = id;
         }
 
+        internal BaseEntity()
+        {
+        }
+
+        /// <summary>
+        /// Gets or sets the identifier.
+        /// </summary>
+        /// <value>
+        /// The identifier.
+        /// </value>
         [JsonProperty("id")]
         public ComplexId Id { get; set; }
 
-        public bool ShouldSerializeId()
+        internal bool ShouldSerializeId()
         {
             return !Id.IsEmpty;
         }

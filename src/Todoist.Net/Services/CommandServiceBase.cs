@@ -4,27 +4,26 @@ using System.Net.Http;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
-using Todoist.Net.Models.Types;
 
 namespace Todoist.Net.Services
 {
-    public class ServiceBase
+    internal abstract class CommandServiceBase
     {
         private readonly ICollection<Command> _queue;
 
-        protected ServiceBase(ITodoistClient todoistClient)
+        internal CommandServiceBase(IAdvancedTodoistClient todoistClient)
         {
             TodoistClient = todoistClient;
         }
 
-        protected ServiceBase(ICollection<Command> queue)
+        internal CommandServiceBase(ICollection<Command> queue)
         {
             _queue = queue;
         }
 
-        protected ITodoistClient TodoistClient { get; }
+        internal IAdvancedTodoistClient TodoistClient { get; }
 
-        protected Command CreateAddCommand<T>(CommandType commandType, T entity) where T : BaseEntity
+        internal Command CreateAddCommand<T>(CommandType commandType, T entity) where T : BaseEntity
         {
             var tempId = Guid.NewGuid();
             entity.Id = tempId;
@@ -39,7 +38,7 @@ namespace Todoist.Net.Services
         /// <param name="commandType">Type of the command.</param>
         /// <returns>The collection operation command.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
-        protected Command CreateCollectionCommand(IEnumerable<ComplexId> ids, CommandType commandType)
+        internal Command CreateCollectionCommand(IEnumerable<ComplexId> ids, CommandType commandType)
         {
             if (ids == null)
             {
@@ -56,7 +55,7 @@ namespace Todoist.Net.Services
         /// <param name="id">The identifier.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>The command.</returns>
-        protected Command CreateEntityCommand(ComplexId id, CommandType commandType)
+        internal Command CreateEntityCommand(ComplexId id, CommandType commandType)
         {
             return new Command(commandType, new BaseEntity(id), null);
         }
@@ -65,10 +64,10 @@ namespace Todoist.Net.Services
         /// Executes the command asynchronous.
         /// </summary>
         /// <param name="command">The command.</param>
-        /// <returns>The task.</returns>
+        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
-        protected async Task ExecuteCommandAsync(Command command)
+        internal async Task ExecuteCommandAsync(Command command)
         {
             if (_queue == null)
             {

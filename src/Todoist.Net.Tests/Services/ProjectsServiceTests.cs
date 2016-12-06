@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Todoist.Net.Models;
@@ -9,7 +10,7 @@ using Xunit;
 
 namespace Todoist.Net.Tests.Services
 {
-    public class ProjectServiceTests
+    public class ProjectsServiceTests
     {
         [Fact]
         [Trait(TraitConstants.Category, TraitConstants.Integration)]
@@ -22,8 +23,6 @@ namespace Todoist.Net.Tests.Services
 
             var projects = client.Projects.GetAsync().Result;
             var project = projects.FirstOrDefault(p => p.Name == projectName);
-
-            var result = client.Projects.GetAsync(project.Id).Result;
 
             Assert.True(project != null);
 
@@ -48,8 +47,6 @@ namespace Todoist.Net.Tests.Services
             var projects = client.Projects.GetAsync().Result;
             var project = projects.FirstOrDefault(p => p.Name == projectName);
 
-            var result = client.Projects.GetAsync(project.Id).Result;
-
             Assert.True(project != null);
 
             client.Projects.DeleteAsync(project.Id).Wait();
@@ -62,7 +59,7 @@ namespace Todoist.Net.Tests.Services
 
         [Fact]
         [Trait(TraitConstants.Category, TraitConstants.Integration)]
-        public void CreateUpdateAndDelete_Success()
+        public void CreateUpdateIndentAndDelete_Success()
         {
             var client = CreateProjectService();
 
@@ -70,13 +67,13 @@ namespace Todoist.Net.Tests.Services
             var project = new Project(projectName);            
             client.Projects.AddAsync(project).Wait();
 
-            var result = client.Projects.GetAsync(project.Id).Result;
-
             Assert.True(project.Id != default(int));
 
             project.Name = "u_" + Guid.NewGuid();
 
             client.Projects.UpdateAsync(project).Wait();
+
+            client.Projects.UpdateMultipleOrdersIndentsAsync(new OrderIndentEntry(project.Id, 1, 2)).Wait();
 
             client.Projects.DeleteAsync(project.Id).Wait();
         }

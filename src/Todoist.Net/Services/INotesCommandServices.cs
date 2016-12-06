@@ -3,10 +3,12 @@ using System.Net.Http;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
-using Todoist.Net.Models.Types;
 
 namespace Todoist.Net.Services
 {
+    /// <summary>
+    /// Contains operations for notes management which can be executes in a transaction.
+    /// </summary>
     public interface INotesCommandServices
     {
         /// <summary>
@@ -38,19 +40,17 @@ namespace Todoist.Net.Services
         /// <summary>
         /// Deletes the note asynchronous.
         /// </summary>
-        /// <param name="ids">The id of the note.</param>
-        /// <returns>The task.</returns>
+        /// <param name="id">The id of the note.</param>
+        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task DeleteAsync(ComplexId ids);
+        Task DeleteAsync(ComplexId id);
 
         /// <summary>
         /// Updates the note asynchronous.
         /// </summary>
         /// <param name="note">The note.</param>
-        /// <returns>
-        /// The task.
-        /// </returns>
+        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="note" /> is <see langword="null" /></exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>

@@ -4,18 +4,22 @@ using System.Net.Http;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
-using Todoist.Net.Models.Types;
 
 namespace Todoist.Net.Services
 {
-    public class NotesServices : ServiceBase, INotesServices
+    /// <summary>
+    /// Contains operations for notes management which can be executes in a transaction.
+    /// </summary>
+    /// <seealso cref="CommandServiceBase" />
+    /// <seealso cref="Todoist.Net.Services.INotesCommandServices" />
+    internal class NotesCommandService : CommandServiceBase, INotesCommandServices
     {
-        public NotesServices(ITodoistClient todoistClient)
+        internal NotesCommandService(IAdvancedTodoistClient todoistClient)
             : base(todoistClient)
         {
         }
 
-        public NotesServices(ICollection<Command> queue)
+        internal NotesCommandService(ICollection<Command> queue)
             : base(queue)
         {
         }
@@ -75,13 +79,13 @@ namespace Todoist.Net.Services
         /// <summary>
         /// Deletes the note asynchronous.
         /// </summary>
-        /// <param name="ids">The id of the note.</param>
-        /// <returns>The task.</returns>
+        /// <param name="id">The ID of the note.</param>
+        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task DeleteAsync(ComplexId ids)
+        public async Task DeleteAsync(ComplexId id)
         {
-            var command = CreateEntityCommand(ids, CommandType.DeleteNote);
+            var command = CreateEntityCommand(id, CommandType.DeleteNote);
             await ExecuteCommandAsync(command).ConfigureAwait(false);
         }
 
@@ -89,9 +93,7 @@ namespace Todoist.Net.Services
         /// Updates the note asynchronous.
         /// </summary>
         /// <param name="note">The note.</param>
-        /// <returns>
-        /// The task.
-        /// </returns>
+        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="note" /> is <see langword="null" /></exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>

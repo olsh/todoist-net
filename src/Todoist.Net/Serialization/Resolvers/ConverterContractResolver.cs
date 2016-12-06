@@ -3,12 +3,11 @@
 using Newtonsoft.Json.Serialization;
 
 using Todoist.Net.Models;
-using Todoist.Net.Models.Types;
 using Todoist.Net.Serialization.Converters;
 
 namespace Todoist.Net.Serialization.Resolvers
 {
-    public class ConverterContractResolver : DefaultContractResolver
+    internal class ConverterContractResolver : DefaultContractResolver
     {
         public static readonly ConverterContractResolver Instance = new ConverterContractResolver();
 

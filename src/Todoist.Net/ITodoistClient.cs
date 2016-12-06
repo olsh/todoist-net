@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -8,42 +7,91 @@ using Todoist.Net.Services;
 
 namespace Todoist.Net
 {
+    /// <summary>
+    /// A Todoist client.
+    /// </summary>
     public interface ITodoistClient
     {
+        /// <summary>
+        /// Gets the activity.
+        /// </summary>
+        /// <value>The activity.</value>
+        IActivityService Activity { get; }
+
+        /// <summary>
+        /// Gets the backups.
+        /// </summary>
+        /// <value>The backups.</value>
+        IBackupService Backups { get; }
+
+        /// <summary>
+        /// Gets the items service.
+        /// </summary>
+        /// <value>
+        /// The items service.
+        /// </value>
+        IItemsService Items { get; }
+
+        /// <summary>
+        /// Gets the labels.
+        /// </summary>
+        /// <value>The labels.</value>
+        ILabelsService Labels { get; }
+
+        /// <summary>
+        /// Gets the notes service.
+        /// </summary>
+        /// <value>
+        /// The notes service.
+        /// </value>
         INotesServices Notes { get; }
 
-        IProjectService Projects { get; }
+        /// <summary>
+        /// Gets the notifications service.
+        /// </summary>
+        /// <value>The notifications service.</value>
+        INotificationsService Notifications { get; }
 
+        /// <summary>
+        /// Gets the projects service.
+        /// </summary>
+        /// <value>
+        /// The projects service.
+        /// </value>
+        IProjectsService Projects { get; }
+
+        /// <summary>
+        /// Gets the templates.
+        /// </summary>
+        /// <value>The templates.</value>
+        /// <remarks>Templates are only available for Todoist Premium users.</remarks>
+        ITemplateService Templates { get; }
+
+        /// <summary>
+        /// Gets the uploads service.
+        /// </summary>
+        /// <value>
+        /// The uploads service.
+        /// </value>
+        IUploadService Uploads { get; }
+
+        /// <summary>
+        /// Creates the transaction.
+        /// </summary>
+        /// <returns>The transaction.</returns>
+        ITransaction CreateTransaction();
+
+        /// <summary>
+        /// Disposes this instance.
+        /// </summary>
         void Dispose();
 
         /// <summary>
-        ///     Executes the commands asynchronous.
-        /// </summary>
-        /// <param name="commands">The commands.</param>
-        /// <returns>The task.</returns>
-        /// <exception cref="System.ArgumentNullException">Value cannot be null - commands.</exception>
-        /// <exception cref="System.AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task ExecuteCommandsAsync(params Command[] commands);
-
-        /// <summary>
-        /// Gets the asynchronous.
-        /// </summary>
-        /// <typeparam name="T">Type of the result.</typeparam>
-        /// <param name="resource">The resource.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>
-        /// The result.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<T> GetAsync<T>(string resource, ICollection<KeyValuePair<string, string>> parameters);
-
-        /// <summary>
-        /// Gets the resources asynchronous.
+        /// Gets the resources asynchronous. Returns all resources if zero resource type were passed.
         /// </summary>
         /// <param name="resourceTypes">The resource types.</param>
         /// <returns>
-        /// All resources.
+        /// The requested resources.
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="resourceTypes"/> is <see langword="null"/></exception>
