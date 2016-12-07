@@ -5,7 +5,7 @@
     "xunit": "2.2.0-beta2-build3300",
     "Todoist.Net": "1.0.0-*",
     "dotnet-test-xunit": "2.2.0-preview2-build1029",
-    "Microsoft.Extensions.Configuration.UserSecrets": "1.1.0"
+    "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0"
   },
   "userSecretsId": "Todoist.Net.Tests-d07bf9a7-7afe-4c8b-acc6-1bae017434b4",
   "frameworks": {
@@ -16,11 +16,16 @@
           "version": "1.0.0"
         }
       }
+    },
+    "net451": {
+      "dependencies": {
+        "Microsoft.NETCore.Platforms": "1.0.1"
+      }
     }
   },
   "tools": {
     "Microsoft.Extensions.SecretManager.Tools": {
-      "version": "1.0.0-preview4-final"
+      "version": "1.0.0-preview2-final"
     }
   },
   "buildOptions": {

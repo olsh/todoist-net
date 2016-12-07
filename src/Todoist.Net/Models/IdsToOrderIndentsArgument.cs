@@ -12,7 +12,7 @@ namespace Todoist.Net.Models
             foreach (var entry in idsToOrderIndents)
             {
                 IdsToOrderIndents.Add(
-                    new KeyValuePair<ComplexId, IEnumerable<int>>(entry.Id, new[] { entry.Order, entry.Indent }));
+                    new KeyValuePair<ComplexId, IEnumerable<int>>(entry.Id, entry.ToArray()));
             }
         }
 

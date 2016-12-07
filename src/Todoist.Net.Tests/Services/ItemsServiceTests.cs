@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Constants;
@@ -56,14 +57,47 @@ namespace Todoist.Net.Tests.Services
         {
             var client = CreateClient();
 
+            var transaction = client.CreateTransaction();
+
             var item = new Item("temp task");
-            client.Items.AddAsync(item).Wait();
-            client.Notes.AddToItemAsync(new Note("test note"), item.Id).Wait();
-            client.Items.CloseAsync(item.Id).Wait();
+            transaction.Items.AddAsync(item).Wait();
+            transaction.Notes.AddToItemAsync(new Note("test note"), item.Id).Wait();
+            transaction.Items.CloseAsync(item.Id).Wait();
+
+            transaction.CommitAsync().Wait();
 
             var completedTasks = client.Items.GetCompletedAsync(new ItemFilter() {AnnotateNotes = true, Limit = 5, Since = DateTime.Today.AddDays(-1)}).Result;
 
             Assert.True(completedTasks.Items.Length > 0);
+
+            client.Items.DeleteAsync(item.Id).Wait();
+        }
+
+        [Fact]
+        [Trait(TraitConstants.Category, TraitConstants.Integration)]
+        public void CreateItemCompleteUncompleteAsync_Success()
+        {
+            var client = CreateClient();
+
+            var transaction = client.CreateTransaction();
+
+            var item = new Item("demo task");
+            var itemId = transaction.Items.AddAsync(item).Result;
+            transaction.Items.CompleteAsync(ids: itemId);  
+            
+            transaction.CommitAsync().Wait();
+
+            var itemInfo = client.Items.GetAsync(item.Id).Result;
+
+            Assert.True(itemInfo.Item.IsChecked == true);
+
+            var itemState = new ItemState(item.Id, false, 2, false, 1);
+            client.Items.UncompleteAsync(itemState).Wait();
+            itemInfo = client.Items.GetAsync(item.Id).Result;
+            Assert.True(itemInfo.Item.IsChecked == itemState.IsChecked);
+            Assert.True(itemInfo.Item.Indent == itemState.Indent);
+            Assert.True(itemInfo.Item.InHistory == itemState.InHistory);
+            Assert.True(itemInfo.Item.ItemOrder == itemState.Order);
 
             client.Items.DeleteAsync(item.Id).Wait();
         }

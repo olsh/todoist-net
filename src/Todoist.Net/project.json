@@ -1,21 +1,32 @@
 {
   "version": "1.0.0-*",
-  "dependencies": {
-    "Newtonsoft.Json": "9.0.1"
-  },
   "frameworks": {
     "netstandard1.1": {
       "dependencies": {
-        "NETStandard.Library": "1.6.1"
+        "System.Net.Http": "4.1.0",
+        "System.Runtime.InteropServices": "4.1.0",
+        "System.Reflection": "4.1.0",
+        "Newtonsoft.Json": "9.0.1"
       }
     },
     "net45": {
       "frameworkAssemblies": {
         "System.Net.Http": "4.0.0.0"
+      },
+      "buildOptions": {
+        "define": [ "NETFW" ]
+      },
+      "dependencies": {
+        "Newtonsoft.Json": "5.0.8"
       }
     }
   },
   "buildOptions": {
     "xmlDoc": true
+  },
+  "authors": [ "Oleg Shevchenko" ],
+  "description": "A Todoist API client for .NET",
+  "packOptions": {
+    "tags": [ "todoist" ]
   }
 }

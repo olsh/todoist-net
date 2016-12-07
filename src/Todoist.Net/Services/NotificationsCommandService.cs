@@ -27,7 +27,7 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         public async Task MarkAllReadAsync()
         {
-            var command = CreateEntityCommand(0, CommandType.SetLastReadNotification);
+            var command = CreateEntityCommand(CommandType.SetLastReadNotification, 0);
             await ExecuteCommandAsync(command).ConfigureAwait(false);
         }
 
@@ -40,7 +40,7 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         public async Task MarkLastReadAsync(ComplexId id)
         {
-            var command = CreateEntityCommand(id, CommandType.SetLastReadNotification);
+            var command = CreateEntityCommand(CommandType.SetLastReadNotification, id);
             await ExecuteCommandAsync(command).ConfigureAwait(false);
         }
     }

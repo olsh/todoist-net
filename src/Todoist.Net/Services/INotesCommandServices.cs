@@ -17,7 +17,7 @@ namespace Todoist.Net.Services
         /// <param name="note">The note.</param>
         /// <param name="itemId">The item identifier.</param>
         /// <returns>
-        /// The note ID.
+        /// The temporary ID of the note.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="note" /> is <see langword="null" /></exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>

@@ -9,7 +9,7 @@ namespace Todoist.Net
     internal interface IAdvancedTodoistClient : ITodoistClient
     {
         /// <summary>
-        ///     Executes the commands asynchronous.
+        /// Executes the commands asynchronous.
         /// </summary>
         /// <param name="commands">The commands.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>

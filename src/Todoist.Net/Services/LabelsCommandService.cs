@@ -56,7 +56,7 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         public async Task DeleteAsync(ComplexId id)
         {
-            var command = CreateEntityCommand(id, CommandType.DeleteLabel);
+            var command = CreateEntityCommand(CommandType.DeleteLabel, id);
             await ExecuteCommandAsync(command).ConfigureAwait(false);
         }
 
@@ -94,7 +94,7 @@ namespace Todoist.Net.Services
                 throw new ArgumentNullException(nameof(orderEntries));
             }
 
-            var command = new Command(CommandType.UpdateOrderLabel, new IdToOrderArgument(orderEntries));
+            var command = new Command(CommandType.UpdateOrderLabel, new IdToOrderMappingArgument(orderEntries));
             await ExecuteCommandAsync(command).ConfigureAwait(false);
         }
     }

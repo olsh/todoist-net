@@ -18,11 +18,6 @@ namespace Todoist.Net.Services
         {
         }
 
-        internal NotesService(ICollection<Command> queue)
-            : base(queue)
-        {
-        }
-
         /// <summary>
         /// Gets all notes.
         /// </summary>

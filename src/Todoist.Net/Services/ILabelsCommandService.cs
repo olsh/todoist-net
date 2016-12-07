@@ -16,7 +16,7 @@ namespace Todoist.Net.Services
         /// </summary>
         /// <param name="label">The label.</param>
         /// <returns>
-        /// The label ID.
+        /// The temporary ID of the label.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="label" /> is <see langword="null" /></exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>

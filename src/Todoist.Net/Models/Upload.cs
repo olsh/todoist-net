@@ -2,7 +2,7 @@
 
 using Newtonsoft.Json;
 
-namespace Todoist.Net.Services
+namespace Todoist.Net.Models
 {
     /// <summary>
     /// Represents a Todoist upload.

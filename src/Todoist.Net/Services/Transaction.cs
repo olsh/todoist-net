@@ -32,7 +32,12 @@ namespace Todoist.Net.Services
             Items = new ItemsCommandService(_commands);
             Labels = new LabelsCommandService(_commands);
             Notifications = new NotificationsCommandService(_commands);
+            Filters = new FiltersCommandService(_commands);
+            Reminders = new ReminersCommandService(_commands);
+            Users = new UsersCommandService(_commands);
         }
+
+        public IFiltersCommandService Filters { get; set; }
 
         public IItemsCommandService Items { get; }
 
@@ -43,6 +48,10 @@ namespace Todoist.Net.Services
         public INotificationsCommandService Notifications { get; }
 
         public IProjectCommandService Project { get; }
+
+        public IReminersCommandService Reminders { get; }
+
+        public IUsersCommandService Users { get; }
 
         /// <summary>
         /// Commits the transaction asynchronous.

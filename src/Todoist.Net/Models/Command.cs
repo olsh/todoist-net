@@ -2,8 +2,6 @@
 
 using Newtonsoft.Json;
 
-using Todoist.Net.Serialization.Converters;
-
 namespace Todoist.Net.Models
 {
     internal class Command
@@ -19,14 +17,13 @@ namespace Todoist.Net.Models
         internal Command(CommandType commandType, ICommandArgument argument)
 
             // ReSharper disable once IntroduceOptionalParameters.Global
-            : this(commandType, argument, Guid.NewGuid())
+            : this(commandType, argument, null)
         {
         }
 
         [JsonProperty("args")]
         public ICommandArgument Argument { get; }
 
-        [JsonConverter(typeof(CommandTypeConverter))]
         [JsonProperty("type")]
         public CommandType CommandType { get; }
 

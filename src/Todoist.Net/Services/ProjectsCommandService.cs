@@ -52,11 +52,16 @@ namespace Todoist.Net.Services
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
         /// <remarks>Only available for Todoist Premium users.</remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
         public async Task ArchiveAsync(params ComplexId[] ids)
         {
-            var command = CreateCollectionCommand(ids, CommandType.ArchiveProject);
+            if (ids == null)
+            {
+                throw new ArgumentNullException(nameof(ids));
+            }
+
+            var command = CreateCollectionCommand(CommandType.ArchiveProject, ids);
             await ExecuteCommandAsync(command).ConfigureAwait(false);
         }
 
@@ -70,7 +75,12 @@ namespace Todoist.Net.Services
         /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
         public async Task DeleteAsync(params ComplexId[] ids)
         {
-            var command = CreateCollectionCommand(ids, CommandType.DeleteProject);
+            if (ids == null)
+            {
+                throw new ArgumentNullException(nameof(ids));
+            }
+
+            var command = CreateCollectionCommand(CommandType.DeleteProject, ids);
             await ExecuteCommandAsync(command).ConfigureAwait(false);
         }
 
@@ -85,7 +95,12 @@ namespace Todoist.Net.Services
         /// <remarks>Only available for Todoist Premium users.</remarks>
         public async Task UnarchiveAsync(params ComplexId[] ids)
         {
-            var command = CreateCollectionCommand(ids, CommandType.ArchiveProject);
+            if (ids == null)
+            {
+                throw new ArgumentNullException(nameof(ids));
+            }
+
+            var command = CreateCollectionCommand(CommandType.UnarchiveProject, ids);
             await ExecuteCommandAsync(command).ConfigureAwait(false);
         }
 
@@ -104,7 +119,7 @@ namespace Todoist.Net.Services
                 throw new ArgumentNullException(nameof(project));
             }
 
-            var command = new Command(CommandType.UpdateProject, project, null);
+            var command = new Command(CommandType.UpdateProject, project);
             await ExecuteCommandAsync(command).ConfigureAwait(false);
         }
 
@@ -125,8 +140,7 @@ namespace Todoist.Net.Services
 
             var command = new Command(
                               CommandType.UpdateOrderIndentsProject,
-                              new IdsToOrderIndentsArgument(idsToOrderIndents),
-                              null);
+                              new IdsToOrderIndentsArgument(idsToOrderIndents));
             await ExecuteCommandAsync(command).ConfigureAwait(false);
         }
     }

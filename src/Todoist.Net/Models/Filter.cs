@@ -39,6 +39,10 @@ namespace Todoist.Net.Models
             Query = query;
         }
 
+        internal Filter()
+        {
+        }
+
         /// <summary>
         /// Gets or sets the color.
         /// </summary>

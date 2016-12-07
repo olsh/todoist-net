@@ -132,12 +132,12 @@ namespace Todoist.Net.Models
 
             if (Since.HasValue)
             {
-                parameters.AddLast(new KeyValuePair<string, string>("since", Since.Value.ToQueryString()));
+                parameters.AddLast(new KeyValuePair<string, string>("since", Since.Value.ToFilterParameter()));
             }
 
             if (Until.HasValue)
             {
-                parameters.AddLast(new KeyValuePair<string, string>("until", Until.Value.ToQueryString()));
+                parameters.AddLast(new KeyValuePair<string, string>("until", Until.Value.ToFilterParameter()));
             }
 
             if (Limit.HasValue)

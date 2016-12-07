@@ -18,9 +18,25 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <param name="content">The content.</param>
         public Item(string content)
+            // ReSharper disable once IntroduceOptionalParameters.Global
+            : this(content, default(ComplexId))
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Item" /> class.
+        /// </summary>
+        /// <param name="content">The content.</param>
+        /// <param name="projectId">The project identifier.</param>
+        public Item(string content, ComplexId projectId)
         {
             Content = content;
+            ProjectId = projectId;
             Labels = new Collection<int>();
+        }
+
+        internal Item()
+        {
         }
 
         /// <summary>
@@ -57,7 +73,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The date language.</value>
         [JsonProperty("date_lang")]
-        public string DateLang { get; set; }
+        public Language DateLanguage { get; set; }
 
         /// <summary>
         /// Gets or sets the date string.
@@ -78,6 +94,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The due date UTC.</value>
         [JsonProperty("due_date_utc")]
+        [JsonConverter(typeof(UtcDateTimeConverter))]
         public DateTime? DueDateUtc { get; set; }
 
         /// <summary>

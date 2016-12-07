@@ -15,7 +15,7 @@ namespace Todoist.Net.Models
             }
         }
 
-        [JsonProperty("id_order_mapping")]
+        [JsonProperty("ids_to_orders")]
         public IDictionary<ComplexId, int> Ids { get; set; }
     }
 }

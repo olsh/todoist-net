@@ -29,7 +29,7 @@ namespace Todoist.Net
                                                                                     NullValueHandling =
                                                                                         NullValueHandling.Ignore,
                                                                                     ContractResolver =
-                                                                                        ConverterContractResolver.Instance
+                                                                                        new ConverterContractResolver()
                                                                                 };
 
         private readonly ITodoistRestClient _restClient;
@@ -37,7 +37,7 @@ namespace Todoist.Net
         private readonly string _token;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="TodoistClient" /> class.
+        /// Initializes a new instance of the <see cref="TodoistClient" /> class.
         /// </summary>
         /// <param name="token">The token.</param>
         /// <exception cref="ArgumentException">Value cannot be null or empty - token</exception>
@@ -47,7 +47,7 @@ namespace Todoist.Net
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="TodoistClient" /> class.
+        /// Initializes a new instance of the <see cref="TodoistClient" /> class.
         /// </summary>
         /// <param name="token">The token.</param>
         /// <param name="restClient">The rest client.</param>
@@ -63,14 +63,22 @@ namespace Todoist.Net
             _restClient = restClient;
 
             Projects = new ProjectsService(this);
-            Notes = new NotesService(this);
-            Uploads = new UploadService(this);
+            Templates = new TemplateService(this);
             Items = new ItemsService(this);
             Labels = new LabelsService(this);
-            Backups = new BackupService(this);
+            Notes = new NotesService(this);
+            Uploads = new UploadService(this);
+            Filters = new FiltersService(this);
             Activity = new ActivityService(this);
             Notifications = new NotificationsService(this);
-            Templates = new TemplateService(this);
+            Backups = new BackupService(this);
+            Reminders = new ReminersService(this);
+            Users = new UsersService(this);
+        }
+
+        private TodoistClient()
+        {
+            _restClient = new TodoistRestClient();
         }
 
         /// <summary>
@@ -84,6 +92,13 @@ namespace Todoist.Net
         /// </summary>
         /// <value>The backups.</value>
         public IBackupService Backups { get; }
+
+        /// <summary>
+        /// Gets or sets the filters.
+        /// </summary>
+        /// <value>The filters.</value>
+        /// <remarks>Filters are only available for Todoist Premium users.</remarks>
+        public IFiltersService Filters { get; set; }
 
         /// <summary>
         /// Gets the items service.
@@ -116,6 +131,13 @@ namespace Todoist.Net
         public IProjectsService Projects { get; }
 
         /// <summary>
+        /// Gets the reminders.
+        /// </summary>
+        /// <value>The reminders.</value>
+        /// <remarks>Reminders are only available for Todoist Premium users.</remarks>
+        public IReminersService Reminders { get; }
+
+        /// <summary>
         /// Gets the templates.
         /// </summary>
         /// <value>The templates.</value>
@@ -127,6 +149,105 @@ namespace Todoist.Net
         /// </summary>
         /// <value>The uploads service.</value>
         public IUploadService Uploads { get; }
+
+        /// <summary>
+        /// Gets the users.
+        /// </summary>
+        /// <value>The users.</value>
+        public IUsersService Users { get; }
+
+        /// <summary>
+        /// Logins user and returns a new instance of Todoist client.
+        /// </summary>
+        /// <param name="email">The email.</param>
+        /// <param name="password">The password.</param>
+        /// <returns>A new instance of Todoist client.</returns>
+        /// <exception cref="System.ArgumentException">
+        /// Value cannot be null or empty - email
+        /// or
+        /// Value cannot be null or empty - password
+        /// </exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <exception cref="TodoistException">Unable to get token.</exception>
+        [Obsolete("This method is scheduled for deprecation and probably will be removed in future versions.")]
+        public static async Task<ITodoistClient> LoginAsync(string email, string password)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                throw new ArgumentException("Value cannot be null or empty.", nameof(email));
+            }
+
+            if (string.IsNullOrEmpty(password))
+            {
+                throw new ArgumentException("Value cannot be null or empty.", nameof(password));
+            }
+
+            var parameters = new[]
+                                 {
+                                     new KeyValuePair<string, string>("email", email),
+                                     new KeyValuePair<string, string>("password", password)
+                                 };
+
+            return await LoginWithCredentialsAsync("login", parameters).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Registers a new user.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <returns>The user info.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="user"/> is <see langword="null"/></exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        public static async Task<UserInfo> RegisterUserAsync(UserBase user)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            var tokenlessClient = new TodoistClient();
+            var userInfo =
+                await
+                    tokenlessClient.ProcessPostAsync<UserInfo>("user/register", user.ToParameters())
+                        .ConfigureAwait(false);
+
+            return userInfo;
+        }
+
+        /// <summary>
+        /// Logins user and returns a new instance of Todoist client.
+        /// </summary>
+        /// <param name="email">The email.</param>
+        /// <param name="oauthToken">The oauth token.</param>
+        /// <returns>A new instance of Todoist client.</returns>
+        /// <exception cref="System.ArgumentException">Value cannot be null or empty - email
+        /// or
+        /// Value cannot be null or empty - password</exception>
+        /// <exception cref="HttpRequestException">Value cannot be null or empty - email
+        /// or
+        /// Value cannot be null or empty - password</exception>
+        /// <exception cref="TodoistException">API exception.</exception>
+        [Obsolete("This method is scheduled for deprecation and probably will be removed in future versions.")]
+        public static async Task<ITodoistClient> LoginWithGoogleAsync(string email, string oauthToken)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                throw new ArgumentException("Value cannot be null or empty.", nameof(email));
+            }
+
+            if (string.IsNullOrEmpty(oauthToken))
+            {
+                throw new ArgumentException("Value cannot be null or empty.", nameof(oauthToken));
+            }
+
+            var parameters = new[]
+                                 {
+                                     new KeyValuePair<string, string>("email", email),
+                                     new KeyValuePair<string, string>("oauth2_token", oauthToken)
+                                 };
+
+            return await LoginWithCredentialsAsync("login_with_google", parameters).ConfigureAwait(false);
+        }
 
         /// <summary>
         /// Creates the transaction.
@@ -196,7 +317,7 @@ namespace Todoist.Net
         }
 
         /// <summary>
-        ///     Executes the commands asynchronous.
+        /// Executes the commands asynchronous.
         /// </summary>
         /// <param name="commands">The commands.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
@@ -264,56 +385,21 @@ namespace Todoist.Net
         }
 
         /// <summary>
-        /// Throws if there are errors in the response.
+        /// Logins with credentials and returns a .
         /// </summary>
-        /// <param name="syncResponse">The synchronize response.</param>
-        /// <exception cref="System.AggregateException">Command execution exception.</exception>        
-        private static void ThrowIfErrors(SyncResponse syncResponse)
+        /// <param name="resource">The resource.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>A new instance of Todoist client.</returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <exception cref="TodoistException">Unable to get token.</exception>
+        private static async Task<ITodoistClient> LoginWithCredentialsAsync(
+            string resource,
+            KeyValuePair<string, string>[] parameters)
         {
-            LinkedList<TodoistException> exceptions = null;
-            foreach (var syncStatus in syncResponse.SyncStatus)
-            {
-                var dynamicStatus = syncStatus.Value;
-                var type = dynamicStatus.GetType();
+            var tokenlessClient = new TodoistClient();
+            var userInfo = await tokenlessClient.ProcessPostAsync<UserInfo>(resource, parameters).ConfigureAwait(false);
 
-                // an "ok" string which signals success of the command
-                if (type == typeof(string) || dynamicStatus.error_code == null)
-                {
-                    continue;
-                }
-
-                if (exceptions == null)
-                {
-                    exceptions = new LinkedList<TodoistException>();
-                }
-
-                exceptions.AddLast(
-                    new TodoistException((int)dynamicStatus.error_code, dynamicStatus.error.ToString(), dynamicStatus));
-            }
-
-            if (exceptions?.Any() == true)
-            {
-                throw new AggregateException(exceptions);
-            }
-        }
-
-        private static void UpdateTempIds(Command[] commands, Dictionary<Guid, int> tempIdMappings)
-        {
-            foreach (var command in commands)
-            {
-                var identifiedArgument = command.Argument as BaseEntity;
-                if (identifiedArgument != null)
-                {
-                    int persistentId;
-                    if (command.TempId.HasValue && tempIdMappings.TryGetValue(command.TempId.Value, out persistentId))
-                    {
-                        identifiedArgument.Id = persistentId;
-                    }
-                }
-
-                var withRelations = command.Argument as IWithRelationsArgument;
-                withRelations?.UpdateRelatedTempIds(tempIdMappings);
-            }
+            return new TodoistClient(userInfo.Token);
         }
 
         private T DeserializeResponse<T>(string responseContent)
@@ -409,11 +495,64 @@ namespace Todoist.Net
             return responseContent;
         }
 
+        /// <summary>
+        /// Throws if there are errors in the response.
+        /// </summary>
+        /// <param name="syncResponse">The synchronize response.</param>
+        /// <exception cref="System.AggregateException">Command execution exception.</exception>        
+        private void ThrowIfErrors(SyncResponse syncResponse)
+        {
+            LinkedList<TodoistException> exceptions = null;
+            foreach (var syncStatus in syncResponse.SyncStatus)
+            {
+                var dynamicStatus = syncStatus.Value;
+                var type = dynamicStatus.GetType();
+
+                // an "ok" string which signals success of the command
+                if (type == typeof(string) || dynamicStatus.error_code == null)
+                {
+                    continue;
+                }
+
+                if (exceptions == null)
+                {
+                    exceptions = new LinkedList<TodoistException>();
+                }
+
+                exceptions.AddLast(
+                    new TodoistException((int)dynamicStatus.error_code, dynamicStatus.error.ToString(), dynamicStatus));
+            }
+
+            if (exceptions?.Any() == true)
+            {
+                throw new AggregateException(exceptions);
+            }
+        }
+
         private void TryAddToken(ICollection<KeyValuePair<string, string>> parameters)
         {
             if (!string.IsNullOrEmpty(_token))
             {
                 parameters.Add(new KeyValuePair<string, string>("token", _token));
+            }
+        }
+
+        private void UpdateTempIds(Command[] commands, Dictionary<Guid, int> tempIdMappings)
+        {
+            foreach (var command in commands)
+            {
+                var identifiedArgument = command.Argument as BaseEntity;
+                if (identifiedArgument != null)
+                {
+                    int persistentId;
+                    if (command.TempId.HasValue && tempIdMappings.TryGetValue(command.TempId.Value, out persistentId))
+                    {
+                        identifiedArgument.Id = persistentId;
+                    }
+                }
+
+                var withRelations = command.Argument as IWithRelationsArgument;
+                withRelations?.UpdateRelatedTempIds(tempIdMappings);
             }
         }
     }

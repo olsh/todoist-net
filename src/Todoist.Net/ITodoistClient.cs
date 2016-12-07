@@ -25,6 +25,13 @@ namespace Todoist.Net
         IBackupService Backups { get; }
 
         /// <summary>
+        /// Gets or sets the filters.
+        /// </summary>
+        /// <value>The filters.</value>
+        /// <remarks>Filters are only available for Todoist Premium users.</remarks>
+        IFiltersService Filters { get; set; }
+
+        /// <summary>
         /// Gets the items service.
         /// </summary>
         /// <value>
@@ -61,6 +68,13 @@ namespace Todoist.Net
         IProjectsService Projects { get; }
 
         /// <summary>
+        /// Gets the reminders.
+        /// </summary>
+        /// <value>The reminders.</value>
+        /// <remarks>Reminders are only available for Todoist Premium users.</remarks>
+        IReminersService Reminders { get; }
+
+        /// <summary>
         /// Gets the templates.
         /// </summary>
         /// <value>The templates.</value>
@@ -74,6 +88,12 @@ namespace Todoist.Net
         /// The uploads service.
         /// </value>
         IUploadService Uploads { get; }
+
+        /// <summary>
+        /// Gets the users.
+        /// </summary>
+        /// <value>The users.</value>
+        IUsersService Users { get; }
 
         /// <summary>
         /// Creates the transaction.

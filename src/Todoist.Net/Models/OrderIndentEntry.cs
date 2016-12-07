@@ -23,5 +23,16 @@
         /// </summary>
         /// <value>The indent.</value>
         public int Indent { get; }
+
+        internal virtual int[] ToArray()
+        {
+            var array = new int[2];
+
+            array[0] = Order;
+
+            array[1] = Indent;
+
+            return array;
+        }
     }
 }

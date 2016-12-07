@@ -1,11 +1,13 @@
 namespace Todoist.Net.Models
 {
-    internal class CommandType
+    internal class CommandType : StringEnum
     {
         private CommandType(string command)
+            : base(command)
         {
-            Command = command;
         }
+
+        public static CommandType AddFilter { get; } = new CommandType("filter_add");
 
         public static CommandType AddItem { get; } = new CommandType("item_add");
 
@@ -15,9 +17,19 @@ namespace Todoist.Net.Models
 
         public static CommandType AddProject { get; } = new CommandType("project_add");
 
+        public static CommandType AddReminder { get; } = new CommandType("reminder_add");
+
         public static CommandType ArchiveProject { get; } = new CommandType("project_archive");
 
+        public static CommandType ClearLocations { get; } = new CommandType("clear_locations");
+
         public static CommandType CloseItem { get; } = new CommandType("item_close");
+
+        public static CommandType CompleteItem { get; } = new CommandType("item_complete");
+
+        public static CommandType CompleteRecurringItem { get; } = new CommandType("item_update_date_complete");
+
+        public static CommandType DeleteFilter { get; } = new CommandType("filter_delete");
 
         public static CommandType DeleteItem { get; } = new CommandType("item_delete");
 
@@ -27,19 +39,31 @@ namespace Todoist.Net.Models
 
         public static CommandType DeleteProject { get; } = new CommandType("project_delete");
 
-        public static CommandType MoveItem { get; } = new CommandType("item_move");
+        public static CommandType DeleteReminder { get; } = new CommandType("reminder_delete");
 
-        public static CommandType CompleteItem { get; } = new CommandType("item_complete");
+        public static CommandType MoveItem { get; } = new CommandType("item_move");
 
         public static CommandType SetLastReadNotification { get; } = new CommandType("live_notifications_set_last_read");
 
         public static CommandType UnarchiveProject { get; } = new CommandType("project_unarchive");
 
+        public static CommandType UncompleteItem { get; } = new CommandType("item_uncomplete");
+
+        public static CommandType UpdateDayOrderItem { get; } = new CommandType("item_update_day_orders");
+
+        public static CommandType UpdateFilter { get; } = new CommandType("filter_update");
+
         public static CommandType UpdateItem { get; } = new CommandType("item_update");
+
+        public static CommandType UpdateKarmaGoals { get; } = new CommandType("update_goals");
 
         public static CommandType UpdateLabel { get; } = new CommandType("label_update");
 
         public static CommandType UpdateNote { get; } = new CommandType("note_update");
+
+        public static CommandType UpdateOrderFilter { get; } = new CommandType("filter_update_orders");
+
+        public static CommandType UpdateOrderIndentsItem { get; } = new CommandType("item_update_orders_indents");
 
         public static CommandType UpdateOrderIndentsProject { get; } = new CommandType("project_update_orders_indents");
 
@@ -47,6 +71,8 @@ namespace Todoist.Net.Models
 
         public static CommandType UpdateProject { get; } = new CommandType("project_update");
 
-        public string Command { get; }
+        public static CommandType UpdateReminder { get; } = new CommandType("reminder_update");
+
+        public static CommandType UpdateUser { get; } = new CommandType("user_update");
     }
 }

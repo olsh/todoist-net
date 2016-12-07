@@ -10,6 +10,13 @@ namespace Todoist.Net.Services
     public interface ITransaction
     {
         /// <summary>
+        /// Gets or sets the filters.
+        /// </summary>
+        /// <value>The filters.</value>
+        /// <remarks>Filters are only available for Todoist Premium users.</remarks>
+        IFiltersCommandService Filters { get; set; }
+
+        /// <summary>
         /// Gets the items service.
         /// </summary>
         /// <value>The items service.</value>
@@ -38,6 +45,19 @@ namespace Todoist.Net.Services
         /// </summary>
         /// <value>The project.</value>
         IProjectCommandService Project { get; }
+
+        /// <summary>
+        /// Gets the reminders.
+        /// </summary>
+        /// <value>The reminders.</value>
+        /// <remarks>Reminders are only available for Todoist Premium users.</remarks>
+        IReminersCommandService Reminders { get; }
+
+        /// <summary>
+        /// Gets the users.
+        /// </summary>
+        /// <value>The users.</value>
+        IUsersCommandService Users { get; }
 
         /// <summary>
         /// Commits the transaction asynchronous.

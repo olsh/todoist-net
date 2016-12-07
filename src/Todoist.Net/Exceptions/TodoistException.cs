@@ -6,6 +6,9 @@ namespace Todoist.Net.Exceptions
     /// Represents an errors that occur during requests to Todoist API.
     /// </summary>
     /// <seealso cref="System.Exception" />
+#if NETFW
+    [Serializable]
+#endif
     public class TodoistException : Exception
     {
         /// <summary>

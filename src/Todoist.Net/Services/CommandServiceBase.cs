@@ -31,33 +31,15 @@ namespace Todoist.Net.Services
             return new Command(commandType, entity, tempId);
         }
 
-        /// <summary>
-        /// Creates the collection operation.
-        /// </summary>
-        /// <param name="ids">The ids.</param>
-        /// <param name="commandType">Type of the command.</param>
-        /// <returns>The collection operation command.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
-        internal Command CreateCollectionCommand(IEnumerable<ComplexId> ids, CommandType commandType)
+        internal Command CreateCollectionCommand(CommandType commandType, IEnumerable<ComplexId> ids)
         {
-            if (ids == null)
-            {
-                throw new ArgumentNullException(nameof(ids));
-            }
-
-            var command = new Command(commandType, new IdsArgument(ids), null);
+            var command = new Command(commandType, new IdsArgument(ids));
             return command;
         }
 
-        /// <summary>
-        /// Creates the entity command.
-        /// </summary>
-        /// <param name="id">The identifier.</param>
-        /// <param name="commandType">Type of the command.</param>
-        /// <returns>The command.</returns>
-        internal Command CreateEntityCommand(ComplexId id, CommandType commandType)
+        internal Command CreateEntityCommand(CommandType commandType, ComplexId id)
         {
-            return new Command(commandType, new BaseEntity(id), null);
+            return new Command(commandType, new BaseEntity(id));
         }
 
         /// <summary>

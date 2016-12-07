@@ -3,15 +3,15 @@
     /// <summary>
     /// Contains Todoist resource types.
     /// </summary>
-    public class ResourceType
+    public class ResourceType : StringEnum
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ResourceType"/> class.
         /// </summary>
-        /// <param name="resource">The resource.</param>
-        private ResourceType(string resource)
+        /// <param name="value">The resource.</param>
+        private ResourceType(string value)
+            : base(value)
         {
-            Resource = resource;
         }
 
         /// <summary>
@@ -63,10 +63,10 @@
         public static ResourceType Reminders { get; } = new ResourceType("reminders");
 
         /// <summary>
-        /// Gets the resource.
+        /// Gets the user.
         /// </summary>
-        /// <value>The resource.</value>
-        public string Resource { get; }
+        /// <value>The user.</value>
+        public static ResourceType User { get; } = new ResourceType("user");
 
         /// <summary>
         /// Gets all.

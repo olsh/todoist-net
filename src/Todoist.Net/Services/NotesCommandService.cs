@@ -85,7 +85,7 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         public async Task DeleteAsync(ComplexId id)
         {
-            var command = CreateEntityCommand(id, CommandType.DeleteNote);
+            var command = CreateEntityCommand(CommandType.DeleteNote, id);
             await ExecuteCommandAsync(command).ConfigureAwait(false);
         }
 

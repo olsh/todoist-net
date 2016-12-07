@@ -8,6 +8,13 @@ namespace Todoist.Net.Models
     public class Resources
     {
         /// <summary>
+        /// Gets the filters.
+        /// </summary>
+        /// <value>The filters.</value>
+        [JsonProperty("filters")]
+        public Filter[] Filters { get; internal set; }
+
+        /// <summary>
         /// Gets the items.
         /// </summary>
         /// <value>The items.</value>
@@ -36,6 +43,13 @@ namespace Todoist.Net.Models
         public Note[] Notes { get; internal set; }
 
         /// <summary>
+        /// Gets the project notes.
+        /// </summary>
+        /// <value>The project notes.</value>
+        [JsonProperty("project_notes")]
+        public Note[] ProjectNotes { get; internal set; }
+
+        /// <summary>
         /// Gets the notifications.
         /// </summary>
         /// <value>The notifications.</value>
@@ -48,5 +62,19 @@ namespace Todoist.Net.Models
         /// <value>The projects.</value>
         [JsonProperty("projects")]
         public Project[] Projects { get; internal set; }
+
+        /// <summary>
+        /// Gets the reminders.
+        /// </summary>
+        /// <value>The reminders.</value>
+        [JsonProperty("reminders")]
+        public Reminder[] Reminders { get; internal set; }
+
+        /// <summary>
+        /// Gets the user information.
+        /// </summary>
+        /// <value>The user information.</value>
+        [JsonProperty("user")]
+        public UserInfo UserInfo { get; internal set; }
     }
 }

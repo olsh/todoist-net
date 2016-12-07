@@ -1,5 +1,4 @@
-﻿using Todoist.Net.Models;
-using Todoist.Net.Tests.Settings;
+﻿using Todoist.Net.Tests.Settings;
 
 using Xunit;
 

@@ -6,11 +6,11 @@ using Todoist.Net.Models;
 
 namespace Todoist.Net.Serialization.Converters
 {
-    internal class ResourceTypeConverter : JsonConverter
+    internal class StringEnumTypeConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(ResourceType);
+            return objectType == typeof(StringEnum);
         }
 
         public override object ReadJson(
@@ -19,12 +19,18 @@ namespace Todoist.Net.Serialization.Converters
             object existingValue,
             JsonSerializer serializer)
         {
-            throw new NotImplementedException();
+            StringEnum stringEnum;
+            if (StringEnum.TryParse(reader.Value?.ToString(), objectType, out stringEnum))
+            {
+                return stringEnum;
+            }
+
+            return null;
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            writer.WriteValue(((ResourceType)value).Resource);
+            writer.WriteValue(((StringEnum)value).Value);
         }
     }
 }

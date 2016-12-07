@@ -15,7 +15,7 @@ namespace Todoist.Net.Services
         /// Adds a new project.
         /// </summary>
         /// <param name="project">The project.</param>
-        /// <returns>The ID of the project.</returns>
+        /// <returns>The temporary ID of the project.</returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="project"/> is <see langword="null"/></exception>

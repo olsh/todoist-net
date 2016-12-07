@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 
 using Newtonsoft.Json.Serialization;
 
@@ -9,8 +10,6 @@ namespace Todoist.Net.Serialization.Resolvers
 {
     internal class ConverterContractResolver : DefaultContractResolver
     {
-        public static readonly ConverterContractResolver Instance = new ConverterContractResolver();
-
         protected override JsonContract CreateContract(Type objectType)
         {
             JsonContract contract = base.CreateContract(objectType);
@@ -19,9 +18,9 @@ namespace Todoist.Net.Serialization.Resolvers
             {
                 contract.Converter = new ComplexIdConverter();
             }
-            else if (objectType == typeof(ResourceType))
+            else if (objectType.GetTypeInfo().IsSubclassOf(typeof(StringEnum)))
             {
-                contract.Converter = new ResourceTypeConverter();
+                contract.Converter = new StringEnumTypeConverter();
             }
 
             return contract;
