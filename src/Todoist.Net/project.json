@@ -24,10 +24,10 @@
   "buildOptions": {
     "xmlDoc": true
   },
-  "projectUrl": "https://github.com/olsh/todoist-net",
   "authors": [ "Oleg Shevchenko" ],  
   "description": "A Todoist API client for .NET",
   "packOptions": {
+    "projectUrl": "https://github.com/olsh/todoist-net",
     "tags": [ "todoist" ],
     "licenseUrl": "https://raw.githubusercontent.com/olsh/todoist-net/master/LICENSE",
     "owners": [ "Oleg Shevchenko" ],

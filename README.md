@@ -1,6 +1,7 @@
 # Todoist.Net
-A [Todoist API v7](https://developer.todoist.com/) client for .NET.
+A [Todoist API v7](https://developer.todoist.com/) client for .NET.  
 
+[![Build status](https://ci.appveyor.com/api/projects/status/r5ylbxtpjya9ayk2?svg=true)](https://ci.appveyor.com/project/Oleg31257/todoist-net)
 ## Installation
 
 The library is available as a [Nuget package](https://www.nuget.org/packages/Todoist.Net/).
