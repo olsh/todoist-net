@@ -1,5 +1,5 @@
 # Todoist.Net
-A [Todoist v7 API](https://developer.todoist.com/) client for .NET.
+A [Todoist API v7](https://developer.todoist.com/) client for .NET.
 
 ## Installation
 
@@ -12,12 +12,12 @@ Install-Package Todoist.Net
 
 ### Creating Todoist client
 
-With token (preferred way):
+With token (preferred way).
 ```csharp
 ITodoistClient client = new TodoistClient("API token");
 ```
 
-With email and password:
+With email and password.
 ```csharp
 ITodoistClient client = await TodoistClient.LoginAsync("email", "password");
 ```
@@ -29,14 +29,17 @@ var projects = await client.Projects.GetAsync();
 
 // Adding a task with a note.
 var taskId = await client.Items.AddAsync(new Item("New task"));
-await client.Notes.AddToItemAsync(new Note("Task decription"), taskId);
+await client.Notes.AddToItemAsync(new Note("Task description"), taskId);
 ```
 
 ### Transactions (Batching)
 Batching: reading and writing of multiple resources can be done in a single HTTP request.
 
-Add project, task and not in one request
+Add a new project, task and note in one request.
 ```csharp
+// Create a new transaction.
+var transaction = client.CreateTransaction();
+
 // These requests are queued and will be executed later.
 var projectId = await transaction.Project.AddAsync(new Project("New project"));
 var taskId = await transaction.Items.AddAsync(new Item("New task", projectId));
