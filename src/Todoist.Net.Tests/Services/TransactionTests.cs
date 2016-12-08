@@ -1,7 +1,7 @@
 ﻿using System;
 
 using Todoist.Net.Models;
-using Todoist.Net.Tests.Constants;
+using Todoist.Net.Tests.Extensions;
 using Todoist.Net.Tests.Settings;
 using Xunit;
 
@@ -10,7 +10,7 @@ namespace Todoist.Net.Tests.Services
     public class TransactionTests
     {
         [Fact]
-        [Trait(TraitConstants.Category, TraitConstants.Integration)]
+        [IntegrationFree]
         public void CreateProjectAndCreateNote_Success()
         {
             var client = CreateClient();

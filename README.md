@@ -52,4 +52,4 @@ await transaction.CommitAsync();
 ```
 
 ## Known issues
-At the moment implemented all APIs except [Sharing](https://developer.todoist.com/?shell#sharing) and [Business](https://developer.todoist.com/?shell#business) because I don't have a Business account to test them.
+At the moment implemented all APIs except [Sharing](https://developer.todoist.com/?shell#sharing) and [Business](https://developer.todoist.com/?shell#business).

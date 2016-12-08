@@ -3,17 +3,22 @@ using System.Linq;
 using System.Text;
 
 using Todoist.Net.Models;
-using Todoist.Net.Tests.Constants;
+using Todoist.Net.Tests.Extensions;
 using Todoist.Net.Tests.Settings;
 
 using Xunit;
 
 namespace Todoist.Net.Tests.Services
 {
+    [IntegrationPremium]
     public class TemplateServiceTests
     {
+        public TodoistClient CreateClient()
+        {
+            return new TodoistClient(SettingsProvider.GetToken());
+        }
+
         [Fact]
-        [Trait(TraitConstants.Category, TraitConstants.Integration)]
         public void ExportAndImportTemplate_Success()
         {
             var client = CreateClient();
@@ -31,7 +36,6 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [Trait(TraitConstants.Category, TraitConstants.Integration)]
         public void ExportAsShareableUrl_Success()
         {
             var client = CreateClient();
@@ -40,11 +44,6 @@ namespace Todoist.Net.Tests.Services
             var template = client.Templates.ExportAsShareableUrlAsync(firstProject.Id).Result;
 
             Assert.True(!string.IsNullOrEmpty(template.FileUrl));
-        }
-
-        public TodoistClient CreateClient()
-        {
-            return new TodoistClient(SettingsProvider.GetToken());
         }
     }
 }

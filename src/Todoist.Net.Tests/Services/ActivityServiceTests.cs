@@ -1,17 +1,17 @@
 ﻿using System.Linq;
 
 using Todoist.Net.Models;
-using Todoist.Net.Tests.Constants;
+using Todoist.Net.Tests.Extensions;
 using Todoist.Net.Tests.Settings;
 
 using Xunit;
 
 namespace Todoist.Net.Tests.Services
 {
+    [IntegrationPremium]
     public class ActivityServiceTests
     {
         [Fact]
-        [Trait(TraitConstants.Category, TraitConstants.Integration)]
         public void GetActivity_HasEntries()
         {
             var client = new TodoistClient(SettingsProvider.GetToken());
@@ -22,7 +22,6 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [Trait(TraitConstants.Category, TraitConstants.Integration)]
         public void GetActivityWithEventObjectFilter_HasEntries()
         {
             var client = new TodoistClient(SettingsProvider.GetToken());

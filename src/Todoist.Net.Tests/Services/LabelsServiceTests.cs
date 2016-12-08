@@ -1,5 +1,5 @@
 ﻿using Todoist.Net.Models;
-using Todoist.Net.Tests.Constants;
+using Todoist.Net.Tests.Extensions;
 using Todoist.Net.Tests.Settings;
 
 using Xunit;
@@ -9,7 +9,7 @@ namespace Todoist.Net.Tests.Services
     public class LabelsServiceTests
     {
         [Fact]
-        [Trait(TraitConstants.Category, TraitConstants.Integration)]
+        [IntegrationFree]
         public void CreateUpdateOrderGetInfoDelete_Success()
         {
             var client = CreateClient();

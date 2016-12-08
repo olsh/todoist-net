@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 using Todoist.Net.Models;
-using Todoist.Net.Tests.Constants;
+using Todoist.Net.Tests.Extensions;
 using Todoist.Net.Tests.Settings;
 
 using Xunit;
@@ -13,7 +12,7 @@ namespace Todoist.Net.Tests.Services
     public class ProjectsServiceTests
     {
         [Fact]
-        [Trait(TraitConstants.Category, TraitConstants.Integration)]
+        [IntegrationFree]
         public void CreateGetAndDelete_Success()
         {
             var client = CreateProjectService();
@@ -35,7 +34,7 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [Trait(TraitConstants.Category, TraitConstants.Integration)]
+        [IntegrationFree]
         public void CreateProjectWithNote_Success()
         {
             var client = CreateProjectService();
@@ -58,7 +57,7 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [Trait(TraitConstants.Category, TraitConstants.Integration)]
+        [IntegrationFree]
         public void CreateUpdateIndentAndDelete_Success()
         {
             var client = CreateProjectService();

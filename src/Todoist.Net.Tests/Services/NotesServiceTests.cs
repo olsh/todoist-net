@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+
 using Todoist.Net.Models;
-using Todoist.Net.Tests.Constants;
+using Todoist.Net.Tests.Extensions;
 using Todoist.Net.Tests.Helpers;
 
 using Xunit;
@@ -12,25 +13,7 @@ namespace Todoist.Net.Tests.Services
     public class NotesServiceTests
     {
         [Fact]
-        [Trait(TraitConstants.Category, TraitConstants.Integration)]
-        public void AddNoteToNewProjectAndUpdateIt_Success()
-        {
-            var todoistClient = ClientFactory.Create();
-
-            var project = new Project(Guid.NewGuid().ToString());
-            todoistClient.Projects.AddAsync(project).Wait();
-
-            var note = new Note("Hello");
-            todoistClient.Notes.AddToProjectAsync(note, project.Id.PersistentId).Wait();
-
-            note.Content = "Updated";
-            todoistClient.Notes.UpdateAsync(note).Wait();
-
-            todoistClient.Projects.DeleteAsync(project.Id).Wait();
-        }
-
-        [Fact]
-        [Trait(TraitConstants.Category, TraitConstants.Integration)]
+        [IntegrationFree]
         public void AddNoteGetByIdAndDelete_Success()
         {
             var todoistClient = ClientFactory.Create();
@@ -48,7 +31,25 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [Trait(TraitConstants.Category, TraitConstants.Integration)]
+        [IntegrationFree]
+        public void AddNoteToNewProjectAndUpdateIt_Success()
+        {
+            var todoistClient = ClientFactory.Create();
+
+            var project = new Project(Guid.NewGuid().ToString());
+            todoistClient.Projects.AddAsync(project).Wait();
+
+            var note = new Note("Hello");
+            todoistClient.Notes.AddToProjectAsync(note, project.Id.PersistentId).Wait();
+
+            note.Content = "Updated";
+            todoistClient.Notes.UpdateAsync(note).Wait();
+
+            todoistClient.Projects.DeleteAsync(project.Id).Wait();
+        }
+
+        [Fact]
+        [IntegrationPremium]
         public void AddNoteToNewProjectAttachFileAndDeleteIt_Success()
         {
             var client = ClientFactory.Create();
@@ -61,7 +62,7 @@ namespace Todoist.Net.Tests.Services
             var upload = client.Uploads.UploadAsync(fileName, Encoding.UTF8.GetBytes("hello")).Result;
             note.FileAttachment = upload;
 
-            client.Notes.AddToProjectAsync(note, project.Id.PersistentId).Wait();            
+            client.Notes.AddToProjectAsync(note, project.Id.PersistentId).Wait();
 
             var projectInfo = client.Projects.GetAsync(project.Id).Result;
             var attachedNote = projectInfo.Notes.FirstOrDefault();
@@ -73,7 +74,7 @@ namespace Todoist.Net.Tests.Services
             projectInfo = client.Projects.GetAsync(project.Id).Result;
             Assert.True(!projectInfo.Notes.Any());
 
-            client.Projects.DeleteAsync(project.Id).Wait();            
+            client.Projects.DeleteAsync(project.Id).Wait();
         }
     }
 }

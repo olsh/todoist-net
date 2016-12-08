@@ -2,17 +2,17 @@
 using System.Linq;
 
 using Todoist.Net.Models;
-using Todoist.Net.Tests.Constants;
+using Todoist.Net.Tests.Extensions;
 using Todoist.Net.Tests.Settings;
 
 using Xunit;
 
 namespace Todoist.Net.Tests.Services
 {
+    [IntegrationPremium]
     public class FiltersServiceTests
     {
         [Fact]
-        [Trait(TraitConstants.Category, TraitConstants.Integration)]
         public void GetFilterInfo_Success()
         {
             var client = CreateClient();
@@ -27,7 +27,6 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [Trait(TraitConstants.Category, TraitConstants.Integration)]
         public void CreateDelete_Success()
         {
             var client = CreateClient();
