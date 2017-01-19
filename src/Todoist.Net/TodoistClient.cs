@@ -20,17 +20,14 @@ namespace Todoist.Net
     /// <seealso cref="Todoist.Net.IAdvancedTodoistClient" />
     public class TodoistClient : IDisposable, IAdvancedTodoistClient
     {
-        private static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings
-                                                                                {
-                                                                                    DateFormatString =
-                                                                                        "ddd dd MMM yyyy HH:mm:ss +0000",
-                                                                                    DateTimeZoneHandling =
-                                                                                        DateTimeZoneHandling.Utc,
-                                                                                    NullValueHandling =
-                                                                                        NullValueHandling.Ignore,
-                                                                                    ContractResolver =
-                                                                                        new ConverterContractResolver()
-                                                                                };
+        private static readonly JsonSerializerSettings SerializerSettings 
+            = new JsonSerializerSettings
+                  {
+                      DateFormatString = "ddd dd MMM yyyy HH:mm:ss +0000",
+                      DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+                      NullValueHandling = NullValueHandling.Ignore,
+                      ContractResolver = new ConverterContractResolver()
+                  };
 
         private readonly ITodoistRestClient _restClient;
 
@@ -74,6 +71,7 @@ namespace Todoist.Net
             Backups = new BackupService(this);
             Reminders = new ReminersService(this);
             Users = new UsersService(this);
+            Sharing = new SharingService(this);
         }
 
         private TodoistClient()
@@ -138,6 +136,14 @@ namespace Todoist.Net
         public IReminersService Reminders { get; }
 
         /// <summary>
+        /// Gets the sharing.
+        /// </summary>
+        /// <value>
+        /// The sharing.
+        /// </value>
+        public ISharingService Sharing { get; }
+
+        /// <summary>
         /// Gets the templates.
         /// </summary>
         /// <value>The templates.</value>
@@ -192,29 +198,6 @@ namespace Todoist.Net
         }
 
         /// <summary>
-        /// Registers a new user.
-        /// </summary>
-        /// <param name="user">The user.</param>
-        /// <returns>The user info.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="user"/> is <see langword="null"/></exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public static async Task<UserInfo> RegisterUserAsync(UserBase user)
-        {
-            if (user == null)
-            {
-                throw new ArgumentNullException(nameof(user));
-            }
-
-            var tokenlessClient = new TodoistClient();
-            var userInfo =
-                await
-                    tokenlessClient.ProcessPostAsync<UserInfo>("user/register", user.ToParameters())
-                        .ConfigureAwait(false);
-
-            return userInfo;
-        }
-
-        /// <summary>
         /// Logins user and returns a new instance of Todoist client.
         /// </summary>
         /// <param name="email">The email.</param>
@@ -247,6 +230,28 @@ namespace Todoist.Net
                                  };
 
             return await LoginWithCredentialsAsync("login_with_google", parameters).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Registers a new user.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <returns>The user info.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="user"/> is <see langword="null"/></exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        public static async Task<UserInfo> RegisterUserAsync(UserBase user)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            var tokenlessClient = new TodoistClient();
+            var userInfo =
+                await tokenlessClient.ProcessPostAsync<UserInfo>("user/register", user.ToParameters())
+                    .ConfigureAwait(false);
+
+            return userInfo;
         }
 
         /// <summary>

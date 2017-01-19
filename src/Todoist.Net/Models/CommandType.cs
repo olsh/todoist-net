@@ -7,6 +7,8 @@ namespace Todoist.Net.Models
         {
         }
 
+        public static CommandType AcceptInvitation { get; } = new CommandType("accept_invitation");
+
         public static CommandType AddFilter { get; } = new CommandType("filter_add");
 
         public static CommandType AddItem { get; } = new CommandType("item_add");
@@ -29,7 +31,11 @@ namespace Todoist.Net.Models
 
         public static CommandType CompleteRecurringItem { get; } = new CommandType("item_update_date_complete");
 
+        public static CommandType DeleteCollaborator { get; } = new CommandType("delete_collaborator");
+
         public static CommandType DeleteFilter { get; } = new CommandType("filter_delete");
+
+        public static CommandType DeleteInvitation { get; } = new CommandType("delete_invitation");
 
         public static CommandType DeleteItem { get; } = new CommandType("item_delete");
 
@@ -43,7 +49,11 @@ namespace Todoist.Net.Models
 
         public static CommandType MoveItem { get; } = new CommandType("item_move");
 
+        public static CommandType RejectInvitation { get; } = new CommandType("reject_invitation");
+
         public static CommandType SetLastReadNotification { get; } = new CommandType("live_notifications_set_last_read");
+
+        public static CommandType ShareProject { get; } = new CommandType("share_project");
 
         public static CommandType UnarchiveProject { get; } = new CommandType("project_unarchive");
 

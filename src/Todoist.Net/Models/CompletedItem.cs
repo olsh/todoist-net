@@ -43,7 +43,7 @@ namespace Todoist.Net.Models
         /// The labels.
         /// </value>
         [JsonProperty("labels")]
-        public Label[] Labels { get; internal set; }
+        public long[] Labels { get; internal set; }
 
         /// <summary>
         /// Gets the note count.

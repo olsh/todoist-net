@@ -18,11 +18,6 @@ namespace Todoist.Net.Services
         {
         }
 
-        internal ProjectsService(ICollection<Command> queue)
-            : base(queue)
-        {
-        }
-
         /// <summary>
         /// Gets archived projects.
         /// </summary>

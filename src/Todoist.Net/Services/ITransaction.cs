@@ -54,6 +54,14 @@ namespace Todoist.Net.Services
         IReminersCommandService Reminders { get; }
 
         /// <summary>
+        /// Gets the sharing.
+        /// </summary>
+        /// <value>
+        /// The sharing.
+        /// </value>
+        ISharingCommandService Sharing { get; }
+
+        /// <summary>
         /// Gets the users.
         /// </summary>
         /// <value>The users.</value>

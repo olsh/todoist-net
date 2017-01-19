@@ -75,6 +75,14 @@ namespace Todoist.Net
         IReminersService Reminders { get; }
 
         /// <summary>
+        /// Gets the sharing.
+        /// </summary>
+        /// <value>
+        /// The sharing.
+        /// </value>
+        ISharingService Sharing { get; }
+
+        /// <summary>
         /// Gets the templates.
         /// </summary>
         /// <value>The templates.</value>
