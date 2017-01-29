@@ -40,7 +40,6 @@ namespace Todoist.Net.Tests.Services
             var client = CreateProjectService();
 
             var projectName = Guid.NewGuid().ToString();
-            var projectId = Guid.NewGuid().ToString();
             client.Projects.AddAsync(new Project(projectName)).Wait();
 
             var projects = client.Projects.GetAsync().Result;

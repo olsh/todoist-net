@@ -18,7 +18,7 @@ namespace Todoist.Net.Tests.Services
 
             var logEntries = client.Activity.GetAsync().Result;
 
-            Assert.True(logEntries.Count() > 0);
+            Assert.True(logEntries.Any());
         }
 
         [Fact]
@@ -31,7 +31,7 @@ namespace Todoist.Net.Tests.Services
              
             var logEntries = client.Activity.GetAsync(logFilter).Result;
 
-            Assert.True(logEntries.Count() > 0);
+            Assert.True(logEntries.Any());
         }
     }
 }

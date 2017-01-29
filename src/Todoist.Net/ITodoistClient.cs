@@ -110,11 +110,6 @@ namespace Todoist.Net
         ITransaction CreateTransaction();
 
         /// <summary>
-        /// Disposes this instance.
-        /// </summary>
-        void Dispose();
-
-        /// <summary>
         /// Gets the resources asynchronous. Returns all resources if zero resource type were passed.
         /// </summary>
         /// <param name="resourceTypes">The resource types.</param>

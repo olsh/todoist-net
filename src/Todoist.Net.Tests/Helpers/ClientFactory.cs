@@ -2,7 +2,7 @@
 
 namespace Todoist.Net.Tests.Helpers
 {
-    public class ClientFactory
+    public static class ClientFactory
     {
         public static TodoistClient Create()
         {

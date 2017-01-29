@@ -15,7 +15,7 @@ namespace Todoist.Net.Tests.Services
 
             var notifications = client.Notifications.GetAsync().Result;
 
-            Assert.True(notifications.Count() > 0);
+            Assert.True(notifications.Any());
         }
 
         [Fact]

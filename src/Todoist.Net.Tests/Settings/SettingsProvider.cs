@@ -2,7 +2,7 @@
 
 namespace Todoist.Net.Tests.Settings
 {
-    public class SettingsProvider
+    public static class SettingsProvider
     {
         public static string GetToken()
         {
