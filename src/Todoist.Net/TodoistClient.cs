@@ -176,7 +176,7 @@ namespace Todoist.Net
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="TodoistException">Unable to get token.</exception>
         [Obsolete("This method is scheduled for deprecation and probably will be removed in future versions.")]
-        public static async Task<ITodoistClient> LoginAsync(string email, string password)
+        public static async Task<TodoistClient> LoginAsync(string email, string password)
         {
             if (string.IsNullOrEmpty(email))
             {
@@ -211,7 +211,7 @@ namespace Todoist.Net
         /// Value cannot be null or empty - password</exception>
         /// <exception cref="TodoistException">API exception.</exception>
         [Obsolete("This method is scheduled for deprecation and probably will be removed in future versions.")]
-        public static async Task<ITodoistClient> LoginWithGoogleAsync(string email, string oauthToken)
+        public static async Task<TodoistClient> LoginWithGoogleAsync(string email, string oauthToken)
         {
             if (string.IsNullOrEmpty(email))
             {
@@ -397,7 +397,7 @@ namespace Todoist.Net
         /// <returns>A new instance of Todoist client.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="TodoistException">Unable to get token.</exception>
-        private static async Task<ITodoistClient> LoginWithCredentialsAsync(
+        private static async Task<TodoistClient> LoginWithCredentialsAsync(
             string resource,
             KeyValuePair<string, string>[] parameters)
         {

@@ -29,6 +29,12 @@ ITodoistClient client = await TodoistClient.LoginAsync("email", "password");
 // Get all projects.
 var projects = await client.Projects.GetAsync();
 
+// Get all resources (labels, projects, tasks, notes etc.)
+var resources = await client.GetResourcesAsync();
+
+// Get only projects and labels
+var projectsAndLabels = await client.GetResourcesAsync(ResourceType.Projects, ResourceType.Labels);
+
 // Adding a task with a note.
 var taskId = await client.Items.AddAsync(new Item("New task"));
 await client.Notes.AddToItemAsync(new Note("Task description"), taskId);
