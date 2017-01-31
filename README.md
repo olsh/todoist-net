@@ -26,16 +26,19 @@ ITodoistClient client = await TodoistClient.LoginAsync("email", "password");
 
 ### Simple API calls
 ```csharp
-// Get all projects.
-var projects = await client.Projects.GetAsync();
-
-// Get all resources (labels, projects, tasks, notes etc.)
+// Get all resources (labels, projects, tasks, notes etc.).
 var resources = await client.GetResourcesAsync();
 
-// Get only projects and labels
+// Get only projects and labels.
 var projectsAndLabels = await client.GetResourcesAsync(ResourceType.Projects, ResourceType.Labels);
 
-// Adding a task with a note.
+// Get only projects.
+var projectsAndLabels = await client.GetResourcesAsync(ResourceType.Projects);
+
+// Alternatively you can use this API to get projects.
+var projects = await client.Projects.GetAsync();
+
+// Add a task with a note.
 var taskId = await client.Items.AddAsync(new Item("New task"));
 await client.Notes.AddToItemAsync(new Note("Task description"), taskId);
 ```
