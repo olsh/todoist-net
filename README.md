@@ -33,7 +33,7 @@ var resources = await client.GetResourcesAsync();
 var projectsAndLabels = await client.GetResourcesAsync(ResourceType.Projects, ResourceType.Labels);
 
 // Get only projects.
-var projectsAndLabels = await client.GetResourcesAsync(ResourceType.Projects);
+var projectsOnly = await client.GetResourcesAsync(ResourceType.Projects);
 
 // Alternatively you can use this API to get projects.
 var projects = await client.Projects.GetAsync();
