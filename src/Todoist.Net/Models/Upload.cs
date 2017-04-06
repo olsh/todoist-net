@@ -42,7 +42,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The identifier.</value>
         [JsonProperty("id")]
-        public int Id { get; internal set; }
+        public long Id { get; internal set; }
 
         /// <summary>
         /// Gets the ip.
@@ -56,21 +56,21 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The item identifier.</value>
         [JsonProperty("item_id")]
-        public int ItemId { get; internal set; }
+        public long ItemId { get; internal set; }
 
         /// <summary>
         /// Gets the note identifier.
         /// </summary>
         /// <value>The note identifier.</value>
         [JsonProperty("note_id")]
-        public int NoteId { get; internal set; }
+        public long NoteId { get; internal set; }
 
         /// <summary>
         /// Gets the project identifier.
         /// </summary>
         /// <value>The project identifier.</value>
         [JsonProperty("project_id")]
-        public int ProjectId { get; internal set; }
+        public long ProjectId { get; internal set; }
 
         /// <summary>
         /// Gets the uploaded.
@@ -84,6 +84,6 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The user identifier.</value>
         [JsonProperty("user_id")]
-        public int UserId { get; internal set; }
+        public long UserId { get; internal set; }
     }
 }
