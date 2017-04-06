@@ -20,7 +20,7 @@ namespace Todoist.Net
     /// <seealso cref="Todoist.Net.IAdvancedTodoistClient" />
     public class TodoistClient : IDisposable, IAdvancedTodoistClient
     {
-        private static readonly JsonSerializerSettings SerializerSettings 
+        private static readonly JsonSerializerSettings SerializerSettings
             = new JsonSerializerSettings
                   {
                       DateFormatString = "ddd dd MMM yyyy HH:mm:ss +0000",
@@ -504,7 +504,7 @@ namespace Todoist.Net
         /// Throws if there are errors in the response.
         /// </summary>
         /// <param name="syncResponse">The synchronize response.</param>
-        /// <exception cref="System.AggregateException">Command execution exception.</exception>        
+        /// <exception cref="System.AggregateException">Command execution exception.</exception>
         private void ThrowIfErrors(SyncResponse syncResponse)
         {
             LinkedList<TodoistException> exceptions = null;
@@ -542,14 +542,14 @@ namespace Todoist.Net
             }
         }
 
-        private void UpdateTempIds(Command[] commands, Dictionary<Guid, int> tempIdMappings)
+        private void UpdateTempIds(Command[] commands, Dictionary<Guid, long> tempIdMappings)
         {
             foreach (var command in commands)
             {
                 var identifiedArgument = command.Argument as BaseEntity;
                 if (identifiedArgument != null)
                 {
-                    int persistentId;
+                    long persistentId;
                     if (command.TempId.HasValue && tempIdMappings.TryGetValue(command.TempId.Value, out persistentId))
                     {
                         identifiedArgument.Id = persistentId;

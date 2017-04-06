@@ -47,7 +47,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The due date UTC.</value>
         [JsonConverter(typeof(UtcDateTimeConverter))]
-        [JsonProperty("due_date_utc")]        
+        [JsonProperty("due_date_utc")]
         public DateTime? DueDateUtc { get; set; }
 
         /// <summary>

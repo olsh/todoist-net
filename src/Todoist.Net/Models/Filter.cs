@@ -82,7 +82,7 @@ namespace Todoist.Net.Models
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the query to search for.   
+        /// Gets or sets the query to search for.
         /// </summary>
         /// <value>
         /// The query to search for.

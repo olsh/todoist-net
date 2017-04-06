@@ -28,7 +28,7 @@ namespace Todoist.Net.Tests.Services
 
             var logFilter = new LogFilter();
             logFilter.ObjectEventTypes.Add(new ObjectEventTypes() { ObjectType = "project" });
-             
+
             var logEntries = client.Activity.GetAsync(logFilter).Result;
 
             Assert.True(logEntries.Any());

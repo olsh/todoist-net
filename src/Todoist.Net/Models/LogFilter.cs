@@ -22,7 +22,7 @@ namespace Todoist.Net.Models
         /// <summary>
         /// Gets or sets the type of the event.
         /// </summary>
-        /// <value>The type of the event.</value>        
+        /// <value>The type of the event.</value>
         public string EventType { get; set; }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Todoist.Net.Models
         /// Gets the object event types.
         /// </summary>
         /// <value>The object event types.</value>
-        /// <remarks>An alternative way to filter by multiple object and event types. 
+        /// <remarks>An alternative way to filter by multiple object and event types.
         /// When this parameter is specified the <see cref="ObjectId"/>, <see cref="EventType"/> and <see cref="ObjectId"/> parameters are ignored.</remarks>
         public ICollection<ObjectEventTypes> ObjectEventTypes { get; }
 

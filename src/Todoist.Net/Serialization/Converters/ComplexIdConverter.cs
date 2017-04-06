@@ -29,10 +29,10 @@ namespace Todoist.Net.Serialization.Converters
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {            
+        {
             var complexId = (ComplexId)value;
             if (complexId.IsEmpty)
-            {                                
+            {
                 writer.WriteNull();
             }
             else

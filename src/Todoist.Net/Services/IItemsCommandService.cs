@@ -31,8 +31,8 @@ namespace Todoist.Net.Services
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <remarks>
-        /// A simplified version of item_complete / item_update_date_complete. 
-        /// The command does exactly what official clients do when you close a task: regular task is completed and moved to history, 
+        /// A simplified version of item_complete / item_update_date_complete.
+        /// The command does exactly what official clients do when you close a task: regular task is completed and moved to history,
         /// subtask is checked (marked as done, but not moved to history), recurring task is moved forward (due date is updated).
         /// </remarks>
         Task CloseAsync(ComplexId id);

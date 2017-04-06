@@ -11,6 +11,6 @@ namespace Todoist.Net.Models
         public Dictionary<Guid, dynamic> SyncStatus { get; set; }
 
         [JsonProperty("temp_id_mapping")]
-        public Dictionary<Guid, int> TempIdMappings { get; set; }
+        public Dictionary<Guid, long> TempIdMappings { get; set; }
     }
 }

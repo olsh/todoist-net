@@ -5,6 +5,6 @@ namespace Todoist.Net.Models
 {
     internal interface IWithRelationsArgument
     {
-        void UpdateRelatedTempIds(IDictionary<Guid, int> map);
+        void UpdateRelatedTempIds(IDictionary<Guid, long> map);
     }
 }

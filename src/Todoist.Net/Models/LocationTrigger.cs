@@ -19,7 +19,7 @@
         /// Gets the on enter.
         /// </summary>
         /// <value>The on enter.</value>
-        /// <remarks>For entering the location.</remarks>        
+        /// <remarks>For entering the location.</remarks>
         public static LocationTrigger OnEnter { get; } = new LocationTrigger("on_enter");
 
         /// <summary>
