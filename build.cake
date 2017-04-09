@@ -58,6 +58,7 @@ Task("Build")
 });
 
 Task("Test")
+  .IsDependentOn("Build")
   .Does(() =>
 {
      var settings = new DotNetCoreTestSettings
