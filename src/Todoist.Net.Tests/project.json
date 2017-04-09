@@ -20,7 +20,7 @@
     },
     "net451": {
       "dependencies": {
-        "Microsoft.NETCore.Platforms": "1.0.1"
+        "Microsoft.NETCore.Platforms": "1.1.0"
       }
     }
   },

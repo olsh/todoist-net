@@ -9,20 +9,13 @@ var testProjectName = "Todoist.Net.Tests";
 var projectFolder = string.Format("./src/{0}/", projectName);
 var testProjectFolder = string.Format("./src/{0}/", testProjectName);
 
-Task("AppendBuildNumber")
+Task("UpdateBuildVersion")
   .WithCriteria(BuildSystem.AppVeyor.IsRunningOnAppVeyor)
   .Does(() =>
 {
 	var buildNumber = BuildSystem.AppVeyor.Environment.Build.Number;
-	extensionsVersion = string.Format("{0}.{1}", extensionsVersion, buildNumber);
-});
 
-Task("UpdateBuildVersion")
-  .IsDependentOn("AppendBuildNumber")
-  .WithCriteria(BuildSystem.AppVeyor.IsRunningOnAppVeyor)
-  .Does(() =>
-{
-	BuildSystem.AppVeyor.UpdateBuildVersion(extensionsVersion);
+	BuildSystem.AppVeyor.UpdateBuildVersion(string.Format("{0}.{1}", extensionsVersion, buildNumber));
 });
 
 Task("NugetRestore")
@@ -32,7 +25,6 @@ Task("NugetRestore")
 });
 
 Task("UpdateAssemblyVersion")
-  .IsDependentOn("AppendBuildNumber")
   .Does(() =>
 {
 	var assemblyFile = string.Format("{0}/Properties/AssemblyInfo.cs", projectFolder);
@@ -83,7 +75,6 @@ Task("UploadTestResults")
 });
 
 Task("NugetPack")
-  .IsDependentOn("AppendBuildNumber")
   .IsDependentOn("Build")
   .Does(() =>
 {
