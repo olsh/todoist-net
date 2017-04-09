@@ -5,7 +5,6 @@
     "xunit": "2.2.0",
     "Todoist.Net": "1.1.4-*",
     "dotnet-test-xunit": "2.2.0-preview2-build1029",
-    "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0",
     "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.1.1"
   },
   "userSecretsId": "Todoist.Net.Tests-d07bf9a7-7afe-4c8b-acc6-1bae017434b4",
