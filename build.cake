@@ -57,21 +57,8 @@ Task("Test")
      {
          Configuration = buildConfiguration
      };
-	 var xunitSettings = new XUnit2Settings() 
-	 {
-		 OutputDirectory = ".",
-		 XmlReport = true
-	 };
 
-     DotNetCoreTest(settings, testProjectFolder, xunitSettings);
-});
-
-Task("UploadTestResults")
-  .IsDependentOn("Test")
-  .WithCriteria(BuildSystem.AppVeyor.IsRunningOnAppVeyor)
-  .Does(() =>
-{
-	BuildSystem.AppVeyor.UploadTestResults("src.xml", AppVeyorTestResultsType.XUnit);
+     DotNetCoreTest(testProjectFolder, settings);
 });
 
 Task("NugetPack")
@@ -102,7 +89,7 @@ Task("Default")
 
 Task("CI")
 	.IsDependentOn("UpdateBuildVersion")
-	.IsDependentOn("UploadTestResults")
+	.IsDependentOn("Test")
 	.IsDependentOn("CreateArtifact");
 
 RunTarget(target);
