@@ -14,7 +14,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationPremium]
         public void CreateItemCompleteGetCloseAsync_Success()
         {
-            var client = CreateClient();
+            var client = TodoistClientFactory.Create();
 
             var transaction = client.CreateTransaction();
 
@@ -38,7 +38,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void CreateItemCompleteUncompleteAsync_Success()
         {
-            var client = CreateClient();
+            var client = TodoistClientFactory.Create();
 
             var transaction = client.CreateTransaction();
 
@@ -67,7 +67,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void CreateItemGetByIdAndDelete_Success()
         {
-            var client = CreateClient();
+            var client = TodoistClientFactory.Create();
 
             var item = new Item("demo task");
             client.Items.AddAsync(item).Wait();
@@ -83,7 +83,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void MoveItemsToProject_Success()
         {
-            var client = CreateClient();
+            var client = TodoistClientFactory.Create();
 
             var item = new Item("demo task");
             client.Items.AddAsync(item).Wait();
@@ -101,11 +101,6 @@ namespace Todoist.Net.Tests.Services
             Assert.True(project.Id == itemInfo.Project.Id);
 
             client.Projects.DeleteAsync(project.Id).Wait();
-        }
-
-        private static ITodoistClient CreateClient()
-        {
-            return new TodoistClient(SettingsProvider.GetToken());
         }
     }
 }

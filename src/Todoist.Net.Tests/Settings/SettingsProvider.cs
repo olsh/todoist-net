@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System;
 
 namespace Todoist.Net.Tests.Settings
 {
@@ -6,11 +6,7 @@ namespace Todoist.Net.Tests.Settings
     {
         public static string GetToken()
         {
-            var builder = new ConfigurationBuilder();
-            builder.AddUserSecrets();
-            var configuration = builder.Build();
-
-            return configuration["token"];
+            return Environment.GetEnvironmentVariable("todoist:token");
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Todoist.Net.Tests.Services
         [Fact]
         public void GetActivity_HasEntries()
         {
-            var client = new TodoistClient(SettingsProvider.GetToken());
+            var client = TodoistClientFactory.Create();
 
             var logEntries = client.Activity.GetAsync().Result;
 
@@ -24,7 +24,7 @@ namespace Todoist.Net.Tests.Services
         [Fact]
         public void GetActivityWithEventObjectFilter_HasEntries()
         {
-            var client = new TodoistClient(SettingsProvider.GetToken());
+            var client = TodoistClientFactory.Create();
 
             var logFilter = new LogFilter();
             logFilter.ObjectEventTypes.Add(new ObjectEventTypes() { ObjectType = "project" });

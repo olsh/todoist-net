@@ -12,7 +12,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void CreateUpdateOrderGetInfoDelete_Success()
         {
-            var client = CreateClient();
+            var client = TodoistClientFactory.Create();
 
             var label = new Label("Test label");
             client.Labels.AddAsync(label).Wait();
@@ -22,11 +22,6 @@ namespace Todoist.Net.Tests.Services
             var labelInfo = client.Labels.GetAsync(label.Id).Result;
 
             client.Labels.DeleteAsync(labelInfo.Label.Id).Wait();
-        }
-
-        private static ITodoistClient CreateClient()
-        {
-            return new TodoistClient(SettingsProvider.GetToken());
         }
     }
 }

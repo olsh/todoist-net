@@ -13,15 +13,10 @@ namespace Todoist.Net.Tests.Services
     [IntegrationPremium]
     public class TemplateServiceTests
     {
-        public TodoistClient CreateClient()
-        {
-            return new TodoistClient(SettingsProvider.GetToken());
-        }
-
         [Fact]
         public void ExportAndImportTemplate_Success()
         {
-            var client = CreateClient();
+            var client = TodoistClientFactory.Create();
 
             var firstProject = client.Projects.GetAsync().Result.First();
 
@@ -38,7 +33,7 @@ namespace Todoist.Net.Tests.Services
         [Fact]
         public void ExportAsShareableUrl_Success()
         {
-            var client = CreateClient();
+            var client = TodoistClientFactory.Create();
 
             var firstProject = client.Projects.GetAsync().Result.First();
             var template = client.Templates.ExportAsShareableUrlAsync(firstProject.Id).Result;

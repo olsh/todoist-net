@@ -15,7 +15,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void CreateGetAndDelete_Success()
         {
-            var client = CreateProjectService();
+            var client = TodoistClientFactory.Create();
 
             var projectName = Guid.NewGuid().ToString();
             client.Projects.AddAsync(new Project(projectName)).Wait();
@@ -37,7 +37,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void CreateProjectWithNote_Success()
         {
-            var client = CreateProjectService();
+            var client = TodoistClientFactory.Create();
 
             var projectName = Guid.NewGuid().ToString();
             client.Projects.AddAsync(new Project(projectName)).Wait();
@@ -59,7 +59,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void CreateUpdateIndentAndDelete_Success()
         {
-            var client = CreateProjectService();
+            var client = TodoistClientFactory.Create();
 
             var projectName = Guid.NewGuid().ToString();
             var project = new Project(projectName);            
@@ -74,11 +74,6 @@ namespace Todoist.Net.Tests.Services
             client.Projects.UpdateMultipleOrdersIndentsAsync(new OrderIndentEntry(project.Id, 1, 2)).Wait();
 
             client.Projects.DeleteAsync(project.Id).Wait();
-        }
-
-        public TodoistClient CreateProjectService()
-        {
-            return new TodoistClient(SettingsProvider.GetToken());
         }
     }
 }

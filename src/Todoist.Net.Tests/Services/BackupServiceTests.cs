@@ -12,7 +12,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void GetBackups_Success()
         {
-            var client = new TodoistClient(SettingsProvider.GetToken());
+            var client = TodoistClientFactory.Create();
 
             var backups = client.Backups.GetAsync().Result;
 

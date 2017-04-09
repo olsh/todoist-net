@@ -4,7 +4,6 @@ using System.Text;
 
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
-using Todoist.Net.Tests.Helpers;
 
 using Xunit;
 
@@ -16,7 +15,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void AddNoteGetByIdAndDelete_Success()
         {
-            var todoistClient = ClientFactory.Create();
+            var todoistClient = TodoistClientFactory.Create();
 
             var project = new Project(Guid.NewGuid().ToString());
             todoistClient.Projects.AddAsync(project).Wait();
@@ -34,7 +33,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void AddNoteToNewProjectAndUpdateIt_Success()
         {
-            var todoistClient = ClientFactory.Create();
+            var todoistClient = TodoistClientFactory.Create();
 
             var project = new Project(Guid.NewGuid().ToString());
             todoistClient.Projects.AddAsync(project).Wait();
@@ -52,7 +51,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationPremium]
         public void AddNoteToNewProjectAttachFileAndDeleteIt_Success()
         {
-            var client = ClientFactory.Create();
+            var client = TodoistClientFactory.Create();
 
             var project = new Project(Guid.NewGuid().ToString());
             client.Projects.AddAsync(project).Wait();

@@ -3,7 +3,6 @@ using System.Linq;
 
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
-using Todoist.Net.Tests.Settings;
 
 using Xunit;
 
@@ -15,7 +14,7 @@ namespace Todoist.Net.Tests.Services
         [Fact]
         public void CreateDelete_Success()
         {
-            var client = CreateClient();
+            var client = TodoistClientFactory.Create();
 
             var transaction = client.CreateTransaction();
 
@@ -27,12 +26,13 @@ namespace Todoist.Net.Tests.Services
             var reminderInfo = client.Reminders.GetAsync(reminderId).Result;
 
             client.Reminders.DeleteAsync(reminderInfo.Reminder.Id).Wait();
+            client.Items.DeleteAsync(itemId);
         }
 
         [Fact]
         public void GetReminderInfo_Success()
         {
-            var client = CreateClient();
+            var client = TodoistClientFactory.Create();
 
             var filters = client.Reminders.GetAsync().Result;
 
@@ -41,12 +41,6 @@ namespace Todoist.Net.Tests.Services
             var result = client.Reminders.GetAsync(filters.First().Id).Result;
 
             Assert.True(result != null);
-        }
-
-        private static TodoistClient CreateClient()
-        {
-            var client = new TodoistClient(SettingsProvider.GetToken());
-            return client;
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Todoist.Net.Tests
         [Fact]
         public void GetAllResources_Success()
         {
-            ITodoistClient client = new TodoistClient(SettingsProvider.GetToken());
+            var client = TodoistClientFactory.Create();
 
             var resources = client.GetResourcesAsync().Result;
         }

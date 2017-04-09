@@ -11,7 +11,7 @@ namespace Todoist.Net.Tests.Services
         [Fact]
         public void GetNotificationAndMarkRead_Success()
         {
-            var client = CreateClient();
+            var client = TodoistClientFactory.Create();
 
             var notifications = client.Notifications.GetAsync().Result;
 
@@ -21,15 +21,9 @@ namespace Todoist.Net.Tests.Services
         [Fact]
         public void MarkAllAsRead_Success()
         {
-            var client = CreateClient();
+            var client = TodoistClientFactory.Create();
 
             client.Notifications.MarkAllReadAsync().Wait();
-        }
-
-        private static ITodoistClient CreateClient()
-        {
-            var client = new TodoistClient(SettingsProvider.GetToken());
-            return client;
         }
     }
 }

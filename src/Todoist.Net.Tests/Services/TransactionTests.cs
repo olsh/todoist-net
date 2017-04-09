@@ -13,7 +13,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void CreateProjectAndCreateNote_Success()
         {
-            var client = CreateClient();
+            var client = TodoistClientFactory.Create();
 
             var transaction = client.CreateTransaction();
 
@@ -34,11 +34,6 @@ namespace Todoist.Net.Tests.Services
             deleteTransaction.Project.DeleteAsync(project.Id).Wait();
 
             deleteTransaction.CommitAsync().Wait();
-        }
-
-        public TodoistClient CreateClient()
-        {
-            return new TodoistClient(SettingsProvider.GetToken());
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Todoist.Net.Tests.Services
         [Fact]
         public void CreateGetDeleteAsync_Success()
         {
-            var client = new TodoistClient(SettingsProvider.GetToken());
+            var client = TodoistClientFactory.Create();
 
             var fileName = $"{Guid.NewGuid().ToString()}.txt";
             var upload = client.Uploads.UploadAsync(fileName, Encoding.UTF8.GetBytes("hello")).Result;
