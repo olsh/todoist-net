@@ -101,6 +101,7 @@ Task("Default")
 	.IsDependentOn("NugetPack");
 
 Task("CI")
+	.IsDependentOn("UpdateBuildVersion")
 	.IsDependentOn("UploadTestResults")
 	.IsDependentOn("CreateArtifact");
 
