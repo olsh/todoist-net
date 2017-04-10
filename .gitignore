@@ -255,6 +255,3 @@ paket-files/
 # Cake
 tools/*
 !tools/packages.config
-
-# xunit test result
-src.xml

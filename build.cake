@@ -1,3 +1,5 @@
+#tool "nuget:?package=OpenCover"
+
 #addin "Cake.Incubator"
 
 var target = Argument("target", "Default");
@@ -61,6 +63,24 @@ Task("Test")
      DotNetCoreTest(testProjectFolder, settings);
 });
 
+Task("CodeCoverage")
+  .IsDependentOn("Build")
+  .Does(() =>
+{
+    var settings = new DotNetCoreTestSettings
+    {
+        Configuration = buildConfiguration
+    };
+
+	OpenCover(tool => { tool.DotNetCoreTest(testProjectFolder, settings); },
+	  new FilePath("./coverage.xml"),
+	  new OpenCoverSettings()
+		.WithFilter("+[Todoist.Net]*")
+		.WithFilter("-[Todoist.Net.Tests]*"));
+	
+	
+});
+
 Task("NugetPack")
   .IsDependentOn("Build")
   .Does(() =>
@@ -89,7 +109,7 @@ Task("Default")
 
 Task("CI")
 	.IsDependentOn("UpdateBuildVersion")
-	.IsDependentOn("Test")
+	.IsDependentOn("CodeCoverage")
 	.IsDependentOn("CreateArtifact");
 
 RunTarget(target);
