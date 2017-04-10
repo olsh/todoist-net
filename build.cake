@@ -109,6 +109,7 @@ Task("Default")
 
 Task("CI")
 	.IsDependentOn("UpdateBuildVersion")
+	.IsDependentOn("Test")
 	.IsDependentOn("CodeCoverage")
 	.IsDependentOn("CreateArtifact");
 
