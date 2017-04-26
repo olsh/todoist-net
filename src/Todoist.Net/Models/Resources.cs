@@ -33,7 +33,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The last read notification identifier.</value>
         [JsonProperty("live_notifications_last_read_id")]
-        public int? LastReadNotificationId { get; set; }
+        public long? LastReadNotificationId { get; set; }
 
         /// <summary>
         /// Gets the notes.

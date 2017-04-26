@@ -25,6 +25,6 @@ namespace Todoist.Net.Models
         /// The projects.
         /// </value>
         [JsonProperty("projects")]
-        public IDictionary<int, Project> Projects { get; internal set; }
+        public IDictionary<long, Project> Projects { get; internal set; }
     }
 }

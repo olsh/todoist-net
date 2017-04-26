@@ -9,7 +9,7 @@ namespace Todoist.Net.Tests.Services
     public class NotificationsServiceTests
     {
         [Fact]
-        public void GetNotificationAndMarkRead_Success()
+        public void GetNotification_Success()
         {
             var client = TodoistClientFactory.Create();
 

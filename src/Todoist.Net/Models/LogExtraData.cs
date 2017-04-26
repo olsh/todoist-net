@@ -10,6 +10,15 @@ namespace Todoist.Net.Models
     public class LogExtraData
     {
         /// <summary>
+        /// Gets the client.
+        /// </summary>
+        /// <value>
+        /// The client.
+        /// </value>
+        [JsonProperty("client")]
+        public string Client { get; internal set; }
+
+        /// <summary>
         /// Gets the content.
         /// </summary>
         /// <value>The content.</value>
