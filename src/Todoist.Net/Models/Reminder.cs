@@ -79,14 +79,14 @@ namespace Todoist.Net.Models
         /// <remarks>The relative time in minutes before the due date of the item, in which the reminder should be triggered.
         /// Note, that the item should have a due date set in order to add a relative reminder.</remarks>
         [JsonProperty("mm_offset")]
-        public int? MinuteOffset { get; set; }
+        public long? MinuteOffset { get; set; }
 
         /// <summary>
         /// Gets or sets the notify uid.
         /// </summary>
         /// <value>The notify uid.</value>
         [JsonProperty("notify_uid")]
-        public int? NotifyUid { get; set; }
+        public long? NotifyUid { get; set; }
 
         /// <summary>
         /// Gets or sets the service.

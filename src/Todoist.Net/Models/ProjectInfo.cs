@@ -14,7 +14,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The notes.</value>
         [JsonProperty("notes")]
-        public ICollection<Note> Notes { get; internal set; }
+        public IReadOnlyCollection<Note> Notes { get; internal set; }
 
         /// <summary>
         /// Gets the project.

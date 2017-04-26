@@ -16,7 +16,7 @@ namespace Todoist.Net.Models
         /// The items.
         /// </value>
         [JsonProperty("items")]
-        public CompletedItem[] Items { get; internal set; }
+        public IReadOnlyCollection<CompletedItem> Items { get; internal set; }
 
         /// <summary>
         /// Gets the projects.
@@ -25,6 +25,6 @@ namespace Todoist.Net.Models
         /// The projects.
         /// </value>
         [JsonProperty("projects")]
-        public IDictionary<long, Project> Projects { get; internal set; }
+        public IReadOnlyDictionary<long, Project> Projects { get; internal set; }
     }
 }

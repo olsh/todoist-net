@@ -28,7 +28,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The automatic reminder.</value>
         [JsonProperty("auto_reminder")]
-        public int AutoReminder { get; set; }
+        public long AutoReminder { get; set; }
 
         /// <summary>
         /// Gets or sets the date format.

@@ -86,7 +86,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The inbox project.</value>
         [JsonProperty("inbox_project")]
-        public int InboxProject { get; internal set; }
+        public long InboxProject { get; internal set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is biz admin.

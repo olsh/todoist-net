@@ -32,7 +32,7 @@ namespace Todoist.Net.Models
         {
             Content = content;
             ProjectId = projectId;
-            Labels = new Collection<int>();
+            Labels = new Collection<long>();
         }
 
         internal Item()
@@ -148,7 +148,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The labels.</value>
         [JsonProperty("labels")]
-        public ICollection<int> Labels { get; internal set; }
+        public ICollection<long> Labels { get; internal set; }
 
         /// <summary>
         /// Gets or sets the priority.

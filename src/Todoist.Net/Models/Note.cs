@@ -94,7 +94,7 @@ namespace Todoist.Net.Models
         /// Updates the related temporary ids.
         /// </summary>
         /// <param name="map">The map.</param>
-        public void UpdateRelatedTempIds(IDictionary<Guid, long> map)
+        void IWithRelationsArgument.UpdateRelatedTempIds(IDictionary<Guid, long> map)
         {
             long persistentProjectId;
             if (ProjectId.HasValue && map.TryGetValue(ProjectId.Value.TempId, out persistentProjectId))

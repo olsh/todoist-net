@@ -29,7 +29,7 @@ namespace Todoist.Net.Tests.Services
                 client.Items.GetCompletedAsync(
                     new ItemFilter() { AnnotateNotes = true, Limit = 5, Since = DateTime.Today.AddDays(-1) }).Result;
 
-            Assert.True(completedTasks.Items.Length > 0);
+            Assert.True(completedTasks.Items.Count > 0);
 
             client.Items.DeleteAsync(item.Id).Wait();
         }

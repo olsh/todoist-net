@@ -24,14 +24,10 @@ namespace Todoist.Net.Models
                 throw new ArgumentNullException(nameof(tempIds));
             }
 
-            Ids = new List<ComplexId>();
-            foreach (var tempId in tempIds)
-            {
-                Ids.Add(tempId);
-            }
+            Ids = tempIds;
         }
 
         [JsonProperty("ids")]
-        public ICollection<ComplexId> Ids { get; }
+        public IEnumerable<ComplexId> Ids { get; }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+
+using Newtonsoft.Json;
 
 namespace Todoist.Net.Models
 {
@@ -19,7 +21,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The notes.</value>
         [JsonProperty("notes")]
-        public Note[] Notes { get; internal set; }
+        public IReadOnlyCollection<Note> Notes { get; internal set; }
 
         /// <summary>
         /// Gets the project.

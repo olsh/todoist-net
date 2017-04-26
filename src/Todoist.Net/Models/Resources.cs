@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+
+using Newtonsoft.Json;
 
 namespace Todoist.Net.Models
 {
@@ -12,21 +14,21 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The filters.</value>
         [JsonProperty("filters")]
-        public Filter[] Filters { get; internal set; }
+        public IReadOnlyCollection<Filter> Filters { get; internal set; }
 
         /// <summary>
         /// Gets the items.
         /// </summary>
         /// <value>The items.</value>
         [JsonProperty("items")]
-        public Item[] Items { get; internal set; }
+        public IReadOnlyCollection<Item> Items { get; internal set; }
 
         /// <summary>
         /// Gets the labels.
         /// </summary>
         /// <value>The labels.</value>
         [JsonProperty("labels")]
-        public Label[] Labels { get; internal set; }
+        public IReadOnlyCollection<Label> Labels { get; internal set; }
 
         /// <summary>
         /// Gets or sets the last read notification identifier.
@@ -40,35 +42,35 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The notes.</value>
         [JsonProperty("notes")]
-        public Note[] Notes { get; internal set; }
+        public IReadOnlyCollection<Note> Notes { get; internal set; }
 
         /// <summary>
         /// Gets the project notes.
         /// </summary>
         /// <value>The project notes.</value>
         [JsonProperty("project_notes")]
-        public Note[] ProjectNotes { get; internal set; }
+        public IReadOnlyCollection<Note> ProjectNotes { get; internal set; }
 
         /// <summary>
         /// Gets the notifications.
         /// </summary>
         /// <value>The notifications.</value>
         [JsonProperty("live_notifications")]
-        public Notification[] Notifications { get; internal set; }
+        public IReadOnlyCollection<Notification> Notifications { get; internal set; }
 
         /// <summary>
         /// Gets the projects.
         /// </summary>
         /// <value>The projects.</value>
         [JsonProperty("projects")]
-        public Project[] Projects { get; internal set; }
+        public IReadOnlyCollection<Project> Projects { get; internal set; }
 
         /// <summary>
         /// Gets the reminders.
         /// </summary>
         /// <value>The reminders.</value>
         [JsonProperty("reminders")]
-        public Reminder[] Reminders { get; internal set; }
+        public IReadOnlyCollection<Reminder> Reminders { get; internal set; }
 
         /// <summary>
         /// Gets the user information.

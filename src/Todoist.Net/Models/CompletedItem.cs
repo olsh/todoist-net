@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Newtonsoft.Json;
 
@@ -43,7 +44,7 @@ namespace Todoist.Net.Models
         /// The labels.
         /// </value>
         [JsonProperty("labels")]
-        public long[] Labels { get; internal set; }
+        public IReadOnlyCollection<long> Labels { get; internal set; }
 
         /// <summary>
         /// Gets the note count.
@@ -61,7 +62,7 @@ namespace Todoist.Net.Models
         /// The notes.
         /// </value>
         [JsonProperty("notes")]
-        public Note[] Notes { get; internal set; }
+        public IReadOnlyCollection<Note> Notes { get; internal set; }
 
         /// <summary>
         /// Gets the project identifier.
