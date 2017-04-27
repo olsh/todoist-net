@@ -2,7 +2,6 @@
 
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
-using Todoist.Net.Tests.Settings;
 
 using Xunit;
 
@@ -16,7 +15,7 @@ namespace Todoist.Net.Tests.Services
         {
             var client = TodoistClientFactory.Create();
 
-            var logEntries = client.Activity.GetAsync().Result;
+            var logEntries = client.Activity.GetAsync(new LogFilter() { Limit = 50 }).Result;
 
             Assert.True(logEntries.Any());
         }

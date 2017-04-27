@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-using Todoist.Net.Tests.Settings;
+using Todoist.Net.Tests.Extensions;
 
 using Xunit;
 
@@ -11,6 +11,7 @@ namespace Todoist.Net.Tests.Services
     public class UploadServiceTests
     {
         [Fact]
+        [IntegrationFree]
         public void CreateGetDeleteAsync_Success()
         {
             var client = TodoistClientFactory.Create();

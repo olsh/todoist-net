@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 
+using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
 using Todoist.Net.Tests.Settings;
@@ -77,6 +79,23 @@ namespace Todoist.Net.Tests.Services
             Assert.True(itemInfo.Item.Content == item.Content);
 
             client.Items.DeleteAsync(item.Id).Wait();
+        }
+
+
+        [Fact]
+        [IntegrationFree]
+        public void CreateItem_InvalidProjectId_ThrowsException()
+        {
+            var client = TodoistClientFactory.Create();
+            var item = new Item("bad task", 123);
+
+            var aggregateException = Assert.ThrowsAsync<AggregateException>(
+                async () =>
+                    {
+                        await client.Items.AddAsync(item);
+                    }).Result;
+
+            Assert.IsType<TodoistException>(aggregateException.InnerExceptions.First());
         }
 
         [Fact]

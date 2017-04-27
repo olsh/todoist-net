@@ -2,7 +2,6 @@
 
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
-using Todoist.Net.Tests.Settings;
 using Xunit;
 
 namespace Todoist.Net.Tests.Services
