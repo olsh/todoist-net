@@ -3,7 +3,7 @@
 #addin "Cake.Incubator"
 
 var target = Argument("target", "Default");
-var extensionsVersion = Argument("version", "1.1.4");
+var extensionsVersion = Argument("version", "1.1.5");
 
 var buildConfiguration = "Release";
 var projectName = "Todoist.Net";
