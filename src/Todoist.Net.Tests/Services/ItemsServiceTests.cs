@@ -121,5 +121,18 @@ namespace Todoist.Net.Tests.Services
 
             client.Projects.DeleteAsync(project.Id).Wait();
         }
+
+        [Fact]
+        [IntegrationFree]
+        public void QuickAddAsync_Success()
+        {
+            var client = TodoistClientFactory.Create();
+
+            var item = client.Items.QuickAddAsync(new QuickAddItem("Demo task")).Result;
+
+            Assert.NotNull(item);
+
+            client.Items.DeleteAsync(item.Id);
+        }
     }
 }

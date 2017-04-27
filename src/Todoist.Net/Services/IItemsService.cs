@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -39,5 +40,13 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <remarks>Only available for Todoist Premium users.</remarks>
         Task<CompletedItemsInfo> GetCompletedAsync(ItemFilter filter = null);
+
+        /// <summary>
+        /// Add a task. Implementation of the Quick Add Task available in the official clients.
+        /// </summary>
+        /// <param name="quickAddItem">The quick add item.</param>
+        /// <returns>The created task.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="quickAddItem"/> is <see langword="null"/></exception>
+        Task<Item> QuickAddAsync(QuickAddItem quickAddItem);
     }
 }

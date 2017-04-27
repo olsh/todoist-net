@@ -44,7 +44,7 @@ namespace Todoist.Net.Exceptions
         /// <param name="code">The code.</param>
         /// <param name="message">The message.</param>
         /// <param name="rawError">The raw error.</param>
-        public TodoistException(int code, string message, dynamic rawError)
+        public TodoistException(long code, string message, dynamic rawError)
             : base(message)
         {
             Code = code;
@@ -57,7 +57,7 @@ namespace Todoist.Net.Exceptions
         /// <param name="code">The code.</param>
         /// <param name="message">The message.</param>
         /// <param name="inner">The inner exception.</param>
-        public TodoistException(int code, string message, Exception inner)
+        public TodoistException(long code, string message, Exception inner)
             : base(message, inner)
         {
             Code = code;
@@ -67,7 +67,7 @@ namespace Todoist.Net.Exceptions
         /// Gets the code.
         /// </summary>
         /// <value>The code.</value>
-        public int Code { get; }
+        public long Code { get; }
 
         /// <summary>
         /// Gets the raw error.

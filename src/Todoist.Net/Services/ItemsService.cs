@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -42,14 +43,15 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         public async Task<ItemInfo> GetAsync(ComplexId id)
         {
-            return
-                await
-                    TodoistClient.PostAsync<ItemInfo>(
-                        "items/get",
-                        new List<KeyValuePair<string, string>>
-                            {
-                                new KeyValuePair<string, string>("item_id", id.ToString())
-                            }).ConfigureAwait(false);
+            return await TodoistClient.PostAsync<ItemInfo>(
+                           "items/get",
+                           new List<KeyValuePair<string, string>>
+                               {
+                                   new KeyValuePair<string, string>(
+                                       "item_id",
+                                       id.ToString())
+                               })
+                       .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -63,9 +65,24 @@ namespace Todoist.Net.Services
         {
             var parameters = filter == null ? new List<KeyValuePair<string, string>>() : filter.ToParameters();
 
-            return
-                await
-                    TodoistClient.PostAsync<CompletedItemsInfo>("completed/get_all", parameters).ConfigureAwait(false);
+            return await TodoistClient.PostAsync<CompletedItemsInfo>("completed/get_all", parameters)
+                       .ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Add a task. Implementation of the Quick Add Task available in the official clients.
+        /// </summary>
+        /// <param name="quickAddItem">The quick add item.</param>
+        /// <returns>The created task.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="quickAddItem"/> is <see langword="null"/></exception>
+        public async Task<Item> QuickAddAsync(QuickAddItem quickAddItem)
+        {
+            if (quickAddItem == null)
+            {
+                throw new ArgumentNullException(nameof(quickAddItem));
+            }
+
+            return await TodoistClient.PostAsync<Item>("quick/add", quickAddItem.ToParameters()).ConfigureAwait(false);
         }
     }
 }

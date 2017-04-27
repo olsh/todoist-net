@@ -525,7 +525,7 @@ namespace Todoist.Net
                 }
 
                 exceptions.AddLast(
-                    new TodoistException((int)dynamicStatus.error_code, dynamicStatus.error.ToString(), dynamicStatus));
+                    new TodoistException((long)dynamicStatus.error_code, dynamicStatus.error.ToString(), dynamicStatus));
             }
 
             if (exceptions?.Any() == true)
