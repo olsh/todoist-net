@@ -31,7 +31,8 @@ namespace Todoist.Net.Tests
             {
                 result = await request().ConfigureAwait(false);
 
-                if ((int)result.StatusCode != 429)
+                if ((int)result.StatusCode != 429 /*Requests limit*/  && 
+                    (int)result.StatusCode != 503 /*Service unavailable*/)
                 {
                     return result;
                 }

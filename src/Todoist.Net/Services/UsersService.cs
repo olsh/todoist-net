@@ -84,7 +84,7 @@ namespace Todoist.Net.Services
             var parameters = new LinkedList<KeyValuePair<string, string>>();
             parameters.AddLast(new KeyValuePair<string, string>("notification_type", notificationType.Value));
             parameters.AddLast(new KeyValuePair<string, string>("service", service.Value));
-            parameters.AddLast(new KeyValuePair<string, string>("dont_notify", notify ? "1" : "0"));
+            parameters.AddLast(new KeyValuePair<string, string>("dont_notify", notify ? "0" : "1"));
 
             return
                 await

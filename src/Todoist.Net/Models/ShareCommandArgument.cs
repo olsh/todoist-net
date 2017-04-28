@@ -2,7 +2,7 @@
 
 namespace Todoist.Net.Models
 {
-    internal class ShareProjectArgument : BaseEntity
+    internal class ShareProjectArgument : ICommandArgument
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ShareProjectArgument"/> class.
@@ -10,12 +10,15 @@ namespace Todoist.Net.Models
         /// <param name="id">The identifier.</param>
         /// <param name="email">The email.</param>
         internal ShareProjectArgument(ComplexId id, string email)
-            : base(id)
         {
+            Id = id;
             Email = email;
         }
 
         [JsonProperty("email")]
         public string Email { get; set; }
+
+        [JsonProperty("project_id")]
+        public ComplexId Id { get; }
     }
 }
