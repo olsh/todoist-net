@@ -25,6 +25,14 @@ With email and password.
 ITodoistClient client = await TodoistClient.LoginAsync("email", "password");
 ```
 
+### Quick add
+
+Implementation of the Quick Add Task available in the official clients.
+```csharp
+var quickAddItem = new QuickAddItem("Task title @Label1 #Project1 +ExampleUser");
+var task = await client.Items.QuickAddAsync(quickAddItem);
+```
+
 ### Simple API calls
 ```csharp
 // Get all resources (labels, projects, tasks, notes etc.).
