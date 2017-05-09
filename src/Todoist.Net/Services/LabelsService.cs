@@ -38,16 +38,11 @@ namespace Todoist.Net.Services
         /// The label info.
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<LabelInfo> GetAsync(ComplexId id)
+        public Task<LabelInfo> GetAsync(ComplexId id)
         {
-            return
-                await
-                    TodoistClient.PostAsync<LabelInfo>(
-                        "labels/get",
-                        new List<KeyValuePair<string, string>>
-                            {
-                                new KeyValuePair<string, string>("label_id", id.ToString())
-                            }).ConfigureAwait(false);
+            return TodoistClient.PostAsync<LabelInfo>(
+                "labels/get",
+                new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("label_id", id.ToString()) });
         }
     }
 }

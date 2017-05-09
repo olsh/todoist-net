@@ -32,7 +32,7 @@ namespace Todoist.Net.Services
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentException">Value cannot be null or empty.</exception>
-        public async Task AcceptInvitationAsync(long id, string invitationSecret)
+        public Task AcceptInvitationAsync(long id, string invitationSecret)
         {
             if (string.IsNullOrEmpty(invitationSecret))
             {
@@ -40,7 +40,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.AcceptInvitation, new Invitation(id, invitationSecret));
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace Todoist.Net.Services
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentException">Value cannot be null or empty.</exception>
-        public async Task DeleteCollaboratorAsync(ComplexId id, string email)
+        public Task DeleteCollaboratorAsync(ComplexId id, string email)
         {
             if (string.IsNullOrEmpty(email))
             {
@@ -60,7 +60,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.DeleteCollaborator, new ShareProjectArgument(id, email));
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -70,10 +70,10 @@ namespace Todoist.Net.Services
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task DeleteInvitationAsync(long id)
+        public Task DeleteInvitationAsync(long id)
         {
             var command = new Command(CommandType.DeleteInvitation, new BaseInvitation(id));
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Todoist.Net.Services
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentException">Value cannot be null or empty.</exception>
-        public async Task RejectInvitationAsync(long id, string invitationSecret)
+        public Task RejectInvitationAsync(long id, string invitationSecret)
         {
             if (string.IsNullOrEmpty(invitationSecret))
             {
@@ -93,7 +93,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.RejectInvitation, new Invitation(id, invitationSecret));
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Todoist.Net.Services
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentException">Value cannot be null or empty.</exception>
-        public async Task ShareProjectAsync(ComplexId id, string email)
+        public Task ShareProjectAsync(ComplexId id, string email)
         {
             if (string.IsNullOrEmpty(email))
             {
@@ -113,7 +113,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.ShareProject, new ShareProjectArgument(id, email));
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
     }
 }

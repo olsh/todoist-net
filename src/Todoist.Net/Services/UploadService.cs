@@ -25,13 +25,13 @@ namespace Todoist.Net.Services
         /// <param name="fileUrl">The file URL.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task DeleteAsync(string fileUrl)
+        public Task DeleteAsync(string fileUrl)
         {
             var parameters = new List<KeyValuePair<string, string>>
                                  {
                                      new KeyValuePair<string, string>("file_url", fileUrl)
                                  };
-            await _todoistClient.PostRawAsync("uploads/delete", parameters).ConfigureAwait(false);
+            return _todoistClient.PostRawAsync("uploads/delete", parameters);
         }
 
         /// <summary>
@@ -41,13 +41,11 @@ namespace Todoist.Net.Services
         /// The uploads.
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<IEnumerable<Upload>> GetAsync()
+        public Task<IEnumerable<Upload>> GetAsync()
         {
-            return
-                await
-                    _todoistClient.PostAsync<IEnumerable<Upload>>(
-                        "uploads/get",
-                        new List<KeyValuePair<string, string>>()).ConfigureAwait(false);
+            return _todoistClient.PostAsync<IEnumerable<Upload>>(
+                "uploads/get",
+                new List<KeyValuePair<string, string>>());
         }
 
         /// <summary>
@@ -57,7 +55,7 @@ namespace Todoist.Net.Services
         /// <param name="fileContent">Content of the file.</param>
         /// <returns>The uploaded file.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<FileAttachment> UploadAsync(string fileName, byte[] fileContent)
+        public Task<FileAttachment> UploadAsync(string fileName, byte[] fileContent)
         {
             var parameters = new List<KeyValuePair<string, string>>
                                  {
@@ -65,9 +63,7 @@ namespace Todoist.Net.Services
                                  };
             var files = new[] { new ByteArrayContent(fileContent) };
 
-            return
-                await
-                    _todoistClient.PostFormAsync<FileAttachment>("uploads/add", parameters, files).ConfigureAwait(false);
+            return _todoistClient.PostFormAsync<FileAttachment>("uploads/add", parameters, files);
         }
     }
 }

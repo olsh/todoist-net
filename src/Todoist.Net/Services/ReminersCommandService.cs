@@ -48,10 +48,10 @@ namespace Todoist.Net.Services
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
-        public async Task ClearLocationsAsync()
+        public Task ClearLocationsAsync()
         {
             var command = new Command(CommandType.ClearLocations, EmptyCommand.Instance);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -61,10 +61,10 @@ namespace Todoist.Net.Services
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task DeleteAsync(ComplexId id)
+        public Task DeleteAsync(ComplexId id)
         {
             var command = CreateEntityCommand(CommandType.DeleteReminder, id);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Todoist.Net.Services
         /// <exception cref="ArgumentNullException"><paramref name="reminder"/> is <see langword="null"/></exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task UpdateAsync(Reminder reminder)
+        public Task UpdateAsync(Reminder reminder)
         {
             if (reminder == null)
             {
@@ -83,7 +83,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.UpdateReminder, reminder);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
     }
 }

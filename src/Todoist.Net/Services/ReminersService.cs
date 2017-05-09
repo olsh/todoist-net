@@ -36,16 +36,16 @@ namespace Todoist.Net.Services
         /// The reminder info.
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<ReminderInfo> GetAsync(ComplexId id)
+        public Task<ReminderInfo> GetAsync(ComplexId id)
         {
-            return
-                await
-                    TodoistClient.PostAsync<ReminderInfo>(
-                        "reminders/get",
-                        new List<KeyValuePair<string, string>>
-                            {
-                                new KeyValuePair<string, string>("reminder_id", id.ToString())
-                            }).ConfigureAwait(false);
+            return TodoistClient.PostAsync<ReminderInfo>(
+                "reminders/get",
+                new List<KeyValuePair<string, string>>
+                    {
+                        new KeyValuePair<string, string>(
+                            "reminder_id",
+                            id.ToString())
+                    });
         }
     }
 }

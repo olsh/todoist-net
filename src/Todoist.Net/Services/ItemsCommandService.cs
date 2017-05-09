@@ -60,10 +60,10 @@ namespace Todoist.Net.Services
         /// The command does exactly what official clients do when you close a task: regular task is completed and moved to history,
         /// subtask is checked (marked as done, but not moved to history), recurring task is moved forward (due date is updated).
         /// </remarks>
-        public async Task CloseAsync(ComplexId id)
+        public Task CloseAsync(ComplexId id)
         {
             var command = CreateEntityCommand(CommandType.CloseItem, id);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Todoist.Net.Services
         /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
-        public async Task CompleteAsync(bool forceHistory = true, params ComplexId[] ids)
+        public Task CompleteAsync(bool forceHistory = true, params ComplexId[] ids)
         {
             if (ids == null)
             {
@@ -83,7 +83,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.CompleteItem, new CompleteItemsArgument(ids, forceHistory));
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -93,10 +93,10 @@ namespace Todoist.Net.Services
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
-        public async Task CompleteRecurringAsync(ComplexId id)
+        public Task CompleteRecurringAsync(ComplexId id)
         {
             var command = CreateEntityCommand(CommandType.CompleteRecurringItem, id);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="recurringItemState"/> is <see langword="null"/></exception>
-        public async Task CompleteRecurringAsync(RecurringItemState recurringItemState)
+        public Task CompleteRecurringAsync(RecurringItemState recurringItemState)
         {
             if (recurringItemState == null)
             {
@@ -117,7 +117,7 @@ namespace Todoist.Net.Services
             var command = new Command(
                               CommandType.CompleteRecurringItem,
                               new CompleteRecurringItemArgument(recurringItemState));
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -127,10 +127,10 @@ namespace Todoist.Net.Services
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task DeleteAsync(params ComplexId[] ids)
+        public Task DeleteAsync(params ComplexId[] ids)
         {
             var command = CreateCollectionCommand(CommandType.DeleteItem, ids);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace Todoist.Net.Services
         /// <exception cref="ArgumentException">Unable to move an item with an empty source project ID.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
-        public async Task MoveToProjectAsync(ComplexId projectId, params Item[] items)
+        public Task MoveToProjectAsync(ComplexId projectId, params Item[] items)
         {
             if (items == null)
             {
@@ -151,7 +151,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.MoveItem, new MoveItemArgument(items, projectId));
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace Todoist.Net.Services
         /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
-        public async Task UncompleteAsync(params ComplexId[] ids)
+        public Task UncompleteAsync(params ComplexId[] ids)
         {
             if (ids == null)
             {
@@ -170,7 +170,7 @@ namespace Todoist.Net.Services
             }
 
             var command = CreateCollectionCommand(CommandType.UncompleteItem, ids);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -181,7 +181,7 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="itemStates" /> is <see langword="null" /></exception>
-        public async Task UncompleteAsync(params ItemState[] itemStates)
+        public Task UncompleteAsync(params ItemState[] itemStates)
         {
             if (itemStates == null)
             {
@@ -189,7 +189,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.UncompleteItem, new UncompleteItemsArgument(itemStates));
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -200,7 +200,7 @@ namespace Todoist.Net.Services
         /// <exception cref="ArgumentNullException"><paramref name="item"/> is <see langword="null"/></exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task UpdateAsync(Item item)
+        public Task UpdateAsync(Item item)
         {
             if (item == null)
             {
@@ -208,7 +208,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.UpdateItem, item);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="idsToOrder"/> is <see langword="null"/></exception>
-        public async Task UpdateDayOrdersAsync(params OrderEntry[] idsToOrder)
+        public Task UpdateDayOrdersAsync(params OrderEntry[] idsToOrder)
         {
             if (idsToOrder == null)
             {
@@ -227,7 +227,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.UpdateDayOrderItem, new IdToOrderArgument(idsToOrder));
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -238,7 +238,7 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="idsToOrderIndents"/> is <see langword="null"/></exception>
-        public async Task UpdateMultipleOrdersIndentsAsync(params OrderIndentEntry[] idsToOrderIndents)
+        public Task UpdateMultipleOrdersIndentsAsync(params OrderIndentEntry[] idsToOrderIndents)
         {
             if (idsToOrderIndents == null)
             {
@@ -248,7 +248,7 @@ namespace Todoist.Net.Services
             var command = new Command(
                               CommandType.UpdateOrderIndentsItem,
                               new IdsToOrderIndentsArgument(idsToOrderIndents));
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
     }
 }

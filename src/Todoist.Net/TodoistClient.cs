@@ -176,7 +176,7 @@ namespace Todoist.Net
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="TodoistException">Unable to get token.</exception>
         [Obsolete("This method is scheduled for deprecation and probably will be removed in future versions.")]
-        public static async Task<TodoistClient> LoginAsync(string email, string password)
+        public static Task<TodoistClient> LoginAsync(string email, string password)
         {
             if (string.IsNullOrEmpty(email))
             {
@@ -194,7 +194,7 @@ namespace Todoist.Net
                                      new KeyValuePair<string, string>("password", password)
                                  };
 
-            return await LoginWithCredentialsAsync("login", parameters).ConfigureAwait(false);
+            return LoginWithCredentialsAsync("login", parameters);
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace Todoist.Net
         /// Value cannot be null or empty - password</exception>
         /// <exception cref="TodoistException">API exception.</exception>
         [Obsolete("This method is scheduled for deprecation and probably will be removed in future versions.")]
-        public static async Task<TodoistClient> LoginWithGoogleAsync(string email, string oauthToken)
+        public static Task<TodoistClient> LoginWithGoogleAsync(string email, string oauthToken)
         {
             if (string.IsNullOrEmpty(email))
             {
@@ -229,7 +229,7 @@ namespace Todoist.Net
                                      new KeyValuePair<string, string>("oauth2_token", oauthToken)
                                  };
 
-            return await LoginWithCredentialsAsync("login_with_google", parameters).ConfigureAwait(false);
+            return LoginWithCredentialsAsync("login_with_google", parameters);
         }
 
         /// <summary>
@@ -280,7 +280,7 @@ namespace Todoist.Net
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="resourceTypes"/> is <see langword="null"/></exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<Resources> GetResourcesAsync(params ResourceType[] resourceTypes)
+        public Task<Resources> GetResourcesAsync(params ResourceType[] resourceTypes)
         {
             if (resourceTypes == null)
             {
@@ -299,7 +299,7 @@ namespace Todoist.Net
                     "resource_types",
                     JsonConvert.SerializeObject(resourceTypes, SerializerSettings)));
 
-            return await ProcessSyncAsync<Resources>(parameters).ConfigureAwait(false);
+            return ProcessSyncAsync<Resources>(parameters);
         }
 
         /// <summary>
@@ -313,12 +313,12 @@ namespace Todoist.Net
         /// The result.
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<T> PostFormAsync<T>(
+        public Task<T> PostFormAsync<T>(
             string resource,
             ICollection<KeyValuePair<string, string>> parameters,
             IEnumerable<ByteArrayContent> files)
         {
-            return await ProcessFormAsync<T>(resource, parameters, files).ConfigureAwait(false);
+            return ProcessFormAsync<T>(resource, parameters, files);
         }
 
         /// <summary>
@@ -366,11 +366,11 @@ namespace Todoist.Net
         /// The result.
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        async Task<T> IAdvancedTodoistClient.PostAsync<T>(
+        Task<T> IAdvancedTodoistClient.PostAsync<T>(
             string resource,
             ICollection<KeyValuePair<string, string>> parameters)
         {
-            return await ProcessPostAsync<T>(resource, parameters).ConfigureAwait(false);
+            return ProcessPostAsync<T>(resource, parameters);
         }
 
         /// <summary>
@@ -382,11 +382,11 @@ namespace Todoist.Net
         /// The result.
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        async Task<string> IAdvancedTodoistClient.PostRawAsync(
+        Task<string> IAdvancedTodoistClient.PostRawAsync(
             string resource,
             ICollection<KeyValuePair<string, string>> parameters)
         {
-            return await ProcessRawPostAsync(resource, parameters).ConfigureAwait(false);
+            return ProcessRawPostAsync(resource, parameters);
         }
 
         /// <summary>
@@ -477,9 +477,9 @@ namespace Todoist.Net
         /// <param name="parameters">The parameters.</param>
         /// <returns>The response.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        private async Task<T> ProcessSyncAsync<T>(ICollection<KeyValuePair<string, string>> parameters)
+        private Task<T> ProcessSyncAsync<T>(ICollection<KeyValuePair<string, string>> parameters)
         {
-            return await ProcessPostAsync<T>("sync", parameters).ConfigureAwait(false);
+            return ProcessPostAsync<T>("sync", parameters);
         }
 
         /// <summary>

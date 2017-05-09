@@ -25,12 +25,11 @@ namespace Todoist.Net.Services
         /// <returns>The activity log entries.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <remarks>The activity log is only available for Todoist Premium.</remarks>
-        public async Task<IEnumerable<LogEntry>> GetAsync(LogFilter filter = null)
+        public Task<IEnumerable<LogEntry>> GetAsync(LogFilter filter = null)
         {
             var parameters = filter != null ? filter.ToParameters() : new List<KeyValuePair<string, string>>();
 
-            return
-                await _todoistClient.PostAsync<IEnumerable<LogEntry>>("activity/get", parameters).ConfigureAwait(false);
+            return _todoistClient.PostAsync<IEnumerable<LogEntry>>("activity/get", parameters);
         }
     }
 }

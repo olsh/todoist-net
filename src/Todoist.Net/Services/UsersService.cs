@@ -27,7 +27,7 @@ namespace Todoist.Net.Services
         /// <returns>The label info.</returns>
         /// <exception cref="ArgumentNullException">API exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task DeleteAsync(string userPassword, string reason = null)
+        public Task DeleteAsync(string userPassword, string reason = null)
         {
             if (userPassword == null)
             {
@@ -42,7 +42,7 @@ namespace Todoist.Net.Services
                 parameters.AddLast(new KeyValuePair<string, string>("reason_for_delete", reason));
             }
 
-            await TodoistClient.PostRawAsync("user/delete", parameters).ConfigureAwait(false);
+            return TodoistClient.PostRawAsync("user/delete", parameters);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace Todoist.Net.Services
         /// <returns>The current user info.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="notificationType" /> or <paramref name="service" /> is <see langword="null" /></exception>
-        public async Task<NotificationSettings> UpdateNotificationSettingsAsync(
+        public Task<NotificationSettings> UpdateNotificationSettingsAsync(
             NotificationType notificationType,
             NotificationService service,
             bool notify)
@@ -86,10 +86,7 @@ namespace Todoist.Net.Services
             parameters.AddLast(new KeyValuePair<string, string>("service", service.Value));
             parameters.AddLast(new KeyValuePair<string, string>("dont_notify", notify ? "0" : "1"));
 
-            return
-                await
-                    TodoistClient.PostAsync<NotificationSettings>("notification_settings/update", parameters)
-                        .ConfigureAwait(false);
+            return TodoistClient.PostAsync<NotificationSettings>("notification_settings/update", parameters);
         }
     }
 }

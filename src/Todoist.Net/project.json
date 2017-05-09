@@ -35,6 +35,6 @@
       "type": "git",
       "url": "https://github.com/olsh/todoist-net"
     },
-    "releaseNotes": "Serialization fixes."
+    "releaseNotes": "Release notes: https://github.com/olsh/todoist-net/releases"
   }
 }

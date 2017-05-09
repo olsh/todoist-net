@@ -25,10 +25,10 @@ namespace Todoist.Net.Services
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task MarkAllReadAsync()
+        public Task MarkAllReadAsync()
         {
             var command = CreateEntityCommand(CommandType.SetLastReadNotification, 0);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -38,10 +38,10 @@ namespace Todoist.Net.Services
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task MarkLastReadAsync(ComplexId id)
+        public Task MarkLastReadAsync(ComplexId id)
         {
             var command = CreateEntityCommand(CommandType.SetLastReadNotification, id);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
     }
 }

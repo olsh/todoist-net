@@ -83,10 +83,10 @@ namespace Todoist.Net.Services
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task DeleteAsync(ComplexId id)
+        public Task DeleteAsync(ComplexId id)
         {
             var command = CreateEntityCommand(CommandType.DeleteNote, id);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace Todoist.Net.Services
         /// <exception cref="ArgumentNullException"><paramref name="note" /> is <see langword="null" /></exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task UpdateAsync(Note note)
+        public Task UpdateAsync(Note note)
         {
             if (note == null)
             {
@@ -105,7 +105,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.UpdateNote, note);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
     }
 }

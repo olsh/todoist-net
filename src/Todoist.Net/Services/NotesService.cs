@@ -38,16 +38,11 @@ namespace Todoist.Net.Services
         /// The note.
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<NoteInfo> GetAsync(ComplexId id)
+        public Task<NoteInfo> GetAsync(ComplexId id)
         {
-            return
-                await
-                    TodoistClient.PostAsync<NoteInfo>(
-                        "notes/get",
-                        new List<KeyValuePair<string, string>>
-                            {
-                                new KeyValuePair<string, string>("note_id", id.ToString())
-                            }).ConfigureAwait(false);
+            return TodoistClient.PostAsync<NoteInfo>(
+                "notes/get",
+                new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("note_id", id.ToString()) });
         }
     }
 }

@@ -36,16 +36,14 @@ namespace Todoist.Net.Services
         /// The filter info.
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<FilterInfo> GetAsync(ComplexId id)
+        public Task<FilterInfo> GetAsync(ComplexId id)
         {
-            return
-                await
-                    TodoistClient.PostAsync<FilterInfo>(
-                        "filters/get",
-                        new List<KeyValuePair<string, string>>
-                            {
-                                new KeyValuePair<string, string>("filter_id", id.ToString())
-                            }).ConfigureAwait(false);
+            return TodoistClient.PostAsync<FilterInfo>(
+                "filters/get",
+                new List<KeyValuePair<string, string>>
+                    {
+                        new KeyValuePair<string, string>("filter_id", id.ToString())
+                    });
         }
     }
 }

@@ -25,13 +25,11 @@ namespace Todoist.Net.Services
         /// The archived projects.
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<IEnumerable<Project>> GetArchivedAsync()
+        public Task<IEnumerable<Project>> GetArchivedAsync()
         {
-            return
-                await
-                    TodoistClient.PostAsync<IEnumerable<Project>>(
-                        "projects/get_archived",
-                        new List<KeyValuePair<string, string>>()).ConfigureAwait(false);
+            return TodoistClient.PostAsync<IEnumerable<Project>>(
+                "projects/get_archived",
+                new List<KeyValuePair<string, string>>());
         }
 
         /// <summary>
@@ -54,16 +52,14 @@ namespace Todoist.Net.Services
         /// The project.
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<ProjectInfo> GetAsync(ComplexId id)
+        public Task<ProjectInfo> GetAsync(ComplexId id)
         {
-            return
-                await
-                    TodoistClient.PostAsync<ProjectInfo>(
-                        "projects/get",
-                        new List<KeyValuePair<string, string>>
-                            {
-                                new KeyValuePair<string, string>("project_id", id.ToString())
-                            }).ConfigureAwait(false);
+            return TodoistClient.PostAsync<ProjectInfo>(
+                "projects/get",
+                new List<KeyValuePair<string, string>>
+                    {
+                        new KeyValuePair<string, string>("project_id", id.ToString())
+                    });
         }
     }
 }

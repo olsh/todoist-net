@@ -21,13 +21,13 @@ namespace Todoist.Net.Services
         /// <param name="projectId">The project identifier.</param>
         /// <returns>The CSV template is returned.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<string> ExportAsFileAsync(ComplexId projectId)
+        public Task<string> ExportAsFileAsync(ComplexId projectId)
         {
             var parameters = new List<KeyValuePair<string, string>>
                                  {
                                      new KeyValuePair<string, string>("project_id", projectId.ToString())
                                  };
-            return await _todoistClient.PostRawAsync("templates/export_as_file", parameters).ConfigureAwait(false);
+            return _todoistClient.PostRawAsync("templates/export_as_file", parameters);
         }
 
         /// <summary>
@@ -36,13 +36,13 @@ namespace Todoist.Net.Services
         /// <param name="projectId">The project identifier.</param>
         /// <returns>The file object of the template.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<FileBase> ExportAsShareableUrlAsync(ComplexId projectId)
+        public Task<FileBase> ExportAsShareableUrlAsync(ComplexId projectId)
         {
             var parameters = new List<KeyValuePair<string, string>>
                                  {
                                      new KeyValuePair<string, string>("project_id", projectId.ToString())
                                  };
-            return await _todoistClient.PostAsync<FileBase>("templates/export_as_url", parameters).ConfigureAwait(false);
+            return _todoistClient.PostAsync<FileBase>("templates/export_as_url", parameters);
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace Todoist.Net.Services
         /// <param name="fileContent">Content of the template.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task ImportIntoProjectAsync(ComplexId projectId, byte[] fileContent)
+        public Task ImportIntoProjectAsync(ComplexId projectId, byte[] fileContent)
         {
             var parameters = new List<KeyValuePair<string, string>>
                                  {
@@ -60,9 +60,7 @@ namespace Todoist.Net.Services
                                  };
             var files = new[] { new ByteArrayContent(fileContent) };
 
-            await
-                _todoistClient.PostFormAsync<dynamic>("templates/import_into_project", parameters, files)
-                    .ConfigureAwait(false);
+            return _todoistClient.PostFormAsync<dynamic>("templates/import_into_project", parameters, files);
         }
     }
 }

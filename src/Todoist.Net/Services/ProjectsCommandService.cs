@@ -54,7 +54,7 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <remarks>Only available for Todoist Premium users.</remarks>
         /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
-        public async Task ArchiveAsync(params ComplexId[] ids)
+        public Task ArchiveAsync(params ComplexId[] ids)
         {
             if (ids == null)
             {
@@ -62,7 +62,7 @@ namespace Todoist.Net.Services
             }
 
             var command = CreateCollectionCommand(CommandType.ArchiveProject, ids);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Todoist.Net.Services
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
-        public async Task DeleteAsync(params ComplexId[] ids)
+        public Task DeleteAsync(params ComplexId[] ids)
         {
             if (ids == null)
             {
@@ -81,7 +81,7 @@ namespace Todoist.Net.Services
             }
 
             var command = CreateCollectionCommand(CommandType.DeleteProject, ids);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
         /// <remarks>Only available for Todoist Premium users.</remarks>
-        public async Task UnarchiveAsync(params ComplexId[] ids)
+        public Task UnarchiveAsync(params ComplexId[] ids)
         {
             if (ids == null)
             {
@@ -101,7 +101,7 @@ namespace Todoist.Net.Services
             }
 
             var command = CreateCollectionCommand(CommandType.UnarchiveProject, ids);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace Todoist.Net.Services
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="project"/> is <see langword="null"/></exception>
-        public async Task UpdateAsync(Project project)
+        public Task UpdateAsync(Project project)
         {
             if (project == null)
             {
@@ -120,7 +120,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.UpdateProject, project);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="idsToOrderIndents"/> is <see langword="null"/></exception>
-        public async Task UpdateMultipleOrdersIndentsAsync(params OrderIndentEntry[] idsToOrderIndents)
+        public Task UpdateMultipleOrdersIndentsAsync(params OrderIndentEntry[] idsToOrderIndents)
         {
             if (idsToOrderIndents == null)
             {
@@ -141,7 +141,7 @@ namespace Todoist.Net.Services
             var command = new Command(
                               CommandType.UpdateOrderIndentsProject,
                               new IdsToOrderIndentsArgument(idsToOrderIndents));
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
     }
 }

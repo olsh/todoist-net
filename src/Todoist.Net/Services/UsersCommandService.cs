@@ -27,7 +27,7 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="user" /> is <see langword="null" /></exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
-        public async Task UpdateAsync(User user)
+        public Task UpdateAsync(User user)
         {
             if (user == null)
             {
@@ -36,7 +36,7 @@ namespace Todoist.Net.Services
 
             var command = new Command(CommandType.UpdateUser, user);
 
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="karmaGoals" /> is <see langword="null" /></exception>
-        public async Task UpdateKarmaGoalsAsync(KarmaGoals karmaGoals)
+        public Task UpdateKarmaGoalsAsync(KarmaGoals karmaGoals)
         {
             if (karmaGoals == null)
             {
@@ -56,7 +56,7 @@ namespace Todoist.Net.Services
 
             var command = new Command(CommandType.UpdateKarmaGoals, karmaGoals);
 
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
     }
 }

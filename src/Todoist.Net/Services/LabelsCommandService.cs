@@ -54,10 +54,10 @@ namespace Todoist.Net.Services
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task DeleteAsync(ComplexId id)
+        public Task DeleteAsync(ComplexId id)
         {
             var command = CreateEntityCommand(CommandType.DeleteLabel, id);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Todoist.Net.Services
         /// <exception cref="ArgumentNullException"><paramref name="label"/> is <see langword="null"/></exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task UpdateAsync(Label label)
+        public Task UpdateAsync(Label label)
         {
             if (label == null)
             {
@@ -76,7 +76,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.UpdateLabel, label);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace Todoist.Net.Services
         /// <exception cref="ArgumentNullException"><paramref name="orderEntries"/> is <see langword="null"/></exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
-        public async Task UpdateOrderAsync(params OrderEntry[] orderEntries)
+        public Task UpdateOrderAsync(params OrderEntry[] orderEntries)
         {
             if (orderEntries == null)
             {
@@ -95,7 +95,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.UpdateOrderLabel, new IdToOrderMappingArgument(orderEntries));
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            return ExecuteCommandAsync(command);
         }
     }
 }
