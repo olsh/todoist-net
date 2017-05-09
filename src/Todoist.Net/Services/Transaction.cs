@@ -33,7 +33,7 @@ namespace Todoist.Net.Services
             Labels = new LabelsCommandService(_commands);
             Notifications = new NotificationsCommandService(_commands);
             Filters = new FiltersCommandService(_commands);
-            Reminders = new ReminersCommandService(_commands);
+            Reminders = new RemindersCommandService(_commands);
             Users = new UsersCommandService(_commands);
             Sharing = new SharingCommandService(_commands);
         }
@@ -50,7 +50,7 @@ namespace Todoist.Net.Services
 
         public IProjectCommandService Project { get; }
 
-        public IReminersCommandService Reminders { get; }
+        public IRemindersCommandService Reminders { get; }
 
         public ISharingCommandService Sharing { get; }
 

@@ -72,7 +72,7 @@ namespace Todoist.Net
         /// </summary>
         /// <value>The reminders.</value>
         /// <remarks>Reminders are only available for Todoist Premium users.</remarks>
-        IReminersService Reminders { get; }
+        IRemindersService Reminders { get; }
 
         /// <summary>
         /// Gets the sharing.

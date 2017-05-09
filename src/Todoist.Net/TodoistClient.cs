@@ -69,7 +69,7 @@ namespace Todoist.Net
             Activity = new ActivityService(this);
             Notifications = new NotificationsService(this);
             Backups = new BackupService(this);
-            Reminders = new ReminersService(this);
+            Reminders = new RemindersService(this);
             Users = new UsersService(this);
             Sharing = new SharingService(this);
         }
@@ -133,7 +133,7 @@ namespace Todoist.Net
         /// </summary>
         /// <value>The reminders.</value>
         /// <remarks>Reminders are only available for Todoist Premium users.</remarks>
-        public IReminersService Reminders { get; }
+        public IRemindersService Reminders { get; }
 
         /// <summary>
         /// Gets the sharing.

@@ -7,14 +7,14 @@ using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
 {
-    internal class ReminersCommandService : CommandServiceBase, IReminersCommandService
+    internal class RemindersCommandService : CommandServiceBase, IRemindersCommandService
     {
-        internal ReminersCommandService(IAdvancedTodoistClient todoistClient)
+        internal RemindersCommandService(IAdvancedTodoistClient todoistClient)
             : base(todoistClient)
         {
         }
 
-        internal ReminersCommandService(ICollection<Command> queue)
+        internal RemindersCommandService(ICollection<Command> queue)
             : base(queue)
         {
         }

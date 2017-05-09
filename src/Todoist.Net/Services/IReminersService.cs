@@ -9,7 +9,7 @@ namespace Todoist.Net.Services
     /// <summary>
     /// Contains operations for reminders management.
     /// </summary>
-    public interface IReminersService : IReminersCommandService
+    public interface IRemindersService : IRemindersCommandService
     {
         /// <summary>
         /// Gets all reminders.

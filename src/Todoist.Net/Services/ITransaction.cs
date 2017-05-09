@@ -51,7 +51,7 @@ namespace Todoist.Net.Services
         /// </summary>
         /// <value>The reminders.</value>
         /// <remarks>Reminders are only available for Todoist Premium users.</remarks>
-        IReminersCommandService Reminders { get; }
+        IRemindersCommandService Reminders { get; }
 
         /// <summary>
         /// Gets the sharing.

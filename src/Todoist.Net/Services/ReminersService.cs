@@ -9,9 +9,9 @@ namespace Todoist.Net.Services
     /// <summary>
     /// Contains operations for reminders management.
     /// </summary>
-    internal class ReminersService : ReminersCommandService, IReminersService
+    internal class RemindersService : RemindersCommandService, IRemindersService
     {
-        internal ReminersService(IAdvancedTodoistClient todoistClient)
+        internal RemindersService(IAdvancedTodoistClient todoistClient)
             : base(todoistClient)
         {
         }
