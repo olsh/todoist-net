@@ -104,6 +104,13 @@ namespace Todoist.Net
         IUsersService Users { get; }
 
         /// <summary>
+        /// Gets or sets the email.
+        /// </summary>
+        /// <value>The email.</value>
+        /// <remarks>Filters are only available for Todoist Premium users.</remarks>
+        IEmailService Emails { get; set; }
+
+        /// <summary>
         /// Creates the transaction.
         /// </summary>
         /// <returns>The transaction.</returns>

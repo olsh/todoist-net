@@ -72,6 +72,7 @@ namespace Todoist.Net
             Reminders = new RemindersService(this);
             Users = new UsersService(this);
             Sharing = new SharingService(this);
+            Emails = new EmailService(this);
         }
 
         private TodoistClient()
@@ -90,6 +91,13 @@ namespace Todoist.Net
         /// </summary>
         /// <value>The backups.</value>
         public IBackupService Backups { get; }
+
+        /// <summary>
+        /// Gets or sets the email.
+        /// </summary>
+        /// <value>The email.</value>
+        /// <remarks>Filters are only available for Todoist Premium users.</remarks>
+        public IEmailService Emails { get; set; }
 
         /// <summary>
         /// Gets or sets the filters.
