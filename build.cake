@@ -9,7 +9,7 @@ var buildConfiguration = "Release";
 var projectName = "Todoist.Net";
 var testProjectName = "Todoist.Net.Tests";
 var projectFolder = string.Format("./src/{0}/", projectName);
-var testProjectFolder = string.Format("./src/{0}/", testProjectName);
+var testProjectFile = string.Format("./src/{0}/{0}.csproj", testProjectName);
 
 Task("UpdateBuildVersion")
   .WithCriteria(BuildSystem.AppVeyor.IsRunningOnAppVeyor)
@@ -45,10 +45,10 @@ Task("Build")
   .IsDependentOn("UpdateAssemblyVersion")
   .Does(() =>
 {
-	MSBuild(string.Format("{0}.sln", projectName), new MSBuildSettings {
-		Verbosity = Verbosity.Minimal,
-		Configuration = buildConfiguration
-    });
+	DotNetBuild(string.Format("{0}.sln", projectName), 
+	settings => settings
+        .SetConfiguration(buildConfiguration)
+        .SetVerbosity(Verbosity.Minimal));
 });
 
 Task("Test")
@@ -60,7 +60,7 @@ Task("Test")
          Configuration = buildConfiguration
      };
 
-     DotNetCoreTest(testProjectFolder, settings);
+     DotNetCoreTest(testProjectFile, settings);
 });
 
 Task("CodeCoverage")
@@ -72,13 +72,11 @@ Task("CodeCoverage")
         Configuration = buildConfiguration
     };
 
-	OpenCover(tool => { tool.DotNetCoreTest(testProjectFolder, settings); },
+	OpenCover(tool => { tool.DotNetCoreTest(testProjectFile, settings); },
 	  new FilePath("./coverage.xml"),
 	  new OpenCoverSettings()
 		.WithFilter("+[Todoist.Net]*")
 		.WithFilter("-[Todoist.Net.Tests]*"));
-	
-	
 });
 
 Task("NugetPack")

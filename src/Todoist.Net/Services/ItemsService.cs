@@ -73,6 +73,7 @@ namespace Todoist.Net.Services
         /// <param name="quickAddItem">The quick add item.</param>
         /// <returns>The created task.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="quickAddItem"/> is <see langword="null"/></exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
         public Task<Item> QuickAddAsync(QuickAddItem quickAddItem)
         {
             if (quickAddItem == null)
