@@ -28,14 +28,14 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The automatic reminder.</value>
         [JsonProperty("auto_reminder")]
-        public long AutoReminder { get; set; }
+        public long? AutoReminder { get; set; }
 
         /// <summary>
         /// Gets or sets the date format.
         /// </summary>
         /// <value>The date format.</value>
         [JsonProperty("date_format")]
-        public DateFormat DateFormat { get; set; }
+        public DateFormat? DateFormat { get; set; }
 
         /// <summary>
         /// Gets or sets the default reminder.
@@ -63,21 +63,21 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The next week.</value>
         [JsonProperty("next_week")]
-        public DayOfWeek NextWeek { get; set; }
+        public DayOfWeek? NextWeek { get; set; }
 
         /// <summary>
         /// Gets or sets the sort order.
         /// </summary>
         /// <value>The sort order.</value>
         [JsonProperty("sort_order")]
-        public OrderType SortOrder { get; set; }
+        public OrderType? SortOrder { get; set; }
 
         /// <summary>
         /// Gets or sets the start day.
         /// </summary>
         /// <value>The start day.</value>
         [JsonProperty("start_day")]
-        public DayOfWeek StartDay { get; set; }
+        public DayOfWeek? StartDay { get; set; }
 
         /// <summary>
         /// Gets or sets the start page.
@@ -91,13 +91,13 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The theme.</value>
         [JsonProperty("theme")]
-        public int Theme { get; set; }
+        public int? Theme { get; set; }
 
         /// <summary>
         /// Gets or sets the time format.
         /// </summary>
         /// <value>The time format.</value>
         [JsonProperty("time_format")]
-        public TimeFormat TimeFormat { get; set; }
+        public TimeFormat? TimeFormat { get; set; }
     }
 }

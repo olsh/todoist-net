@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 using Todoist.Net.Models;
@@ -24,6 +25,17 @@ namespace Todoist.Net.Serialization.Resolvers
             }
 
             return contract;
+        }
+
+        protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+        {
+            var property = base.CreateProperty(member, memberSerialization);
+            if (property.DeclaringType == typeof(UserInfo))
+            {
+                property.ShouldSerialize = instance => false;
+            }
+
+            return property;
         }
     }
 }
