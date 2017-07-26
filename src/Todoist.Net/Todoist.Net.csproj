@@ -19,6 +19,9 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+
+    <!-- Workaround for OpenCover https://github.com/OpenCover/opencover/issues/601 -->
+    <DebugType>full</DebugType>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.1' ">
