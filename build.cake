@@ -98,7 +98,6 @@ Task("CreateArtifact")
   .Does(() =>
 {
 	BuildSystem.AppVeyor.UploadArtifact(string.Format("{0}.{1}.nupkg", projectName, extensionsVersion));
-	BuildSystem.AppVeyor.UploadArtifact(string.Format("{0}.{1}.symbols.nupkg", projectName, extensionsVersion));
 });
 
 Task("Default")
