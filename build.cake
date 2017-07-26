@@ -15,29 +15,29 @@ Task("UpdateBuildVersion")
   .WithCriteria(BuildSystem.AppVeyor.IsRunningOnAppVeyor)
   .Does(() =>
 {
-	var buildNumber = BuildSystem.AppVeyor.Environment.Build.Number;
+    var buildNumber = BuildSystem.AppVeyor.Environment.Build.Number;
 
-	BuildSystem.AppVeyor.UpdateBuildVersion(string.Format("{0}.{1}", extensionsVersion, buildNumber));
+    BuildSystem.AppVeyor.UpdateBuildVersion(string.Format("{0}.{1}", extensionsVersion, buildNumber));
 });
 
 Task("NugetRestore")
   .Does(() =>
 {
-	DotNetCoreRestore();
+    DotNetCoreRestore();
 });
 
 Task("UpdateAssemblyVersion")
   .Does(() =>
 {
-	var assemblyFile = string.Format("{0}/Properties/AssemblyInfo.cs", projectFolder);
+    var assemblyFile = string.Format("{0}/Properties/AssemblyInfo.cs", projectFolder);
 
-	AssemblyInfoSettings assemblySettings = new AssemblyInfoSettings();
-	assemblySettings.Title = projectName;
-	assemblySettings.FileVersion = extensionsVersion;
-	assemblySettings.Version = extensionsVersion;
-	assemblySettings.InternalsVisibleTo = new [] { testProjectName };
+    AssemblyInfoSettings assemblySettings = new AssemblyInfoSettings();
+    assemblySettings.Title = projectName;
+    assemblySettings.FileVersion = extensionsVersion;
+    assemblySettings.Version = extensionsVersion;
+    assemblySettings.InternalsVisibleTo = new [] { testProjectName };
 
-	CreateAssemblyInfo(assemblyFile, assemblySettings);
+    CreateAssemblyInfo(assemblyFile, assemblySettings);
 });
 
 Task("Build")
@@ -45,8 +45,8 @@ Task("Build")
   .IsDependentOn("UpdateAssemblyVersion")
   .Does(() =>
 {
-	DotNetBuild(string.Format("{0}.sln", projectName), 
-	settings => settings
+    DotNetBuild(string.Format("{0}.sln", projectName), 
+    settings => settings
         .SetConfiguration(buildConfiguration)
         .SetVerbosity(Verbosity.Minimal));
 });
@@ -72,11 +72,17 @@ Task("CodeCoverage")
         Configuration = buildConfiguration
     };
 
-	OpenCover(tool => { tool.DotNetCoreTest(testProjectFile, settings); },
-	  new FilePath("./coverage.xml"),
-	  new OpenCoverSettings()
-		.WithFilter("+[Todoist.Net]*")
-		.WithFilter("-[Todoist.Net.Tests]*"));
+    var coverageSettings = new OpenCoverSettings
+    {
+        // Workaround for the issue https://github.com/OpenCover/opencover/issues/601
+        OldStyle = true
+    };
+
+    OpenCover(tool => { tool.DotNetCoreTest(testProjectFile, settings); },
+      new FilePath("./coverage.xml"),
+      coverageSettings
+        .WithFilter("+[Todoist.Net]*")
+        .WithFilter("-[Todoist.Net.Tests]*"));
 });
 
 Task("NugetPack")
@@ -97,16 +103,16 @@ Task("CreateArtifact")
   .WithCriteria(BuildSystem.AppVeyor.IsRunningOnAppVeyor)
   .Does(() =>
 {
-	BuildSystem.AppVeyor.UploadArtifact(string.Format("{0}.{1}.nupkg", projectName, extensionsVersion));
+    BuildSystem.AppVeyor.UploadArtifact(string.Format("{0}.{1}.nupkg", projectName, extensionsVersion));
 });
 
 Task("Default")
-	.IsDependentOn("Test")
-	.IsDependentOn("NugetPack");
+    .IsDependentOn("Test")
+    .IsDependentOn("NugetPack");
 
 Task("CI")
-	.IsDependentOn("UpdateBuildVersion")
-	.IsDependentOn("CodeCoverage")
-	.IsDependentOn("CreateArtifact");
+    .IsDependentOn("UpdateBuildVersion")
+    .IsDependentOn("CodeCoverage")
+    .IsDependentOn("CreateArtifact");
 
 RunTarget(target);
