@@ -1,6 +1,4 @@
-﻿using Todoist.Net.Tests.Settings;
-
-using Xunit;
+﻿using Xunit;
 
 namespace Todoist.Net.Tests
 {
