@@ -88,7 +88,7 @@ Task("CodeCoverage")
         .WithFilter("+[Todoist.Net]*")
         .WithFilter("-[Todoist.Net.Tests]*"));
 
-    Codecov(coverageFileName);
+    Codecov(coverageFileName, EnvironmentVariable("codecov:token"));
 });
 
 Task("CodeAnalysis")
