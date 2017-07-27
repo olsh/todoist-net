@@ -1,6 +1,9 @@
 #tool "nuget:?package=OpenCover"
+#tool "nuget:?package=Codecov"
+#tool "nuget:?package=PublishCoverity"
 
 #addin "Cake.Incubator"
+#addin "nuget:?package=Cake.Codecov"
 
 var target = Argument("target", "Default");
 var extensionsVersion = Argument("version", "1.3.1");
@@ -78,11 +81,27 @@ Task("CodeCoverage")
         OldStyle = true
     };
 
+	var coverageFileName = "./coverage.xml";
     OpenCover(tool => { tool.DotNetCoreTest(testProjectFile, settings); },
-      new FilePath("./coverage.xml"),
+      new FilePath(coverageFileName),
       coverageSettings
         .WithFilter("+[Todoist.Net]*")
         .WithFilter("-[Todoist.Net.Tests]*"));
+
+    Codecov(coverageFileName);
+});
+
+Task("CodeAnalysis")
+  .IsDependentOn("Build")
+  .Does(() =>
+{
+    StartProcess("cov-build", "--dir cov-int msbuild /t:Rebuild /v:q");
+
+    var publishCoverity = Context.Tools.Resolve("PublishCoverity.exe");
+    StartProcess(publishCoverity, "compress -o coverity.zip -i cov-int --overwrite --nologo");
+    StartProcess(publishCoverity, 
+        string.Format("publish -z coverity.zip -r olsh/todoist-net -t {1} -e olsh.me@gmail.com -d \"A Todoist API client for .NET written in C#\" --codeVersion \"{0}\" --nologo", 
+        extensionsVersion, EnvironmentVariable("coverity:token")));
 });
 
 Task("NugetPack")
@@ -113,6 +132,7 @@ Task("Default")
 Task("CI")
     .IsDependentOn("UpdateBuildVersion")
     .IsDependentOn("CodeCoverage")
+    .IsDependentOn("CodeAnalysis")
     .IsDependentOn("CreateArtifact");
 
 RunTarget(target);

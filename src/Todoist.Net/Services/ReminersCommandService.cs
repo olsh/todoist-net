@@ -43,7 +43,7 @@ namespace Todoist.Net.Services
         }
 
         /// <summary>
-        /// Update the orders of multiple filters at once.
+        /// Clears the locations list, which is used for the location reminders.
         /// </summary>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>

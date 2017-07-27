@@ -1,5 +1,6 @@
 # Todoist.Net
 [![Build status](https://ci.appveyor.com/api/projects/status/r5ylbxtpjya9ayk2?svg=true)](https://ci.appveyor.com/project/olsh/todoist-net)
+[![Coverity Scan](https://img.shields.io/coverity/scan/11385.svg)](https://scan.coverity.com/projects/olsh-todoist-net)
 [![codecov](https://codecov.io/gh/olsh/todoist-net/branch/master/graph/badge.svg)](https://codecov.io/gh/olsh/todoist-net)
 [![NuGet](https://img.shields.io/nuget/v/Todoist.Net.svg)](https://www.nuget.org/packages/Todoist.Net/)
 
