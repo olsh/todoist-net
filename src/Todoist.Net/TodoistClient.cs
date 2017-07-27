@@ -254,12 +254,14 @@ namespace Todoist.Net
                 throw new ArgumentNullException(nameof(user));
             }
 
-            var tokenlessClient = new TodoistClient();
-            var userInfo =
-                await tokenlessClient.ProcessPostAsync<UserInfo>("user/register", user.ToParameters())
-                    .ConfigureAwait(false);
+            using (var tokenlessClient = new TodoistClient())
+            {
+                var userInfo =
+                    await tokenlessClient.ProcessPostAsync<UserInfo>("user/register", user.ToParameters())
+                        .ConfigureAwait(false);
 
-            return userInfo;
+                return userInfo;
+            }
         }
 
         /// <summary>
@@ -409,10 +411,12 @@ namespace Todoist.Net
             string resource,
             KeyValuePair<string, string>[] parameters)
         {
-            var tokenlessClient = new TodoistClient();
-            var userInfo = await tokenlessClient.ProcessPostAsync<UserInfo>(resource, parameters).ConfigureAwait(false);
+            using (var tokenlessClient = new TodoistClient())
+            {
+                var userInfo = await tokenlessClient.ProcessPostAsync<UserInfo>(resource, parameters).ConfigureAwait(false);
 
-            return new TodoistClient(userInfo.Token);
+                return new TodoistClient(userInfo.Token);
+            }
         }
 
         private T DeserializeResponse<T>(string responseContent)
