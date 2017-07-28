@@ -100,7 +100,7 @@ namespace Todoist.Net.Tests.Services
 
         [Fact]
         [IntegrationFree]
-        public void MoveItemsToProjectAndRecurring_Success()
+        public void MoveItemsToProject_Success()
         {
             var client = TodoistClientFactory.Create();
 
@@ -109,9 +109,6 @@ namespace Todoist.Net.Tests.Services
 
             item.DateString = "every fri";
             client.Items.UpdateAsync(item).Wait();
-
-            client.Items.CompleteRecurringAsync(new RecurringItemState(item.Id) { NewDate = DateTime.UtcNow.AddMonths(1) });
-            client.Items.CompleteRecurringAsync(item.Id);
 
             var project = new Project(Guid.NewGuid().ToString());
             client.Projects.AddAsync(project);
@@ -134,11 +131,14 @@ namespace Todoist.Net.Tests.Services
         {
             var client = TodoistClientFactory.Create();
 
-            var item = client.Items.QuickAddAsync(new QuickAddItem("Demo task")).Result;
+            var item = client.Items.QuickAddAsync(new QuickAddItem("Demo task every fri")).Result;
 
             Assert.NotNull(item);
 
-            client.Items.DeleteAsync(item.Id);
+            client.Items.CompleteRecurringAsync(new RecurringItemState(item.Id) { NewDate = DateTime.UtcNow.AddMonths(1) }).Wait();
+            client.Items.CompleteRecurringAsync(item.Id).Wait();
+
+            client.Items.DeleteAsync(item.Id).Wait();
         }
     }
 }
