@@ -3,7 +3,6 @@ using System.Linq;
 
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
-using Todoist.Net.Tests.Settings;
 
 using Xunit;
 
@@ -27,7 +26,7 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        public void CreateDelete_Success()
+        public void CreateUpdateDelete_Success()
         {
             var client = TodoistClientFactory.Create();
 
@@ -37,6 +36,16 @@ namespace Todoist.Net.Tests.Services
             var filters = client.Filters.GetAsync().Result;
 
             Assert.True(filters.Any(f => f.Name == filter.Name));
+
+            filter.Query = "test";
+            client.Filters.UpdateAsync(filter)
+                .Wait();
+            var filterOrder = 2;
+            client.Filters.UpdateOrderAsync(new OrderEntry(filter.Id, filterOrder)).Wait();
+
+            var filterInfo = client.Filters.GetAsync(filter.Id).Result;
+            Assert.Equal(filter.Query, filterInfo.Filter.Query);
+            Assert.Equal(filterOrder, filterInfo.Filter.ItemOrder);
 
             client.Filters.DeleteAsync(filter.Id).Wait();
         }

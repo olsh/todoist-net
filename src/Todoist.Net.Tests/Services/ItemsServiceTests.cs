@@ -62,6 +62,14 @@ namespace Todoist.Net.Tests.Services
             Assert.True(itemInfo.Item.InHistory == itemState.InHistory);
             Assert.True(itemInfo.Item.ItemOrder == itemState.Order);
 
+            client.Items.CompleteAsync(ids: itemId).Wait();
+            itemInfo = client.Items.GetAsync(item.Id).Result;
+            Assert.True(itemInfo.Item.IsChecked == true);
+
+            client.Items.UncompleteAsync(itemId).Wait();
+            itemInfo = client.Items.GetAsync(item.Id).Result;
+            Assert.True(itemInfo.Item.IsChecked == false);
+
             client.Items.DeleteAsync(item.Id).Wait();
         }
 
@@ -137,6 +145,20 @@ namespace Todoist.Net.Tests.Services
 
             client.Items.CompleteRecurringAsync(new RecurringItemState(item.Id) { NewDate = DateTime.UtcNow.AddMonths(1) }).Wait();
             client.Items.CompleteRecurringAsync(item.Id).Wait();
+
+            client.Items.DeleteAsync(item.Id).Wait();
+        }
+
+        [Fact]
+        [IntegrationFree]
+        public void UpdateOrders_Success()
+        {
+            var client = TodoistClientFactory.Create();
+
+            var item = client.Items.QuickAddAsync(new QuickAddItem("Demo task every fri")).Result;
+
+            client.Items.UpdateMultipleOrdersIndentsAsync(new OrderIndentEntry(item.Id, 1, 1)).Wait();
+            client.Items.UpdateDayOrdersAsync(new OrderEntry(item.Id, 2));
 
             client.Items.DeleteAsync(item.Id).Wait();
         }
