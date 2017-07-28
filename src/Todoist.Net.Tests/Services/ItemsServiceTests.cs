@@ -100,12 +100,18 @@ namespace Todoist.Net.Tests.Services
 
         [Fact]
         [IntegrationFree]
-        public void MoveItemsToProject_Success()
+        public void MoveItemsToProjectAndRecurring_Success()
         {
             var client = TodoistClientFactory.Create();
 
             var item = new Item("demo task");
             client.Items.AddAsync(item).Wait();
+
+            item.DateString = "every fri";
+            client.Items.UpdateAsync(item).Wait();
+
+            client.Items.CompleteRecurringAsync(new RecurringItemState(item.Id) { NewDate = DateTime.UtcNow.AddMonths(1) });
+            client.Items.CompleteRecurringAsync(item.Id);
 
             var project = new Project(Guid.NewGuid().ToString());
             client.Projects.AddAsync(project);

@@ -75,5 +75,27 @@ namespace Todoist.Net.Tests.Services
 
             client.Projects.DeleteAsync(project.Id).Wait();
         }
+
+        [Fact]
+        [IntegrationFree]
+        public void CreateArchiveAndDelete_Success()
+        {
+            var client = TodoistClientFactory.Create();
+
+            var projectName = Guid.NewGuid().ToString();
+            var newProject = new Project(projectName);
+            client.Projects.AddAsync(newProject).Wait();
+
+            client.Projects.ArchiveAsync(newProject.Id).Wait();
+            var projectInfo = client.Projects.GetAsync(newProject.Id).Result;
+            Assert.True(projectInfo.Project.IsArchived);
+
+
+            client.Projects.UnarchiveAsync(newProject.Id).Wait();
+            projectInfo = client.Projects.GetAsync(newProject.Id).Result;
+            Assert.False(projectInfo.Project.IsArchived);
+
+            client.Projects.DeleteAsync(projectInfo.Project.Id).Wait();
+        }
     }
 }
