@@ -23,24 +23,14 @@ namespace Todoist.Net.Tests.Services
                 transaction.Reminders.AddAsync(new Reminder(itemId) { DueDateUtc = DateTime.UtcNow.AddDays(1) }).Result;
             transaction.CommitAsync().Wait();
 
+            var reminders = client.Reminders.GetAsync().Result;
+            Assert.True(reminders.Count() > 0);
+
             var reminderInfo = client.Reminders.GetAsync(reminderId).Result;
+            Assert.True(reminderInfo != null);
 
             client.Reminders.DeleteAsync(reminderInfo.Reminder.Id).Wait();
             client.Items.DeleteAsync(itemId);
-        }
-
-        [Fact]
-        public void GetReminderInfo_Success()
-        {
-            var client = TodoistClientFactory.Create();
-
-            var filters = client.Reminders.GetAsync().Result;
-
-            Assert.True(filters.Count() > 0);
-
-            var result = client.Reminders.GetAsync(filters.First().Id).Result;
-
-            Assert.True(result != null);
         }
     }
 }
