@@ -6,7 +6,7 @@
 #addin "nuget:?package=Cake.Codecov"
 
 var target = Argument("target", "Default");
-var extensionsVersion = Argument("version", "1.3.1");
+var extensionsVersion = Argument("version", "1.3.2");
 
 var buildConfiguration = "Release";
 var projectName = "Todoist.Net";
