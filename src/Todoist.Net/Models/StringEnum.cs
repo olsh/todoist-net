@@ -13,7 +13,7 @@ namespace Todoist.Net.Models
         /// Initializes a new instance of the <see cref="StringEnum" /> class.
         /// </summary>
         /// <param name="value">The value.</param>
-        protected internal StringEnum(string value)
+        protected StringEnum(string value)
         {
             Value = value;
         }

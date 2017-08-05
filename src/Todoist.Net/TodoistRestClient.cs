@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Todoist.Net
 {
-    internal class TodoistRestClient : ITodoistRestClient
+    internal sealed class TodoistRestClient : ITodoistRestClient
     {
         private readonly HttpClient _httpClient;
 

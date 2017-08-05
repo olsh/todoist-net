@@ -91,19 +91,6 @@ Task("CodeCoverage")
     Codecov(coverageFileName, EnvironmentVariable("codecov:token"));
 });
 
-Task("CodeAnalysis")
-  .IsDependentOn("Build")
-  .Does(() =>
-{
-    StartProcess("cov-build", "--dir cov-int msbuild /t:Rebuild /v:q");
-
-    var publishCoverity = Context.Tools.Resolve("PublishCoverity.exe");
-    StartProcess(publishCoverity, "compress -o coverity.zip -i cov-int --overwrite --nologo");
-    StartProcess(publishCoverity, 
-        string.Format("publish -z coverity.zip -r olsh/todoist-net -t {1} -e olsh.me@gmail.com -d \"A Todoist API client for .NET written in C#\" --codeVersion \"{0}\" --nologo", 
-        extensionsVersion, EnvironmentVariable("coverity:token")));
-});
-
 Task("NugetPack")
   .IsDependentOn("Build")
   .Does(() =>
@@ -132,7 +119,6 @@ Task("Default")
 Task("CI")
     .IsDependentOn("UpdateBuildVersion")
     .IsDependentOn("CodeCoverage")
-    .IsDependentOn("CodeAnalysis")
     .IsDependentOn("CreateArtifact");
 
 RunTarget(target);

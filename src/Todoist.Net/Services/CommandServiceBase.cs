@@ -11,12 +11,12 @@ namespace Todoist.Net.Services
     {
         private readonly ICollection<Command> _queue;
 
-        internal CommandServiceBase(IAdvancedTodoistClient todoistClient)
+        protected CommandServiceBase(IAdvancedTodoistClient todoistClient)
         {
             TodoistClient = todoistClient;
         }
 
-        internal CommandServiceBase(ICollection<Command> queue)
+        protected CommandServiceBase(ICollection<Command> queue)
         {
             _queue = queue;
         }

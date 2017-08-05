@@ -18,7 +18,7 @@ namespace Todoist.Net
     /// </summary>
     /// <seealso cref="System.IDisposable" />
     /// <seealso cref="Todoist.Net.IAdvancedTodoistClient" />
-    public class TodoistClient : IDisposable, IAdvancedTodoistClient
+    public sealed class TodoistClient : IDisposable, IAdvancedTodoistClient
     {
         private static readonly JsonSerializerSettings SerializerSettings
             = new JsonSerializerSettings
