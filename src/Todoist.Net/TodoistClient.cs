@@ -554,7 +554,7 @@ namespace Todoist.Net
             }
         }
 
-        private void UpdateTempIds(Command[] commands, Dictionary<Guid, long> tempIdMappings)
+        private void UpdateTempIds(Command[] commands, IDictionary<Guid, long> tempIdMappings)
         {
             foreach (var command in commands)
             {

@@ -82,7 +82,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <param name="other">An object to compare with this object.</param>
         /// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
-        public bool Equals(StringEnum other)
+        public virtual bool Equals(StringEnum other)
         {
             if (ReferenceEquals(null, other))
             {
