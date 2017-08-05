@@ -3,7 +3,7 @@
 namespace Todoist.Net.Models
 {
     /// <summary>
-    /// Struct that represents an identifier of Todist entities. Can be <see cref="System.Int32"/> if it's persistent or <see cref="Guid"/> if it's temporary.
+    /// Struct that represents an identifier of Todoist entities. Can be <see cref="System.Int32"/> if it's persistent or <see cref="Guid"/> if it's temporary.
     /// </summary>
     public struct ComplexId : IEquatable<ComplexId>
     {

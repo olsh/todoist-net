@@ -1,7 +1,7 @@
 ﻿namespace Todoist.Net.Models
 {
     /// <summary>
-    /// Containse types of Todoist notifications.
+    /// Contains types of Todoist notifications.
     /// </summary>
     /// <seealso cref="Todoist.Net.Models.StringEnum" />
     public class NotificationType : StringEnum

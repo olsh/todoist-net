@@ -19,12 +19,7 @@ namespace Todoist.Net.Models
         /// <exception cref="ArgumentNullException"><paramref name="tempIds"/> is <see langword="null"/></exception>
         public IdsArgument(IEnumerable<ComplexId> tempIds)
         {
-            if (tempIds == null)
-            {
-                throw new ArgumentNullException(nameof(tempIds));
-            }
-
-            Ids = tempIds;
+            Ids = tempIds ?? throw new ArgumentNullException(nameof(tempIds));
         }
 
         [JsonProperty("ids")]

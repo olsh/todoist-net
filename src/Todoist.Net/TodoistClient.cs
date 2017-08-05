@@ -400,7 +400,7 @@ namespace Todoist.Net
         }
 
         /// <summary>
-        /// Logins with credentials and returns a .
+        /// Logins with credentials and returns a new instance of Todoist client.
         /// </summary>
         /// <param name="resource">The resource.</param>
         /// <param name="parameters">The parameters.</param>
