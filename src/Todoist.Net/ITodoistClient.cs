@@ -25,11 +25,11 @@ namespace Todoist.Net
         IBackupService Backups { get; }
 
         /// <summary>
-        /// Gets or sets the filters.
+        /// Gets the filters.
         /// </summary>
         /// <value>The filters.</value>
         /// <remarks>Filters are only available for Todoist Premium users.</remarks>
-        IFiltersService Filters { get; set; }
+        IFiltersService Filters { get; }
 
         /// <summary>
         /// Gets the items service.
@@ -104,11 +104,11 @@ namespace Todoist.Net
         IUsersService Users { get; }
 
         /// <summary>
-        /// Gets or sets the email.
+        /// Gets the email.
         /// </summary>
         /// <value>The email.</value>
         /// <remarks>Filters are only available for Todoist Premium users.</remarks>
-        IEmailService Emails { get; set; }
+        IEmailService Emails { get; }
 
         /// <summary>
         /// Creates the transaction.

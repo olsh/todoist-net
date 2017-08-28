@@ -35,28 +35,6 @@ namespace Todoist.Net.Tests.Services
 
         [Fact]
         [IntegrationFree]
-        public void CreateProjectWithNote_Success()
-        {
-            var client = TodoistClientFactory.Create();
-
-            var projectName = Guid.NewGuid().ToString();
-            client.Projects.AddAsync(new Project(projectName)).Wait();
-
-            var projects = client.Projects.GetAsync().Result;
-            var project = projects.FirstOrDefault(p => p.Name == projectName);
-
-            Assert.True(project != null);
-
-            client.Projects.DeleteAsync(project.Id).Wait();
-
-            projects = client.Projects.GetAsync().Result;
-            project = projects.FirstOrDefault(p => p.Name == projectName);
-
-            Assert.True(project == null);
-        }
-
-        [Fact]
-        [IntegrationFree]
         public void CreateUpdateIndentAndDelete_Success()
         {
             var client = TodoistClientFactory.Create();

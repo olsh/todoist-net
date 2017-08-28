@@ -93,18 +93,18 @@ namespace Todoist.Net
         public IBackupService Backups { get; }
 
         /// <summary>
-        /// Gets or sets the email.
+        /// Gets the email.
         /// </summary>
         /// <value>The email.</value>
         /// <remarks>Filters are only available for Todoist Premium users.</remarks>
-        public IEmailService Emails { get; set; }
+        public IEmailService Emails { get; }
 
         /// <summary>
-        /// Gets or sets the filters.
+        /// Gets the filters.
         /// </summary>
         /// <value>The filters.</value>
         /// <remarks>Filters are only available for Todoist Premium users.</remarks>
-        public IFiltersService Filters { get; set; }
+        public IFiltersService Filters { get; }
 
         /// <summary>
         /// Gets the items service.
