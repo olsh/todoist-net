@@ -20,7 +20,7 @@ namespace Todoist.Net.Tests.Services
             var upload = client.Uploads.UploadAsync(fileName, Encoding.UTF8.GetBytes("hello")).Result;
 
             var allUploads = client.Uploads.GetAsync().Result;
-            Assert.True(allUploads.Any(u => u.FileUrl == upload.FileUrl));
+            Assert.Contains(allUploads, u => u.FileUrl == upload.FileUrl);
 
             client.Uploads.DeleteAsync(upload.FileUrl).Wait();
 

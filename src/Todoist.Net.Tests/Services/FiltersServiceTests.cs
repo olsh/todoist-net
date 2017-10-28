@@ -35,7 +35,7 @@ namespace Todoist.Net.Tests.Services
 
             var filters = client.Filters.GetAsync().Result;
 
-            Assert.True(filters.Any(f => f.Name == filter.Name));
+            Assert.Contains(filters, f => f.Name == filter.Name);
 
             filter.Query = "test";
             client.Filters.UpdateAsync(filter)
