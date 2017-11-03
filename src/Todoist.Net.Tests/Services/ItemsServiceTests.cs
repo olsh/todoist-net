@@ -162,5 +162,21 @@ namespace Todoist.Net.Tests.Services
 
             client.Items.DeleteAsync(item.Id).Wait();
         }
+
+        [Fact]
+        [IntegrationFree]
+        public void CreateNewItem_DueDateNotChanged_Success()
+        {
+            var client = TodoistClientFactory.Create();
+
+            var item = new Item("New task") { DueDateUtc = DateTime.UtcNow.AddYears(1).Date };
+            var taskId = client.Items.AddAsync(item).Result;
+
+            var itemInfo = client.Items.GetAsync(taskId).Result;
+
+            Assert.Equal(item.DueDateUtc.Value, itemInfo.Item.DueDateUtc.Value);
+
+            client.Items.DeleteAsync(item.Id).Wait();
+        }
     }
 }
