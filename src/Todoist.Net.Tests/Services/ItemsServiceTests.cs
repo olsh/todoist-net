@@ -165,16 +165,16 @@ namespace Todoist.Net.Tests.Services
 
         [Fact]
         [IntegrationFree]
-        public void CreateNewItem_DueDateNotChanged_Success()
+        public void CreateNewItem_DueDateIsLocal_DueDateNotChanged()
         {
             var client = TodoistClientFactory.Create();
 
-            var item = new Item("New task") { DueDateUtc = DateTime.UtcNow.AddYears(1).Date };
+            var item = new Item("New task") { DueDateUtc = DateTime.Now.AddYears(1).Date };
             var taskId = client.Items.AddAsync(item).Result;
 
             var itemInfo = client.Items.GetAsync(taskId).Result;
 
-            Assert.Equal(item.DueDateUtc.Value, itemInfo.Item.DueDateUtc.Value);
+            Assert.Equal(item.DueDateUtc.Value, itemInfo.Item.DueDateUtc.Value.ToLocalTime());
 
             client.Items.DeleteAsync(item.Id).Wait();
         }
