@@ -6,13 +6,15 @@
 #addin "nuget:?package=Cake.Codecov"
 
 var target = Argument("target", "Default");
-var extensionsVersion = Argument("version", "1.3.2");
 
 var buildConfiguration = "Release";
 var projectName = "Todoist.Net";
 var testProjectName = "Todoist.Net.Tests";
 var projectFolder = string.Format("./src/{0}/", projectName);
+var projectFile = string.Format("./src/{0}/{0}.csproj", projectName);
 var testProjectFile = string.Format("./src/{0}/{0}.csproj", testProjectName);
+
+var extensionsVersion = XmlPeek(projectFile, "Project/PropertyGroup[1]/VersionPrefix/text()");
 
 Task("UpdateBuildVersion")
   .WithCriteria(BuildSystem.AppVeyor.IsRunningOnAppVeyor)
