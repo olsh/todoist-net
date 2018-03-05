@@ -16,7 +16,7 @@ namespace Todoist.Net.Tests.Services
 
             var backups = client.Backups.GetAsync().Result;
 
-            Assert.True(backups.Count() > 0);
+            Assert.True(backups.Any());
         }
     }
 }

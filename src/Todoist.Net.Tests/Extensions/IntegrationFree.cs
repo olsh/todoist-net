@@ -2,7 +2,7 @@
 
 namespace Todoist.Net.Tests.Extensions
 {
-    public class IntegrationFree : CustomTraitBase, ITraitAttribute
+    public class IntegrationFree : CustomTraitBaseAttribute, ITraitAttribute
     {
         public IntegrationFree()
         {

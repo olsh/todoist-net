@@ -24,7 +24,7 @@ namespace Todoist.Net.Tests.Services
             transaction.CommitAsync().Wait();
 
             var reminders = client.Reminders.GetAsync().Result;
-            Assert.True(reminders.Count() > 0);
+            Assert.True(reminders.Any());
 
             var reminderInfo = client.Reminders.GetAsync(reminderId).Result;
             Assert.True(reminderInfo != null);

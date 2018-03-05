@@ -19,7 +19,7 @@ namespace Todoist.Net.Tests.Services
             var project = new Project(Guid.NewGuid().ToString());
             var projectId = transaction.Project.AddAsync(project).Result;
             var note = new Note("Demo note");
-            var noteId = transaction.Notes.AddToProjectAsync(note, projectId).Result;
+            transaction.Notes.AddToProjectAsync(note, projectId).Wait();
 
             transaction.CommitAsync().Wait();
 

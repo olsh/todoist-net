@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Todoist.Net.Tests
 {
-    public class RateLimitAwareRestClient : ITodoistRestClient
+    public sealed class RateLimitAwareRestClient : ITodoistRestClient
     {
         private readonly TodoistRestClient restClient;
 

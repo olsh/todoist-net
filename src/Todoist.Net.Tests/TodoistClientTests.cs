@@ -9,7 +9,9 @@ namespace Todoist.Net.Tests
         {
             var client = TodoistClientFactory.Create();
 
-            var resources = client.GetResourcesAsync().Result;            
+            var resources = client.GetResourcesAsync().Result;
+
+            Assert.NotNull(resources);
         }
     }
 }
