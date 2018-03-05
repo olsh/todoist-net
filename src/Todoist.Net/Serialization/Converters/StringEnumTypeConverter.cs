@@ -19,8 +19,7 @@ namespace Todoist.Net.Serialization.Converters
             object existingValue,
             JsonSerializer serializer)
         {
-            StringEnum stringEnum;
-            if (StringEnum.TryParse(reader.Value?.ToString(), objectType, out stringEnum))
+            if (StringEnum.TryParse(reader.Value?.ToString(), objectType, out var stringEnum))
             {
                 return stringEnum;
             }

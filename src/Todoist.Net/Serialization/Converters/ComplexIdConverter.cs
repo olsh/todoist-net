@@ -19,8 +19,7 @@ namespace Todoist.Net.Serialization.Converters
             object existingValue,
             JsonSerializer serializer)
         {
-            long result;
-            if (long.TryParse(reader.Value?.ToString(), out result))
+            if (long.TryParse(reader.Value?.ToString(), out var result))
             {
                 return new ComplexId(result);
             }
