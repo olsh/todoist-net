@@ -2,9 +2,9 @@
 
 namespace Todoist.Net.Tests.Extensions
 {
-    public class Unit : CustomTraitBaseAttribute, ITraitAttribute
+    public class UnitAttribute : CustomTraitBaseAttribute, ITraitAttribute
     {
-        public Unit()
+        public UnitAttribute()
         {
             Name = "unit";
         }

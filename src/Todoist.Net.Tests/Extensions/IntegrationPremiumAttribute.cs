@@ -2,9 +2,9 @@
 
 namespace Todoist.Net.Tests.Extensions
 {
-    public class IntegrationPremium : CustomTraitBaseAttribute, ITraitAttribute
+    public class IntegrationPremiumAttribute : CustomTraitBaseAttribute, ITraitAttribute
     {
-        public IntegrationPremium()
+        public IntegrationPremiumAttribute()
         {
             Name = "integration-premium";
         }
