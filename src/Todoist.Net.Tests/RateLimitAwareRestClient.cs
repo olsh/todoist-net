@@ -32,7 +32,7 @@ namespace Todoist.Net.Tests
                 result = await request().ConfigureAwait(false);
 
                 if ((int)result.StatusCode != 429 /*Requests limit*/  && 
-                    (int)result.StatusCode != 503 /*Service unavailable*/)
+                    (int)result.StatusCode < 500 /*Server side errors happen randomly*/)
                 {
                     return result;
                 }

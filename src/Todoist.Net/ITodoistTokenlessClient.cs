@@ -7,6 +7,9 @@ using Todoist.Net.Models;
 
 namespace Todoist.Net
 {
+    /// <summary>
+    /// A Todoist client without an access token.
+    /// </summary>
     public interface ITodoistTokenlessClient
     {
         /// <summary>
