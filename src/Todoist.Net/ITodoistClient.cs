@@ -125,7 +125,6 @@ namespace Todoist.Net
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="resourceTypes"/> is <see langword="null"/></exception>
-        /// <exception cref="ArgumentException">Value cannot be an empty collection.</exception>
         Task<Resources> GetResourcesAsync(params ResourceType[] resourceTypes);
     }
 }

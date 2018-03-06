@@ -25,12 +25,13 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void RegisterUpdateSettingsAndDeleteUser_Success()
         {
+            var todoistTokenlessClient = TodoistClientFactory.CreateTokenlessClient();
             var userBase = new UserBase(Guid.NewGuid().ToString("N") + "@example.com", "test user", "Pa$$W@rd");
-            var userInfo = TodoistClient.RegisterUserAsync(userBase).Result;
+            var userInfo = todoistTokenlessClient.RegisterUserAsync(userBase).Result;
             Assert.NotNull(userInfo);
 
 #pragma warning disable CS0618 // Type or member is obsolete
-            var todoistClient = TodoistClient.LoginAsync(userBase.Email, userBase.Password).Result;
+            var todoistClient = todoistTokenlessClient.LoginAsync(userBase.Email, userBase.Password).Result;
 #pragma warning restore CS0618 // Type or member is obsolete
 
             todoistClient.Users.UpdateNotificationSettingsAsync(

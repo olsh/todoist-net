@@ -21,14 +21,14 @@ namespace Todoist.Net
     /// <seealso cref="Todoist.Net.IAdvancedTodoistClient" />
     public sealed class TodoistClient : IDisposable, IAdvancedTodoistClient
     {
-        private static readonly JsonSerializerSettings SerializerSettings
-            = new JsonSerializerSettings
-                  {
-                      DateFormatString = "ddd dd MMM yyyy HH:mm:ss +0000",
-                      DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-                      NullValueHandling = NullValueHandling.Ignore,
-                      ContractResolver = new ConverterContractResolver()
-                  };
+        private static readonly JsonSerializerSettings SerializerSettings =
+            new JsonSerializerSettings
+                {
+                    DateFormatString = "ddd dd MMM yyyy HH:mm:ss +0000",
+                    DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+                    NullValueHandling = NullValueHandling.Ignore,
+                    ContractResolver = new ConverterContractResolver()
+                };
 
         private readonly ITodoistRestClient _restClient;
 
@@ -87,7 +87,7 @@ namespace Todoist.Net
             Emails = new EmailService(this);
         }
 
-        private TodoistClient(IWebProxy webProxy)
+        internal TodoistClient(IWebProxy webProxy)
         {
             _restClient = new TodoistRestClient(webProxy);
         }
@@ -183,170 +183,6 @@ namespace Todoist.Net
         public IUsersService Users { get; }
 
         /// <summary>
-        /// Logins user and returns a new instance of Todoist client.
-        /// </summary>
-        /// <param name="email">The email.</param>
-        /// <param name="password">The password.</param>
-        /// <returns>A new instance of Todoist client.</returns>
-        /// <exception cref="System.ArgumentException">
-        /// Value cannot be null or empty - email
-        /// or
-        /// Value cannot be null or empty - password
-        /// </exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="TodoistException">Unable to get token.</exception>
-        [Obsolete("This method is scheduled for deprecation and probably will be removed in future versions.")]
-        public static Task<TodoistClient> LoginAsync(string email, string password)
-        {
-            return LoginAsync(email, password, null);
-        }
-
-        /// <summary>
-        /// Logins user and returns a new instance of Todoist client.
-        /// </summary>
-        /// <param name="email">The email.</param>
-        /// <param name="password">The password.</param>
-        /// <param name="proxy">The proxy.</param>
-        /// <returns>
-        /// A new instance of Todoist client.
-        /// </returns>
-        /// <exception cref="ArgumentException">
-        /// Value cannot be null or empty. - email
-        /// or
-        /// Value cannot be null or empty. - password
-        /// </exception>
-        /// <exception cref="System.ArgumentException">Value cannot be null or empty - email
-        /// or
-        /// Value cannot be null or empty - password</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="TodoistException">Unable to get token.</exception>
-        [Obsolete("This method is scheduled for deprecation and probably will be removed in future versions.")]
-        public static Task<TodoistClient> LoginAsync(string email, string password, IWebProxy proxy)
-        {
-            if (string.IsNullOrEmpty(email))
-            {
-                throw new ArgumentException("Value cannot be null or empty.", nameof(email));
-            }
-
-            if (string.IsNullOrEmpty(password))
-            {
-                throw new ArgumentException("Value cannot be null or empty.", nameof(password));
-            }
-
-            var parameters = new[]
-                                 {
-                                     new KeyValuePair<string, string>("email", email),
-                                     new KeyValuePair<string, string>("password", password)
-                                 };
-
-            return LoginWithCredentialsAsync("login", parameters, proxy);
-        }
-
-        /// <summary>
-        /// Logins user and returns a new instance of Todoist client.
-        /// </summary>
-        /// <param name="email">The email.</param>
-        /// <param name="oauthToken">The oauth token.</param>
-        /// <returns>A new instance of Todoist client.</returns>
-        /// <exception cref="System.ArgumentException">Value cannot be null or empty - email
-        /// or
-        /// Value cannot be null or empty - password</exception>
-        /// <exception cref="HttpRequestException">Value cannot be null or empty - email
-        /// or
-        /// Value cannot be null or empty - password</exception>
-        /// <exception cref="TodoistException">API exception.</exception>
-        [Obsolete("This method is scheduled for deprecation and probably will be removed in future versions.")]
-        public static Task<TodoistClient> LoginWithGoogleAsync(string email, string oauthToken)
-        {
-            return LoginWithGoogleAsync(email, oauthToken, null);
-        }
-
-        /// <summary>
-        /// Logins user and returns a new instance of Todoist client.
-        /// </summary>
-        /// <param name="email">The email.</param>
-        /// <param name="oauthToken">The oauth token.</param>
-        /// <param name="proxy">The proxy.</param>
-        /// <returns>
-        /// A new instance of Todoist client.
-        /// </returns>
-        /// <exception cref="ArgumentException">
-        /// Value cannot be null or empty. - email
-        /// or
-        /// Value cannot be null or empty. - oauthToken
-        /// </exception>
-        /// <exception cref="System.ArgumentException">Value cannot be null or empty - email
-        /// or
-        /// Value cannot be null or empty - password</exception>
-        /// <exception cref="HttpRequestException">Value cannot be null or empty - email
-        /// or
-        /// Value cannot be null or empty - password</exception>
-        /// <exception cref="TodoistException">API exception.</exception>
-        [Obsolete("This method is scheduled for deprecation and probably will be removed in future versions.")]
-        public static Task<TodoistClient> LoginWithGoogleAsync(string email, string oauthToken, IWebProxy proxy)
-        {
-            if (string.IsNullOrEmpty(email))
-            {
-                throw new ArgumentException("Value cannot be null or empty.", nameof(email));
-            }
-
-            if (string.IsNullOrEmpty(oauthToken))
-            {
-                throw new ArgumentException("Value cannot be null or empty.", nameof(oauthToken));
-            }
-
-            var parameters = new[]
-                                 {
-                                     new KeyValuePair<string, string>("email", email),
-                                     new KeyValuePair<string, string>("oauth2_token", oauthToken)
-                                 };
-
-            return LoginWithCredentialsAsync("login_with_google", parameters, proxy);
-        }
-
-        /// <summary>
-        /// Registers a new user.
-        /// </summary>
-        /// <param name="user">The user.</param>
-        /// <returns>
-        /// The user info.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="user" /> is <see langword="null" /></exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public static Task<UserInfo> RegisterUserAsync(UserBase user)
-        {
-            // ReSharper disable once IntroduceOptionalParameters.Global
-            return RegisterUserAsync(user, null);
-        }
-
-        /// <summary>
-        /// Registers a new user.
-        /// </summary>
-        /// <param name="user">The user.</param>
-        /// <param name="proxy">The proxy.</param>
-        /// <returns>
-        /// The user info.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="user" /> is <see langword="null" /></exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public static async Task<UserInfo> RegisterUserAsync(UserBase user, IWebProxy proxy)
-        {
-            if (user == null)
-            {
-                throw new ArgumentNullException(nameof(user));
-            }
-
-            using (var tokenlessClient = new TodoistClient(proxy))
-            {
-                var userInfo =
-                    await tokenlessClient.ProcessPostAsync<UserInfo>("user/register", user.ToParameters())
-                        .ConfigureAwait(false);
-
-                return userInfo;
-            }
-        }
-
-        /// <summary>
         /// Creates the transaction.
         /// </summary>
         /// <returns>The transaction.</returns>
@@ -370,7 +206,7 @@ namespace Todoist.Net
         /// <returns>
         /// All resources.
         /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="resourceTypes"/> is <see langword="null"/></exception>
+        /// <exception cref="ArgumentNullException"><paramref name="resourceTypes" /> is <see langword="null" /></exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         public Task<Resources> GetResourcesAsync(params ResourceType[] resourceTypes)
         {
@@ -436,9 +272,12 @@ namespace Todoist.Net
 
             var parameters = new LinkedList<KeyValuePair<string, string>>();
             parameters.AddLast(
-                new KeyValuePair<string, string>("commands", JsonConvert.SerializeObject(commands, SerializerSettings)));
+                new KeyValuePair<string, string>(
+                    "commands",
+                    JsonConvert.SerializeObject(commands, SerializerSettings)));
 
-            var syncResponse = await ProcessSyncAsync<SyncResponse>(parameters).ConfigureAwait(false);
+            var syncResponse = await ProcessSyncAsync<SyncResponse>(parameters)
+                                   .ConfigureAwait(false);
 
             ThrowIfErrors(syncResponse);
 
@@ -462,7 +301,7 @@ namespace Todoist.Net
             string resource,
             ICollection<KeyValuePair<string, string>> parameters)
         {
-            return ProcessPostAsync<T>(resource, parameters);
+            return ((IAdvancedTodoistClient)this).ProcessPostAsync<T>(resource, parameters);
         }
 
         /// <summary>
@@ -482,27 +321,23 @@ namespace Todoist.Net
         }
 
         /// <summary>
-        /// Logins with credentials and returns a new instance of Todoist client.
+        /// Processes the request asynchronous.
         /// </summary>
+        /// <typeparam name="T">The type of the result.</typeparam>
         /// <param name="resource">The resource.</param>
         /// <param name="parameters">The parameters.</param>
-        /// <param name="proxy">The proxy.</param>
         /// <returns>
-        /// A new instance of Todoist client.
+        /// The result of the operation.
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="TodoistException">Unable to get token.</exception>
-        private static async Task<TodoistClient> LoginWithCredentialsAsync(
+        async Task<T> IAdvancedTodoistClient.ProcessPostAsync<T>(
             string resource,
-            KeyValuePair<string, string>[] parameters,
-            IWebProxy proxy)
+            ICollection<KeyValuePair<string, string>> parameters)
         {
-            using (var tokenlessClient = new TodoistClient(proxy))
-            {
-                var userInfo = await tokenlessClient.ProcessPostAsync<UserInfo>(resource, parameters).ConfigureAwait(false);
+            var responseContent = await ProcessRawPostAsync(resource, parameters)
+                                      .ConfigureAwait(false);
 
-                return new TodoistClient(userInfo.Token);
-            }
+            return DeserializeResponse<T>(responseContent);
         }
 
         private T DeserializeResponse<T>(string responseContent)
@@ -526,25 +361,10 @@ namespace Todoist.Net
         {
             TryAddToken(parameters);
 
-            var response = await _restClient.PostFormAsync(resource, parameters, files).ConfigureAwait(false);
-            var responseContent = await ReadResponseAsync(response).ConfigureAwait(false);
-
-            return DeserializeResponse<T>(responseContent);
-        }
-
-        /// <summary>
-        /// Processes the request asynchronous.
-        /// </summary>
-        /// <typeparam name="T">The type of the result.</typeparam>
-        /// <param name="resource">The resource.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>
-        /// The result of the operation.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        private async Task<T> ProcessPostAsync<T>(string resource, ICollection<KeyValuePair<string, string>> parameters)
-        {
-            var responseContent = await ProcessRawPostAsync(resource, parameters).ConfigureAwait(false);
+            var response = await _restClient.PostFormAsync(resource, parameters, files)
+                               .ConfigureAwait(false);
+            var responseContent = await ReadResponseAsync(response)
+                                      .ConfigureAwait(false);
 
             return DeserializeResponse<T>(responseContent);
         }
@@ -562,9 +382,11 @@ namespace Todoist.Net
         {
             TryAddToken(parameters);
 
-            HttpResponseMessage response = await _restClient.PostAsync(resource, parameters).ConfigureAwait(false);
+            var response = await _restClient.PostAsync(resource, parameters)
+                               .ConfigureAwait(false);
 
-            var responseContent = await ReadResponseAsync(response).ConfigureAwait(false);
+            var responseContent = await ReadResponseAsync(response)
+                                      .ConfigureAwait(false);
             return responseContent;
         }
 
@@ -577,7 +399,7 @@ namespace Todoist.Net
         /// <exception cref="HttpRequestException">API exception.</exception>
         private Task<T> ProcessSyncAsync<T>(ICollection<KeyValuePair<string, string>> parameters)
         {
-            return ProcessPostAsync<T>("sync", parameters);
+            return ((IAdvancedTodoistClient)this).ProcessPostAsync<T>("sync", parameters);
         }
 
         /// <summary>
@@ -588,7 +410,8 @@ namespace Todoist.Net
         /// <returns>The response content.</returns>
         private async Task<string> ReadResponseAsync(HttpResponseMessage response)
         {
-            var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var responseContent = await response.Content.ReadAsStringAsync()
+                                      .ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -623,7 +446,10 @@ namespace Todoist.Net
                 }
 
                 exceptions.AddLast(
-                    new TodoistException((long)dynamicStatus.error_code, dynamicStatus.error.ToString(), dynamicStatus));
+                    new TodoistException(
+                        (long)dynamicStatus.error_code,
+                        dynamicStatus.error.ToString(),
+                        dynamicStatus));
             }
 
             if (exceptions?.Any() == true)
@@ -644,11 +470,9 @@ namespace Todoist.Net
         {
             foreach (var command in commands)
             {
-                var identifiedArgument = command.Argument as BaseEntity;
-                if (identifiedArgument != null)
+                if (command.Argument is BaseEntity identifiedArgument)
                 {
-                    long persistentId;
-                    if (command.TempId.HasValue && tempIdMappings.TryGetValue(command.TempId.Value, out persistentId))
+                    if (command.TempId.HasValue && tempIdMappings.TryGetValue(command.TempId.Value, out var persistentId))
                     {
                         identifiedArgument.Id = persistentId;
                     }

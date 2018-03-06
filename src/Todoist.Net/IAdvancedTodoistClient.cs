@@ -56,5 +56,17 @@ namespace Todoist.Net
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task<string> PostRawAsync(string resource, ICollection<KeyValuePair<string, string>> parameters);
+
+        /// <summary>
+        /// Processes the request asynchronous.
+        /// </summary>
+        /// <typeparam name="T">The type of the result.</typeparam>
+        /// <param name="resource">The resource.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>
+        /// The result of the operation.
+        /// </returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        Task<T> ProcessPostAsync<T>(string resource, ICollection<KeyValuePair<string, string>> parameters);
     }
 }
