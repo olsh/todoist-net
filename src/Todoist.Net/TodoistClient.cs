@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -47,6 +48,17 @@ namespace Todoist.Net
         /// Initializes a new instance of the <see cref="TodoistClient" /> class.
         /// </summary>
         /// <param name="token">The token.</param>
+        /// <param name="proxy">The proxy.</param>
+        /// <exception cref="ArgumentException">Value cannot be null or empty - token</exception>
+        public TodoistClient(string token, IWebProxy proxy)
+            : this(token, new TodoistRestClient(proxy))
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TodoistClient" /> class.
+        /// </summary>
+        /// <param name="token">The token.</param>
         /// <param name="restClient">The rest client.</param>
         /// <exception cref="System.ArgumentException">Value cannot be null or empty - token</exception>
         internal TodoistClient(string token, ITodoistRestClient restClient)
@@ -75,9 +87,9 @@ namespace Todoist.Net
             Emails = new EmailService(this);
         }
 
-        private TodoistClient()
+        private TodoistClient(IWebProxy webProxy)
         {
-            _restClient = new TodoistRestClient();
+            _restClient = new TodoistRestClient(webProxy);
         }
 
         /// <summary>
@@ -186,6 +198,31 @@ namespace Todoist.Net
         [Obsolete("This method is scheduled for deprecation and probably will be removed in future versions.")]
         public static Task<TodoistClient> LoginAsync(string email, string password)
         {
+            return LoginAsync(email, password, null);
+        }
+
+        /// <summary>
+        /// Logins user and returns a new instance of Todoist client.
+        /// </summary>
+        /// <param name="email">The email.</param>
+        /// <param name="password">The password.</param>
+        /// <param name="proxy">The proxy.</param>
+        /// <returns>
+        /// A new instance of Todoist client.
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        /// Value cannot be null or empty. - email
+        /// or
+        /// Value cannot be null or empty. - password
+        /// </exception>
+        /// <exception cref="System.ArgumentException">Value cannot be null or empty - email
+        /// or
+        /// Value cannot be null or empty - password</exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <exception cref="TodoistException">Unable to get token.</exception>
+        [Obsolete("This method is scheduled for deprecation and probably will be removed in future versions.")]
+        public static Task<TodoistClient> LoginAsync(string email, string password, IWebProxy proxy)
+        {
             if (string.IsNullOrEmpty(email))
             {
                 throw new ArgumentException("Value cannot be null or empty.", nameof(email));
@@ -202,7 +239,7 @@ namespace Todoist.Net
                                      new KeyValuePair<string, string>("password", password)
                                  };
 
-            return LoginWithCredentialsAsync("login", parameters);
+            return LoginWithCredentialsAsync("login", parameters, proxy);
         }
 
         /// <summary>
@@ -221,6 +258,33 @@ namespace Todoist.Net
         [Obsolete("This method is scheduled for deprecation and probably will be removed in future versions.")]
         public static Task<TodoistClient> LoginWithGoogleAsync(string email, string oauthToken)
         {
+            return LoginWithGoogleAsync(email, oauthToken, null);
+        }
+
+        /// <summary>
+        /// Logins user and returns a new instance of Todoist client.
+        /// </summary>
+        /// <param name="email">The email.</param>
+        /// <param name="oauthToken">The oauth token.</param>
+        /// <param name="proxy">The proxy.</param>
+        /// <returns>
+        /// A new instance of Todoist client.
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        /// Value cannot be null or empty. - email
+        /// or
+        /// Value cannot be null or empty. - oauthToken
+        /// </exception>
+        /// <exception cref="System.ArgumentException">Value cannot be null or empty - email
+        /// or
+        /// Value cannot be null or empty - password</exception>
+        /// <exception cref="HttpRequestException">Value cannot be null or empty - email
+        /// or
+        /// Value cannot be null or empty - password</exception>
+        /// <exception cref="TodoistException">API exception.</exception>
+        [Obsolete("This method is scheduled for deprecation and probably will be removed in future versions.")]
+        public static Task<TodoistClient> LoginWithGoogleAsync(string email, string oauthToken, IWebProxy proxy)
+        {
             if (string.IsNullOrEmpty(email))
             {
                 throw new ArgumentException("Value cannot be null or empty.", nameof(email));
@@ -237,24 +301,42 @@ namespace Todoist.Net
                                      new KeyValuePair<string, string>("oauth2_token", oauthToken)
                                  };
 
-            return LoginWithCredentialsAsync("login_with_google", parameters);
+            return LoginWithCredentialsAsync("login_with_google", parameters, proxy);
         }
 
         /// <summary>
         /// Registers a new user.
         /// </summary>
         /// <param name="user">The user.</param>
-        /// <returns>The user info.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="user"/> is <see langword="null"/></exception>
+        /// <returns>
+        /// The user info.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="user" /> is <see langword="null" /></exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public static async Task<UserInfo> RegisterUserAsync(UserBase user)
+        public static Task<UserInfo> RegisterUserAsync(UserBase user)
+        {
+            // ReSharper disable once IntroduceOptionalParameters.Global
+            return RegisterUserAsync(user, null);
+        }
+
+        /// <summary>
+        /// Registers a new user.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <param name="proxy">The proxy.</param>
+        /// <returns>
+        /// The user info.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="user" /> is <see langword="null" /></exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        public static async Task<UserInfo> RegisterUserAsync(UserBase user, IWebProxy proxy)
         {
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
             }
 
-            using (var tokenlessClient = new TodoistClient())
+            using (var tokenlessClient = new TodoistClient(proxy))
             {
                 var userInfo =
                     await tokenlessClient.ProcessPostAsync<UserInfo>("user/register", user.ToParameters())
@@ -404,14 +486,18 @@ namespace Todoist.Net
         /// </summary>
         /// <param name="resource">The resource.</param>
         /// <param name="parameters">The parameters.</param>
-        /// <returns>A new instance of Todoist client.</returns>
+        /// <param name="proxy">The proxy.</param>
+        /// <returns>
+        /// A new instance of Todoist client.
+        /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="TodoistException">Unable to get token.</exception>
         private static async Task<TodoistClient> LoginWithCredentialsAsync(
             string resource,
-            KeyValuePair<string, string>[] parameters)
+            KeyValuePair<string, string>[] parameters,
+            IWebProxy proxy)
         {
-            using (var tokenlessClient = new TodoistClient())
+            using (var tokenlessClient = new TodoistClient(proxy))
             {
                 var userInfo = await tokenlessClient.ProcessPostAsync<UserInfo>(resource, parameters).ConfigureAwait(false);
 

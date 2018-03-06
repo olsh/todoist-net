@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -9,10 +10,21 @@ namespace Todoist.Net
     {
         private readonly HttpClient _httpClient;
 
-        public TodoistRestClient()
+        public TodoistRestClient() : this(null)
         {
+        }
+
+        public TodoistRestClient(IWebProxy proxy)
+        {
+            var httpClientHandler = new HttpClientHandler();
+            if (proxy != null)
+            {
+                httpClientHandler.Proxy = proxy;
+                httpClientHandler.UseProxy = true;
+            }
+
             // ReSharper disable once ExceptionNotDocumented
-            _httpClient = new HttpClient { BaseAddress = new Uri("https://todoist.com/API/v7/") };
+            _httpClient = new HttpClient(httpClientHandler) { BaseAddress = new Uri("https://todoist.com/API/v7/") };
         }
 
         public void Dispose()
