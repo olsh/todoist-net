@@ -470,12 +470,10 @@ namespace Todoist.Net
         {
             foreach (var command in commands)
             {
-                if (command.Argument is BaseEntity identifiedArgument)
+                if (command.Argument is BaseEntity identifiedArgument && command.TempId.HasValue
+                        && tempIdMappings.TryGetValue(command.TempId.Value, out var persistentId))
                 {
-                    if (command.TempId.HasValue && tempIdMappings.TryGetValue(command.TempId.Value, out var persistentId))
-                    {
-                        identifiedArgument.Id = persistentId;
-                    }
+                    identifiedArgument.Id = persistentId;
                 }
 
                 var withRelations = command.Argument as IWithRelationsArgument;
