@@ -23,7 +23,8 @@ ITodoistClient client = new TodoistClient("API token");
 
 With email and password.
 ```csharp
-ITodoistClient client = await TodoistClient.LoginAsync("email", "password");
+ITodoistTokenlessClient tokenlessClient = new TodoistTokenlessClient();
+ITodoistClient todoistClient = await tokenlessClient.LoginAsync("email", "password");
 ```
 
 ### Quick add
