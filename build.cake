@@ -1,8 +1,6 @@
 #tool "nuget:?package=OpenCover"
 #tool "nuget:?package=Codecov"
-#tool "nuget:?package=PublishCoverity"
 
-#addin "Cake.Incubator"
 #addin "nuget:?package=Cake.Codecov"
 
 var target = Argument("target", "Default");
@@ -25,32 +23,10 @@ Task("UpdateBuildVersion")
     BuildSystem.AppVeyor.UpdateBuildVersion(string.Format("{0}.{1}", extensionsVersion, buildNumber));
 });
 
-Task("NugetRestore")
-  .Does(() =>
-{
-    DotNetCoreRestore();
-});
-
-Task("UpdateAssemblyVersion")
-  .Does(() =>
-{
-    var assemblyFile = string.Format("{0}/Properties/AssemblyInfo.cs", projectFolder);
-
-    AssemblyInfoSettings assemblySettings = new AssemblyInfoSettings();
-    assemblySettings.Title = projectName;
-    assemblySettings.FileVersion = extensionsVersion;
-    assemblySettings.Version = extensionsVersion;
-    assemblySettings.InternalsVisibleTo = new [] { testProjectName };
-
-    CreateAssemblyInfo(assemblyFile, assemblySettings);
-});
-
 Task("Build")
-  .IsDependentOn("NugetRestore")
-  .IsDependentOn("UpdateAssemblyVersion")
   .Does(() =>
 {
-    DotNetBuild(string.Format("{0}.sln", projectName), 
+    MSBuild(string.Format("{0}.sln", projectName), 
     settings => settings
         .SetConfiguration(buildConfiguration)
         .SetVerbosity(Verbosity.Minimal));
