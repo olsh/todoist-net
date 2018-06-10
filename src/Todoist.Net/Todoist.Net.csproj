@@ -16,9 +16,6 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/olsh/todoist-net</RepositoryUrl>
     <PackageIconUrl>http://raw.githubusercontent.com/olsh/todoist-net/master/images/todoist-net-nuget.png</PackageIconUrl>
-
-    <!-- Workaround for OpenCover https://github.com/OpenCover/opencover/issues/601 -->
-    <DebugType>full</DebugType>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.1' ">

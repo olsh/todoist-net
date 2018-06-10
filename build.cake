@@ -1,4 +1,3 @@
-#tool "nuget:?package=OpenCover"
 #tool "nuget:?package=Codecov"
 
 #addin "nuget:?package=Cake.Codecov"
@@ -9,6 +8,7 @@ var buildConfiguration = "Release";
 var projectName = "Todoist.Net";
 var testProjectName = "Todoist.Net.Tests";
 var projectFolder = string.Format("./src/{0}/", projectName);
+var testProjectFolder = string.Format("./src/{0}/", testProjectName);
 var projectFile = string.Format("./src/{0}/{0}.csproj", projectName);
 var testProjectFile = string.Format("./src/{0}/{0}.csproj", testProjectName);
 
@@ -50,25 +50,17 @@ Task("CodeCoverage")
   .IsDependentOn("Build")
   .Does(() =>
 {
-    var settings = new DotNetCoreTestSettings
-    {
-        Configuration = buildConfiguration
-    };
+	var settings = new DotNetCoreTestSettings
+	{
+		Configuration = buildConfiguration,
+		ArgumentCustomization = args => args
+											.Append("/p:CollectCoverage=true")
+                                            .Append("/p:CoverletOutputFormat=opencover")
+	};
 
-    var coverageSettings = new OpenCoverSettings
-    {
-        // Workaround for the issue https://github.com/OpenCover/opencover/issues/601
-        OldStyle = true
-    };
+    DotNetCoreTest(testProjectFile, settings);
 
-	var coverageFileName = "./coverage.xml";
-    OpenCover(tool => { tool.DotNetCoreTest(testProjectFile, settings); },
-      new FilePath(coverageFileName),
-      coverageSettings
-        .WithFilter("+[Todoist.Net]*")
-        .WithFilter("-[Todoist.Net.Tests]*"));
-
-    Codecov(coverageFileName, EnvironmentVariable("codecov:token"));
+    Codecov(string.Format("{0}coverage.xml", testProjectFolder), EnvironmentVariable("codecov:token"));
 });
 
 Task("NugetPack")
