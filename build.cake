@@ -26,10 +26,12 @@ Task("UpdateBuildVersion")
 Task("Build")
   .Does(() =>
 {
-    MSBuild(string.Format("{0}.sln", projectName), 
-    settings => settings
-        .SetConfiguration(buildConfiguration)
-        .SetVerbosity(Verbosity.Minimal));
+    var settings = new DotNetCoreBuildSettings
+    {
+        Configuration = buildConfiguration
+    };
+
+    DotNetCoreBuild(string.Format("{0}.sln", projectName), settings);
 });
 
 Task("Test")
