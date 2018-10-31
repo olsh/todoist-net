@@ -1,6 +1,8 @@
-#tool "nuget:?package=Codecov"
+#tool nuget:?package=Codecov
+#addin nuget:?package=Cake.Codecov
 
-#addin "nuget:?package=Cake.Codecov"
+#tool nuget:?package=MSBuild.SonarQube.Runner.Tool
+#addin nuget:?package=Cake.Sonar
 
 var target = Argument("target", "Default");
 
@@ -50,13 +52,13 @@ Task("CodeCoverage")
   .IsDependentOn("Build")
   .Does(() =>
 {
-	var settings = new DotNetCoreTestSettings
-	{
-		Configuration = buildConfiguration,
-		ArgumentCustomization = args => args
-											.Append("/p:CollectCoverage=true")
+    var settings = new DotNetCoreTestSettings
+    {
+        Configuration = buildConfiguration,
+        ArgumentCustomization = args => args
+                                            .Append("/p:CollectCoverage=true")
                                             .Append("/p:CoverletOutputFormat=opencover")
-	};
+    };
 
     DotNetCoreTest(testProjectFile, settings);
 
@@ -84,12 +86,38 @@ Task("CreateArtifact")
     BuildSystem.AppVeyor.UploadArtifact(string.Format("{0}.{1}.nupkg", projectName, extensionsVersion));
 });
 
+Task("SonarBegin")
+  .Does(() => {
+     SonarBegin(new SonarBeginSettings {
+        Url = "https://sonarcloud.io",
+        Login = EnvironmentVariable("sonar:apikey"),
+        Key = "todoist-net",
+        Name = "Todoist.Net",
+        ArgumentCustomization = args => args
+            .Append($"/o:olsh-github"),
+        Version = "1.0.0.0"
+     });
+  });
+
+Task("SonarEnd")
+  .Does(() => {
+     SonarEnd(new SonarEndSettings {
+        Login = EnvironmentVariable("sonar:apikey")
+     });
+  });
+
+Task("Sonar")
+  .IsDependentOn("SonarBegin")
+  .IsDependentOn("Build")
+  .IsDependentOn("SonarEnd");
+
 Task("Default")
     .IsDependentOn("Test")
     .IsDependentOn("NugetPack");
 
 Task("CI")
     .IsDependentOn("UpdateBuildVersion")
+    .IsDependentOn("Sonar")
     .IsDependentOn("CodeCoverage")
     .IsDependentOn("CreateArtifact");
 
