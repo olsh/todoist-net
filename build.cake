@@ -62,7 +62,7 @@ Task("CodeCoverage")
 
     DotNetCoreTest(testProjectFile, settings);
 
-    Codecov(string.Format("{0}coverage.xml", testProjectFolder), EnvironmentVariable("codecov:token"));
+    Codecov(string.Format("{0}coverage.opencover.xml", testProjectFolder), EnvironmentVariable("codecov:token"));
 });
 
 Task("NugetPack")
