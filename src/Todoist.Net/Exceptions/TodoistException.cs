@@ -1,9 +1,6 @@
 ﻿using System;
-#if NETFW
 using System.Runtime.Serialization;
 using System.Security.Permissions;
-
-#endif
 
 namespace Todoist.Net.Exceptions
 {
@@ -11,9 +8,7 @@ namespace Todoist.Net.Exceptions
     ///     Represents an errors that occur during requests to Todoist API.
     /// </summary>
     /// <seealso cref="System.Exception" />
-#if NETFW
     [Serializable]
-#endif
     public sealed class TodoistException : Exception
     {
         /// <summary>
@@ -80,7 +75,6 @@ namespace Todoist.Net.Exceptions
         /// <value>The raw error.</value>
         public dynamic RawError { get; }
 
-#if NETFW
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         private TodoistException(SerializationInfo info, StreamingContext context)
             : base(info, context)
@@ -102,7 +96,5 @@ namespace Todoist.Net.Exceptions
 
             base.GetObjectData(info, context);
         }
-
-#endif
     }
 }

@@ -19,8 +19,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Todoist.Net\Todoist.Net.csproj" />
   </ItemGroup>
-  
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
-    <Reference Include="System.Net.Http" />
-  </ItemGroup>
 </Project>

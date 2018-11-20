@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{32567012-95F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{28A18847-32D8-4A08-A1BF-BC51E3FBAB96}"
 	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
 		build.cake = build.cake
 		README.md = README.md
 	EndProjectSection
@@ -36,5 +37,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{0D84413B-43C0-4F0E-92A6-669F2E9EA5CB} = {32567012-95F2-4535-A545-6A48FEAF0A32}
 		{6F7D284C-2790-41E6-BAB5-DB0524F630D7} = {32567012-95F2-4535-A545-6A48FEAF0A32}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B041B20E-5078-409B-A474-8004179914FC}
 	EndGlobalSection
 EndGlobal
