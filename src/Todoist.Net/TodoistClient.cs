@@ -61,7 +61,7 @@ namespace Todoist.Net
         /// <param name="token">The token.</param>
         /// <param name="restClient">The rest client.</param>
         /// <exception cref="System.ArgumentException">Value cannot be null or empty - token</exception>
-        internal TodoistClient(string token, ITodoistRestClient restClient)
+        public TodoistClient(string token, ITodoistRestClient restClient)
         {
             if (string.IsNullOrEmpty(token))
             {
@@ -87,9 +87,9 @@ namespace Todoist.Net
             Emails = new EmailService(this);
         }
 
-        internal TodoistClient(IWebProxy webProxy)
+        internal TodoistClient(ITodoistRestClient restClient)
         {
-            _restClient = new TodoistRestClient(webProxy);
+            _restClient = restClient ?? throw new ArgumentNullException(nameof(restClient));
         }
 
         /// <summary>

@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 
 namespace Todoist.Net
 {
-    internal interface ITodoistRestClient : IDisposable
+    /// <summary>
+    /// Represents a REST client.
+    /// </summary>
+    public interface ITodoistRestClient : IDisposable
     {
         /// <summary>
         /// Posts the asynchronous.

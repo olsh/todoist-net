@@ -21,8 +21,7 @@ namespace Todoist.Net
         /// <summary>
         /// Initializes a new instance of the <see cref="TodoistTokenlessClient" /> class.
         /// </summary>
-        public TodoistTokenlessClient()
-            : this(null)
+        public TodoistTokenlessClient() : this(new TodoistRestClient())
         {
         }
 
@@ -30,9 +29,17 @@ namespace Todoist.Net
         /// Initializes a new instance of the <see cref="TodoistTokenlessClient" /> class.
         /// </summary>
         /// <param name="proxy">The proxy.</param>
-        public TodoistTokenlessClient(IWebProxy proxy)
+        public TodoistTokenlessClient(IWebProxy proxy) : this(new TodoistRestClient(proxy))
         {
-            _todoistClient = new TodoistClient(proxy);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TodoistTokenlessClient" /> class.
+        /// </summary>
+        /// <param name="restClient">The rest client.</param>
+        public TodoistTokenlessClient(ITodoistRestClient restClient)
+        {
+            _todoistClient = new TodoistClient(restClient);
         }
 
         /// <summary>
