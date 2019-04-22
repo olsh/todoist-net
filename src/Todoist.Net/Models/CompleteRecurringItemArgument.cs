@@ -1,33 +1,40 @@
-﻿using System;
-
-using Newtonsoft.Json;
-
-using Todoist.Net.Serialization.Converters;
+﻿using Newtonsoft.Json;
 
 namespace Todoist.Net.Models
 {
-    internal class CompleteRecurringItemArgument : ICommandArgument
+    /// <summary>
+    /// Represents complete item argument.
+    /// </summary>
+    /// <seealso cref="Todoist.Net.Models.ICommandArgument" />
+    public class CompleteRecurringItemArgument : ICommandArgument
     {
-        public CompleteRecurringItemArgument(RecurringItemState recurringItemState)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CompleteRecurringItemArgument" /> class.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="dueDate">The due date.</param>
+        public CompleteRecurringItemArgument(ComplexId id, DueDate dueDate = null)
         {
-            Id = recurringItemState.Id;
-            DateString = recurringItemState.DateString;
-            IsForward = recurringItemState.IsForward;
-            NewDate = recurringItemState.NewDate;
+            DueDate = dueDate;
+            Id = id;
         }
 
-        [JsonProperty("date_string")]
-        public string DateString { get; }
+        /// <summary>
+        /// Gets the due date.
+        /// </summary>
+        /// <value>
+        /// The due date.
+        /// </value>
+        [JsonProperty("due")]
+        public DueDate DueDate { get; }
 
+        /// <summary>
+        /// Gets the identifier.
+        /// </summary>
+        /// <value>
+        /// The identifier.
+        /// </value>
         [JsonProperty("id")]
         public ComplexId Id { get; }
-
-        [JsonConverter(typeof(BoolConverter))]
-        [JsonProperty("is_forward")]
-        public bool? IsForward { get; }
-
-        [JsonConverter(typeof(UtcDateTimeConverter))]
-        [JsonProperty("new_date_utc")]
-        public DateTime? NewDate { get; }
     }
 }

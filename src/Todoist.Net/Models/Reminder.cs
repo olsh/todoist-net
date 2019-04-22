@@ -1,6 +1,4 @@
-﻿using System;
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 using Todoist.Net.Serialization.Converters;
 
@@ -29,26 +27,13 @@ namespace Todoist.Net.Models
         }
 
         /// <summary>
-        /// Gets or sets the date language.
+        /// Gets or sets the due date.
         /// </summary>
-        /// <value>The date language.</value>
-        [JsonProperty("date_lang")]
-        public Language DateLanguage { get; set; }
-
-        /// <summary>
-        /// Gets or sets the date string.
-        /// </summary>
-        /// <value>The date string.</value>
-        [JsonProperty("date_string")]
-        public string DateString { get; set; }
-
-        /// <summary>
-        /// Gets or sets the due date UTC.
-        /// </summary>
-        /// <value>The due date UTC.</value>
-        [JsonConverter(typeof(UtcDateTimeConverter))]
-        [JsonProperty("due_date_utc")]
-        public DateTime? DueDateUtc { get; set; }
+        /// <value>
+        /// The due date.
+        /// </value>
+        [JsonProperty("due")]
+        public DueDate DueDate { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is deleted.

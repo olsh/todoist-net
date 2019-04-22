@@ -61,5 +61,23 @@ namespace Todoist.Net.Services
                         new KeyValuePair<string, string>("project_id", id.ToString())
                     });
         }
+
+        /// <summary>
+        /// Gets a project’s uncompleted items.
+        /// </summary>
+        /// <param name="id">The ID of the project.</param>
+        /// <returns>
+        /// The project data.
+        /// </returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        public Task<ProjectData> GetDataAsync(ComplexId id)
+        {
+            return TodoistClient.PostAsync<ProjectData>(
+                "projects/get_data",
+                new List<KeyValuePair<string, string>>
+                    {
+                        new KeyValuePair<string, string>("project_id", id.ToString())
+                    });
+        }
     }
 }

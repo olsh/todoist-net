@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-
-using Todoist.Net.Extensions;
 
 namespace Todoist.Net.Models
 {
@@ -77,16 +74,12 @@ namespace Todoist.Net.Models
         public long? ParentProjectId { get; set; }
 
         /// <summary>
-        /// Gets or sets the since.
+        /// Gets or sets the page.
         /// </summary>
-        /// <value>The since.</value>
-        public DateTime? Since { get; set; }
-
-        /// <summary>
-        /// Gets or sets the until.
-        /// </summary>
-        /// <value>The until.</value>
-        public DateTime? Until { get; set; }
+        /// <value>
+        /// The page.
+        /// </value>
+        public long? Page { get; set; }
 
         // ReSharper disable once FunctionComplexityOverflow
         internal ICollection<KeyValuePair<string, string>> ToParameters()
@@ -130,14 +123,9 @@ namespace Todoist.Net.Models
                 parameters.AddLast(new KeyValuePair<string, string>("initiator_id", InitiatorId.Value.ToString()));
             }
 
-            if (Since.HasValue)
+            if (Page.HasValue)
             {
-                parameters.AddLast(new KeyValuePair<string, string>("since", Since.Value.ToFilterParameter()));
-            }
-
-            if (Until.HasValue)
-            {
-                parameters.AddLast(new KeyValuePair<string, string>("until", Until.Value.ToFilterParameter()));
+                parameters.AddLast(new KeyValuePair<string, string>("page", Page.Value.ToString()));
             }
 
             if (Limit.HasValue)

@@ -38,8 +38,8 @@ namespace Todoist.Net.Models
         /// Gets or sets the indent.
         /// </summary>
         /// <value>The indent.</value>
-        [JsonProperty("indent")]
-        public int? Indent { get; set; }
+        [JsonProperty("parent_id")]
+        public long? ParentId { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is archived.
@@ -58,11 +58,11 @@ namespace Todoist.Net.Models
         public bool IsDeleted { get; internal set; }
 
         /// <summary>
-        /// Gets or sets the item order.
+        /// Gets or sets order of project. Defines the position of the project among all the projects with the same parent_id.
         /// </summary>
-        /// <value>The item order.</value>
-        [JsonProperty("item_order")]
-        public int? ItemOrder { get; set; }
+        /// <value>The project order.</value>
+        [JsonProperty("child_order")]
+        public int? ChildOrder { get; set; }
 
         /// <summary>
         /// Gets or sets the name.

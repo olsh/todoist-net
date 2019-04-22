@@ -21,6 +21,8 @@ namespace Todoist.Net.Models
 
         public static CommandType AddReminder { get; } = new CommandType("reminder_add");
 
+        public static CommandType ArchiveItem { get; } = new CommandType("item_archive");
+
         public static CommandType ArchiveProject { get; } = new CommandType("project_archive");
 
         public static CommandType ClearLocations { get; } = new CommandType("clear_locations");
@@ -49,11 +51,20 @@ namespace Todoist.Net.Models
 
         public static CommandType MoveItem { get; } = new CommandType("item_move");
 
+        public static CommandType MoveProject { get; } = new CommandType("project_move");
+
         public static CommandType RejectInvitation { get; } = new CommandType("reject_invitation");
 
-        public static CommandType SetLastReadNotification { get; } = new CommandType("live_notifications_set_last_read");
+        public static CommandType ReorderItems { get; } = new CommandType("item_reorder");
+
+        public static CommandType ReorderProjects { get; } = new CommandType("project_reorder");
+
+        public static CommandType SetLastReadNotification { get; } =
+            new CommandType("live_notifications_set_last_read");
 
         public static CommandType ShareProject { get; } = new CommandType("share_project");
+
+        public static CommandType UnArchiveItem { get; } = new CommandType("item_unarchive");
 
         public static CommandType UnarchiveProject { get; } = new CommandType("project_unarchive");
 
@@ -72,10 +83,6 @@ namespace Todoist.Net.Models
         public static CommandType UpdateNote { get; } = new CommandType("note_update");
 
         public static CommandType UpdateOrderFilter { get; } = new CommandType("filter_update_orders");
-
-        public static CommandType UpdateOrderIndentsItem { get; } = new CommandType("item_update_orders_indents");
-
-        public static CommandType UpdateOrderIndentsProject { get; } = new CommandType("project_update_orders_indents");
 
         public static CommandType UpdateOrderLabel { get; } = new CommandType("label_update_orders");
 

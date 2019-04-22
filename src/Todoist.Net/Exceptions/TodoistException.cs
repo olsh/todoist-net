@@ -63,6 +63,13 @@ namespace Todoist.Net.Exceptions
             Code = code;
         }
 
+        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+        private TodoistException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            Code = info.GetInt64(nameof(Code));
+        }
+
         /// <summary>
         ///     Gets the code.
         /// </summary>
@@ -74,13 +81,6 @@ namespace Todoist.Net.Exceptions
         /// </summary>
         /// <value>The raw error.</value>
         public dynamic RawError { get; }
-
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-        private TodoistException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            Code = info.GetInt64(nameof(Code));
-        }
 
         /// <inheritdoc />
         public override void GetObjectData(SerializationInfo info, StreamingContext context)

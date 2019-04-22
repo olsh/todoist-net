@@ -14,12 +14,13 @@ namespace Todoist.Net.Models
     public class Item : BaseEntity, IWithRelationsArgument
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Item"/> class.
+        /// Initializes a new instance of the <see cref="Item" /> class.
         /// </summary>
         /// <param name="content">The content.</param>
         public Item(string content)
+
             // ReSharper disable once IntroduceOptionalParameters.Global
-            : this(content, default(ComplexId))
+            : this(content, default)
         {
         }
 
@@ -47,7 +48,14 @@ namespace Todoist.Net.Models
         public long? AssignedByUid { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="Item"/> is collapsed.
+        /// Gets or sets order of project. Defines the position of the project among all the projects with the same parent_id.
+        /// </summary>
+        /// <value>The project order.</value>
+        [JsonProperty("child_order")]
+        public int? ChildOrder { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="Item" /> is collapsed.
         /// </summary>
         /// <value><c>null</c> if [collapsed] contains no value, <c>true</c> if [collapsed]; otherwise, <c>false</c>.</value>
         [JsonConverter(typeof(BoolConverter))]
@@ -69,20 +77,6 @@ namespace Todoist.Net.Models
         public DateTime? DateAdded { get; internal set; }
 
         /// <summary>
-        /// Gets or sets the date language.
-        /// </summary>
-        /// <value>The date language.</value>
-        [JsonProperty("date_lang")]
-        public Language DateLanguage { get; set; }
-
-        /// <summary>
-        /// Gets or sets the date string.
-        /// </summary>
-        /// <value>The date string.</value>
-        [JsonProperty("date_string")]
-        public string DateString { get; set; }
-
-        /// <summary>
         /// Gets or sets the day order.
         /// </summary>
         /// <value>The day order.</value>
@@ -90,19 +84,13 @@ namespace Todoist.Net.Models
         public int? DayOrder { get; set; }
 
         /// <summary>
-        /// Gets or sets the due date UTC.
+        /// Gets or sets the due date.
         /// </summary>
-        /// <value>The due date UTC.</value>
-        [JsonProperty("due_date_utc")]
-        [JsonConverter(typeof(UtcDateTimeConverter))]
-        public DateTime? DueDateUtc { get; set; }
-
-        /// <summary>
-        /// Gets or sets the indent.
-        /// </summary>
-        /// <value>The indent.</value>
-        [JsonProperty("indent")]
-        public int? Indent { get; set; }
+        /// <value>
+        /// The due date.
+        /// </value>
+        [JsonProperty("due")]
+        public DueDate DueDate { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether [in history].
@@ -137,18 +125,20 @@ namespace Todoist.Net.Models
         public bool? IsDeleted { get; internal set; }
 
         /// <summary>
-        /// Gets or sets the item order.
-        /// </summary>
-        /// <value>The item order.</value>
-        [JsonProperty("item_order")]
-        public int? ItemOrder { get; set; }
-
-        /// <summary>
         /// Gets the labels.
         /// </summary>
         /// <value>The labels.</value>
         [JsonProperty("labels")]
         public ICollection<long> Labels { get; internal set; }
+
+        /// <summary>
+        /// Gets or sets the id of the parent task. Set to <see langword="null" /> for root tasks.
+        /// </summary>
+        /// <value>
+        /// The parent identifier.
+        /// </value>
+        [JsonProperty("parent_id")]
+        public long? ParentId { get; set; }
 
         /// <summary>
         /// Gets or sets the priority.
@@ -191,8 +181,7 @@ namespace Todoist.Net.Models
         /// <param name="map">The map.</param>
         void IWithRelationsArgument.UpdateRelatedTempIds(IDictionary<Guid, long> map)
         {
-            long persistentProjectId;
-            if (ProjectId.HasValue && map.TryGetValue(ProjectId.Value.TempId, out persistentProjectId))
+            if (ProjectId.HasValue && map.TryGetValue(ProjectId.Value.TempId, out var persistentProjectId))
             {
                 ProjectId = new ComplexId(persistentProjectId);
             }

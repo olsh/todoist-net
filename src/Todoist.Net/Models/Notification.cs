@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Dynamic;
 
 using Newtonsoft.Json;
@@ -17,7 +18,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The created.</value>
         [JsonProperty("created")]
-        public long Created { get; internal set; }
+        public DateTime Created { get; internal set; }
 
         /// <summary>
         /// Gets from uid.

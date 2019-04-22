@@ -24,8 +24,6 @@ namespace Todoist.Net
         private static readonly JsonSerializerSettings SerializerSettings =
             new JsonSerializerSettings
                 {
-                    DateFormatString = "ddd dd MMM yyyy HH:mm:ss +0000",
-                    DateTimeZoneHandling = DateTimeZoneHandling.Utc,
                     NullValueHandling = NullValueHandling.Ignore,
                     ContractResolver = new ConverterContractResolver()
                 };

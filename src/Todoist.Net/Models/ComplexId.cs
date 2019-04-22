@@ -43,13 +43,13 @@ namespace Todoist.Net.Models
         /// Gets a value indicating whether this instance is empty.
         /// </summary>
         /// <value><c>true</c> if this instance is empty; otherwise, <c>false</c>.</value>
-        public bool IsEmpty => PersistentId == default(long) && TempId == default(Guid);
+        public bool IsEmpty => PersistentId == default && TempId == default;
 
         internal object DynamicId
         {
             get
             {
-                if (PersistentId == default(long))
+                if (PersistentId == default)
                 {
                     return TempId;
                 }
@@ -122,7 +122,7 @@ namespace Todoist.Net.Models
                 return false;
             }
 
-            return obj is ComplexId && Equals((ComplexId)obj);
+            return obj is ComplexId a && Equals(a);
         }
 
         /// <summary>
@@ -148,7 +148,7 @@ namespace Todoist.Net.Models
                 return PersistentId.ToString();
             }
 
-            if (TempId != default(Guid))
+            if (TempId != default)
             {
                 return TempId.ToString();
             }

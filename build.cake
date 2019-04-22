@@ -58,7 +58,7 @@ Task("CodeCoverage")
         ArgumentCustomization = args => args
                                             .Append("/p:CollectCoverage=true")
                                             .Append("/p:CoverletOutputFormat=opencover")
-                                            .Append("/p:INclude=\"[Todoist.Net]*\"")
+                                            .Append("/p:Include=\"[Todoist.Net]*\"")
     };
 
     DotNetCoreTest(testProjectFile, settings);

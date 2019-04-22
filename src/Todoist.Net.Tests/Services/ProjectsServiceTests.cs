@@ -3,7 +3,6 @@ using System.Linq;
 
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
-using Todoist.Net.Tests.Settings;
 
 using Xunit;
 
@@ -35,7 +34,7 @@ namespace Todoist.Net.Tests.Services
 
         [Fact]
         [IntegrationFree]
-        public void CreateUpdateIndentAndDelete_Success()
+        public void CreateUpdateOrderMoveAndDelete_Success()
         {
             var client = TodoistClientFactory.Create();
 
@@ -49,7 +48,8 @@ namespace Todoist.Net.Tests.Services
 
             client.Projects.UpdateAsync(project).Wait();
 
-            client.Projects.UpdateMultipleOrdersIndentsAsync(new OrderIndentEntry(project.Id, 1, 2)).Wait();
+            client.Projects.ReorderAsync(new ReorderEntry(project.Id, 1)).Wait();
+            client.Projects.MoveAsync(new MoveArgument(project.Id, null));
 
             client.Projects.DeleteAsync(project.Id).Wait();
         }
@@ -74,6 +74,26 @@ namespace Todoist.Net.Tests.Services
             Assert.False(projectInfo.Project.IsArchived);
 
             client.Projects.DeleteAsync(projectInfo.Project.Id).Wait();
+        }
+
+        [Fact]
+        [IntegrationFree]
+        public void CreateProjectAndGetProjectData_Success()
+        {
+            var client = TodoistClientFactory.Create();
+
+            var transaction = client.CreateTransaction();
+
+            var projectId = transaction.Project.AddAsync(new Project("Test")).Result;
+            transaction.Items.AddAsync(new Item("Test task", projectId)).Wait();
+
+            transaction.CommitAsync().Wait();
+
+            var projectData = client.Projects.GetDataAsync(projectId).Result;
+
+            Assert.Equal(1, projectData.Items.Count);
+
+            client.Projects.DeleteAsync(projectId).Wait();
         }
     }
 }

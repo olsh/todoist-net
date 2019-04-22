@@ -46,61 +46,48 @@ namespace Todoist.Net.Services
         }
 
         /// <summary>
-        /// Archives the project and its children.
+        /// Archive a project and its descendants.
         /// </summary>
-        /// <param name="ids">The ids.</param>
+        /// <param name="id">The project ID.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <remarks>Only available for Todoist Premium users.</remarks>
-        /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
-        public Task ArchiveAsync(params ComplexId[] ids)
+        public Task ArchiveAsync(ComplexId id)
         {
-            if (ids == null)
-            {
-                throw new ArgumentNullException(nameof(ids));
-            }
+            var command = CreateEntityCommand(CommandType.ArchiveProject, id);
 
-            var command = CreateCollectionCommand(CommandType.ArchiveProject, ids);
             return ExecuteCommandAsync(command);
         }
 
         /// <summary>
-        /// Deletes existing projects.
+        /// Delete an existing project and all its descendants.
         /// </summary>
-        /// <param name="ids">The IDs.</param>
+        /// <param name="id">The project ID.</param>
         /// <returns> Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation. </returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
-        public Task DeleteAsync(params ComplexId[] ids)
+        public Task DeleteAsync(ComplexId id)
         {
-            if (ids == null)
-            {
-                throw new ArgumentNullException(nameof(ids));
-            }
+            var command = CreateEntityCommand(CommandType.DeleteProject, id);
 
-            var command = CreateCollectionCommand(CommandType.DeleteProject, ids);
             return ExecuteCommandAsync(command);
         }
 
         /// <summary>
-        /// Un archive project and its children.
+        /// Unarchive a project.
+        /// No ancestors will be unarchived along with the unarchived project.
+        /// Instead, the project is unarchived alone, loses any parent relationship (becomes a root project), and is placed at the end of the list of other root projects.
         /// </summary>
-        /// <param name="ids">The ids.</param>
+        /// <param name="id">The project ID.</param>
         /// <returns> Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation. </returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
         /// <remarks>Only available for Todoist Premium users.</remarks>
-        public Task UnarchiveAsync(params ComplexId[] ids)
+        public Task UnarchiveAsync(ComplexId id)
         {
-            if (ids == null)
-            {
-                throw new ArgumentNullException(nameof(ids));
-            }
+            var command = CreateEntityCommand(CommandType.UnarchiveProject, id);
 
-            var command = CreateCollectionCommand(CommandType.UnarchiveProject, ids);
             return ExecuteCommandAsync(command);
         }
 
@@ -120,28 +107,54 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.UpdateProject, project);
+
             return ExecuteCommandAsync(command);
         }
 
         /// <summary>
-        /// Updates the multiple orders indents asynchronous.
+        /// Updates parent project relationships of the project asynchronous.
         /// </summary>
-        /// <param name="idsToOrderIndents">The ids to order indents.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
+        /// <param name="moveArgument">The move entry.</param>
+        /// <returns>
+        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="moveArgument" /> is <see langword="null" /></exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="idsToOrderIndents"/> is <see langword="null"/></exception>
-        public Task UpdateMultipleOrdersIndentsAsync(params OrderIndentEntry[] idsToOrderIndents)
+        public Task MoveAsync(MoveArgument moveArgument)
         {
-            if (idsToOrderIndents == null)
+            if (moveArgument == null)
             {
-                throw new ArgumentNullException(nameof(idsToOrderIndents));
+                throw new ArgumentNullException(nameof(moveArgument));
             }
 
-            var command = new Command(
-                              CommandType.UpdateOrderIndentsProject,
-                              new IdsToOrderIndentsArgument(idsToOrderIndents));
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(new Command(CommandType.MoveProject, moveArgument));
+        }
+
+        /// <summary>
+        /// Update the orders and indents of multiple projects at once asynchronous.
+        /// </summary>
+        /// <param name="reorderEntries">The reorder entries.</param>
+        /// <returns>
+        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="reorderEntries" /> is <see langword="null" /></exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="T:System.ArgumentException">Value cannot be an empty collection.</exception>
+        public Task ReorderAsync(params ReorderEntry[] reorderEntries)
+        {
+            if (reorderEntries == null)
+            {
+                throw new ArgumentNullException(nameof(reorderEntries));
+            }
+
+            if (reorderEntries.Length == 0)
+            {
+                throw new ArgumentException("Value cannot be an empty collection.", nameof(reorderEntries));
+            }
+
+            return ExecuteCommandAsync(new Command(CommandType.ReorderProjects, new ReorderProjectsArgument(reorderEntries)));
         }
     }
 }

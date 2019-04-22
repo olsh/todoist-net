@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -18,6 +17,6 @@ namespace Todoist.Net.Services
         /// <returns>The activity log entries.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <remarks>The activity log is only available for Todoist Premium.</remarks>
-        Task<IEnumerable<LogEntry>> GetAsync(LogFilter filter = null);
+        Task<Activity> GetAsync(LogFilter filter = null);
     }
 }

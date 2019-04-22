@@ -24,34 +24,34 @@ namespace Todoist.Net.Services
         /// <summary>
         /// Archive project and its children.
         /// </summary>
-        /// <param name="ids">The ids.</param>
+        /// <param name="id">The ids.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
+        /// <exception cref="ArgumentNullException"><paramref name="id"/> is <see langword="null"/></exception>
         /// <remarks>Only available for Todoist Premium users.</remarks>
-        Task ArchiveAsync(params ComplexId[] ids);
+        Task ArchiveAsync(ComplexId id);
 
         /// <summary>
-        /// Deletes existing projects.
+        /// Delete an existing project and all its descendants.
         /// </summary>
-        /// <param name="ids">The IDs of the projects.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
+        /// <param name="id">The project ID.</param>
+        /// <returns> Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation. </returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
-        Task DeleteAsync(params ComplexId[] ids);
+        /// <exception cref="ArgumentNullException"><paramref name="id"/> is <see langword="null"/></exception>
+        Task DeleteAsync(ComplexId id);
 
         /// <summary>
         /// Un archive project and its children.
         /// </summary>
-        /// <param name="ids">The ids.</param>
+        /// <param name="id">The ids.</param>
         /// <returns> Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation. </returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
+        /// <exception cref="ArgumentNullException"><paramref name="id"/> is <see langword="null"/></exception>
         /// <remarks>Only available for Todoist Premium users.</remarks>
-        Task UnarchiveAsync(params ComplexId[] ids);
+        Task UnarchiveAsync(ComplexId id);
 
         /// <summary>
         /// Updates an existing project.
@@ -62,5 +62,30 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="project"/> is <see langword="null"/></exception>
         Task UpdateAsync(Project project);
+
+        /// <summary>
+        /// Updates parent project relationships of the project asynchronous.
+        /// </summary>
+        /// <param name="moveArgument">The move entry.</param>
+        /// <returns>
+        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="moveArgument" /> is <see langword="null" /></exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <exception cref="AggregateException">Command execution exception.</exception>
+        Task MoveAsync(MoveArgument moveArgument);
+
+        /// <summary>
+        /// Update the orders and indents of multiple projects at once asynchronous.
+        /// </summary>
+        /// <param name="reorderEntries">The reorder entries.</param>
+        /// <returns>
+        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="reorderEntries" /> is <see langword="null" /></exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="T:System.ArgumentException">Value cannot be an empty collection.</exception>
+        Task ReorderAsync(params ReorderEntry[] reorderEntries);
     }
 }

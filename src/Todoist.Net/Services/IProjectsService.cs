@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -40,13 +39,13 @@ namespace Todoist.Net.Services
         Task<ProjectInfo> GetAsync(ComplexId id);
 
         /// <summary>
-        /// Updates the multiple orders indents asynchronous.
+        /// Gets a project’s uncompleted items.
         /// </summary>
-        /// <param name="idsToOrderIndents">The ids to order indents.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
+        /// <param name="id">The ID of the project.</param>
+        /// <returns>
+        /// The project data.
+        /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="idsToOrderIndents"/> is <see langword="null"/></exception>
-        Task UpdateMultipleOrdersIndentsAsync(params OrderIndentEntry[] idsToOrderIndents);
+        Task<ProjectData> GetDataAsync(ComplexId id);
     }
 }

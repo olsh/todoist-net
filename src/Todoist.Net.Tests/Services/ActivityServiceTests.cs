@@ -15,9 +15,9 @@ namespace Todoist.Net.Tests.Services
         {
             var client = TodoistClientFactory.Create();
 
-            var logEntries = client.Activity.GetAsync(new LogFilter() { Limit = 50 }).Result;
+            var logEntries = client.Activity.GetAsync(new LogFilter() { Limit = 50 }).Result.Events;
 
-            Assert.True(logEntries.Any());
+            Assert.NotEmpty(logEntries);
         }
 
         [Fact]
@@ -28,9 +28,9 @@ namespace Todoist.Net.Tests.Services
             var logFilter = new LogFilter();
             logFilter.ObjectEventTypes.Add(new ObjectEventTypes() { ObjectType = "project" });
 
-            var logEntries = client.Activity.GetAsync(logFilter).Result;
+            var logEntries = client.Activity.GetAsync(logFilter).Result.Events;
 
-            Assert.True(logEntries.Any());
+            Assert.NotEmpty(logEntries);
         }
     }
 }

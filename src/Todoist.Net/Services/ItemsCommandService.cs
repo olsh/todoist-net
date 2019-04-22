@@ -67,22 +67,60 @@ namespace Todoist.Net.Services
         }
 
         /// <summary>
+        /// Archives a task and all its descendants asynchronous.
+        /// </summary>
+        /// <param name="id">The item ID.</param>
+        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
+        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <remarks>
+        /// It is mostly intended to allow users to force sub-tasks to be moved to the history since root tasks are automatically
+        /// archived upon completion. See also item_close for a simplified version of the command.
+        /// </remarks>
+        public Task ArchiveAsync(ComplexId id)
+        {
+            var command = CreateEntityCommand(CommandType.ArchiveItem, id);
+
+            return ExecuteCommandAsync(command);
+        }
+
+        /// <summary>
+        /// UnArchives a task and all its descendants asynchronous.
+        /// </summary>
+        /// <param name="id">The item ID.</param>
+        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
+        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <remarks>
+        /// No ancestors will be restored from the history. Instead, the item is unarchived (and uncompleted) alone, loses any
+        /// parent relationship (becomes a project root item), and is placed at the end of the list of other project root items.
+        /// </remarks>
+        public Task UnArchiveAsync(ComplexId id)
+        {
+            var command = CreateEntityCommand(CommandType.UnArchiveItem, id);
+
+            return ExecuteCommandAsync(command);
+        }
+
+        /// <summary>
         /// Completes tasks and optionally move them to history. See also <see cref="CloseAsync" /> for a simplified version of the command.
         /// </summary>
-        /// <param name="forceHistory">Whether these tasks should be moved to history.</param>
-        /// <param name="ids">The ids of the tasks.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
+        /// <param name="completeItemArgument">The complete item argument.</param>
+        /// <returns>
+        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
+        /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
-        public Task CompleteAsync(bool forceHistory = true, params ComplexId[] ids)
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="completeItemArgument"/> is <see langword="null"/></exception>
+        public Task CompleteAsync(CompleteItemArgument completeItemArgument)
         {
-            if (ids == null)
+            if (completeItemArgument == null)
             {
-                throw new ArgumentNullException(nameof(ids));
+                throw new ArgumentNullException(nameof(completeItemArgument));
             }
 
-            var command = new Command(CommandType.CompleteItem, new CompleteItemsArgument(ids, forceHistory));
+            var command = new Command(CommandType.CompleteItem, completeItemArgument);
+
             return ExecuteCommandAsync(command);
         }
 
@@ -102,93 +140,50 @@ namespace Todoist.Net.Services
         /// <summary>
         /// Completes a recurring task. See also <see cref="CloseAsync" /> for a simplified version of the command.
         /// </summary>
-        /// <param name="recurringItemState">State of the recurring item.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
+        /// <param name="completeRecurringItemArgument">The complete recurring item argument.</param>
+        /// <returns>
+        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
+        /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="recurringItemState"/> is <see langword="null"/></exception>
-        public Task CompleteRecurringAsync(RecurringItemState recurringItemState)
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="completeRecurringItemArgument"/> is <see langword="null"/></exception>
+        public Task CompleteRecurringAsync(CompleteRecurringItemArgument completeRecurringItemArgument)
         {
-            if (recurringItemState == null)
+            if (completeRecurringItemArgument == null)
             {
-                throw new ArgumentNullException(nameof(recurringItemState));
+                throw new ArgumentNullException(nameof(completeRecurringItemArgument));
             }
 
-            var command = new Command(
-                              CommandType.CompleteRecurringItem,
-                              new CompleteRecurringItemArgument(recurringItemState));
+            var command = new Command(CommandType.CompleteRecurringItem, completeRecurringItemArgument);
+
             return ExecuteCommandAsync(command);
         }
 
         /// <summary>
         /// Deletes an existing task asynchronous.
         /// </summary>
-        /// <param name="ids">List of the IDs of the tasks to delete.</param>
+        /// <param name="id">Id of the task to delete.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task DeleteAsync(params ComplexId[] ids)
+        public Task DeleteAsync(ComplexId id)
         {
-            var command = CreateCollectionCommand(CommandType.DeleteItem, ids);
+            var command = CreateEntityCommand(CommandType.DeleteItem, id);
+
             return ExecuteCommandAsync(command);
         }
 
         /// <summary>
-        /// Moves the tasks to the project asynchronous.
+        /// Uncompletes an unarchived item and all its ancestors.
         /// </summary>
-        /// <param name="projectId">The project identifier.</param>
-        /// <param name="items">The items.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="items" /> is <see langword="null" /></exception>
-        /// <exception cref="ArgumentException">Unable to move an item with an empty source project ID.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        public Task MoveToProjectAsync(ComplexId projectId, params Item[] items)
-        {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
-
-            var command = new Command(CommandType.MoveItem, new MoveItemArgument(items, projectId));
-            return ExecuteCommandAsync(command);
-        }
-
-        /// <summary>
-        /// Uncompletes tasks and moves them to the active projects.
-        /// </summary>
-        /// <param name="ids">The ids of the tasks.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        public Task UncompleteAsync(params ComplexId[] ids)
-        {
-            if (ids == null)
-            {
-                throw new ArgumentNullException(nameof(ids));
-            }
-
-            var command = CreateCollectionCommand(CommandType.UncompleteItem, ids);
-            return ExecuteCommandAsync(command);
-        }
-
-        /// <summary>
-        /// Uncompletes tasks and moves them to the active projects and sets the states to the tasks.
-        /// </summary>
-        /// <param name="itemStates">The item states.</param>
+        /// <param name="id">The ids of the tasks.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="itemStates" /> is <see langword="null" /></exception>
-        public Task UncompleteAsync(params ItemState[] itemStates)
+        public Task UncompleteAsync(ComplexId id)
         {
-            if (itemStates == null)
-            {
-                throw new ArgumentNullException(nameof(itemStates));
-            }
+            var command = CreateEntityCommand(CommandType.UncompleteItem, id);
 
-            var command = new Command(CommandType.UncompleteItem, new UncompleteItemsArgument(itemStates));
             return ExecuteCommandAsync(command);
         }
 
@@ -231,24 +226,49 @@ namespace Todoist.Net.Services
         }
 
         /// <summary>
-        /// Updates the multiple orders indents asynchronous.
+        /// Moves task to a different location asynchronous.
         /// </summary>
-        /// <param name="idsToOrderIndents">The ids to order indents.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
+        /// <param name="moveArgument">The move entry.</param>
+        /// <returns>
+        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="moveArgument" /> is <see langword="null" /></exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="idsToOrderIndents"/> is <see langword="null"/></exception>
-        public Task UpdateMultipleOrdersIndentsAsync(params OrderIndentEntry[] idsToOrderIndents)
+        public Task MoveAsync(ItemMoveArgument moveArgument)
         {
-            if (idsToOrderIndents == null)
+            if (moveArgument == null)
             {
-                throw new ArgumentNullException(nameof(idsToOrderIndents));
+                throw new ArgumentNullException(nameof(moveArgument));
             }
 
-            var command = new Command(
-                              CommandType.UpdateOrderIndentsItem,
-                              new IdsToOrderIndentsArgument(idsToOrderIndents));
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(new Command(CommandType.MoveItem, moveArgument));
+        }
+
+        /// <summary>
+        /// Update the orders and indents of multiple items at once asynchronous.
+        /// </summary>
+        /// <param name="reorderEntries">The reorder entries.</param>
+        /// <returns>
+        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="reorderEntries" /> is <see langword="null" /></exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="T:System.ArgumentException">Value cannot be an empty collection.</exception>
+        public Task ReorderAsync(params ReorderEntry[] reorderEntries)
+        {
+            if (reorderEntries == null)
+            {
+                throw new ArgumentNullException(nameof(reorderEntries));
+            }
+
+            if (reorderEntries.Length == 0)
+            {
+                throw new ArgumentException("Value cannot be an empty collection.", nameof(reorderEntries));
+            }
+
+            return ExecuteCommandAsync(new Command(CommandType.ReorderItems, new ReorderItemsArgument(reorderEntries)));
         }
     }
 }

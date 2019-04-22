@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>A Todoist API client for .NET</Description>
-    <VersionPrefix>1.5.0</VersionPrefix>
+    <VersionPrefix>2.0.0</VersionPrefix>
     <Authors>Oleg Shevchenko</Authors>
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -18,6 +18,8 @@
     <PackageIconUrl>https://raw.githubusercontent.com/olsh/todoist-net/master/images/todoist-net-nuget.png</PackageIconUrl>
     
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

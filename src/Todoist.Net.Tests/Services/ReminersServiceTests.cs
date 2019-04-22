@@ -20,7 +20,7 @@ namespace Todoist.Net.Tests.Services
 
             var itemId = transaction.Items.AddAsync(new Item("Temp")).Result;
             var reminderId =
-                transaction.Reminders.AddAsync(new Reminder(itemId) { DueDateUtc = DateTime.UtcNow.AddDays(1) }).Result;
+                transaction.Reminders.AddAsync(new Reminder(itemId) { DueDate = new DueDate(DateTime.UtcNow.AddDays(1)) }).Result;
             transaction.CommitAsync().Wait();
 
             var reminders = client.Reminders.GetAsync().Result;

@@ -4,7 +4,6 @@ using System.Linq;
 using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
-using Todoist.Net.Tests.Settings;
 
 using Xunit;
 
@@ -46,7 +45,7 @@ namespace Todoist.Net.Tests.Services
 
             var item = new Item("demo task");
             var itemId = transaction.Items.AddAsync(item).Result;
-            transaction.Items.CompleteAsync(ids: itemId);
+            transaction.Items.CompleteAsync(new CompleteItemArgument(itemId));
 
             transaction.CommitAsync().Wait();
 
@@ -54,21 +53,26 @@ namespace Todoist.Net.Tests.Services
 
             Assert.True(itemInfo.Item.IsChecked == true);
 
-            var itemState = new ItemState(item.Id, false, 2, false, 1);
-            client.Items.UncompleteAsync(itemState).Wait();
-            itemInfo = client.Items.GetAsync(item.Id).Result;
-            Assert.True(itemInfo.Item.IsChecked == itemState.IsChecked);
-            Assert.True(itemInfo.Item.Indent == itemState.Indent);
-            Assert.True(itemInfo.Item.InHistory == itemState.InHistory);
-            Assert.True(itemInfo.Item.ItemOrder == itemState.Order);
+            client.Items.UnArchiveAsync(itemId).Wait();
+            client.Items.UncompleteAsync(itemId).Wait();
 
-            client.Items.CompleteAsync(ids: itemId).Wait();
+            var childOrder = 3;
+            client.Items.ReorderAsync(new ReorderEntry(item.Id, childOrder)).Wait();
+            var anotherItem = client.Items.GetAsync().Result.First(i => i.Id != item.Id);
+            client.Items.MoveAsync(ItemMoveArgument.CreateMoveToParent(item.Id, anotherItem.Id))
+                .Wait();
+
             itemInfo = client.Items.GetAsync(item.Id).Result;
-            Assert.True(itemInfo.Item.IsChecked == true);
+            Assert.Equal(anotherItem.Id.PersistentId, itemInfo.Item.ParentId);
+            Assert.Equal(childOrder, itemInfo.Item.ChildOrder);
+
+            client.Items.CompleteAsync(new CompleteItemArgument(itemId)).Wait();
+            itemInfo = client.Items.GetAsync(item.Id).Result;
+            Assert.True(itemInfo.Item.IsChecked);
 
             client.Items.UncompleteAsync(itemId).Wait();
             itemInfo = client.Items.GetAsync(item.Id).Result;
-            Assert.True(itemInfo.Item.IsChecked == false);
+            Assert.False(itemInfo.Item.IsChecked);
 
             client.Items.DeleteAsync(item.Id).Wait();
         }
@@ -92,10 +96,11 @@ namespace Todoist.Net.Tests.Services
 
         [Fact]
         [IntegrationFree]
-        public void CreateItem_InvalidProjectId_ThrowsException()
+        public void CreateItem_InvalidPDueDate_ThrowsException()
         {
             var client = TodoistClientFactory.Create();
-            var item = new Item("bad task", 123);
+            var item = new Item("bad task");
+            item.DueDate = new DueDate("Invalid date string");
 
             var aggregateException = Assert.ThrowsAsync<AggregateException>(
                 async () =>
@@ -115,7 +120,7 @@ namespace Todoist.Net.Tests.Services
             var item = new Item("demo task");
             client.Items.AddAsync(item).Wait();
 
-            item.DateString = "every fri";
+            item.DueDate = new DueDate("every fri");
             client.Items.UpdateAsync(item).Wait();
 
             var project = new Project(Guid.NewGuid().ToString());
@@ -125,12 +130,13 @@ namespace Todoist.Net.Tests.Services
 
             Assert.True(project.Id != itemInfo.Project.Id);
 
-            client.Items.MoveToProjectAsync(project.Id, itemInfo.Item).Wait();
+            client.Items.MoveAsync(ItemMoveArgument.CreateMoveToProject(itemInfo.Item.Id, project.Id)).Wait();
             itemInfo = client.Items.GetAsync(item.Id).Result;
 
             Assert.True(project.Id == itemInfo.Project.Id);
 
             client.Projects.DeleteAsync(project.Id).Wait();
+            client.Items.DeleteAsync(item.Id).Wait();
         }
 
         [Fact]
@@ -143,7 +149,7 @@ namespace Todoist.Net.Tests.Services
 
             Assert.NotNull(item);
 
-            client.Items.CompleteRecurringAsync(new RecurringItemState(item.Id) { NewDate = DateTime.UtcNow.AddMonths(1) }).Wait();
+            client.Items.CompleteRecurringAsync(new CompleteRecurringItemArgument(item.Id, new DueDate(DateTime.UtcNow.AddMonths(1)))).Wait();
             client.Items.CompleteRecurringAsync(item.Id).Wait();
 
             client.Items.DeleteAsync(item.Id).Wait();
@@ -157,7 +163,8 @@ namespace Todoist.Net.Tests.Services
 
             var item = client.Items.QuickAddAsync(new QuickAddItem("Demo task every fri")).Result;
 
-            client.Items.UpdateMultipleOrdersIndentsAsync(new OrderIndentEntry(item.Id, 1, 1)).Wait();
+            var firstProject = client.Projects.GetAsync().Result.First();
+            client.Items.MoveAsync(ItemMoveArgument.CreateMoveToProject(item.Id, firstProject.Id)).Wait();
             client.Items.UpdateDayOrdersAsync(new OrderEntry(item.Id, 2));
 
             client.Items.DeleteAsync(item.Id).Wait();
@@ -169,12 +176,12 @@ namespace Todoist.Net.Tests.Services
         {
             var client = TodoistClientFactory.Create();
 
-            var item = new Item("New task") { DueDateUtc = DateTime.Now.AddYears(1).Date };
+            var item = new Item("New task") { DueDate = new DueDate(DateTime.Now.AddYears(1).Date) };
             var taskId = client.Items.AddAsync(item).Result;
 
             var itemInfo = client.Items.GetAsync(taskId).Result;
 
-            Assert.Equal(item.DueDateUtc.Value, itemInfo.Item.DueDateUtc.Value.ToLocalTime());
+            Assert.Equal(item.DueDate.Date, itemInfo.Item.DueDate.Date.Value.ToLocalTime());
 
             client.Items.DeleteAsync(item.Id).Wait();
         }

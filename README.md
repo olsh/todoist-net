@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/olsh/todoist-net/branch/master/graph/badge.svg)](https://codecov.io/gh/olsh/todoist-net)
 [![NuGet](https://img.shields.io/nuget/v/Todoist.Net.svg)](https://www.nuget.org/packages/Todoist.Net/)
 
-A [Todoist API v7](https://developer.todoist.com/) client for .NET.
+A [Todoist API](https://developer.todoist.com/) client for .NET.
 ## Installation
 
 The library is available as a [Nuget package](https://www.nuget.org/packages/Todoist.Net/).
@@ -71,6 +71,3 @@ await transaction.Notes.AddToItemAsync(new Note("Task description"), taskId);
 await transaction.CommitAsync();
 
 ```
-
-## Known issues
-At the moment implemented all APIs except [Business](https://developer.todoist.com/?shell#business).
