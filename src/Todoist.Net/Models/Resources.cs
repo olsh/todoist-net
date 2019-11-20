@@ -45,18 +45,18 @@ namespace Todoist.Net.Models
         public IReadOnlyCollection<Note> Notes { get; internal set; }
 
         /// <summary>
-        /// Gets the project notes.
-        /// </summary>
-        /// <value>The project notes.</value>
-        [JsonProperty("project_notes")]
-        public IReadOnlyCollection<Note> ProjectNotes { get; internal set; }
-
-        /// <summary>
         /// Gets the notifications.
         /// </summary>
         /// <value>The notifications.</value>
         [JsonProperty("live_notifications")]
         public IReadOnlyCollection<Notification> Notifications { get; internal set; }
+
+        /// <summary>
+        /// Gets the project notes.
+        /// </summary>
+        /// <value>The project notes.</value>
+        [JsonProperty("project_notes")]
+        public IReadOnlyCollection<Note> ProjectNotes { get; internal set; }
 
         /// <summary>
         /// Gets the projects.
@@ -71,6 +71,15 @@ namespace Todoist.Net.Models
         /// <value>The reminders.</value>
         [JsonProperty("reminders")]
         public IReadOnlyCollection<Reminder> Reminders { get; internal set; }
+
+        /// <summary>
+        /// Gets the sections.
+        /// </summary>
+        /// <value>
+        /// The sections.
+        /// </value>
+        [JsonProperty("sections")]
+        public IReadOnlyCollection<Section> Sections { get; internal set; }
 
         /// <summary>
         /// Gets the user information.

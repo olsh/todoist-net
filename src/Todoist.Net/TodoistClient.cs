@@ -83,6 +83,7 @@ namespace Todoist.Net
             Users = new UsersService(this);
             Sharing = new SharingService(this);
             Emails = new EmailService(this);
+            Sections = new SectionService(this);
         }
 
         internal TodoistClient(ITodoistRestClient restClient)
@@ -152,6 +153,14 @@ namespace Todoist.Net
         /// <value>The reminders.</value>
         /// <remarks>Reminders are only available for Todoist Premium users.</remarks>
         public IRemindersService Reminders { get; }
+
+        /// <summary>
+        /// Gets the sections service.
+        /// </summary>
+        /// <value>
+        /// The service.
+        /// </value>
+        public ISectionService Sections { get; }
 
         /// <summary>
         /// Gets the sharing.

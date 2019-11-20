@@ -21,7 +21,11 @@ namespace Todoist.Net.Models
 
         public static CommandType AddReminder { get; } = new CommandType("reminder_add");
 
+        public static CommandType AddSection { get; } = new CommandType("section_add");
+
         public static CommandType ArchiveItem { get; } = new CommandType("item_archive");
+
+        public static CommandType ArchiveSection { get; } = new CommandType("section_archive");
 
         public static CommandType ArchiveProject { get; } = new CommandType("project_archive");
 
@@ -49,6 +53,8 @@ namespace Todoist.Net.Models
 
         public static CommandType DeleteReminder { get; } = new CommandType("reminder_delete");
 
+        public static CommandType DeleteSection { get; } = new CommandType("section_delete");
+
         public static CommandType MoveItem { get; } = new CommandType("item_move");
 
         public static CommandType MoveProject { get; } = new CommandType("project_move");
@@ -67,6 +73,8 @@ namespace Todoist.Net.Models
         public static CommandType UnArchiveItem { get; } = new CommandType("item_unarchive");
 
         public static CommandType UnarchiveProject { get; } = new CommandType("project_unarchive");
+
+        public static CommandType UnarchiveSection { get; } = new CommandType("section_unarchive");
 
         public static CommandType UncompleteItem { get; } = new CommandType("item_uncomplete");
 
@@ -89,6 +97,8 @@ namespace Todoist.Net.Models
         public static CommandType UpdateProject { get; } = new CommandType("project_update");
 
         public static CommandType UpdateReminder { get; } = new CommandType("reminder_update");
+
+        public static CommandType UpdateSection { get; } = new CommandType("section_update");
 
         public static CommandType UpdateUser { get; } = new CommandType("user_update");
     }
