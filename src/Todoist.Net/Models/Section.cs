@@ -26,6 +26,16 @@ namespace Todoist.Net.Models
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="Section" /> class.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="projectId">The project identifier.</param>
+        public Section(string name, ComplexId projectId)
+            : this(name, projectId, 0)
+        {
+        }
+
+        /// <summary>
         /// Gets the date added.
         /// </summary>
         /// <value>

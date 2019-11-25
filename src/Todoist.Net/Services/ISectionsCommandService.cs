@@ -40,6 +40,30 @@ namespace Todoist.Net.Services
         Task DeleteAsync(ComplexId id);
 
         /// <summary>
+        /// Updates the section.
+        /// </summary>
+        /// <param name="moveArgument">The move argument.</param>
+        /// <returns>
+        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="moveArgument" /> is <see langword="null" /></exception>
+        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        Task MoveAsync(SectionMoveArgument moveArgument);
+
+        /// <summary>
+        /// Updates the section.
+        /// </summary>
+        /// <param name="orderEntries">The order entries.</param>
+        /// <returns>
+        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="orderEntries" /> is <see langword="null" /></exception>
+        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        Task ReorderAsync(params SectionOrderEntry[] orderEntries);
+
+        /// <summary>
         /// Unarchive a section.
         /// </summary>
         /// <param name="id">The section ID.</param>

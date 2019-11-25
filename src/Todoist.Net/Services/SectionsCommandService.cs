@@ -47,6 +47,20 @@ namespace Todoist.Net.Services
         }
 
         /// <summary>
+        /// Archive a section and all its descendants tasks.
+        /// </summary>
+        /// <param name="id">The section ID.</param>
+        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
+        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        public Task ArchiveAsync(ComplexId id)
+        {
+            var command = CreateEntityCommand(CommandType.ArchiveSection, id);
+
+            return ExecuteCommandAsync(command);
+        }
+
+        /// <summary>
         /// Delete a section and all its descendants items.
         /// </summary>
         /// <param name="id">The section ID.</param>
@@ -61,15 +75,45 @@ namespace Todoist.Net.Services
         }
 
         /// <summary>
-        /// Archive a section and all its descendants tasks.
+        /// Updates the section.
         /// </summary>
-        /// <param name="id">The section ID.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
+        /// <param name="moveArgument">The move argument.</param>
+        /// <returns>
+        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="moveArgument" /> is <see langword="null" /></exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task ArchiveAsync(ComplexId id)
+        public Task MoveAsync(SectionMoveArgument moveArgument)
         {
-            var command = CreateEntityCommand(CommandType.ArchiveSection, id);
+            if (moveArgument == null)
+            {
+                throw new ArgumentNullException(nameof(moveArgument));
+            }
+
+            var command = new Command(CommandType.MoveSection, moveArgument);
+
+            return ExecuteCommandAsync(command);
+        }
+
+        /// <summary>
+        /// Updates the section.
+        /// </summary>
+        /// <param name="orderEntries">The order entries.</param>
+        /// <returns>
+        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="orderEntries" /> is <see langword="null" /></exception>
+        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        public Task ReorderAsync(params SectionOrderEntry[] orderEntries)
+        {
+            if (orderEntries == null)
+            {
+                throw new ArgumentNullException(nameof(orderEntries));
+            }
+
+            var command = new Command(CommandType.ReorderSection, new ReorderSectionArgument(orderEntries));
 
             return ExecuteCommandAsync(command);
         }

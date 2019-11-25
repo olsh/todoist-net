@@ -31,12 +31,6 @@ namespace Todoist.Net.Services
             return new Command(commandType, entity, tempId);
         }
 
-        internal Command CreateCollectionCommand(CommandType commandType, IEnumerable<ComplexId> ids)
-        {
-            var command = new Command(commandType, new IdsArgument(ids));
-            return command;
-        }
-
         internal Command CreateEntityCommand(CommandType commandType, ComplexId id)
         {
             return new Command(commandType, new BaseEntity(id));

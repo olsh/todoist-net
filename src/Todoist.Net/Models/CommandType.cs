@@ -25,9 +25,9 @@ namespace Todoist.Net.Models
 
         public static CommandType ArchiveItem { get; } = new CommandType("item_archive");
 
-        public static CommandType ArchiveSection { get; } = new CommandType("section_archive");
-
         public static CommandType ArchiveProject { get; } = new CommandType("project_archive");
+
+        public static CommandType ArchiveSection { get; } = new CommandType("section_archive");
 
         public static CommandType ClearLocations { get; } = new CommandType("clear_locations");
 
@@ -59,11 +59,15 @@ namespace Todoist.Net.Models
 
         public static CommandType MoveProject { get; } = new CommandType("project_move");
 
+        public static CommandType MoveSection { get; } = new CommandType("section_move");
+
         public static CommandType RejectInvitation { get; } = new CommandType("reject_invitation");
 
         public static CommandType ReorderItems { get; } = new CommandType("item_reorder");
 
         public static CommandType ReorderProjects { get; } = new CommandType("project_reorder");
+
+        public static CommandType ReorderSection { get; } = new CommandType("section_reorder");
 
         public static CommandType SetLastReadNotification { get; } =
             new CommandType("live_notifications_set_last_read");

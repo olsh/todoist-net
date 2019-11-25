@@ -111,6 +111,14 @@ namespace Todoist.Net
         IEmailService Emails { get; }
 
         /// <summary>
+        /// Gets the sections service.
+        /// </summary>
+        /// <value>
+        /// The service.
+        /// </value>
+        ISectionService Sections { get; }
+
+        /// <summary>
         /// Creates the transaction.
         /// </summary>
         /// <returns>The transaction.</returns>
