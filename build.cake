@@ -1,8 +1,8 @@
-#tool nuget:?package=Codecov&version=1.9.0
-#addin nuget:?package=Cake.Codecov&version=0.7.0
+#tool nuget:?package=Codecov&version=1.12.2
+#addin nuget:?package=Cake.Codecov&version=0.9.1
 
-#tool nuget:?package=MSBuild.SonarQube.Runner.Tool&version=4.6.0
-#addin nuget:?package=Cake.Sonar&version=1.1.22
+#tool nuget:?package=MSBuild.SonarQube.Runner.Tool&version=4.8.0
+#addin nuget:?package=Cake.Sonar&version=1.1.25
 
 var target = Argument("target", "Default");
 
