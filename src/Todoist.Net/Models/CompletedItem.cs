@@ -29,6 +29,15 @@ namespace Todoist.Net.Models
         public string Content { get; internal set; }
 
         /// <summary>
+        /// Gets the task id
+        /// </summary>
+        /// <value>
+        /// The task id
+        /// </value>
+        [JsonProperty("task_id")]
+        public long TaskId { get; internal set; }
+
+        /// <summary>
         /// Gets the identifier.
         /// </summary>
         /// <value>
