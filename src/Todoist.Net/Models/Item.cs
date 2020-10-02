@@ -162,6 +162,14 @@ namespace Todoist.Net.Models
         public long? ResponsibleUid { get; set; }
 
         /// <summary>
+        /// Gets or sets section of project. Defines the section that the task belongs to.
+        /// </summary>
+        /// <value>The project order.</value>
+        [JsonProperty("section_id")]
+        public long? Section { get; set; }
+
+
+        /// <summary>
         /// Gets the synchronize identifier.
         /// </summary>
         /// <value>The synchronize identifier.</value>
