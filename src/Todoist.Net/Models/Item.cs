@@ -84,6 +84,13 @@ namespace Todoist.Net.Models
         public int? DayOrder { get; set; }
 
         /// <summary>
+        /// Gets or sets the description.
+        /// </summary>
+        /// <value>The description.</value>
+        [JsonProperty("content")]
+        public string Description { get; set; }        
+        
+        /// <summary>
         /// Gets or sets the due date.
         /// </summary>
         /// <value>
