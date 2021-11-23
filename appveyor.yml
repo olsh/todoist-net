@@ -1,5 +1,6 @@
 version: 1.0.{build}
 image: Visual Studio 2019
+stack: jdk 11
 install:
   - dotnet tool install -g Cake.Tool --version 0.38.4 
 build_script:
