@@ -87,7 +87,7 @@ namespace Todoist.Net.Models
         /// Gets or sets the description.
         /// </summary>
         /// <value>The description.</value>
-        [JsonProperty("content")]
+        [JsonProperty("description")]
         public string Description { get; set; }        
         
         /// <summary>
