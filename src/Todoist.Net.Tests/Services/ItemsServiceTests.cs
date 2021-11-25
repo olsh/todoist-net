@@ -56,15 +56,12 @@ namespace Todoist.Net.Tests.Services
             client.Items.UnArchiveAsync(itemId).Wait();
             client.Items.UncompleteAsync(itemId).Wait();
 
-            var childOrder = 3;
-            client.Items.ReorderAsync(new ReorderEntry(item.Id, childOrder)).Wait();
             var anotherItem = client.Items.GetAsync().Result.First(i => i.Id != item.Id);
             client.Items.MoveAsync(ItemMoveArgument.CreateMoveToParent(item.Id, anotherItem.Id))
                 .Wait();
 
             itemInfo = client.Items.GetAsync(item.Id).Result;
             Assert.Equal(anotherItem.Id.PersistentId, itemInfo.Item.ParentId);
-            Assert.Equal(childOrder, itemInfo.Item.ChildOrder);
 
             client.Items.CompleteAsync(new CompleteItemArgument(itemId)).Wait();
             itemInfo = client.Items.GetAsync(item.Id).Result;

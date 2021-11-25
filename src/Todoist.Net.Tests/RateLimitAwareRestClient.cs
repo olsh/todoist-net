@@ -23,8 +23,9 @@ namespace Todoist.Net.Tests
         {
             HttpResponseMessage result;
 
-            const int maxRetryCount = 20;
-            const int delaySeconds = 10;
+            // For each user, you can make a maximum of 450 requests within a 15 minute period.
+            const int maxRetryCount = 35;
+            const int delaySeconds = 30;
 
             int retryCount = 0;
             do

@@ -50,7 +50,7 @@ namespace Todoist.Net.Models
         /// The color.
         /// </value>
         [JsonProperty("color")]
-        public int Color { get; set; }
+        public int? Color { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is deleted.
