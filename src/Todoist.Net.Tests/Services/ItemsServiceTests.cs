@@ -76,16 +76,23 @@ namespace Todoist.Net.Tests.Services
 
         [Fact]
         [IntegrationFree]
-        public void CreateItemGetByIdAndDelete_Success()
+        public void CreateItemClearDueDateAndDelete_Success()
         {
             var client = TodoistClientFactory.Create();
 
-            var item = new Item("demo task");
+            var item = new Item("demo task") { DueDate = new DueDate(DateTime.Today, true) };
             client.Items.AddAsync(item).Wait();
 
             var itemInfo = client.Items.GetAsync(item.Id).Result;
 
             Assert.True(itemInfo.Item.Content == item.Content);
+            Assert.NotNull(itemInfo.Item.DueDate);
+
+            itemInfo.Item.DueDate = null;
+            client.Items.UpdateAsync(itemInfo.Item).Wait();
+
+            itemInfo = client.Items.GetAsync(item.Id).Result;
+            Assert.Null(itemInfo.Item.DueDate);
 
             client.Items.DeleteAsync(item.Id).Wait();
         }
