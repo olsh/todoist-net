@@ -135,12 +135,12 @@ namespace Todoist.Net.Tests.Services
             Assert.True(project.Id != itemInfo.Project.Id);
 
             client.Items.MoveAsync(ItemMoveArgument.CreateMoveToProject(itemInfo.Item.Id, project.Id)).Wait();
-            itemInfo = client.Items.GetAsync(item.Id).Result;
+            itemInfo = client.Items.GetAsync(itemInfo.Item.Id).Result;
 
             Assert.True(project.Id == itemInfo.Project.Id);
 
             client.Projects.DeleteAsync(project.Id).Wait();
-            client.Items.DeleteAsync(item.Id).Wait();
+            client.Items.DeleteAsync(itemInfo.Item.Id).Wait();
         }
 
         [Fact]
