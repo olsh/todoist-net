@@ -115,12 +115,12 @@ namespace Todoist.Net.Models
                     return null;
                 }
 
-                var date = Date.Value.ToUniversalTime();
                 if (IsFullDay)
                 {
-                    return date.ToString(FullDayEventDateFormat);
+                    return Date.Value.ToString(FullDayEventDateFormat);
                 }
 
+                var date = Date.Value.ToUniversalTime();
                 if (string.IsNullOrEmpty(Timezone))
                 {
                     return date.ToString("s");

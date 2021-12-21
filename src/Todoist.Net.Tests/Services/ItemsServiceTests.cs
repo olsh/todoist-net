@@ -80,13 +80,13 @@ namespace Todoist.Net.Tests.Services
         {
             var client = TodoistClientFactory.Create();
 
-            var item = new Item("demo task") { DueDate = new DueDate(DateTime.Today, true) };
+            var item = new Item("demo task") { DueDate = new DueDate("22 Dec 2021", null, Language.English) };
             client.Items.AddAsync(item).Wait();
 
             var itemInfo = client.Items.GetAsync(item.Id).Result;
 
             Assert.True(itemInfo.Item.Content == item.Content);
-            Assert.NotNull(itemInfo.Item.DueDate);
+            Assert.Equal("2021-12-22", itemInfo.Item.DueDate.StringDate);
 
             itemInfo.Item.DueDate = null;
             client.Items.UpdateAsync(itemInfo.Item).Wait();
