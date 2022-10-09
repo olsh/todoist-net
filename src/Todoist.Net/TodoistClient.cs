@@ -198,7 +198,6 @@ namespace Todoist.Net
             return new Transaction(this);
         }
 
-
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
