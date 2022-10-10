@@ -45,7 +45,7 @@ namespace Todoist.Net.Tests
                 var cooldown = await GetRateLimitCooldown(result).ConfigureAwait(false);
                 retryCount++;
 
-                _outputHelper.WriteLine("Received [{0}] status code from Todoist API, retry #{1} in {2}", result.StatusCode, retryCount, cooldown);
+                _outputHelper.WriteLine("[{0:G}] Received [{1}] status code from Todoist API, retry #{2} in {3}", DateTime.UtcNow, result.StatusCode, retryCount, cooldown);
                 await Task.Delay(cooldown);
             }
             while (retryCount < maxRetryCount);
@@ -79,7 +79,10 @@ namespace Todoist.Net.Tests
                     var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     JObject json = JObject.Parse(content);
 
-                    return TimeSpan.FromSeconds(json["error_extra"]["retry_after"].Value<double>());
+                    return TimeSpan.FromSeconds(json["error_extra"]["retry_after"].Value<double>())
+
+                        // Add one more second to be sure
+                        .Add(TimeSpan.FromSeconds(1));
                 }
                 catch
                 {
