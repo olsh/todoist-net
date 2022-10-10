@@ -56,6 +56,7 @@ Task("CodeCoverage")
     var settings = new DotNetTestSettings
     {
         Configuration = buildConfiguration,
+        Loggers = new List<string> { "console;verbosity=detailed" },
         ArgumentCustomization = args => args
                                             .Append("/p:CollectCoverage=true")
                                             .Append("/p:CoverletOutputFormat=opencover")
