@@ -215,7 +215,19 @@ namespace Todoist.Net
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="resourceTypes" /> is <see langword="null" /></exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task<Resources> GetResourcesAsync(params ResourceType[] resourceTypes)
+        public Task<Resources> GetResourcesAsync(params ResourceType[] resourceTypes) => GetResourcesAsync("*", resourceTypes);
+
+        /// <summary>
+        /// Gets the resources asynchronous.
+        /// </summary>
+        /// <param name="syncToken">The sync token returned from todoist for increment sync</param>
+        /// <param name="resourceTypes">The resource types.</param>
+        /// <returns>
+        /// All resources.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="resourceTypes" /> is <see langword="null" /></exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        public Task<Resources> GetResourcesAsync(string syncToken, params ResourceType[] resourceTypes)
         {
             if (resourceTypes == null)
             {
@@ -228,7 +240,7 @@ namespace Todoist.Net
             }
 
             var parameters = new LinkedList<KeyValuePair<string, string>>();
-            parameters.AddLast(new KeyValuePair<string, string>("sync_token", "*"));
+            parameters.AddLast(new KeyValuePair<string, string>("sync_token", syncToken));
             parameters.AddLast(
                 new KeyValuePair<string, string>(
                     "resource_types",

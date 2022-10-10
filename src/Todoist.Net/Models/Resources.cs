@@ -87,5 +87,12 @@ namespace Todoist.Net.Models
         /// <value>The user information.</value>
         [JsonProperty("user")]
         public UserInfo UserInfo { get; internal set; }
+        
+        /// <summary>
+        /// The Sync_Token returned from Todoist for incremental Sync
+        /// </summary>
+        /// <value>The Sync Token</value>
+        [JsonProperty("sync_token")]
+        public string SyncToken { get; internal set; }
     }
 }
