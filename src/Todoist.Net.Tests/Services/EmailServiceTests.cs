@@ -19,7 +19,7 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [IntegrationPremium]
+        [Trait(Constants.TraitName, Constants.IntegrationPremiumTraitValue)]
         public void GetOrCreateAsyncDisable_NewProject_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);

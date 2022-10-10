@@ -20,12 +20,12 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [IntegrationFree]
+        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
         public void CreateGetDeleteAsync_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var fileName = $"{Guid.NewGuid().ToString()}.txt";
+            var fileName = $"{Guid.NewGuid()}.txt";
             var upload = client.Uploads.UploadAsync(fileName, Encoding.UTF8.GetBytes("hello")).Result;
 
             var allUploads = client.Uploads.GetAsync().Result;

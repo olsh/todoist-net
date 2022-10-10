@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 
 using Newtonsoft.Json;
@@ -103,7 +103,7 @@ namespace Todoist.Net.Models
         /// The string date.
         /// </value>
         /// <remarks>
-        /// Format date according this rules https://developer.todoist.com/sync/v8/?shell#due-dates
+        /// Format date according this rules https://developer.todoist.com/sync/v9/?shell#due-dates
         /// </remarks>
         [JsonProperty("date")]
         internal string StringDate

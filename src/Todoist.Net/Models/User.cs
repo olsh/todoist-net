@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 
 namespace Todoist.Net.Models
 {
@@ -31,32 +31,22 @@ namespace Todoist.Net.Models
         public long? AutoReminder { get; set; }
 
         /// <summary>
+        /// The user's current password.
+        /// This must be provided if the request is modifying the user's password or email address and the user already has a password set (indicated by has_password in the user object).
+        /// For amending other properties this is not required.
+        /// </summary>
+        /// <value>
+        /// The current password.
+        /// </value>
+        [JsonProperty("current_password")]
+        public string CurrentPassword { get; set; }
+
+        /// <summary>
         /// Gets or sets the date format.
         /// </summary>
         /// <value>The date format.</value>
         [JsonProperty("date_format")]
         public DateFormat? DateFormat { get; set; }
-
-        /// <summary>
-        /// Gets or sets the default reminder.
-        /// </summary>
-        /// <value>The default reminder.</value>
-        [JsonProperty("default_reminder")]
-        public ReminderService DefaultReminder { get; set; }
-
-        /// <summary>
-        /// Gets or sets the mobile host.
-        /// </summary>
-        /// <value>The mobile host.</value>
-        [JsonProperty("mobile_host")]
-        public string MobileHost { get; set; }
-
-        /// <summary>
-        /// Gets or sets the mobile number.
-        /// </summary>
-        /// <value>The mobile number.</value>
-        [JsonProperty("mobile_number")]
-        public string MobileNumber { get; set; }
 
         /// <summary>
         /// Gets or sets the next week.
@@ -90,8 +80,8 @@ namespace Todoist.Net.Models
         /// Gets or sets the theme.
         /// </summary>
         /// <value>The theme.</value>
-        [JsonProperty("theme")]
-        public int? Theme { get; set; }
+        [JsonProperty("theme_id")]
+        public string Theme { get; set; }
 
         /// <summary>
         /// Gets or sets the time format.

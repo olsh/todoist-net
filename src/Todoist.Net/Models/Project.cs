@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-using Todoist.Net.Serialization.Converters;
+using Newtonsoft.Json;
 
 namespace Todoist.Net.Models
 {
@@ -23,7 +21,6 @@ namespace Todoist.Net.Models
         /// Gets or sets a value indicating whether this <see cref="Project"/> is collapsed.
         /// </summary>
         /// <value><c>null</c> if [collapsed] contains no value, <c>true</c> if [collapsed]; otherwise, <c>false</c>.</value>
-        [JsonConverter(typeof(BoolConverter))]
         [JsonProperty("collapsed")]
         public bool? Collapsed { get; set; }
 
@@ -32,20 +29,19 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The color.</value>
         [JsonProperty("color")]
-        public int? Color { get; set; }
+        public string Color { get; set; }
 
         /// <summary>
         /// Gets or sets the indent.
         /// </summary>
         /// <value>The indent.</value>
         [JsonProperty("parent_id")]
-        public long? ParentId { get; set; }
+        public string ParentId { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is archived.
         /// </summary>
         /// <value><c>true</c> if this instance is archived; otherwise, <c>false</c>.</value>
-        [JsonConverter(typeof(BoolConverter))]
         [JsonProperty("is_archived")]
         public bool IsArchived { get; internal set; }
 
@@ -53,9 +49,17 @@ namespace Todoist.Net.Models
         /// Gets a value indicating whether this instance is deleted.
         /// </summary>
         /// <value><c>true</c> if this instance is deleted; otherwise, <c>false</c>.</value>
-        [JsonConverter(typeof(BoolConverter))]
         [JsonProperty("is_deleted")]
         public bool IsDeleted { get; internal set; }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is favorite.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is favorite; otherwise, <c>false</c>.
+        /// </value>
+        [JsonProperty("is_favorite")]
+        public bool IsFavorite { get; internal set; }
 
         /// <summary>
         /// Gets or sets order of project. Defines the position of the project among all the projects with the same parent_id.

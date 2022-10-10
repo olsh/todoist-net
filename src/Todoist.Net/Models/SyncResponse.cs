@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Newtonsoft.Json;
@@ -11,6 +11,6 @@ namespace Todoist.Net.Models
         public Dictionary<Guid, dynamic> SyncStatus { get; set; }
 
         [JsonProperty("temp_id_mapping")]
-        public Dictionary<Guid, long> TempIdMappings { get; set; }
+        public Dictionary<Guid, string> TempIdMappings { get; set; }
     }
 }

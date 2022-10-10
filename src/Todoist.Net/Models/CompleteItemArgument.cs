@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Newtonsoft.Json;
 
@@ -14,18 +14,13 @@ namespace Todoist.Net.Models
         /// Initializes a new instance of the <see cref="CompleteItemArgument" /> class.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        /// <param name="dateCompleted">
+        /// <param name="completedAt">
         /// The date completed. If not set, the server will set the value to the current timestamp.
         /// </param>
-        /// <param name="forceHistory">
-        /// The force history. When enabled the item is moved to history irregardless of whether it’s a
-        /// sub-task or not (by default only root tasks are moved to history).
-        /// </param>
-        public CompleteItemArgument(ComplexId id, DateTime? dateCompleted = null, bool? forceHistory = null)
+        public CompleteItemArgument(ComplexId id, DateTime? completedAt = null)
         {
             Id = id;
-            DateCompleted = dateCompleted;
-            ForceHistory = forceHistory;
+            CompletedAt = completedAt;
         }
 
         /// <summary>
@@ -34,17 +29,8 @@ namespace Todoist.Net.Models
         /// <value>
         /// The date completed.
         /// </value>
-        [JsonProperty("date_completed")]
-        public DateTime? DateCompleted { get; }
-
-        /// <summary>
-        /// Gets the force history.
-        /// </summary>
-        /// <value>
-        /// The force history.
-        /// </value>
-        [JsonProperty("force_history")]
-        public bool? ForceHistory { get; }
+        [JsonProperty("completed_at")]
+        public DateTime? CompletedAt { get; }
 
         /// <summary>
         /// Gets the identifier.

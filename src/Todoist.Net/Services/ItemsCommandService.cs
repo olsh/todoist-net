@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -63,42 +63,6 @@ namespace Todoist.Net.Services
         public Task CloseAsync(ComplexId id)
         {
             var command = CreateEntityCommand(CommandType.CloseItem, id);
-            return ExecuteCommandAsync(command);
-        }
-
-        /// <summary>
-        /// Archives a task and all its descendants asynchronous.
-        /// </summary>
-        /// <param name="id">The item ID.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <remarks>
-        /// It is mostly intended to allow users to force sub-tasks to be moved to the history since root tasks are automatically
-        /// archived upon completion. See also item_close for a simplified version of the command.
-        /// </remarks>
-        public Task ArchiveAsync(ComplexId id)
-        {
-            var command = CreateEntityCommand(CommandType.ArchiveItem, id);
-
-            return ExecuteCommandAsync(command);
-        }
-
-        /// <summary>
-        /// UnArchives a task and all its descendants asynchronous.
-        /// </summary>
-        /// <param name="id">The item ID.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <remarks>
-        /// No ancestors will be restored from the history. Instead, the item is unarchived (and uncompleted) alone, loses any
-        /// parent relationship (becomes a project root item), and is placed at the end of the list of other project root items.
-        /// </remarks>
-        public Task UnArchiveAsync(ComplexId id)
-        {
-            var command = CreateEntityCommand(CommandType.UnArchiveItem, id);
-
             return ExecuteCommandAsync(command);
         }
 

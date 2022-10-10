@@ -1,6 +1,3 @@
-#tool nuget:?package=Codecov&version=1.13.0
-#addin nuget:?package=Cake.Codecov&version=1.0.1
-
 #tool nuget:?package=MSBuild.SonarQube.Runner.Tool&version=4.8.0
 #addin nuget:?package=Cake.Sonar&version=1.1.30
 
@@ -36,6 +33,19 @@ Task("Build")
     DotNetBuild(string.Format("{0}.sln", projectName), settings);
 });
 
+Task("UnitTest")
+  .IsDependentOn("Build")
+  .Does(() =>
+{
+     var settings = new DotNetTestSettings
+     {
+         Configuration = buildConfiguration,
+         Filter = "trait=unit"
+     };
+
+     DotNetTest(testProjectFile, settings);
+});
+
 Task("Test")
   .IsDependentOn("Build")
   .Does(() =>
@@ -47,25 +57,6 @@ Task("Test")
      };
 
      DotNetTest(testProjectFile, settings);
-});
-
-Task("CodeCoverage")
-  .IsDependentOn("Build")
-  .Does(() =>
-{
-    var settings = new DotNetTestSettings
-    {
-        Configuration = buildConfiguration,
-        Loggers = new List<string> { "console;verbosity=detailed" },
-        ArgumentCustomization = args => args
-                                            .Append("/p:CollectCoverage=true")
-                                            .Append("/p:CoverletOutputFormat=opencover")
-                                            .Append("/p:Include=\"[Todoist.Net]*\"")
-    };
-
-    DotNetTest(testProjectFile, settings);
-
-    Codecov(string.Format("{0}coverage.net6.0.opencover.xml", testProjectFolder), EnvironmentVariable("codecov:token"));
 });
 
 Task("NugetPack")
@@ -121,7 +112,7 @@ Task("Default")
 Task("CI")
     .IsDependentOn("UpdateBuildVersion")
     .IsDependentOn("Sonar")
-    .IsDependentOn("CodeCoverage")
+    .IsDependentOn("UnitTest")
     .IsDependentOn("CreateArtifact");
 
 RunTarget(target);

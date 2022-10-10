@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
@@ -19,38 +20,39 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [IntegrationFree]
-        public void GetCurrentAsync_Success()
+        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
+        public async Task GetCurrentAsync_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var user = client.Users.GetCurrentAsync().Result;
+            var user = await client.Users.GetCurrentAsync();
 
             Assert.NotNull(user);
             Assert.True(user.Id > 0);
         }
 
         [Fact]
-        [IntegrationFree]
-        public void RegisterUpdateSettingsAndDeleteUser_Success()
+        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
+        public async Task RegisterUpdateSettingsAndDeleteUser_Success()
         {
             var todoistTokenlessClient = TodoistClientFactory.CreateTokenlessClient();
-            var userBase = new UserBase(Guid.NewGuid().ToString("N") + "@example.com", "test user", "Pa$$W@rd");
-            var userInfo = todoistTokenlessClient.RegisterUserAsync(userBase).Result;
+
+            const string password = "Pa$$W@rd";
+            var userBase = new UserBase(Guid.NewGuid().ToString("N") + "@example.com", "test user", password);
+            var userInfo = await todoistTokenlessClient.RegisterUserAsync(userBase);
             Assert.NotNull(userInfo);
 
-            var todoistClient = todoistTokenlessClient.LoginAsync(userBase.Email, userBase.Password).Result;
+            var todoistClient = await todoistTokenlessClient.LoginAsync(userBase.Email, userBase.Password);
+            await todoistClient.Users.UpdateKarmaGoalsAsync(new KarmaGoals() { KarmaDisabled = true });
 
-            todoistClient.Users.UpdateNotificationSettingsAsync(
-                NotificationType.ItemCompleted,
-                NotificationService.Email,
-                true);
-            todoistClient.Users.UpdateKarmaGoalsAsync(new KarmaGoals() { KarmaDisabled = true })
-                .Wait();
-            todoistClient.Users.UpdateAsync(userInfo)
-                .Wait();
+            if (userInfo.HasPassword)
+            {
+                userInfo.CurrentPassword = password;
+            }
 
-            todoistClient.Users.DeleteAsync(userBase.Password, "test");
+            await todoistClient.Users.UpdateAsync(userInfo);
+
+            await todoistClient.Users.DeleteAsync(userBase.Password, "test");
 
             todoistClient.Dispose();
         }

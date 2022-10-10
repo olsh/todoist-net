@@ -10,7 +10,7 @@ using Xunit.Abstractions;
 namespace Todoist.Net.Tests.Services
 {
     [Collection(Constants.TodoistApiTestCollectionName)]
-    [IntegrationPremium]
+    [Trait(Constants.TraitName, Constants.IntegrationPremiumTraitValue)]
     public class FiltersServiceTests
     {
         private readonly ITestOutputHelper _outputHelper;

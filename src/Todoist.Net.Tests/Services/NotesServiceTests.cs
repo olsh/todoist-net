@@ -21,7 +21,7 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [IntegrationFree]
+        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
         public void AddNoteGetByIdAndDelete_Success()
         {
             var todoistClient = TodoistClientFactory.Create(_outputHelper);
@@ -39,7 +39,7 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [IntegrationFree]
+        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
         public void AddNoteToNewProjectAndUpdateIt_Success()
         {
             var todoistClient = TodoistClientFactory.Create(_outputHelper);
@@ -57,7 +57,7 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [IntegrationPremium]
+        [Trait(Constants.TraitName, Constants.IntegrationPremiumTraitValue)]
         public void AddNoteToNewProjectAttachFileAndDeleteIt_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);

@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/olsh/todoist-net/branch/master/graph/badge.svg)](https://codecov.io/gh/olsh/todoist-net)
 [![NuGet](https://img.shields.io/nuget/v/Todoist.Net.svg)](https://www.nuget.org/packages/Todoist.Net/)
 
-A [Todoist Sync API](https://developer.todoist.com/sync/v8/) client for .NET.
+A [Todoist Sync API](https://developer.todoist.com/sync/v9/) client for .NET.
 ## Installation
 
 The library is available as a [Nuget package](https://www.nuget.org/packages/Todoist.Net/).

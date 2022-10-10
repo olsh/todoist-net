@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Newtonsoft.Json;
 
@@ -19,9 +19,10 @@ namespace Todoist.Net.Serialization.Converters
             object existingValue,
             JsonSerializer serializer)
         {
-            if (long.TryParse(reader.Value?.ToString(), out var result))
+            var value = reader.Value?.ToString();
+            if (!string.IsNullOrEmpty(value))
             {
-                return new ComplexId(result);
+                return new ComplexId(value);
             }
 
             return new ComplexId();

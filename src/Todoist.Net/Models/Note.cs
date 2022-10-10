@@ -1,10 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 using Newtonsoft.Json;
-
-using Todoist.Net.Serialization.Converters;
 
 namespace Todoist.Net.Models
 {
@@ -22,7 +20,7 @@ namespace Todoist.Net.Models
         {
             Content = content;
 
-            UserIdsToNotify = new Collection<int>();
+            UserIdsToNotify = new Collection<string>();
         }
 
         /// <summary>
@@ -40,19 +38,10 @@ namespace Todoist.Net.Models
         public FileAttachment FileAttachment { get; set; }
 
         /// <summary>
-        /// Gets the is archived.
-        /// </summary>
-        /// <value>The is archived.</value>
-        [JsonProperty("is_archived")]
-        [JsonConverter(typeof(BoolConverter))]
-        public bool? IsArchived { get; internal set; }
-
-        /// <summary>
         /// Gets the is deleted.
         /// </summary>
         /// <value>The is deleted.</value>
         [JsonProperty("is_deleted")]
-        [JsonConverter(typeof(BoolConverter))]
         public bool? IsDeleted { get; internal set; }
 
         /// <summary>
@@ -66,15 +55,15 @@ namespace Todoist.Net.Models
         /// Gets the posted.
         /// </summary>
         /// <value>The posted.</value>
-        [JsonProperty("posted")]
-        public DateTime? Posted { get; internal set; }
+        [JsonProperty("posted_at")]
+        public DateTime? PostedAt { get; internal set; }
 
         /// <summary>
         /// Gets the posted user identifier.
         /// </summary>
         /// <value>The posted user identifier.</value>
         [JsonProperty("posted_uid")]
-        public long? PostedUserId { get; internal set; }
+        public string PostedUserId { get; internal set; }
 
         /// <summary>
         /// Gets the project identifier.
@@ -88,13 +77,13 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The user ids to notify.</value>
         [JsonProperty("uids_to_notify")]
-        public ICollection<int> UserIdsToNotify { get; internal set; }
+        public ICollection<string> UserIdsToNotify { get; internal set; }
 
         /// <summary>
         /// Updates the related temporary ids.
         /// </summary>
         /// <param name="map">The map.</param>
-        void IWithRelationsArgument.UpdateRelatedTempIds(IDictionary<Guid, long> map)
+        void IWithRelationsArgument.UpdateRelatedTempIds(IDictionary<Guid, string> map)
         {
             if (ProjectId.HasValue && map.TryGetValue(ProjectId.Value.TempId, out var persistentProjectId))
             {

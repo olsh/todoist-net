@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -27,7 +27,7 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         public Task MarkAllReadAsync()
         {
-            var command = CreateEntityCommand(CommandType.SetLastReadNotification, 0);
+            var command = CreateEntityCommand(CommandType.SetLastReadNotification, null);
             return ExecuteCommandAsync(command);
         }
 

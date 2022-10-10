@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 
 using Todoist.Net.Serialization.Converters;
 
@@ -71,14 +71,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The notify uid.</value>
         [JsonProperty("notify_uid")]
-        public long? NotifyUid { get; set; }
-
-        /// <summary>
-        /// Gets or sets the service.
-        /// </summary>
-        /// <value>The service.</value>
-        [JsonProperty("service")]
-        public ReminderService Service { get; set; }
+        public string NotifyUid { get; set; }
 
         /// <summary>
         /// Gets or sets the type.
