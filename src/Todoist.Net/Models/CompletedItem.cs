@@ -16,8 +16,8 @@ namespace Todoist.Net.Models
         /// <value>
         /// The completed date.
         /// </value>
-        [JsonProperty("completed_date")]
-        public DateTime CompletedDate { get; internal set; }
+        [JsonProperty("completed_at")]
+        public DateTime CompletedAt { get; internal set; }
 
         /// <summary>
         /// Gets the content.
