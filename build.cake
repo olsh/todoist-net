@@ -2,7 +2,7 @@
 #addin nuget:?package=Cake.Codecov&version=1.0.1
 
 #tool nuget:?package=MSBuild.SonarQube.Runner.Tool&version=4.8.0
-#addin nuget:?package=Cake.Sonar&version=1.1.25
+#addin nuget:?package=Cake.Sonar&version=1.1.30
 
 var target = Argument("target", "Default");
 
@@ -28,55 +28,57 @@ Task("UpdateBuildVersion")
 Task("Build")
   .Does(() =>
 {
-    var settings = new DotNetCoreBuildSettings
+    var settings = new DotNetBuildSettings
     {
         Configuration = buildConfiguration
     };
 
-    DotNetCoreBuild(string.Format("{0}.sln", projectName), settings);
+    DotNetBuild(string.Format("{0}.sln", projectName), settings);
 });
 
 Task("Test")
   .IsDependentOn("Build")
   .Does(() =>
 {
-     var settings = new DotNetCoreTestSettings
+     var settings = new DotNetTestSettings
      {
-         Configuration = buildConfiguration
+         Configuration = buildConfiguration,
+         Loggers = new List<string> { "console;verbosity=detailed" }
      };
 
-     DotNetCoreTest(testProjectFile, settings);
+     DotNetTest(testProjectFile, settings);
 });
 
 Task("CodeCoverage")
   .IsDependentOn("Build")
   .Does(() =>
 {
-    var settings = new DotNetCoreTestSettings
+    var settings = new DotNetTestSettings
     {
         Configuration = buildConfiguration,
+        Loggers = new List<string> { "console;verbosity=detailed" },
         ArgumentCustomization = args => args
                                             .Append("/p:CollectCoverage=true")
                                             .Append("/p:CoverletOutputFormat=opencover")
                                             .Append("/p:Include=\"[Todoist.Net]*\"")
     };
 
-    DotNetCoreTest(testProjectFile, settings);
+    DotNetTest(testProjectFile, settings);
 
-    Codecov(string.Format("{0}coverage.netcoreapp3.1.opencover.xml", testProjectFolder), EnvironmentVariable("codecov:token"));
+    Codecov(string.Format("{0}coverage.net6.0.opencover.xml", testProjectFolder), EnvironmentVariable("codecov:token"));
 });
 
 Task("NugetPack")
   .IsDependentOn("Build")
   .Does(() =>
 {
-     var settings = new DotNetCorePackSettings
+     var settings = new DotNetPackSettings
      {
          Configuration = buildConfiguration,
          OutputDirectory = "."
      };
 
-     DotNetCorePack(projectFolder, settings);
+     DotNetPack(projectFolder, settings);
 });
 
 Task("CreateArtifact")

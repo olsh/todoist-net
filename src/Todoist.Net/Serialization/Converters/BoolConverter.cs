@@ -17,7 +17,7 @@ namespace Todoist.Net.Serialization.Converters
             object existingValue,
             JsonSerializer serializer)
         {
-            return reader.Value.ToString() == "1";
+            return reader.Value?.ToString() == "1";
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

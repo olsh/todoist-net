@@ -1,18 +1,26 @@
-﻿using Todoist.Net.Models;
+using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
-using Todoist.Net.Tests.Settings;
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Todoist.Net.Tests.Services
 {
+    [Collection(Constants.TodoistApiTestCollectionName)]
     public class LabelsServiceTests
     {
+        private readonly ITestOutputHelper _outputHelper;
+
+        public LabelsServiceTests(ITestOutputHelper outputHelper)
+        {
+            _outputHelper = outputHelper;
+        }
+
         [Fact]
         [IntegrationFree]
         public void CreateUpdateOrderGetInfoDelete_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var label = new Label("Test label");
             client.Labels.AddAsync(label).Wait();

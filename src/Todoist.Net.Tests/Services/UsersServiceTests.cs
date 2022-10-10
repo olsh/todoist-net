@@ -1,19 +1,28 @@
-﻿using System;
+using System;
 
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Todoist.Net.Tests.Services
 {
+    [Collection(Constants.TodoistApiTestCollectionName)]
     public class UsersServiceTests
     {
+        private readonly ITestOutputHelper _outputHelper;
+
+        public UsersServiceTests(ITestOutputHelper outputHelper)
+        {
+            _outputHelper = outputHelper;
+        }
+
         [Fact]
         [IntegrationFree]
         public void GetCurrentAsync_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var user = client.Users.GetCurrentAsync().Result;
 
@@ -30,9 +39,7 @@ namespace Todoist.Net.Tests.Services
             var userInfo = todoistTokenlessClient.RegisterUserAsync(userBase).Result;
             Assert.NotNull(userInfo);
 
-#pragma warning disable CS0618 // Type or member is obsolete
             var todoistClient = todoistTokenlessClient.LoginAsync(userBase.Email, userBase.Password).Result;
-#pragma warning restore CS0618 // Type or member is obsolete
 
             todoistClient.Users.UpdateNotificationSettingsAsync(
                 NotificationType.ItemCompleted,

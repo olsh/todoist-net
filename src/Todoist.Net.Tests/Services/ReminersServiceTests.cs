@@ -1,20 +1,29 @@
-﻿using System;
+using System;
 using System.Linq;
 
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Todoist.Net.Tests.Services
 {
+    [Collection(Constants.TodoistApiTestCollectionName)]
     [IntegrationPremium]
     public class ReminersServiceTests
     {
+        private readonly ITestOutputHelper _outputHelper;
+
+        public ReminersServiceTests(ITestOutputHelper outputHelper)
+        {
+            _outputHelper = outputHelper;
+        }
+
         [Fact]
         public void CreateDelete_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var transaction = client.CreateTransaction();
 

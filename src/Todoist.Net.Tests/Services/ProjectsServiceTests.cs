@@ -1,20 +1,29 @@
-﻿using System;
+using System;
 using System.Linq;
 
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Todoist.Net.Tests.Services
 {
+    [Collection(Constants.TodoistApiTestCollectionName)]
     public class ProjectsServiceTests
     {
+        private readonly ITestOutputHelper _outputHelper;
+
+        public ProjectsServiceTests(ITestOutputHelper outputHelper)
+        {
+            _outputHelper = outputHelper;
+        }
+
         [Fact]
         [IntegrationFree]
         public void CreateGetAndDelete_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var projectName = Guid.NewGuid().ToString();
             client.Projects.AddAsync(new Project(projectName)).Wait();
@@ -36,7 +45,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void CreateUpdateOrderMoveAndDelete_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var projectName = Guid.NewGuid().ToString();
             var project = new Project(projectName);            
@@ -58,7 +67,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void CreateArchiveAndDelete_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var projectName = Guid.NewGuid().ToString();
             var newProject = new Project(projectName);
@@ -80,7 +89,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void CreateProjectAndGetProjectData_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var transaction = client.CreateTransaction();
 

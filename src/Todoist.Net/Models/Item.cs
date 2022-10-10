@@ -88,8 +88,8 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The description.</value>
         [JsonProperty("description")]
-        public string Description { get; set; }        
-        
+        public string Description { get; set; }
+
         /// <summary>
         /// Gets or sets the due date.
         /// </summary>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Text;
 
@@ -6,16 +6,25 @@ using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Todoist.Net.Tests.Services
 {
+    [Collection(Constants.TodoistApiTestCollectionName)]
     public class NotesServiceTests
     {
+        private readonly ITestOutputHelper _outputHelper;
+
+        public NotesServiceTests(ITestOutputHelper outputHelper)
+        {
+            _outputHelper = outputHelper;
+        }
+
         [Fact]
         [IntegrationFree]
         public void AddNoteGetByIdAndDelete_Success()
         {
-            var todoistClient = TodoistClientFactory.Create();
+            var todoistClient = TodoistClientFactory.Create(_outputHelper);
 
             var project = new Project(Guid.NewGuid().ToString());
             todoistClient.Projects.AddAsync(project).Wait();
@@ -33,7 +42,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void AddNoteToNewProjectAndUpdateIt_Success()
         {
-            var todoistClient = TodoistClientFactory.Create();
+            var todoistClient = TodoistClientFactory.Create(_outputHelper);
 
             var project = new Project(Guid.NewGuid().ToString());
             todoistClient.Projects.AddAsync(project).Wait();
@@ -51,7 +60,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationPremium]
         public void AddNoteToNewProjectAttachFileAndDeleteIt_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var project = new Project(Guid.NewGuid().ToString());
             client.Projects.AddAsync(project).Wait();

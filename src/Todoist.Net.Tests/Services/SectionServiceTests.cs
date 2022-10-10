@@ -1,17 +1,28 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 
 using Todoist.Net.Models;
+using Todoist.Net.Tests.Extensions;
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Todoist.Net.Tests.Services
 {
+    [Collection(Constants.TodoistApiTestCollectionName)]
+    [IntegrationFree]
     public class SectionServiceTests
     {
+        private readonly ITestOutputHelper _outputHelper;
+
+        public SectionServiceTests(ITestOutputHelper outputHelper)
+        {
+            _outputHelper = outputHelper;
+        }
+
         [Fact]
         public async Task CreateArchiveUnarchiveDelete_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var projectId = await client.Projects.AddAsync(new Project("test"));
             var sectionId = await client.Sections.AddAsync(new Section("test", projectId));
@@ -30,7 +41,7 @@ namespace Todoist.Net.Tests.Services
         [Fact]
         public async Task Reorder_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var projectId = await client.Projects.AddAsync(new Project("test"));
             var firstId = await client.Sections.AddAsync(new Section("test", projectId));

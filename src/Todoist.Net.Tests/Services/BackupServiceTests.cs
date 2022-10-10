@@ -1,18 +1,26 @@
-﻿using System.Linq;
+using System.Linq;
 using Todoist.Net.Tests.Extensions;
-using Todoist.Net.Tests.Settings;
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Todoist.Net.Tests.Services
 {
+    [Collection(Constants.TodoistApiTestCollectionName)]
     public class BackupServiceTests
     {
+        private readonly ITestOutputHelper _outputHelper;
+
+        public BackupServiceTests(ITestOutputHelper outputHelper)
+        {
+            _outputHelper = outputHelper;
+        }
+
         [Fact]
         [IntegrationFree]
         public void GetBackups_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var backups = client.Backups.GetAsync().Result;
 

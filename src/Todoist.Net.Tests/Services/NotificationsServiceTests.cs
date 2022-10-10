@@ -1,17 +1,27 @@
-﻿using System.Linq;
+using System.Linq;
 
-using Todoist.Net.Tests.Settings;
+using Todoist.Net.Tests.Extensions;
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Todoist.Net.Tests.Services
 {
+    [Collection(Constants.TodoistApiTestCollectionName)]
+    [IntegrationFree]
     public class NotificationsServiceTests
     {
+        private readonly ITestOutputHelper _outputHelper;
+
+        public NotificationsServiceTests(ITestOutputHelper outputHelper)
+        {
+            _outputHelper = outputHelper;
+        }
+
         [Fact]
         public void GetNotification_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var notifications = client.Notifications.GetAsync().Result;
 
@@ -21,7 +31,7 @@ namespace Todoist.Net.Tests.Services
         [Fact]
         public void MarkAllAsRead_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             client.Notifications.MarkAllReadAsync().Wait();
         }
