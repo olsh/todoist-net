@@ -79,10 +79,7 @@ namespace Todoist.Net.Tests
                     var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     JObject json = JObject.Parse(content);
 
-                    return TimeSpan.FromSeconds(json["error_extra"]["retry_after"].Value<double>())
-
-                        // Add one more second to be sure
-                        .Add(TimeSpan.FromSeconds(1));
+                    return TimeSpan.FromSeconds(json["error_extra"]["retry_after"].Value<double>()));
                 }
                 catch
                 {
