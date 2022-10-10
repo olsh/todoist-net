@@ -1,22 +1,30 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Text;
 
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
-using Todoist.Net.Tests.Settings;
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Todoist.Net.Tests.Services
 {
+    [Collection(Constants.TodoistApiTestCollectionName)]
     [IntegrationPremium]
     public class TemplateServiceTests
     {
+        private readonly ITestOutputHelper _outputHelper;
+
+        public TemplateServiceTests(ITestOutputHelper outputHelper)
+        {
+            _outputHelper = outputHelper;
+        }
+
         [Fact]
         public void ExportAndImportTemplate_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var firstProject = client.Projects.GetAsync().Result.First();
 
@@ -33,7 +41,7 @@ namespace Todoist.Net.Tests.Services
         [Fact]
         public void ExportAsShareableUrl_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var firstProject = client.Projects.GetAsync().Result.First();
             var template = client.Templates.ExportAsShareableUrlAsync(firstProject.Id).Result;

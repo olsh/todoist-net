@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 
 using Todoist.Net.Exceptions;
@@ -6,16 +6,25 @@ using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Todoist.Net.Tests.Services
 {
+    [Collection(Constants.TodoistApiTestCollectionName)]
     public class ItemsServiceTests
     {
+        private readonly ITestOutputHelper _outputHelper;
+
+        public ItemsServiceTests(ITestOutputHelper outputHelper)
+        {
+            _outputHelper = outputHelper;
+        }
+
         [Fact]
         [IntegrationPremium]
         public void CreateItemCompleteGetCloseAsync_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var transaction = client.CreateTransaction();
 
@@ -39,7 +48,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void CreateItemCompleteUncompleteAsync_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var transaction = client.CreateTransaction();
 
@@ -78,7 +87,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void CreateItemClearDueDateAndDelete_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var item = new Item("demo task") { DueDate = new DueDate("22 Dec 2021", null, Language.English) };
             client.Items.AddAsync(item).Wait();
@@ -102,7 +111,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void CreateItem_InvalidPDueDate_ThrowsException()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
             var item = new Item("bad task");
             item.DueDate = new DueDate("Invalid date string");
 
@@ -119,7 +128,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void MoveItemsToProject_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var item = new Item("demo task");
             client.Items.AddAsync(item).Wait();
@@ -147,7 +156,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void QuickAddAsync_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var item = client.Items.QuickAddAsync(new QuickAddItem("Demo task every fri")).Result;
 
@@ -163,7 +172,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void UpdateOrders_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var item = client.Items.QuickAddAsync(new QuickAddItem("Demo task every fri")).Result;
 
@@ -178,7 +187,7 @@ namespace Todoist.Net.Tests.Services
         [IntegrationFree]
         public void CreateNewItem_DueDateIsLocal_DueDateNotChanged()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var item = new Item("New task") { DueDate = new DueDate(DateTime.Now.AddYears(1).Date) };
             var taskId = client.Items.AddAsync(item).Result;

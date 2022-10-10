@@ -1,19 +1,26 @@
-﻿using System.Linq;
-
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Todoist.Net.Tests.Services
 {
+    [Collection(Constants.TodoistApiTestCollectionName)]
     [IntegrationPremium]
     public class ActivityServiceTests
     {
+        private readonly ITestOutputHelper _outputHelper;
+
+        public ActivityServiceTests(ITestOutputHelper outputHelper)
+        {
+            _outputHelper = outputHelper;
+        }
+
         [Fact]
         public void GetActivity_HasEntries()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var logEntries = client.Activity.GetAsync(new LogFilter() { Limit = 50 }).Result.Events;
 
@@ -23,7 +30,7 @@ namespace Todoist.Net.Tests.Services
         [Fact]
         public void GetActivityWithEventObjectFilter_HasEntries()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var logFilter = new LogFilter();
             logFilter.ObjectEventTypes.Add(new ObjectEventTypes() { ObjectType = "project" });

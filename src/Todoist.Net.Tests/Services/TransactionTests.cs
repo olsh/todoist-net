@@ -1,18 +1,27 @@
-﻿using System;
+using System;
 
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Todoist.Net.Tests.Services
 {
+    [Collection(Constants.TodoistApiTestCollectionName)]
     public class TransactionTests
     {
+        private readonly ITestOutputHelper _outputHelper;
+
+        public TransactionTests(ITestOutputHelper outputHelper)
+        {
+            _outputHelper = outputHelper;
+        }
+
         [Fact]
         [IntegrationFree]
         public void CreateProjectAndCreateNote_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var transaction = client.CreateTransaction();
 

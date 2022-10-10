@@ -1,20 +1,29 @@
-﻿using System;
+using System;
 using System.Linq;
 
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Todoist.Net.Tests.Services
 {
+    [Collection(Constants.TodoistApiTestCollectionName)]
     [IntegrationPremium]
     public class FiltersServiceTests
     {
+        private readonly ITestOutputHelper _outputHelper;
+
+        public FiltersServiceTests(ITestOutputHelper outputHelper)
+        {
+            _outputHelper = outputHelper;
+        }
+
         [Fact]
         public void GetFilterInfo_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var filters = client.Filters.GetAsync().Result;
 
@@ -28,7 +37,7 @@ namespace Todoist.Net.Tests.Services
         [Fact]
         public void CreateUpdateDelete_Success()
         {
-            var client = TodoistClientFactory.Create();
+            var client = TodoistClientFactory.Create(_outputHelper);
 
             var filter = new Filter(Guid.NewGuid().ToString(), "today");
             client.Filters.AddAsync(filter).Wait();

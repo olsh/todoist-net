@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -137,9 +137,9 @@ namespace Todoist.Net
 
         /// <summary>
         /// Gets the resources asynchronous. Returns all resources if zero resource type were passed.
-        /// When sync token is passed in only tasks that have changed since last Sync will be returned 
+        /// When sync token is passed in only tasks that have changed since last Sync will be returned.
         /// </summary>
-        /// <param name="syncToken">The sync token returned from todoist for increment sync</param>
+        /// <param name="syncToken">The sync token returned from Todoist for increment sync</param>
         /// <param name="resourceTypes">The resource types.</param>
         /// <returns>
         /// The requested resources.
