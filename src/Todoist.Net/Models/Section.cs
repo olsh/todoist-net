@@ -1,8 +1,6 @@
-﻿using System;
+using System;
 
 using Newtonsoft.Json;
-
-using Todoist.Net.Serialization.Converters;
 
 namespace Todoist.Net.Models
 {
@@ -48,8 +46,8 @@ namespace Todoist.Net.Models
         /// <value>
         /// The date when the section was created.
         /// </value>
-        [JsonProperty("date_added")]
-        public DateTime? DateAdded { get; internal set; }
+        [JsonProperty("added_at")]
+        public DateTime? AddedAt { get; internal set; }
 
         /// <summary>
         /// Gets the date archived.
@@ -57,14 +55,13 @@ namespace Todoist.Net.Models
         /// <value>
         /// The date when the section was archived (or null if not archived).
         /// </value>
-        [JsonProperty("date_archived")]
-        public DateTime? DateArchived { get; internal set; }
+        [JsonProperty("archived_at")]
+        public DateTime? ArchivedAt { get; internal set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is archived.
         /// </summary>
         /// <value><c>true</c> if this instance is archived; otherwise, <c>false</c>.</value>
-        [JsonConverter(typeof(BoolConverter))]
         [JsonProperty("is_archived")]
         public bool IsArchived { get; internal set; }
 
@@ -74,7 +71,6 @@ namespace Todoist.Net.Models
         /// <value>
         /// <c>true</c> if the section’s tasks are collapsed; otherwise, <c>false</c>.
         /// </value>
-        [JsonConverter(typeof(BoolConverter))]
         [JsonProperty("collapsed")]
         public bool IsCollapsed { get; set; }
 
@@ -82,19 +78,8 @@ namespace Todoist.Net.Models
         /// Gets a value indicating whether this instance is deleted.
         /// </summary>
         /// <value><c>true</c> if this instance is deleted; otherwise, <c>false</c>.</value>
-        [JsonConverter(typeof(BoolConverter))]
         [JsonProperty("is_deleted")]
         public bool IsDeleted { get; internal set; }
-
-        /// <summary>
-        /// Gets the legacy project identifier.
-        /// </summary>
-        /// <value>
-        /// Legacy project id for the project that the section resides in.
-        /// (only shown for objects created before 1 April 2017)
-        /// </value>
-        [JsonProperty("legacy_project_id")]
-        public long? LegacyProjectId { get; internal set; }
 
         /// <summary>
         /// Gets or sets the name.

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -24,7 +24,7 @@ namespace Todoist.Net
             }
 
             // ReSharper disable once ExceptionNotDocumented
-            _httpClient = new HttpClient(httpClientHandler) { BaseAddress = new Uri("https://todoist.com/API/v8/") };
+            _httpClient = new HttpClient(httpClientHandler) { BaseAddress = new Uri("https://api.todoist.com/sync/v9/") };
         }
 
         public void Dispose()

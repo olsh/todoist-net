@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 
@@ -17,22 +17,22 @@ namespace Todoist.Net.Models
         /// Gets the created.
         /// </summary>
         /// <value>The created.</value>
-        [JsonProperty("created")]
-        public DateTime Created { get; internal set; }
+        [JsonProperty("created_at")]
+        public DateTime CreatedAt { get; internal set; }
 
         /// <summary>
         /// Gets from uid.
         /// </summary>
         /// <value>From uid.</value>
         [JsonProperty("from_uid")]
-        public long FromUid { get; internal set; }
+        public string FromUid { get; internal set; }
 
         /// <summary>
         /// Gets the identifier.
         /// </summary>
         /// <value>The identifier.</value>
         [JsonProperty("id")]
-        public long Id { get; internal set; }
+        public string Id { get; internal set; }
 
         /// <summary>
         /// Gets the notification key.

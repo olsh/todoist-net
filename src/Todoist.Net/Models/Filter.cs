@@ -1,8 +1,6 @@
-﻿using System;
+using System;
 
 using Newtonsoft.Json;
-
-using Todoist.Net.Serialization.Converters;
 
 namespace Todoist.Net.Models
 {
@@ -50,7 +48,7 @@ namespace Todoist.Net.Models
         /// The color.
         /// </value>
         [JsonProperty("color")]
-        public int? Color { get; set; }
+        public string Color { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is deleted.
@@ -59,8 +57,16 @@ namespace Todoist.Net.Models
         /// <c>true</c> if this instance is deleted; otherwise, <c>false</c>.
         /// </value>
         [JsonProperty("is_deleted")]
-        [JsonConverter(typeof(BoolConverter))]
         public bool IsDeleted { get; internal set; }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is favorite.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is favorite; otherwise, <c>false</c>.
+        /// </value>
+        [JsonProperty("is_favorite")]
+        public bool IsFavorite { get; internal set; }
 
         /// <summary>
         /// Gets or sets the item order.

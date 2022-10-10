@@ -8,7 +8,7 @@ using Xunit.Abstractions;
 namespace Todoist.Net.Tests.Services
 {
     [Collection(Constants.TodoistApiTestCollectionName)]
-    [IntegrationFree]
+    [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
     public class NotificationsServiceTests
     {
         private readonly ITestOutputHelper _outputHelper;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Todoist.Net.Models
 {
@@ -11,7 +11,7 @@ namespace Todoist.Net.Models
         /// Initializes a new instance of the <see cref="ComplexId"/> struct.
         /// </summary>
         /// <param name="persistentId">The persistent identifier.</param>
-        public ComplexId(long persistentId)
+        public ComplexId(string persistentId)
             : this()
         {
             PersistentId = persistentId;
@@ -31,7 +31,7 @@ namespace Todoist.Net.Models
         /// Gets the persistent identifier.
         /// </summary>
         /// <value>The persistent identifier.</value>
-        public long PersistentId { get; }
+        public string PersistentId { get; }
 
         /// <summary>
         /// Gets the temporary identifier.
@@ -85,7 +85,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <param name="i">The i.</param>
         /// <returns>The result of the conversion.</returns>
-        public static implicit operator ComplexId(long i)
+        public static implicit operator ComplexId(string i)
         {
             return new ComplexId(i);
         }
@@ -143,9 +143,9 @@ namespace Todoist.Net.Models
         /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
         public override string ToString()
         {
-            if (PersistentId != default(int))
+            if (!string.IsNullOrEmpty(PersistentId))
             {
-                return PersistentId.ToString();
+                return PersistentId;
             }
 
             if (TempId != default)

@@ -27,19 +27,5 @@ namespace Todoist.Net.Services
         /// <returns>The current user info.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task<UserInfo> GetCurrentAsync();
-
-        /// <summary>
-        /// Gets the current user info.
-        /// </summary>
-        /// <param name="notificationType">Type of the notification.</param>
-        /// <param name="service">The service.</param>
-        /// <param name="notify">The notify.</param>
-        /// <returns>The current user info.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="notificationType" /> or <paramref name="service" /> is <see langword="null" /></exception>
-        Task<NotificationSettings> UpdateNotificationSettingsAsync(
-            NotificationType notificationType,
-            NotificationService service,
-            bool notify);
     }
 }

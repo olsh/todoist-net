@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Todoist.Net.Tests.Models
 {
-    [Unit]
+    [Trait(Constants.TraitName, Constants.UnitTraitValue)]
     public class DueDateTests
     {
         [Fact]

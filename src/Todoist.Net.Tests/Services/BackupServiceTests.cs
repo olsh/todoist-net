@@ -7,6 +7,7 @@ using Xunit.Abstractions;
 namespace Todoist.Net.Tests.Services
 {
     [Collection(Constants.TodoistApiTestCollectionName)]
+    [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
     public class BackupServiceTests
     {
         private readonly ITestOutputHelper _outputHelper;
@@ -17,7 +18,6 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [IntegrationFree]
         public void GetBackups_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);

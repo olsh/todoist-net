@@ -1,10 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 using Newtonsoft.Json;
-
-using Todoist.Net.Serialization.Converters;
 
 namespace Todoist.Net.Models
 {
@@ -33,7 +31,7 @@ namespace Todoist.Net.Models
         {
             Content = content;
             ProjectId = projectId;
-            Labels = new Collection<long>();
+            Labels = new Collection<string>();
         }
 
         internal Item()
@@ -41,11 +39,18 @@ namespace Todoist.Net.Models
         }
 
         /// <summary>
+        /// Gets or sets the added by uid.
+        /// </summary>
+        /// <value>The added by uid.</value>
+        [JsonProperty("added_by_uid")]
+        public string AddedByUid { get; set; }
+
+        /// <summary>
         /// Gets or sets the assigned by uid.
         /// </summary>
         /// <value>The assigned by uid.</value>
         [JsonProperty("assigned_by_uid")]
-        public long? AssignedByUid { get; set; }
+        public string AssignedByUid { get; set; }
 
         /// <summary>
         /// Gets or sets order of project. Defines the position of the project among all the projects with the same parent_id.
@@ -58,7 +63,6 @@ namespace Todoist.Net.Models
         /// Gets or sets a value indicating whether this <see cref="Item" /> is collapsed.
         /// </summary>
         /// <value><c>null</c> if [collapsed] contains no value, <c>true</c> if [collapsed]; otherwise, <c>false</c>.</value>
-        [JsonConverter(typeof(BoolConverter))]
         [JsonProperty("collapsed")]
         public bool? Collapsed { get; set; }
 
@@ -73,8 +77,8 @@ namespace Todoist.Net.Models
         /// Gets the date added.
         /// </summary>
         /// <value>The date added.</value>
-        [JsonProperty("date_added")]
-        public DateTime? DateAdded { get; internal set; }
+        [JsonProperty("added_at")]
+        public DateTime? AddedAt { get; internal set; }
 
         /// <summary>
         /// Gets or sets the day order.
@@ -100,26 +104,9 @@ namespace Todoist.Net.Models
         public DueDate DueDate { get; set; }
 
         /// <summary>
-        /// Gets a value indicating whether [in history].
-        /// </summary>
-        /// <value><c>null</c> if [in history] contains no value, <c>true</c> if [in history]; otherwise, <c>false</c>.</value>
-        [JsonConverter(typeof(BoolConverter))]
-        [JsonProperty("in_history")]
-        public bool? InHistory { get; internal set; }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is archived.
-        /// </summary>
-        /// <value><c>null</c> if [is archived] contains no value, <c>true</c> if [is archived]; otherwise, <c>false</c>.</value>
-        [JsonConverter(typeof(BoolConverter))]
-        [JsonProperty("is_archived")]
-        public bool? IsArchived { get; internal set; }
-
-        /// <summary>
         /// Gets a value indicating whether this instance is checked.
         /// </summary>
         /// <value><c>null</c> if [is checked] contains no value, <c>true</c> if [is checked]; otherwise, <c>false</c>.</value>
-        [JsonConverter(typeof(BoolConverter))]
         [JsonProperty("checked")]
         public bool? IsChecked { get; internal set; }
 
@@ -127,7 +114,6 @@ namespace Todoist.Net.Models
         /// Gets a value indicating whether this instance is deleted.
         /// </summary>
         /// <value><c>null</c> if [is deleted] contains no value, <c>true</c> if [is deleted]; otherwise, <c>false</c>.</value>
-        [JsonConverter(typeof(BoolConverter))]
         [JsonProperty("is_deleted")]
         public bool? IsDeleted { get; internal set; }
 
@@ -136,7 +122,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The labels.</value>
         [JsonProperty("labels")]
-        public ICollection<long> Labels { get; internal set; }
+        public ICollection<string> Labels { get; internal set; }
 
         /// <summary>
         /// Gets or sets the id of the parent task. Set to <see langword="null" /> for root tasks.
@@ -145,7 +131,7 @@ namespace Todoist.Net.Models
         /// The parent identifier.
         /// </value>
         [JsonProperty("parent_id")]
-        public long? ParentId { get; set; }
+        public string ParentId { get; set; }
 
         /// <summary>
         /// Gets or sets the priority.
@@ -166,14 +152,14 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The responsible uid.</value>
         [JsonProperty("responsible_uid")]
-        public long? ResponsibleUid { get; set; }
+        public string ResponsibleUid { get; set; }
 
         /// <summary>
         /// Gets or sets section of project. Defines the section that the task belongs to.
         /// </summary>
         /// <value>The project order.</value>
         [JsonProperty("section_id")]
-        public long? Section { get; set; }
+        public string Section { get; set; }
 
 
         /// <summary>
@@ -181,20 +167,20 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The synchronize identifier.</value>
         [JsonProperty("sync_id")]
-        public long? SyncId { get; internal set; }
+        public string SyncId { get; internal set; }
 
         /// <summary>
         /// Gets the user identifier.
         /// </summary>
         /// <value>The user identifier.</value>
         [JsonProperty("user_id")]
-        public long? UserId { get; internal set; }
+        public string UserId { get; internal set; }
 
         /// <summary>
         /// Updates the related temporary ids.
         /// </summary>
         /// <param name="map">The map.</param>
-        void IWithRelationsArgument.UpdateRelatedTempIds(IDictionary<Guid, long> map)
+        void IWithRelationsArgument.UpdateRelatedTempIds(IDictionary<Guid, string> map)
         {
             if (ProjectId.HasValue && map.TryGetValue(ProjectId.Value.TempId, out var persistentProjectId))
             {

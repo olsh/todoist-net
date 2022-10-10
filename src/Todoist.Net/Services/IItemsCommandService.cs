@@ -133,31 +133,5 @@ namespace Todoist.Net.Services
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="completeItemArgument"/> is <see langword="null"/></exception>
         Task CompleteAsync(CompleteItemArgument completeItemArgument);
-
-        /// <summary>
-        /// Archives a task and all its descendants asynchronous.
-        /// </summary>
-        /// <param name="id">The item ID.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <remarks>
-        /// It is mostly intended to allow users to force sub-tasks to be moved to the history since root tasks are automatically
-        /// archived upon completion. See also item_close for a simplified version of the command.
-        /// </remarks>
-        Task ArchiveAsync(ComplexId id);
-
-        /// <summary>
-        /// UnArchives a task and all its descendants asynchronous.
-        /// </summary>
-        /// <param name="id">The item ID.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <remarks>
-        /// No ancestors will be restored from the history. Instead, the item is unarchived (and uncompleted) alone, loses any
-        /// parent relationship (becomes a project root item), and is placed at the end of the list of other project root items.
-        /// </remarks>
-        Task UnArchiveAsync(ComplexId id);
     }
 }

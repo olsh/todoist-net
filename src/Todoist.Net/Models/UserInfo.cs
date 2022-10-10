@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Newtonsoft.Json;
 
@@ -51,7 +51,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The business account identifier.</value>
         [JsonProperty("business_account_id")]
-        public long BusinessAccountId { get; internal set; }
+        public string BusinessAccountId { get; internal set; }
 
         /// <summary>
         /// Gets the completed count.
@@ -66,6 +66,16 @@ namespace Todoist.Net.Models
         /// <value>The completed today.</value>
         [JsonProperty("completed_today")]
         public int CompletedToday { get; internal set; }
+
+        /// <summary>
+        /// Whether the user has a password set on the account.
+        /// It will be false if they have only authenticated without a password (e.g. using Google, Facebook, etc.)
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if the user has password; otherwise, <c>false</c>.
+        /// </value>
+        [JsonProperty("has_password")]
+        public bool HasPassword { get; set; }
 
         /// <summary>
         /// Gets the identifier.
@@ -85,8 +95,8 @@ namespace Todoist.Net.Models
         /// Gets the inbox project.
         /// </summary>
         /// <value>The inbox project.</value>
-        [JsonProperty("inbox_project")]
-        public long InboxProject { get; internal set; }
+        [JsonProperty("inbox_project_id")]
+        public string InboxProjectId { get; internal set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is biz admin.
@@ -106,8 +116,8 @@ namespace Todoist.Net.Models
         /// Gets the join date.
         /// </summary>
         /// <value>The join date.</value>
-        [JsonProperty("join_date")]
-        public DateTime? JoinDate { get; internal set; }
+        [JsonProperty("joined_at")]
+        public DateTime? JoinedAt { get; internal set; }
 
         /// <summary>
         /// Gets the karma.
@@ -129,6 +139,15 @@ namespace Todoist.Net.Models
         /// <value>The premium until.</value>
         [JsonProperty("premium_until")]
         public DateTime? PremiumUntil { get; internal set; }
+
+        /// <summary>
+        /// Gets the team inbox identifier.
+        /// </summary>
+        /// <value>
+        /// The team inbox identifier.
+        /// </value>
+        [JsonProperty("team_inbox_id")]
+        public string TeamInboxId { get; internal set; }
 
         /// <summary>
         /// Gets the token.

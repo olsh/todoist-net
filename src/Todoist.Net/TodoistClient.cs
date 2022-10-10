@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -485,7 +485,7 @@ namespace Todoist.Net
             }
         }
 
-        private void UpdateTempIds(Command[] commands, IDictionary<Guid, long> tempIdMappings)
+        private void UpdateTempIds(Command[] commands, IDictionary<Guid, string> tempIdMappings)
         {
             foreach (var command in commands)
             {

@@ -20,7 +20,7 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [IntegrationFree]
+        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
         public void CreateGetAndDelete_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
@@ -42,7 +42,7 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [IntegrationFree]
+        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
         public void CreateUpdateOrderMoveAndDelete_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
@@ -51,20 +51,20 @@ namespace Todoist.Net.Tests.Services
             var project = new Project(projectName);            
             client.Projects.AddAsync(project).Wait();
 
-            Assert.True(project.Id != default(int));
+            Assert.True(project.Id != default(string));
 
             project.Name = "u_" + Guid.NewGuid();
 
             client.Projects.UpdateAsync(project).Wait();
 
             client.Projects.ReorderAsync(new ReorderEntry(project.Id, 1)).Wait();
-            client.Projects.MoveAsync(new MoveArgument(project.Id, null));
+            client.Projects.MoveAsync(new MoveArgument(project.Id, null)).Wait();
 
             client.Projects.DeleteAsync(project.Id).Wait();
         }
 
         [Fact]
-        [IntegrationFree]
+        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
         public void CreateArchiveAndDelete_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
@@ -86,7 +86,7 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [IntegrationFree]
+        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
         public void CreateProjectAndGetProjectData_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);

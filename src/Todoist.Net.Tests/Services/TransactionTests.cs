@@ -18,7 +18,7 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [IntegrationFree]
+        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
         public void CreateProjectAndCreateNote_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);

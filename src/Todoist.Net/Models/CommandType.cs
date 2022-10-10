@@ -23,8 +23,6 @@ namespace Todoist.Net.Models
 
         public static CommandType AddSection { get; } = new CommandType("section_add");
 
-        public static CommandType ArchiveItem { get; } = new CommandType("item_archive");
-
         public static CommandType ArchiveProject { get; } = new CommandType("project_archive");
 
         public static CommandType ArchiveSection { get; } = new CommandType("section_archive");
@@ -73,8 +71,6 @@ namespace Todoist.Net.Models
             new CommandType("live_notifications_set_last_read");
 
         public static CommandType ShareProject { get; } = new CommandType("share_project");
-
-        public static CommandType UnArchiveItem { get; } = new CommandType("item_unarchive");
 
         public static CommandType UnarchiveProject { get; } = new CommandType("project_unarchive");
 

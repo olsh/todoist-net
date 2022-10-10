@@ -21,7 +21,7 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [IntegrationPremium]
+        [Trait(Constants.TraitName, Constants.IntegrationPremiumTraitValue)]
         public void CreateItemCompleteGetCloseAsync_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
@@ -45,7 +45,7 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [IntegrationFree]
+        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
         public void CreateItemCompleteUncompleteAsync_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
@@ -62,7 +62,6 @@ namespace Todoist.Net.Tests.Services
 
             Assert.True(itemInfo.Item.IsChecked == true);
 
-            client.Items.UnArchiveAsync(itemId).Wait();
             client.Items.UncompleteAsync(itemId).Wait();
 
             var anotherItem = client.Items.GetAsync().Result.First(i => i.Id != item.Id);
@@ -84,7 +83,7 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [IntegrationFree]
+        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
         public void CreateItemClearDueDateAndDelete_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
@@ -108,7 +107,7 @@ namespace Todoist.Net.Tests.Services
 
 
         [Fact]
-        [IntegrationFree]
+        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
         public void CreateItem_InvalidPDueDate_ThrowsException()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
@@ -125,7 +124,7 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [IntegrationFree]
+        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
         public void MoveItemsToProject_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
@@ -153,7 +152,7 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [IntegrationFree]
+        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
         public void QuickAddAsync_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
@@ -169,7 +168,7 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [IntegrationFree]
+        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
         public void UpdateOrders_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
@@ -184,7 +183,7 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [IntegrationFree]
+        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
         public void CreateNewItem_DueDateIsLocal_DueDateNotChanged()
         {
             var client = TodoistClientFactory.Create(_outputHelper);

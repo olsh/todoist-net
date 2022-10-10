@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -55,38 +55,6 @@ namespace Todoist.Net.Services
             var response = await TodoistClient.GetResourcesAsync(ResourceType.User).ConfigureAwait(false);
 
             return response.UserInfo;
-        }
-
-        /// <summary>
-        /// Gets the current user info.
-        /// </summary>
-        /// <param name="notificationType">Type of the notification.</param>
-        /// <param name="service">The service.</param>
-        /// <param name="notify">The notify.</param>
-        /// <returns>The current user info.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="notificationType" /> or <paramref name="service" /> is <see langword="null" /></exception>
-        public Task<NotificationSettings> UpdateNotificationSettingsAsync(
-            NotificationType notificationType,
-            NotificationService service,
-            bool notify)
-        {
-            if (notificationType == null)
-            {
-                throw new ArgumentNullException(nameof(notificationType));
-            }
-
-            if (service == null)
-            {
-                throw new ArgumentNullException(nameof(service));
-            }
-
-            var parameters = new LinkedList<KeyValuePair<string, string>>();
-            parameters.AddLast(new KeyValuePair<string, string>("notification_type", notificationType.Value));
-            parameters.AddLast(new KeyValuePair<string, string>("service", service.Value));
-            parameters.AddLast(new KeyValuePair<string, string>("dont_notify", notify ? "0" : "1"));
-
-            return TodoistClient.PostAsync<NotificationSettings>("notification_settings/update", parameters);
         }
     }
 }
