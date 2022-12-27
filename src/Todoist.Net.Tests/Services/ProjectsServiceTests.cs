@@ -59,10 +59,14 @@ namespace Todoist.Net.Tests.Services
 
             client.Projects.ReorderAsync(new ReorderEntry(project.Id, 1)).Wait();
 
-            // TODO: Fix the request
-            //client.Projects.MoveAsync(new MoveArgument(project.Id, null)).Wait();
+            var parentProjectName = Guid.NewGuid().ToString();
+            var parentProject = new Project(parentProjectName);
+            client.Projects.AddAsync(parentProject).Wait();
+
+            client.Projects.MoveAsync(new MoveArgument(project.Id, parentProject.Id)).Wait();
 
             client.Projects.DeleteAsync(project.Id).Wait();
+            client.Projects.DeleteAsync(parentProject.Id).Wait();
         }
 
         [Fact]
