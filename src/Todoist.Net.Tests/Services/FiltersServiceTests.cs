@@ -25,7 +25,7 @@ namespace Todoist.Net.Tests.Services
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var filters = client.Filters.GetAsync().Result;
+            var filters = client.Filters.GetAsync().Result.ToList();
 
             Assert.True(filters.Any());
 

@@ -9,7 +9,7 @@ namespace Todoist.Net.Tests
         public static ITodoistClient Create(ITestOutputHelper outputHelper)
         {
             var token = SettingsProvider.GetToken();
-            return new TodoistClient(token, new RateLimitAwareRestClient(outputHelper));
+            return new TodoistClient(new RateLimitAwareRestClient(token, outputHelper));
         }
 
         public static ITodoistTokenlessClient CreateTokenlessClient()

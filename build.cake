@@ -53,7 +53,8 @@ Task("Test")
      var settings = new DotNetTestSettings
      {
          Configuration = buildConfiguration,
-         Loggers = new List<string> { "console;verbosity=detailed" }
+         Loggers = new List<string> { "console;verbosity=detailed" },
+         Filter = "trait!=mfa-required"
      };
 
      DotNetTest(testProjectFile, settings);

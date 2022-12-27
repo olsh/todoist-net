@@ -2,12 +2,12 @@
 
   <PropertyGroup>
     <Description>A Todoist API client for .NET</Description>
-    <VersionPrefix>3.0.1</VersionPrefix>
+    <VersionPrefix>4.0.0</VersionPrefix>
     <Authors>Oleg Shevchenko</Authors>
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Todoist.Net</AssemblyName>
-    
+
     <PackageId>Todoist.Net</PackageId>
     <PackageTags>todoist</PackageTags>
     <PackageReleaseNotes>https://github.com/olsh/todoist-net/releases</PackageReleaseNotes>
@@ -16,7 +16,7 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/olsh/todoist-net</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/olsh/todoist-net/master/images/todoist-net-nuget.png</PackageIconUrl>
-    
+
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
 
@@ -29,7 +29,7 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
       <_Parameter1>Todoist.Net.Tests</_Parameter1>
