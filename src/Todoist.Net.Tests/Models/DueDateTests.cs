@@ -25,7 +25,7 @@ namespace Todoist.Net.Tests.Models
         {
             var date = new DateTime(2018, 2, 5, 0, 0, 0, DateTimeKind.Utc);
 
-            var dueDate = new DueDate(date, false);
+            var dueDate = new DueDate(date);
 
             Assert.Equal("2018-02-05T00:00:00", dueDate.StringDate);
             Assert.False(dueDate.IsFullDay);

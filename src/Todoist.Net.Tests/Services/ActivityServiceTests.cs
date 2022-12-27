@@ -22,7 +22,7 @@ namespace Todoist.Net.Tests.Services
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var logEntries = client.Activity.GetAsync(new LogFilter() { Limit = 50 }).Result.Events;
+            var logEntries = client.Activity.GetAsync(new LogFilter { Limit = 50 }).Result.Events;
 
             Assert.NotEmpty(logEntries);
         }
