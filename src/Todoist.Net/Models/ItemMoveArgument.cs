@@ -6,7 +6,7 @@ namespace Todoist.Net.Models
     /// Represents a item move argument.
     /// </summary>
     /// <seealso cref="Todoist.Net.Models.MoveArgument" />
-    public class ItemMoveArgument : MoveArgument
+    public class ItemMoveArgument : BaseEntity
     {
         internal ItemMoveArgument()
         {
@@ -29,6 +29,11 @@ namespace Todoist.Net.Models
         /// </value>
         [JsonProperty("section_id")]
         public ComplexId? SectionId { get; internal set; }
+
+        /// <summary>Gets the parent entity identifier.</summary>
+        /// <value>The parent entity identifier.</value>
+        [JsonProperty("parent_id")]
+        public ComplexId? ParentId { get; internal set; }
 
         /// <summary>
         /// Creates the move to project argument.
