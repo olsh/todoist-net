@@ -34,6 +34,6 @@
         /// </summary>
         /// <value>The relative.</value>
         /// <remarks>For a time-based reminder specified in minutes from now.</remarks>
-        public static ReminderType Relative { get; } = new ReminderType("relative ");
+        public static ReminderType Relative { get; } = new ReminderType("relative");
     }
 }

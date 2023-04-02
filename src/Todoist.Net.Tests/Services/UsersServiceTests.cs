@@ -28,7 +28,7 @@ namespace Todoist.Net.Tests.Services
             var user = await client.Users.GetCurrentAsync();
 
             Assert.NotNull(user);
-            Assert.True(user.Id > 0);
+            Assert.NotNull(user.Id);
         }
 
         [Fact]
