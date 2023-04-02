@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>A Todoist API client for .NET</Description>
-    <VersionPrefix>4.0.0</VersionPrefix>
+    <VersionPrefix>5.0.0</VersionPrefix>
     <Authors>Oleg Shevchenko</Authors>
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -12,10 +12,11 @@
     <PackageTags>todoist</PackageTags>
     <PackageReleaseNotes>https://github.com/olsh/todoist-net/releases</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/olsh/todoist-net</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/olsh/todoist-net/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/olsh/todoist-net</RepositoryUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/olsh/todoist-net/master/images/todoist-net-nuget.png</PackageIconUrl>
+    <PackageIcon>todoist-net-nuget.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
 
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
@@ -34,6 +35,11 @@
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
       <_Parameter1>Todoist.Net.Tests</_Parameter1>
     </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../../images/todoist-net-nuget.png" Pack="true" PackagePath="\"/>
+    <None Include="../../README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
 </Project>
