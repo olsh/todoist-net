@@ -88,7 +88,7 @@ namespace Todoist.Net.Tests.Services
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var item = new Item("demo task") { DueDate = new DueDate("22 Dec 2021", null, Language.English) };
+            var item = new Item("demo task") { DueDate = new DueDate("22 Dec 2021", language: Language.English) };
             client.Items.AddAsync(item).Wait();
 
             var itemInfo = client.Items.GetAsync(item.Id).Result;
