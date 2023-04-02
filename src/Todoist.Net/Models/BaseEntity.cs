@@ -25,7 +25,11 @@ namespace Todoist.Net.Models
         [JsonProperty("id")]
         public ComplexId Id { get; set; }
 
-        internal bool ShouldSerializeId()
+        /// <summary>
+        /// Checks if the Id property should be serialized.
+        /// </summary>
+        /// <returns><c>True</c> if the property should be serialized, <c>false</c> otherwise.</returns>
+        public bool ShouldSerializeId()
         {
             return !Id.IsEmpty;
         }

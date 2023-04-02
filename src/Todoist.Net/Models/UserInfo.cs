@@ -82,7 +82,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The identifier.</value>
         [JsonProperty("id")]
-        public int Id { get; internal set; }
+        public string Id { get; internal set; }
 
         /// <summary>
         /// Gets the image identifier.
