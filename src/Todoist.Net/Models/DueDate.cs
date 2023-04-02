@@ -29,26 +29,28 @@ namespace Todoist.Net.Models
         /// Initializes a new instance of the <see cref="DueDate" /> class.
         /// </summary>
         /// <param name="text">The text.</param>
-        /// <param name="date">The date time.</param>
-        /// <param name="isFullDay">if set to <c>true</c> then it's a full day event.</param>
-        /// <param name="timezone">The timezone.</param>
-        public DueDate(string text, DateTime date, bool isFullDay = false, string timezone = null)
-        {
-            Text = text;
-            Date = date;
-            IsFullDay = isFullDay;
-            Timezone = timezone;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DueDate" /> class.
-        /// </summary>
-        /// <param name="text">The text.</param>
         /// <param name="timezone">The timezone.</param>
         /// <param name="language">The language.</param>
         public DueDate(string text, string timezone = null, Language language = null)
         {
             Text = text;
+            Timezone = timezone;
+            Language = language;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DueDate" /> class.
+        /// </summary>
+        /// <param name="text">The text (every day ; each monday)</param>
+        /// <param name="date">The date time. this can be used with 'text' paramater to create a recurring from specific date</param>
+        /// <param name="isFullDay">if set to <c>true</c> then it's a full day event.</param>
+        /// <param name="timezone">The timezone.</param>
+        /// <param name="language">The language.</param>
+        public DueDate(string text, DateTime? date = null, bool isFullDay = false, string timezone = null, Language language = null)
+        {
+            Text = text;
+            Date = date;
+            IsFullDay = isFullDay;
             Timezone = timezone;
             Language = language;
         }
