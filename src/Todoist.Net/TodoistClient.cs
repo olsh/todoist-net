@@ -297,6 +297,7 @@ namespace Todoist.Net
             {
                 UpdateTempIds(commands, syncResponse.TempIdMappings);
             }
+
             return syncResponse.SyncToken;
         }
 
