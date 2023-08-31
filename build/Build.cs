@@ -85,7 +85,7 @@ class Build : NukeBuild
                     .SetServer("https://sonarcloud.io")
                     .SetFramework("net5.0")
                     .SetLogin(SonarQubeApiKey)
-                    .SetProjectKey("olsh_todoist-net")
+                    .SetProjectKey("todoist-net")
                     .SetName("Todoist.Net")
                     .SetOrganization("olsh")
                     .SetVersion("1.0.0.0");
