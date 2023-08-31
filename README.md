@@ -1,6 +1,6 @@
 # Todoist.Net
 [![Build status](https://ci.appveyor.com/api/projects/status/r5ylbxtpjya9ayk2?svg=true)](https://ci.appveyor.com/project/olsh/todoist-net)
-[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=olsh_todoist-net&metric=alert_status)](https://sonarcloud.io/dashboard?id=olsh_todoist-net)
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=todoist-net&metric=alert_status)](https://sonarcloud.io/dashboard?id=todoist-net)
 [![NuGet](https://img.shields.io/nuget/v/Todoist.Net.svg)](https://www.nuget.org/packages/Todoist.Net/)
 
 A [Todoist Sync API](https://developer.todoist.com/sync/v9/) client for .NET.
