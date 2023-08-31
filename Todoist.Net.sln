@@ -8,13 +8,15 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{28A18847-32D8-4A08-A1BF-BC51E3FBAB96}"
 	ProjectSection(SolutionItems) = preProject
 		appveyor.yml = appveyor.yml
-		build.cake = build.cake
 		README.md = README.md
+		.gitignore = .gitignore
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Todoist.Net", "src\Todoist.Net\Todoist.Net.csproj", "{0D84413B-43C0-4F0E-92A6-669F2E9EA5CB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Todoist.Net.Tests", "src\Todoist.Net.Tests\Todoist.Net.Tests.csproj", "{6F7D284C-2790-41E6-BAB5-DB0524F630D7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{51A0DD62-8257-48DA-BE1C-5E1F3DE9A5F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,6 +24,8 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{51A0DD62-8257-48DA-BE1C-5E1F3DE9A5F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51A0DD62-8257-48DA-BE1C-5E1F3DE9A5F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D84413B-43C0-4F0E-92A6-669F2E9EA5CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0D84413B-43C0-4F0E-92A6-669F2E9EA5CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D84413B-43C0-4F0E-92A6-669F2E9EA5CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
