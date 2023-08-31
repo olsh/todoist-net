@@ -90,17 +90,20 @@ class Build : NukeBuild
                     .SetOrganization("olsh-github")
                     .SetVersion("1.0.0.0");
 
-                if (AppVeyor?.PullRequestNumber != null)
+                if (AppVeyor != null)
                 {
-                    s = s
-                        .SetPullRequestKey(AppVeyor.PullRequestNumber.ToString())
-                        .SetPullRequestBase(AppVeyor.RepositoryBranch)
-                        .SetPullRequestBranch(AppVeyor.PullRequestHeadRepositoryBranch);
-                }
-                else
-                {
-                    s = s
-                        .SetBranchName(GitTasks.GitCurrentBranch());
+                    if (AppVeyor.PullRequestNumber != null)
+                    {
+                        s = s
+                            .SetPullRequestKey(AppVeyor.PullRequestNumber.ToString())
+                            .SetPullRequestBase(AppVeyor.RepositoryBranch)
+                            .SetPullRequestBranch(AppVeyor.PullRequestHeadRepositoryBranch);
+                    }
+                    else
+                    {
+                        s = s
+                            .SetBranchName(AppVeyor.RepositoryBranch);
+                    }
                 }
 
                 return s;
