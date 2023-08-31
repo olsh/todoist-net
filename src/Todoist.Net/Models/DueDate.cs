@@ -135,7 +135,7 @@ namespace Todoist.Net.Models
 
             set
             {
-                if (DateTime.TryParseExact(value, FullDayEventDateFormat, null, DateTimeStyles.None, out var date))
+                if (DateTime.TryParseExact(value, FullDayEventDateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
                 {
                     IsFullDay = true;
                     Date = date;
@@ -143,7 +143,7 @@ namespace Todoist.Net.Models
                     return;
                 }
 
-                Date = DateTime.Parse(value);
+                Date = DateTime.Parse(value, CultureInfo.InvariantCulture);
             }
         }
     }
