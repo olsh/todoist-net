@@ -262,12 +262,15 @@ namespace Todoist.Net
         /// Executes the commands asynchronous.
         /// </summary>
         /// <param name="commands">The commands.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
+        /// <returns>
+        /// Returns <see cref="Task{TResult}" />. The task object representing the asynchronous operation
+        /// that at completion returns the commands execution sync_token.
+        /// </returns>
         /// <exception cref="System.ArgumentNullException">Value cannot be null - commands.</exception>
         /// <exception cref="System.AggregateException">Command execution exception.</exception>
         /// <exception cref="ArgumentException">Value cannot be an empty collection.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        async Task IAdvancedTodoistClient.ExecuteCommandsAsync(params Command[] commands)
+        async Task<string> IAdvancedTodoistClient.ExecuteCommandsAsync(params Command[] commands)
         {
             if (commands == null)
             {
@@ -294,6 +297,7 @@ namespace Todoist.Net
             {
                 UpdateTempIds(commands, syncResponse.TempIdMappings);
             }
+            return syncResponse.SyncToken;
         }
 
         /// <summary>

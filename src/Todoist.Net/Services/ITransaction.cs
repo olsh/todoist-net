@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -70,9 +70,12 @@ namespace Todoist.Net.Services
         /// <summary>
         /// Commits the transaction asynchronous.
         /// </summary>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
+        /// <returns>
+        /// Returns <see cref="Task{TResult}" />. The task object representing the asynchronous operation
+        /// that at completion returns the transaction sync_token.
+        /// </returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task CommitAsync();
+        Task<string> CommitAsync();
     }
 }

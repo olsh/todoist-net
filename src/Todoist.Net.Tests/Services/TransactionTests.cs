@@ -30,11 +30,12 @@ namespace Todoist.Net.Tests.Services
             var note = new Note("Demo note");
             transaction.Notes.AddToProjectAsync(note, projectId).Wait();
 
-            transaction.CommitAsync().Wait();
+            var syncToken = transaction.CommitAsync().Result;
 
             var projectInfo = client.Projects.GetAsync(project.Id).Result;
 
             Assert.True(projectInfo.Notes.Count > 0);
+            Assert.NotNull(syncToken);
 
             var deleteTransaction = client.CreateTransaction();
 
