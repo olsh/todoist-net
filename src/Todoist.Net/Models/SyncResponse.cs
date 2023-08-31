@@ -12,5 +12,8 @@ namespace Todoist.Net.Models
 
         [JsonProperty("temp_id_mapping")]
         public Dictionary<Guid, string> TempIdMappings { get; set; }
+
+        [JsonProperty("sync_token")]
+        public string SyncToken { get; set; }
     }
 }

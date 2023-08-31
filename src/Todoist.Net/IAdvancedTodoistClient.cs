@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -12,11 +12,14 @@ namespace Todoist.Net
         /// Executes the commands asynchronous.
         /// </summary>
         /// <param name="commands">The commands.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
+        /// <returns>
+        /// Returns <see cref="Task{TResult}" />. The task object representing the asynchronous operation
+        /// that at completion returns the commands execution sync_token.
+        /// </returns>
         /// <exception cref="System.ArgumentNullException">Value cannot be null - commands.</exception>
         /// <exception cref="System.AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task ExecuteCommandsAsync(params Command[] commands);
+        Task<string> ExecuteCommandsAsync(params Command[] commands);
 
         /// <summary>
         /// Posts the request asynchronous.
