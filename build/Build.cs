@@ -87,7 +87,7 @@ class Build : NukeBuild
                     .SetLogin(SonarQubeApiKey)
                     .SetProjectKey("todoist-net")
                     .SetName("Todoist.Net")
-                    .SetOrganization("olsh-github")
+                    .SetOrganization("olsh")
                     .SetVersion("1.0.0.0");
 
                 if (AppVeyor != null)
