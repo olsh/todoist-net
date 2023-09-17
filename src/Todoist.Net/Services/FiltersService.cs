@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -16,11 +15,7 @@ namespace Todoist.Net.Services
         {
         }
 
-        /// <summary>
-        /// Gets all filters.
-        /// </summary>
-        /// <returns>The filters.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public async Task<IEnumerable<Filter>> GetAsync()
         {
             var response = await TodoistClient.GetResourcesAsync(ResourceType.Filters).ConfigureAwait(false);
@@ -28,14 +23,7 @@ namespace Todoist.Net.Services
             return response.Filters;
         }
 
-        /// <summary>
-        /// Gets a filter info by ID.
-        /// </summary>
-        /// <param name="id">The ID of the filter.</param>
-        /// <returns>
-        /// The filter info.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public Task<FilterInfo> GetAsync(ComplexId id)
         {
             return TodoistClient.PostAsync<FilterInfo>(

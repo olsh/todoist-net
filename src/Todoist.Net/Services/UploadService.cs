@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -19,12 +19,7 @@ namespace Todoist.Net.Services
             _todoistClient = todoistClient;
         }
 
-        /// <summary>
-        /// Deletes a file asynchronous.
-        /// </summary>
-        /// <param name="fileUrl">The file URL.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public Task DeleteAsync(string fileUrl)
         {
             var parameters = new List<KeyValuePair<string, string>>
@@ -34,13 +29,7 @@ namespace Todoist.Net.Services
             return _todoistClient.PostRawAsync("uploads/delete", parameters);
         }
 
-        /// <summary>
-        /// Gets all uploads.
-        /// </summary>
-        /// <returns>
-        /// The uploads.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public Task<IEnumerable<Upload>> GetAsync()
         {
             return _todoistClient.PostAsync<IEnumerable<Upload>>(
@@ -48,13 +37,7 @@ namespace Todoist.Net.Services
                 new List<KeyValuePair<string, string>>());
         }
 
-        /// <summary>
-        /// Uploads a file asynchronous.
-        /// </summary>
-        /// <param name="fileName">Name of the file.</param>
-        /// <param name="fileContent">Content of the file.</param>
-        /// <returns>The uploaded file.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public Task<FileAttachment> UploadAsync(string fileName, byte[] fileContent)
         {
             var parameters = new List<KeyValuePair<string, string>>

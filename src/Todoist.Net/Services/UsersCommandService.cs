@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -19,14 +18,7 @@ namespace Todoist.Net.Services
         {
         }
 
-        /// <summary>
-        /// Gets the current user info.
-        /// </summary>
-        /// <param name="user">The user.</param>
-        /// <returns>The current user info.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="user" /> is <see langword="null" /></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <inheritdoc/>
         public Task UpdateAsync(User user)
         {
             if (user == null)
@@ -39,14 +31,7 @@ namespace Todoist.Net.Services
             return ExecuteCommandAsync(command);
         }
 
-        /// <summary>
-        /// Gets the current user info.
-        /// </summary>
-        /// <param name="karmaGoals">The karma goals.</param>
-        /// <returns>The current user info.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="karmaGoals" /> is <see langword="null" /></exception>
+        /// <inheritdoc/>
         public Task UpdateKarmaGoalsAsync(KarmaGoals karmaGoals)
         {
             if (karmaGoals == null)

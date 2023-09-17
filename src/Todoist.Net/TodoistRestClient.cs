@@ -49,16 +49,8 @@ namespace Todoist.Net
             _httpClient?.Dispose();
         }
 
-        /// <summary>
-        /// Posts the asynchronous.
-        /// </summary>
-        /// <param name="resource">The resource.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>
-        /// The response.
-        /// </returns>
-        /// <exception cref="System.ArgumentException">Value cannot be null or empty - resource</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="parameters" /> is <see langword="null" /></exception>
+
+        /// <inheritdoc/>
         public async Task<HttpResponseMessage> PostAsync(
             string resource,
             IEnumerable<KeyValuePair<string, string>> parameters)
@@ -79,13 +71,8 @@ namespace Todoist.Net
             }
         }
 
-        /// <summary>
-        /// Posts the form asynchronous.
-        /// </summary>
-        /// <param name="resource">The resource.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <param name="files">The files.</param>
-        /// <returns>The response.</returns>
+
+        /// <inheritdoc/>
         public async Task<HttpResponseMessage> PostFormAsync(
             string resource,
             IEnumerable<KeyValuePair<string, string>> parameters,

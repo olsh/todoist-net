@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -56,15 +54,7 @@ namespace Todoist.Net.Services
 
         public IUsersCommandService Users { get; }
 
-        /// <summary>
-        /// Commits the transaction asynchronous.
-        /// </summary>
-        /// <returns>
-        /// Returns <see cref="Task{TResult}" />. The task object representing the asynchronous operation
-        /// that at completion returns the transaction sync_token.
-        /// </returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public async Task<string> CommitAsync()
         {
             try

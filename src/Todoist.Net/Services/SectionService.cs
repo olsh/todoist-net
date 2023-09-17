@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -18,14 +17,7 @@ namespace Todoist.Net.Services
         {
         }
 
-        /// <summary>
-        /// Gets a section by ID.
-        /// </summary>
-        /// <param name="id">The ID of the section.</param>
-        /// <returns>
-        /// The section.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public Task<Section> GetAsync(ComplexId id)
         {
             return TodoistClient.PostAsync<Section>(

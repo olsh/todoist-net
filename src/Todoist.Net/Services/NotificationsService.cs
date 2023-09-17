@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -18,11 +17,7 @@ namespace Todoist.Net.Services
         {
         }
 
-        /// <summary>
-        /// Gets all live notifications.
-        /// </summary>
-        /// <returns>List of the notifications.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public async Task<IEnumerable<Notification>> GetAsync()
         {
             var response = await TodoistClient.GetResourcesAsync(ResourceType.Notifications).ConfigureAwait(false);

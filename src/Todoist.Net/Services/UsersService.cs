@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -19,14 +18,7 @@ namespace Todoist.Net.Services
         {
         }
 
-        /// <summary>
-        /// Deletes the current user.
-        /// </summary>
-        /// <param name="userPassword">The user password.</param>
-        /// <param name="reason">The reason.</param>
-        /// <returns>The label info.</returns>
-        /// <exception cref="ArgumentNullException">API exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public Task DeleteAsync(string userPassword, string reason = null)
         {
             if (userPassword == null)
@@ -45,11 +37,7 @@ namespace Todoist.Net.Services
             return TodoistClient.PostRawAsync("user/delete", parameters);
         }
 
-        /// <summary>
-        /// Gets the current user info.
-        /// </summary>
-        /// <returns>The current user info.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public async Task<UserInfo> GetCurrentAsync()
         {
             var response = await TodoistClient.GetResourcesAsync(ResourceType.User).ConfigureAwait(false);

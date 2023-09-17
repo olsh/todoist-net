@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -24,14 +23,7 @@ namespace Todoist.Net.Services
         {
         }
 
-        /// <summary>
-        /// Adds a new project.
-        /// </summary>
-        /// <param name="project">The project.</param>
-        /// <returns>The ID of the project.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="project"/> is <see langword="null"/></exception>
+        /// <inheritdoc/>
         public async Task<ComplexId> AddAsync(Project project)
         {
             if (project == null)
@@ -45,14 +37,7 @@ namespace Todoist.Net.Services
             return project.Id;
         }
 
-        /// <summary>
-        /// Archive a project and its descendants.
-        /// </summary>
-        /// <param name="id">The project ID.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <remarks>Only available for Todoist Premium users.</remarks>
+        /// <inheritdoc/>
         public Task ArchiveAsync(ComplexId id)
         {
             var command = CreateEntityCommand(CommandType.ArchiveProject, id);
@@ -60,13 +45,7 @@ namespace Todoist.Net.Services
             return ExecuteCommandAsync(command);
         }
 
-        /// <summary>
-        /// Delete an existing project and all its descendants.
-        /// </summary>
-        /// <param name="id">The project ID.</param>
-        /// <returns> Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation. </returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public Task DeleteAsync(ComplexId id)
         {
             var command = CreateEntityCommand(CommandType.DeleteProject, id);
@@ -74,16 +53,7 @@ namespace Todoist.Net.Services
             return ExecuteCommandAsync(command);
         }
 
-        /// <summary>
-        /// Unarchive a project.
-        /// No ancestors will be unarchived along with the unarchived project.
-        /// Instead, the project is unarchived alone, loses any parent relationship (becomes a root project), and is placed at the end of the list of other root projects.
-        /// </summary>
-        /// <param name="id">The project ID.</param>
-        /// <returns> Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation. </returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <remarks>Only available for Todoist Premium users.</remarks>
+        /// <inheritdoc/>
         public Task UnarchiveAsync(ComplexId id)
         {
             var command = CreateEntityCommand(CommandType.UnarchiveProject, id);
@@ -91,14 +61,7 @@ namespace Todoist.Net.Services
             return ExecuteCommandAsync(command);
         }
 
-        /// <summary>
-        /// Updates the project.
-        /// </summary>
-        /// <param name="project">The project.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="project"/> is <see langword="null"/></exception>
+        /// <inheritdoc/>
         public Task UpdateAsync(Project project)
         {
             if (project == null)
@@ -111,16 +74,7 @@ namespace Todoist.Net.Services
             return ExecuteCommandAsync(command);
         }
 
-        /// <summary>
-        /// Updates parent project relationships of the project asynchronous.
-        /// </summary>
-        /// <param name="moveArgument">The move entry.</param>
-        /// <returns>
-        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="moveArgument" /> is <see langword="null" /></exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <inheritdoc/>
         public Task MoveAsync(MoveArgument moveArgument)
         {
             if (moveArgument == null)
@@ -131,17 +85,7 @@ namespace Todoist.Net.Services
             return ExecuteCommandAsync(new Command(CommandType.MoveProject, moveArgument));
         }
 
-        /// <summary>
-        /// Update the orders and indents of multiple projects at once asynchronous.
-        /// </summary>
-        /// <param name="reorderEntries">The reorder entries.</param>
-        /// <returns>
-        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="reorderEntries" /> is <see langword="null" /></exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="T:System.ArgumentException">Value cannot be an empty collection.</exception>
+        /// <inheritdoc/>
         public Task ReorderAsync(params ReorderEntry[] reorderEntries)
         {
             if (reorderEntries == null)

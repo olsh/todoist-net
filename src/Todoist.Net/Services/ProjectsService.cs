@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -18,13 +17,7 @@ namespace Todoist.Net.Services
         {
         }
 
-        /// <summary>
-        /// Gets archived projects.
-        /// </summary>
-        /// <returns>
-        /// The archived projects.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public Task<IEnumerable<Project>> GetArchivedAsync()
         {
             return TodoistClient.PostAsync<IEnumerable<Project>>(
@@ -32,11 +25,7 @@ namespace Todoist.Net.Services
                 new List<KeyValuePair<string, string>>());
         }
 
-        /// <summary>
-        /// Gets all projects.
-        /// </summary>
-        /// <returns>The projects.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public async Task<IEnumerable<Project>> GetAsync()
         {
             var response = await TodoistClient.GetResourcesAsync(ResourceType.Projects).ConfigureAwait(false);
@@ -44,14 +33,7 @@ namespace Todoist.Net.Services
             return response.Projects;
         }
 
-        /// <summary>
-        /// Gets a project by ID.
-        /// </summary>
-        /// <param name="id">The ID of the project.</param>
-        /// <returns>
-        /// The project.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public Task<ProjectInfo> GetAsync(ComplexId id)
         {
             return TodoistClient.PostAsync<ProjectInfo>(
@@ -62,14 +44,7 @@ namespace Todoist.Net.Services
                     });
         }
 
-        /// <summary>
-        /// Gets a project’s uncompleted items.
-        /// </summary>
-        /// <param name="id">The ID of the project.</param>
-        /// <returns>
-        /// The project data.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public Task<ProjectData> GetDataAsync(ComplexId id)
         {
             return TodoistClient.PostAsync<ProjectData>(

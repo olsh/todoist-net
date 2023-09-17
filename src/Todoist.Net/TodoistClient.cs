@@ -196,27 +196,10 @@ namespace Todoist.Net
             _restClient?.Dispose();
         }
 
-        /// <summary>
-        /// Gets the resources asynchronous.
-        /// </summary>
-        /// <param name="resourceTypes">The resource types.</param>
-        /// <returns>
-        /// All resources.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="resourceTypes" /> is <see langword="null" /></exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public Task<Resources> GetResourcesAsync(params ResourceType[] resourceTypes) => GetResourcesAsync("*", resourceTypes);
 
-        /// <summary>
-        /// Gets the resources asynchronous.
-        /// </summary>
-        /// <param name="syncToken">The sync token returned from todoist for increment sync</param>
-        /// <param name="resourceTypes">The resource types.</param>
-        /// <returns>
-        /// All resources.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="resourceTypes" /> is <see langword="null" /></exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public Task<Resources> GetResourcesAsync(string syncToken, params ResourceType[] resourceTypes)
         {
             if (resourceTypes == null)
@@ -239,17 +222,7 @@ namespace Todoist.Net
             return ProcessSyncAsync<Resources>(parameters);
         }
 
-        /// <summary>
-        /// Posts the asynchronous and returns a raw content.
-        /// </summary>
-        /// <typeparam name="T">The result type.</typeparam>
-        /// <param name="resource">The resource.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <param name="files">The files.</param>
-        /// <returns>
-        /// The result.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public Task<T> PostFormAsync<T>(
             string resource,
             ICollection<KeyValuePair<string, string>> parameters,
@@ -258,18 +231,7 @@ namespace Todoist.Net
             return ProcessFormAsync<T>(resource, parameters, files);
         }
 
-        /// <summary>
-        /// Executes the commands asynchronous.
-        /// </summary>
-        /// <param name="commands">The commands.</param>
-        /// <returns>
-        /// Returns <see cref="Task{TResult}" />. The task object representing the asynchronous operation
-        /// that at completion returns the commands execution sync_token.
-        /// </returns>
-        /// <exception cref="System.ArgumentNullException">Value cannot be null - commands.</exception>
-        /// <exception cref="System.AggregateException">Command execution exception.</exception>
-        /// <exception cref="ArgumentException">Value cannot be an empty collection.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         async Task<string> IAdvancedTodoistClient.ExecuteCommandsAsync(params Command[] commands)
         {
             if (commands == null)
@@ -301,16 +263,7 @@ namespace Todoist.Net
             return syncResponse.SyncToken;
         }
 
-        /// <summary>
-        /// Posts the request asynchronous.
-        /// </summary>
-        /// <typeparam name="T">Type of the result.</typeparam>
-        /// <param name="resource">The resource.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>
-        /// The result.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         Task<T> IAdvancedTodoistClient.PostAsync<T>(
             string resource,
             ICollection<KeyValuePair<string, string>> parameters)
@@ -318,15 +271,7 @@ namespace Todoist.Net
             return ((IAdvancedTodoistClient)this).ProcessPostAsync<T>(resource, parameters);
         }
 
-        /// <summary>
-        /// Posts the asynchronous and returns a raw content.
-        /// </summary>
-        /// <param name="resource">The resource.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>
-        /// The result.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         Task<string> IAdvancedTodoistClient.PostRawAsync(
             string resource,
             ICollection<KeyValuePair<string, string>> parameters)
@@ -334,16 +279,7 @@ namespace Todoist.Net
             return ProcessRawPostAsync(resource, parameters);
         }
 
-        /// <summary>
-        /// Processes the request asynchronous.
-        /// </summary>
-        /// <typeparam name="T">The type of the result.</typeparam>
-        /// <param name="resource">The resource.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>
-        /// The result of the operation.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         async Task<T> IAdvancedTodoistClient.ProcessPostAsync<T>(
             string resource,
             ICollection<KeyValuePair<string, string>> parameters)

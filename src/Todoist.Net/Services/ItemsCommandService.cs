@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -24,17 +23,7 @@ namespace Todoist.Net.Services
         {
         }
 
-        /// <summary>
-        /// Adds a new task to a project asynchronous.
-        /// </summary>
-        /// <param name="item">The item.</param>
-        /// <returns>
-        /// The item ID.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <remarks>By default the task is added to the user’s Inbox project.</remarks>
+        /// <inheritdoc/>
         public async Task<ComplexId> AddAsync(Item item)
         {
             if (item == null)
@@ -48,34 +37,14 @@ namespace Todoist.Net.Services
             return item.Id;
         }
 
-        /// <summary>
-        /// Closes a task asynchronous.
-        /// </summary>
-        /// <param name="id">The item ID.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <remarks>
-        /// A simplified version of item_complete / item_update_date_complete.
-        /// The command does exactly what official clients do when you close a task: regular task is completed and moved to history,
-        /// subtask is checked (marked as done, but not moved to history), recurring task is moved forward (due date is updated).
-        /// </remarks>
+        /// <inheritdoc/>
         public Task CloseAsync(ComplexId id)
         {
             var command = CreateEntityCommand(CommandType.CloseItem, id);
             return ExecuteCommandAsync(command);
         }
 
-        /// <summary>
-        /// Completes tasks and optionally move them to history. See also <see cref="CloseAsync" /> for a simplified version of the command.
-        /// </summary>
-        /// <param name="completeItemArgument">The complete item argument.</param>
-        /// <returns>
-        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="completeItemArgument"/> is <see langword="null"/></exception>
+        /// <inheritdoc/>
         public Task CompleteAsync(CompleteItemArgument completeItemArgument)
         {
             if (completeItemArgument == null)
@@ -88,29 +57,14 @@ namespace Todoist.Net.Services
             return ExecuteCommandAsync(command);
         }
 
-        /// <summary>
-        /// Completes a recurring task. See also <see cref="CloseAsync" /> for a simplified version of the command.
-        /// </summary>
-        /// <param name="id">The recurring task ID.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <inheritdoc/>
         public Task CompleteRecurringAsync(ComplexId id)
         {
             var command = CreateEntityCommand(CommandType.CompleteRecurringItem, id);
             return ExecuteCommandAsync(command);
         }
 
-        /// <summary>
-        /// Completes a recurring task. See also <see cref="CloseAsync" /> for a simplified version of the command.
-        /// </summary>
-        /// <param name="completeRecurringItemArgument">The complete recurring item argument.</param>
-        /// <returns>
-        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="completeRecurringItemArgument"/> is <see langword="null"/></exception>
+        /// <inheritdoc/>
         public Task CompleteRecurringAsync(CompleteRecurringItemArgument completeRecurringItemArgument)
         {
             if (completeRecurringItemArgument == null)
@@ -123,13 +77,7 @@ namespace Todoist.Net.Services
             return ExecuteCommandAsync(command);
         }
 
-        /// <summary>
-        /// Deletes an existing task asynchronous.
-        /// </summary>
-        /// <param name="id">Id of the task to delete.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public Task DeleteAsync(ComplexId id)
         {
             var command = CreateEntityCommand(CommandType.DeleteItem, id);
@@ -137,13 +85,7 @@ namespace Todoist.Net.Services
             return ExecuteCommandAsync(command);
         }
 
-        /// <summary>
-        /// Uncompletes an unarchived item and all its ancestors.
-        /// </summary>
-        /// <param name="id">The ids of the tasks.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <inheritdoc/>
         public Task UncompleteAsync(ComplexId id)
         {
             var command = CreateEntityCommand(CommandType.UncompleteItem, id);
@@ -151,14 +93,7 @@ namespace Todoist.Net.Services
             return ExecuteCommandAsync(command);
         }
 
-        /// <summary>
-        /// Updates a task asynchronous.
-        /// </summary>
-        /// <param name="item">The item.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="item"/> is <see langword="null"/></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public Task UpdateAsync(Item item)
         {
             if (item == null)
@@ -170,14 +105,7 @@ namespace Todoist.Net.Services
             return ExecuteCommandAsync(command);
         }
 
-        /// <summary>
-        /// Updates the day orders of multiple items at once.
-        /// </summary>
-        /// <param name="idsToOrder">The ids to order.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="idsToOrder"/> is <see langword="null"/></exception>
+        /// <inheritdoc/>
         public Task UpdateDayOrdersAsync(params OrderEntry[] idsToOrder)
         {
             if (idsToOrder == null)
@@ -189,16 +117,7 @@ namespace Todoist.Net.Services
             return ExecuteCommandAsync(command);
         }
 
-        /// <summary>
-        /// Moves task to a different location asynchronous.
-        /// </summary>
-        /// <param name="moveArgument">The move entry.</param>
-        /// <returns>
-        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="moveArgument" /> is <see langword="null" /></exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <inheritdoc/>
         public Task MoveAsync(ItemMoveArgument moveArgument)
         {
             if (moveArgument == null)
@@ -209,17 +128,7 @@ namespace Todoist.Net.Services
             return ExecuteCommandAsync(new Command(CommandType.MoveItem, moveArgument));
         }
 
-        /// <summary>
-        /// Update the orders and indents of multiple items at once asynchronous.
-        /// </summary>
-        /// <param name="reorderEntries">The reorder entries.</param>
-        /// <returns>
-        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="reorderEntries" /> is <see langword="null" /></exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="T:System.ArgumentException">Value cannot be an empty collection.</exception>
+        /// <inheritdoc/>
         public Task ReorderAsync(params ReorderEntry[] reorderEntries)
         {
             if (reorderEntries == null)

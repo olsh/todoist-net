@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -16,6 +16,7 @@ namespace Todoist.Net
         /// <param name="resource">The resource.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
+        /// <exception cref="System.ArgumentException">Value cannot be null or empty - resource</exception>
         /// <exception cref="ArgumentNullException"><paramref name="parameters" /> is <see langword="null" /></exception>
         Task<HttpResponseMessage> PostAsync(string resource, IEnumerable<KeyValuePair<string, string>> parameters);
 

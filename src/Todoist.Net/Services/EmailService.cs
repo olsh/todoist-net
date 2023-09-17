@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -20,13 +19,7 @@ namespace Todoist.Net.Services
             _todoistClient = todoistClient;
         }
 
-        /// <summary>
-        /// Disables an email address for an object.
-        /// </summary>
-        /// <param name="objectType">Type of the object.</param>
-        /// <param name="objectId">The object identifier.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public Task DisableAsync(ObjectType objectType, ComplexId objectId)
         {
             var parameters = CreateParameters(objectType, objectId);
@@ -34,15 +27,7 @@ namespace Todoist.Net.Services
             return _todoistClient.PostRawAsync("emails/disable", parameters);
         }
 
-        /// <summary>
-        /// Creates a new email address for an object, or gets an existing email.
-        /// </summary>
-        /// <param name="objectType">Type of the object.</param>
-        /// <param name="objectId">The object identifier.</param>
-        /// <returns>
-        /// The email information.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <inheritdoc/>
         public Task<EmailInfo> GetOrCreateAsync(ObjectType objectType, ComplexId objectId)
         {
             var parameters = CreateParameters(objectType, objectId);
