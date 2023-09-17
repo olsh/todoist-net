@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Exceptions;
@@ -52,7 +53,7 @@ namespace Todoist.Net
 
         /// <inheritdoc/>
         [Obsolete("This method is scheduled for deprecation and probably will be removed in future versions.")]
-        public Task<TodoistClient> LoginAsync(string email, string password)
+        public Task<TodoistClient> LoginAsync(string email, string password, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(email))
             {
@@ -70,12 +71,12 @@ namespace Todoist.Net
                                      new KeyValuePair<string, string>("password", password)
                                  };
 
-            return LoginWithCredentialsAsync("login", parameters);
+            return LoginWithCredentialsAsync("login", parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
         [Obsolete("This method is scheduled for deprecation and probably will be removed in future versions.")]
-        public Task<TodoistClient> LoginWithGoogleAsync(string email, string oauthToken)
+        public Task<TodoistClient> LoginWithGoogleAsync(string email, string oauthToken, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(email))
             {
@@ -93,11 +94,11 @@ namespace Todoist.Net
                                      new KeyValuePair<string, string>("oauth2_token", oauthToken)
                                  };
 
-            return LoginWithCredentialsAsync("login_with_google", parameters);
+            return LoginWithCredentialsAsync("login_with_google", parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task<UserInfo> RegisterUserAsync(UserBase user)
+        public async Task<UserInfo> RegisterUserAsync(UserBase user, CancellationToken cancellationToken = default)
         {
             if (user == null)
             {
@@ -105,7 +106,7 @@ namespace Todoist.Net
             }
 
             var userInfo = await ((IAdvancedTodoistClient)_todoistClient)
-                               .ProcessPostAsync<UserInfo>("user/register", user.ToParameters())
+                               .ProcessPostAsync<UserInfo>("user/register", user.ToParameters(), cancellationToken)
                                .ConfigureAwait(false);
 
             return userInfo;
@@ -116,6 +117,7 @@ namespace Todoist.Net
         /// </summary>
         /// <param name="resource">The resource.</param>
         /// <param name="parameters">The parameters.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>
         /// A new instance of Todoist client.
         /// </returns>
@@ -123,10 +125,11 @@ namespace Todoist.Net
         /// <exception cref="TodoistException">Unable to get token.</exception>
         private async Task<TodoistClient> LoginWithCredentialsAsync(
             string resource,
-            KeyValuePair<string, string>[] parameters)
+            KeyValuePair<string, string>[] parameters,
+            CancellationToken cancellationToken)
         {
             var userInfo = await ((IAdvancedTodoistClient)_todoistClient)
-                               .ProcessPostAsync<UserInfo>(resource, parameters)
+                               .ProcessPostAsync<UserInfo>(resource, parameters, cancellationToken)
                                .ConfigureAwait(false);
 
             return new TodoistClient(userInfo.Token);

@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -137,6 +138,18 @@ namespace Todoist.Net
 
         /// <summary>
         /// Gets the resources asynchronous. Returns all resources if zero resource type were passed.
+        /// </summary>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <param name="resourceTypes">The resource types.</param>
+        /// <returns>
+        /// The requested resources.
+        /// </returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="resourceTypes"/> is <see langword="null"/></exception>
+        Task<Resources> GetResourcesAsync(CancellationToken cancellationToken, params ResourceType[] resourceTypes);
+
+        /// <summary>
+        /// Gets the resources asynchronous. Returns all resources if zero resource type were passed.
         /// When sync token is passed in only tasks that have changed since last Sync will be returned.
         /// </summary>
         /// <param name="syncToken">The sync token returned from Todoist for increment sync</param>
@@ -147,5 +160,19 @@ namespace Todoist.Net
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="resourceTypes"/> is <see langword="null"/></exception>
         Task<Resources> GetResourcesAsync(string syncToken, params ResourceType[] resourceTypes);
+
+        /// <summary>
+        /// Gets the resources asynchronous. Returns all resources if zero resource type were passed.
+        /// When sync token is passed in only tasks that have changed since last Sync will be returned.
+        /// </summary>
+        /// <param name="syncToken">The sync token returned from Todoist for increment sync</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <param name="resourceTypes">The resource types.</param>
+        /// <returns>
+        /// The requested resources.
+        /// </returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="resourceTypes"/> is <see langword="null"/></exception>
+        Task<Resources> GetResourcesAsync(string syncToken, CancellationToken cancellationToken, params ResourceType[] resourceTypes);
     }
 }

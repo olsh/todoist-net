@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Newtonsoft.Json;
@@ -197,10 +198,19 @@ namespace Todoist.Net
         }
 
         /// <inheritdoc/>
-        public Task<Resources> GetResourcesAsync(params ResourceType[] resourceTypes) => GetResourcesAsync("*", resourceTypes);
+        public Task<Resources> GetResourcesAsync(params ResourceType[] resourceTypes) =>
+            GetResourcesAsync("*", resourceTypes);
+        
+        /// <inheritdoc/>
+        public Task<Resources> GetResourcesAsync(CancellationToken cancellationToken, params ResourceType[] resourceTypes) =>
+            GetResourcesAsync("*", cancellationToken, resourceTypes);
 
         /// <inheritdoc/>
-        public Task<Resources> GetResourcesAsync(string syncToken, params ResourceType[] resourceTypes)
+        public Task<Resources> GetResourcesAsync(string syncToken, params ResourceType[] resourceTypes) =>
+            GetResourcesAsync(syncToken, CancellationToken.None, resourceTypes);
+
+        /// <inheritdoc/>
+        public Task<Resources> GetResourcesAsync(string syncToken, CancellationToken cancellationToken, params ResourceType[] resourceTypes)
         {
             if (resourceTypes == null)
             {
@@ -219,20 +229,29 @@ namespace Todoist.Net
                     "resource_types",
                     JsonConvert.SerializeObject(resourceTypes, SerializerSettings)));
 
-            return ProcessSyncAsync<Resources>(parameters);
+            return ProcessSyncAsync<Resources>(parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
         public Task<T> PostFormAsync<T>(
             string resource,
             ICollection<KeyValuePair<string, string>> parameters,
-            IEnumerable<ByteArrayContent> files)
+            IEnumerable<ByteArrayContent> files,
+            CancellationToken cancellationToken = default)
         {
-            return ProcessFormAsync<T>(resource, parameters, files);
+            return ProcessFormAsync<T>(resource, parameters, files, cancellationToken);
         }
 
         /// <inheritdoc/>
-        async Task<string> IAdvancedTodoistClient.ExecuteCommandsAsync(params Command[] commands)
+        Task<string> IAdvancedTodoistClient.ExecuteCommandsAsync(params Command[] commands) =>
+            ExecuteCommandsAsync(CancellationToken.None, commands);
+
+        /// <inheritdoc/>
+        Task<string> IAdvancedTodoistClient.ExecuteCommandsAsync(CancellationToken cancellationToken, params Command[] commands) =>
+            ExecuteCommandsAsync(cancellationToken, commands);
+
+        /// <inheritdoc cref="IAdvancedTodoistClient.ExecuteCommandsAsync(CancellationToken, Command[])"/>
+        private async Task<string> ExecuteCommandsAsync(CancellationToken cancellationToken, params Command[] commands)
         {
             if (commands == null)
             {
@@ -250,7 +269,7 @@ namespace Todoist.Net
                     "commands",
                     JsonConvert.SerializeObject(commands, SerializerSettings)));
 
-            var syncResponse = await ProcessSyncAsync<SyncResponse>(parameters)
+            var syncResponse = await ProcessSyncAsync<SyncResponse>(parameters, cancellationToken)
                                    .ConfigureAwait(false);
 
             ThrowIfErrors(syncResponse);
@@ -266,25 +285,28 @@ namespace Todoist.Net
         /// <inheritdoc/>
         Task<T> IAdvancedTodoistClient.PostAsync<T>(
             string resource,
-            ICollection<KeyValuePair<string, string>> parameters)
+            ICollection<KeyValuePair<string, string>> parameters,
+            CancellationToken cancellationToken)
         {
-            return ((IAdvancedTodoistClient)this).ProcessPostAsync<T>(resource, parameters);
+            return ((IAdvancedTodoistClient)this).ProcessPostAsync<T>(resource, parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
         Task<string> IAdvancedTodoistClient.PostRawAsync(
             string resource,
-            ICollection<KeyValuePair<string, string>> parameters)
+            ICollection<KeyValuePair<string, string>> parameters,
+            CancellationToken cancellationToken)
         {
-            return ProcessRawPostAsync(resource, parameters);
+            return ProcessRawPostAsync(resource, parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
         async Task<T> IAdvancedTodoistClient.ProcessPostAsync<T>(
             string resource,
-            ICollection<KeyValuePair<string, string>> parameters)
+            ICollection<KeyValuePair<string, string>> parameters,
+            CancellationToken cancellationToken)
         {
-            var responseContent = await ProcessRawPostAsync(resource, parameters)
+            var responseContent = await ProcessRawPostAsync(resource, parameters, cancellationToken)
                                       .ConfigureAwait(false);
 
             return DeserializeResponse<T>(responseContent);
@@ -302,16 +324,20 @@ namespace Todoist.Net
         /// <param name="resource">The resource.</param>
         /// <param name="parameters">The parameters.</param>
         /// <param name="files">The files.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <returns>The response.</returns>
         private async Task<T> ProcessFormAsync<T>(
             string resource,
             ICollection<KeyValuePair<string, string>> parameters,
-            IEnumerable<ByteArrayContent> files)
+            IEnumerable<ByteArrayContent> files,
+            CancellationToken cancellationToken)
         {
-            var response = await _restClient.PostFormAsync(resource, parameters, files)
-                               .ConfigureAwait(false);
-            var responseContent = await ReadResponseAsync(response)
+            var response = _restClient is ICancellableTodoistRestClient cancellableClient
+                ? await cancellableClient.PostFormAsync(resource, parameters, files, cancellationToken).ConfigureAwait(false)
+                : await _restClient.PostFormAsync(resource, parameters, files).ConfigureAwait(false);
+
+            var responseContent = await ReadResponseAsync(response, cancellationToken)
                                       .ConfigureAwait(false);
 
             return DeserializeResponse<T>(responseContent);
@@ -322,16 +348,19 @@ namespace Todoist.Net
         /// </summary>
         /// <param name="resource">The resource.</param>
         /// <param name="parameters">The parameters.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The response content.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         private async Task<string> ProcessRawPostAsync(
             string resource,
-            ICollection<KeyValuePair<string, string>> parameters)
+            ICollection<KeyValuePair<string, string>> parameters,
+            CancellationToken cancellationToken)
         {
-            var response = await _restClient.PostAsync(resource, parameters)
-                               .ConfigureAwait(false);
+            var response = _restClient is ICancellableTodoistRestClient cancellableClient
+                ? await cancellableClient.PostAsync(resource, parameters, cancellationToken).ConfigureAwait(false)
+                : await _restClient.PostAsync(resource, parameters).ConfigureAwait(false);
 
-            var responseContent = await ReadResponseAsync(response)
+            var responseContent = await ReadResponseAsync(response, cancellationToken)
                                       .ConfigureAwait(false);
             return responseContent;
         }
@@ -341,23 +370,26 @@ namespace Todoist.Net
         /// </summary>
         /// <typeparam name="T">Type of the response.</typeparam>
         /// <param name="parameters">The parameters.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The response.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        private Task<T> ProcessSyncAsync<T>(ICollection<KeyValuePair<string, string>> parameters)
+        private Task<T> ProcessSyncAsync<T>(ICollection<KeyValuePair<string, string>> parameters, CancellationToken cancellationToken)
         {
-            return ((IAdvancedTodoistClient)this).ProcessPostAsync<T>("sync", parameters);
+            return ((IAdvancedTodoistClient)this).ProcessPostAsync<T>("sync", parameters, cancellationToken);
         }
 
         /// <summary>
         /// Reads the response asynchronous.
         /// </summary>
         /// <param name="response">The response.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <returns>The response content.</returns>
-        private async Task<string> ReadResponseAsync(HttpResponseMessage response)
+        private async Task<string> ReadResponseAsync(HttpResponseMessage response, CancellationToken cancellationToken)
         {
             var responseContent = await response.Content.ReadAsStringAsync()
                                       .ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
 
             if (!response.IsSuccessStatusCode)
             {
