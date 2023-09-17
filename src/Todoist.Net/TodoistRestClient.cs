@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Todoist.Net
 {
-    internal sealed class TodoistRestClient : ITodoistRestClient
+    internal sealed class TodoistRestClient : ICancellableTodoistRestClient
     {
         private readonly HttpClient _httpClient;
 
@@ -51,9 +52,15 @@ namespace Todoist.Net
 
 
         /// <inheritdoc/>
+        public Task<HttpResponseMessage> PostAsync(
+            string resource,
+            IEnumerable<KeyValuePair<string, string>> parameters) => PostAsync(resource, parameters, CancellationToken.None);
+
+        /// <inheritdoc/>
         public async Task<HttpResponseMessage> PostAsync(
             string resource,
-            IEnumerable<KeyValuePair<string, string>> parameters)
+            IEnumerable<KeyValuePair<string, string>> parameters,
+            CancellationToken cancellationToken)
         {
             if (parameters == null)
             {
@@ -67,16 +74,23 @@ namespace Todoist.Net
 
             using (var content = new FormUrlEncodedContent(parameters))
             {
-                return await _httpClient.PostAsync(resource, content).ConfigureAwait(false);
+                return await _httpClient.PostAsync(resource, content, cancellationToken).ConfigureAwait(false);
             }
         }
 
 
         /// <inheritdoc/>
+        public Task<HttpResponseMessage> PostFormAsync(
+            string resource,
+            IEnumerable<KeyValuePair<string, string>> parameters,
+            IEnumerable<ByteArrayContent> files) => PostFormAsync(resource, parameters, files, CancellationToken.None);
+
+        /// <inheritdoc/>
         public async Task<HttpResponseMessage> PostFormAsync(
             string resource,
             IEnumerable<KeyValuePair<string, string>> parameters,
-            IEnumerable<ByteArrayContent> files)
+            IEnumerable<ByteArrayContent> files,
+            CancellationToken cancellationToken)
         {
             using (var multipartFormDataContent = new MultipartFormDataContent())
             {
@@ -90,7 +104,7 @@ namespace Todoist.Net
                     multipartFormDataContent.Add(file, Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
                 }
 
-                return await _httpClient.PostAsync(resource, multipartFormDataContent).ConfigureAwait(false);
+                return await _httpClient.PostAsync(resource, multipartFormDataContent, cancellationToken).ConfigureAwait(false);
             }
         }
     }
