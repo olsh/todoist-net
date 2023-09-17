@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -18,19 +19,20 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<Label>> GetAsync()
+        public async Task<IEnumerable<Label>> GetAsync(CancellationToken cancellationToken = default)
         {
-            var response = await TodoistClient.GetResourcesAsync(ResourceType.Labels).ConfigureAwait(false);
+            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Labels).ConfigureAwait(false);
 
             return response.Labels;
         }
 
         /// <inheritdoc/>
-        public Task<LabelInfo> GetAsync(ComplexId id)
+        public Task<LabelInfo> GetAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             return TodoistClient.PostAsync<LabelInfo>(
                 "labels/get",
-                new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("label_id", id.ToString()) });
+                new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("label_id", id.ToString()) },
+                cancellationToken);
         }
     }
 }

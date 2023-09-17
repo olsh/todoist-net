@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -18,9 +19,9 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<Notification>> GetAsync()
+        public async Task<IEnumerable<Notification>> GetAsync(CancellationToken cancellationToken = default)
         {
-            var response = await TodoistClient.GetResourcesAsync(ResourceType.Notifications).ConfigureAwait(false);
+            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Notifications).ConfigureAwait(false);
 
             return response.Notifications;
         }

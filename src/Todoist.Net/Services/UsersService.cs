@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -19,7 +20,7 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task DeleteAsync(string userPassword, string reason = null)
+        public Task DeleteAsync(string userPassword, string reason = null, CancellationToken cancellationToken = default)
         {
             if (userPassword == null)
             {
@@ -34,13 +35,13 @@ namespace Todoist.Net.Services
                 parameters.AddLast(new KeyValuePair<string, string>("reason_for_delete", reason));
             }
 
-            return TodoistClient.PostRawAsync("user/delete", parameters);
+            return TodoistClient.PostRawAsync("user/delete", parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task<UserInfo> GetCurrentAsync()
+        public async Task<UserInfo> GetCurrentAsync(CancellationToken cancellationToken = default)
         {
-            var response = await TodoistClient.GetResourcesAsync(ResourceType.User).ConfigureAwait(false);
+            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.User).ConfigureAwait(false);
 
             return response.UserInfo;
         }

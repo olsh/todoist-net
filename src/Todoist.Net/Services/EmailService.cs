@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -20,19 +21,19 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task DisableAsync(ObjectType objectType, ComplexId objectId)
+        public Task DisableAsync(ObjectType objectType, ComplexId objectId, CancellationToken cancellationToken = default)
         {
             var parameters = CreateParameters(objectType, objectId);
 
-            return _todoistClient.PostRawAsync("emails/disable", parameters);
+            return _todoistClient.PostRawAsync("emails/disable", parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<EmailInfo> GetOrCreateAsync(ObjectType objectType, ComplexId objectId)
+        public Task<EmailInfo> GetOrCreateAsync(ObjectType objectType, ComplexId objectId, CancellationToken cancellationToken = default)
         {
             var parameters = CreateParameters(objectType, objectId);
 
-            return _todoistClient.PostAsync<EmailInfo>("emails/get_or_create", parameters);
+            return _todoistClient.PostAsync<EmailInfo>("emails/get_or_create", parameters, cancellationToken);
         }
 
         private static List<KeyValuePair<string, string>> CreateParameters(ObjectType objectType, ComplexId objectId)

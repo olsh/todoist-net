@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -55,11 +56,11 @@ namespace Todoist.Net.Services
         public IUsersCommandService Users { get; }
 
         /// <inheritdoc/>
-        public async Task<string> CommitAsync()
+        public async Task<string> CommitAsync(CancellationToken cancellationToken = default)
         {
             try
             {
-                return await _todoistClient.ExecuteCommandsAsync(_commands.ToArray()).ConfigureAwait(false);
+                return await _todoistClient.ExecuteCommandsAsync(cancellationToken, _commands.ToArray()).ConfigureAwait(false);
             }
             finally
             {

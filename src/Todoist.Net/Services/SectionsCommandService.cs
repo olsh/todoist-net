@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -24,7 +25,7 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public async Task<ComplexId> AddAsync(Section section)
+        public async Task<ComplexId> AddAsync(Section section, CancellationToken cancellationToken = default)
         {
             if (section == null)
             {
@@ -32,30 +33,30 @@ namespace Todoist.Net.Services
             }
 
             var command = CreateAddCommand(CommandType.AddSection, section);
-            await ExecuteCommandAsync(command)
+            await ExecuteCommandAsync(command, cancellationToken)
                 .ConfigureAwait(false);
 
             return section.Id;
         }
 
         /// <inheritdoc/>
-        public Task ArchiveAsync(ComplexId id)
+        public Task ArchiveAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             var command = CreateEntityCommand(CommandType.ArchiveSection, id);
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task DeleteAsync(ComplexId id)
+        public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             var command = CreateEntityCommand(CommandType.DeleteSection, id);
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task MoveAsync(SectionMoveArgument moveArgument)
+        public Task MoveAsync(SectionMoveArgument moveArgument, CancellationToken cancellationToken = default)
         {
             if (moveArgument == null)
             {
@@ -64,11 +65,14 @@ namespace Todoist.Net.Services
 
             var command = new Command(CommandType.MoveSection, moveArgument);
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task ReorderAsync(params SectionOrderEntry[] orderEntries)
+        public Task ReorderAsync(params SectionOrderEntry[] orderEntries) => ReorderAsync(CancellationToken.None, orderEntries);
+
+        /// <inheritdoc/>
+        public Task ReorderAsync(CancellationToken cancellationToken, params SectionOrderEntry[] orderEntries)
         {
             if (orderEntries == null)
             {
@@ -77,19 +81,19 @@ namespace Todoist.Net.Services
 
             var command = new Command(CommandType.ReorderSection, new ReorderSectionArgument(orderEntries));
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task UnarchiveAsync(ComplexId id)
+        public Task UnarchiveAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             var command = CreateEntityCommand(CommandType.UnarchiveSection, id);
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task UpdateAsync(Section section)
+        public Task UpdateAsync(Section section, CancellationToken cancellationToken = default)
         {
             if (section == null)
             {
@@ -98,7 +102,7 @@ namespace Todoist.Net.Services
 
             var command = new Command(CommandType.UpdateSection, section);
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
     }
 }

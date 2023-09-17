@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -18,11 +19,12 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task<IEnumerable<Backup>> GetAsync()
+        public Task<IEnumerable<Backup>> GetAsync(CancellationToken cancellationToken = default)
         {
             return _todoistClient.PostAsync<IEnumerable<Backup>>(
                 "backups/get",
-                new List<KeyValuePair<string, string>>());
+                new List<KeyValuePair<string, string>>(),
+                cancellationToken);
         }
     }
 }

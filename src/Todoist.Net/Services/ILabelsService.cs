@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -15,18 +16,20 @@ namespace Todoist.Net.Services
         /// <summary>
         /// Gets all labels.
         /// </summary>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The labels.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<IEnumerable<Label>> GetAsync();
+        Task<IEnumerable<Label>> GetAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets a label by ID.
         /// </summary>
         /// <param name="id">The ID of the label.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>
         /// The label.
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<LabelInfo> GetAsync(ComplexId id);
+        Task<LabelInfo> GetAsync(ComplexId id, CancellationToken cancellationToken = default);
     }
 }

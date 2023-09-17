@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -19,7 +20,7 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task UpdateAsync(User user)
+        public Task UpdateAsync(User user, CancellationToken cancellationToken = default)
         {
             if (user == null)
             {
@@ -28,11 +29,11 @@ namespace Todoist.Net.Services
 
             var command = new Command(CommandType.UpdateUser, user);
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task UpdateKarmaGoalsAsync(KarmaGoals karmaGoals)
+        public Task UpdateKarmaGoalsAsync(KarmaGoals karmaGoals, CancellationToken cancellationToken = default)
         {
             if (karmaGoals == null)
             {
@@ -41,7 +42,7 @@ namespace Todoist.Net.Services
 
             var command = new Command(CommandType.UpdateKarmaGoals, karmaGoals);
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -24,7 +25,7 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public async Task<ComplexId> AddToItemAsync(Note note, ComplexId itemId)
+        public async Task<ComplexId> AddToItemAsync(Note note, ComplexId itemId, CancellationToken cancellationToken = default)
         {
             if (note == null)
             {
@@ -34,13 +35,13 @@ namespace Todoist.Net.Services
             note.ItemId = itemId;
 
             var command = CreateAddCommand(CommandType.AddNote, note);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            await ExecuteCommandAsync(command, cancellationToken).ConfigureAwait(false);
 
             return note.Id;
         }
 
         /// <inheritdoc/>
-        public async Task<ComplexId> AddToProjectAsync(Note note, ComplexId projectId)
+        public async Task<ComplexId> AddToProjectAsync(Note note, ComplexId projectId, CancellationToken cancellationToken = default)
         {
             if (note == null)
             {
@@ -50,20 +51,20 @@ namespace Todoist.Net.Services
             note.ProjectId = projectId;
 
             var command = CreateAddCommand(CommandType.AddNote, note);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            await ExecuteCommandAsync(command, cancellationToken).ConfigureAwait(false);
 
             return note.Id;
         }
 
         /// <inheritdoc/>
-        public Task DeleteAsync(ComplexId id)
+        public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             var command = CreateEntityCommand(CommandType.DeleteNote, id);
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task UpdateAsync(Note note)
+        public Task UpdateAsync(Note note, CancellationToken cancellationToken = default)
         {
             if (note == null)
             {
@@ -71,7 +72,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.UpdateNote, note);
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
     }
 }

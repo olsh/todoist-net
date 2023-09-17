@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Todoist.Net.Services
@@ -70,12 +71,13 @@ namespace Todoist.Net.Services
         /// <summary>
         /// Commits the transaction asynchronous.
         /// </summary>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>
         /// Returns <see cref="Task{TResult}" />. The task object representing the asynchronous operation
         /// that at completion returns the transaction sync_token.
         /// </returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<string> CommitAsync();
+        Task<string> CommitAsync(CancellationToken cancellationToken = default);
     }
 }

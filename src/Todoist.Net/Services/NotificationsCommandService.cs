@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -18,17 +19,17 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task MarkAllReadAsync()
+        public Task MarkAllReadAsync(CancellationToken cancellationToken = default)
         {
             var command = CreateEntityCommand(CommandType.SetLastReadNotification, null);
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task MarkLastReadAsync(ComplexId id)
+        public Task MarkLastReadAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             var command = CreateEntityCommand(CommandType.SetLastReadNotification, id);
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
     }
 }

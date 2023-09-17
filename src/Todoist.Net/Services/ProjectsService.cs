@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -18,41 +19,44 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task<IEnumerable<Project>> GetArchivedAsync()
+        public Task<IEnumerable<Project>> GetArchivedAsync(CancellationToken cancellationToken = default)
         {
             return TodoistClient.PostAsync<IEnumerable<Project>>(
                 "projects/get_archived",
-                new List<KeyValuePair<string, string>>());
+                new List<KeyValuePair<string, string>>(),
+                cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<Project>> GetAsync()
+        public async Task<IEnumerable<Project>> GetAsync(CancellationToken cancellationToken = default)
         {
-            var response = await TodoistClient.GetResourcesAsync(ResourceType.Projects).ConfigureAwait(false);
+            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Projects).ConfigureAwait(false);
 
             return response.Projects;
         }
 
         /// <inheritdoc/>
-        public Task<ProjectInfo> GetAsync(ComplexId id)
+        public Task<ProjectInfo> GetAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             return TodoistClient.PostAsync<ProjectInfo>(
                 "projects/get",
                 new List<KeyValuePair<string, string>>
                     {
                         new KeyValuePair<string, string>("project_id", id.ToString())
-                    });
+                    },
+                cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<ProjectData> GetDataAsync(ComplexId id)
+        public Task<ProjectData> GetDataAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             return TodoistClient.PostAsync<ProjectData>(
                 "projects/get_data",
                 new List<KeyValuePair<string, string>>
                     {
                         new KeyValuePair<string, string>("project_id", id.ToString())
-                    });
+                    },
+                cancellationToken);
         }
     }
 }

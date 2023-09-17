@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -23,7 +24,7 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task AcceptInvitationAsync(long id, string invitationSecret)
+        public Task AcceptInvitationAsync(long id, string invitationSecret, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(invitationSecret))
             {
@@ -31,11 +32,11 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.AcceptInvitation, new Invitation(id, invitationSecret));
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task DeleteCollaboratorAsync(ComplexId id, string email)
+        public Task DeleteCollaboratorAsync(ComplexId id, string email, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(email))
             {
@@ -43,18 +44,18 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.DeleteCollaborator, new ShareProjectArgument(id, email));
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task DeleteInvitationAsync(long id)
+        public Task DeleteInvitationAsync(long id, CancellationToken cancellationToken = default)
         {
             var command = new Command(CommandType.DeleteInvitation, new BaseInvitation(id));
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task RejectInvitationAsync(long id, string invitationSecret)
+        public Task RejectInvitationAsync(long id, string invitationSecret, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(invitationSecret))
             {
@@ -62,11 +63,11 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.RejectInvitation, new Invitation(id, invitationSecret));
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task ShareProjectAsync(ComplexId id, string email)
+        public Task ShareProjectAsync(ComplexId id, string email, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(email))
             {
@@ -74,7 +75,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.ShareProject, new ShareProjectArgument(id, email));
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
     }
 }

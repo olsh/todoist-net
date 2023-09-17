@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -24,7 +25,7 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public async Task<ComplexId> AddAsync(Project project)
+        public async Task<ComplexId> AddAsync(Project project, CancellationToken cancellationToken = default)
         {
             if (project == null)
             {
@@ -32,37 +33,37 @@ namespace Todoist.Net.Services
             }
 
             var command = CreateAddCommand(CommandType.AddProject, project);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            await ExecuteCommandAsync(command, cancellationToken).ConfigureAwait(false);
 
             return project.Id;
         }
 
         /// <inheritdoc/>
-        public Task ArchiveAsync(ComplexId id)
+        public Task ArchiveAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             var command = CreateEntityCommand(CommandType.ArchiveProject, id);
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task DeleteAsync(ComplexId id)
+        public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             var command = CreateEntityCommand(CommandType.DeleteProject, id);
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task UnarchiveAsync(ComplexId id)
+        public Task UnarchiveAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             var command = CreateEntityCommand(CommandType.UnarchiveProject, id);
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task UpdateAsync(Project project)
+        public Task UpdateAsync(Project project, CancellationToken cancellationToken = default)
         {
             if (project == null)
             {
@@ -71,22 +72,25 @@ namespace Todoist.Net.Services
 
             var command = new Command(CommandType.UpdateProject, project);
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task MoveAsync(MoveArgument moveArgument)
+        public Task MoveAsync(MoveArgument moveArgument, CancellationToken cancellationToken = default)
         {
             if (moveArgument == null)
             {
                 throw new ArgumentNullException(nameof(moveArgument));
             }
 
-            return ExecuteCommandAsync(new Command(CommandType.MoveProject, moveArgument));
+            return ExecuteCommandAsync(new Command(CommandType.MoveProject, moveArgument), cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task ReorderAsync(params ReorderEntry[] reorderEntries)
+        public Task ReorderAsync(params ReorderEntry[] reorderEntries) => ReorderAsync(CancellationToken.None, reorderEntries);
+
+        /// <inheritdoc/>
+        public Task ReorderAsync(CancellationToken cancellationToken, params ReorderEntry[] reorderEntries)
         {
             if (reorderEntries == null)
             {
@@ -98,7 +102,7 @@ namespace Todoist.Net.Services
                 throw new ArgumentException("Value cannot be an empty collection.", nameof(reorderEntries));
             }
 
-            return ExecuteCommandAsync(new Command(CommandType.ReorderProjects, new ReorderProjectsArgument(reorderEntries)));
+            return ExecuteCommandAsync(new Command(CommandType.ReorderProjects, new ReorderProjectsArgument(reorderEntries)), cancellationToken);
         }
     }
 }

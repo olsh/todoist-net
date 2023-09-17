@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -18,14 +19,15 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task<Section> GetAsync(ComplexId id)
+        public Task<Section> GetAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             return TodoistClient.PostAsync<Section>(
                 "sections/get",
                 new List<KeyValuePair<string, string>>
                     {
                         new KeyValuePair<string, string>("section_id", id.ToString())
-                    });
+                    },
+                cancellationToken);
         }
     }
 }

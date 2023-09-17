@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -16,27 +17,27 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task<string> ExportAsFileAsync(ComplexId projectId)
+        public Task<string> ExportAsFileAsync(ComplexId projectId, CancellationToken cancellationToken = default)
         {
             var parameters = new List<KeyValuePair<string, string>>
                                  {
                                      new KeyValuePair<string, string>("project_id", projectId.ToString())
                                  };
-            return _todoistClient.PostRawAsync("templates/export_as_file", parameters);
+            return _todoistClient.PostRawAsync("templates/export_as_file", parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<FileBase> ExportAsShareableUrlAsync(ComplexId projectId)
+        public Task<FileBase> ExportAsShareableUrlAsync(ComplexId projectId, CancellationToken cancellationToken = default)
         {
             var parameters = new List<KeyValuePair<string, string>>
                                  {
                                      new KeyValuePair<string, string>("project_id", projectId.ToString())
                                  };
-            return _todoistClient.PostAsync<FileBase>("templates/export_as_url", parameters);
+            return _todoistClient.PostAsync<FileBase>("templates/export_as_url", parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task ImportIntoProjectAsync(ComplexId projectId, byte[] fileContent)
+        public Task ImportIntoProjectAsync(ComplexId projectId, byte[] fileContent, CancellationToken cancellationToken = default)
         {
             var parameters = new List<KeyValuePair<string, string>>
                                  {
@@ -44,7 +45,7 @@ namespace Todoist.Net.Services
                                  };
             var files = new[] { new ByteArrayContent(fileContent) };
 
-            return _todoistClient.PostFormAsync<dynamic>("templates/import_into_project", parameters, files);
+            return _todoistClient.PostFormAsync<dynamic>("templates/import_into_project", parameters, files, cancellationToken);
         }
     }
 }

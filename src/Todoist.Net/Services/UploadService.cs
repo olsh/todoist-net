@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -20,25 +21,26 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task DeleteAsync(string fileUrl)
+        public Task DeleteAsync(string fileUrl, CancellationToken cancellationToken = default)
         {
             var parameters = new List<KeyValuePair<string, string>>
                                  {
                                      new KeyValuePair<string, string>("file_url", fileUrl)
                                  };
-            return _todoistClient.PostRawAsync("uploads/delete", parameters);
+            return _todoistClient.PostRawAsync("uploads/delete", parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<IEnumerable<Upload>> GetAsync()
+        public Task<IEnumerable<Upload>> GetAsync(CancellationToken cancellationToken = default)
         {
             return _todoistClient.PostAsync<IEnumerable<Upload>>(
                 "uploads/get",
-                new List<KeyValuePair<string, string>>());
+                new List<KeyValuePair<string, string>>(),
+                cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<FileAttachment> UploadAsync(string fileName, byte[] fileContent)
+        public Task<FileAttachment> UploadAsync(string fileName, byte[] fileContent, CancellationToken cancellationToken = default)
         {
             var parameters = new List<KeyValuePair<string, string>>
                                  {
@@ -46,7 +48,7 @@ namespace Todoist.Net.Services
                                  };
             var files = new[] { new ByteArrayContent(fileContent) };
 
-            return _todoistClient.PostFormAsync<FileAttachment>("uploads/add", parameters, files);
+            return _todoistClient.PostFormAsync<FileAttachment>("uploads/add", parameters, files, cancellationToken);
         }
     }
 }
