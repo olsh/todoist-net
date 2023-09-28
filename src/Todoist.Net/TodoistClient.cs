@@ -59,8 +59,16 @@ namespace Todoist.Net
         /// <summary>
         /// Initializes a new instance of the <see cref="TodoistClient" /> class.
         /// </summary>
+        /// <param name="cancellableRestClient">The cancellable rest client.</param>
+        /// <exception cref="System.ArgumentException">Value cannot be null or empty - restClient</exception>
+        public TodoistClient(ICancellableTodoistRestClient cancellableRestClient) : this((ITodoistRestClient)cancellableRestClient)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TodoistClient" /> class.
+        /// </summary>
         /// <param name="restClient">The rest client.</param>
-        /// <exception cref="System.ArgumentException">Value cannot be null or empty - token</exception>
+        /// <exception cref="System.ArgumentException">Value cannot be null or empty - restClient</exception>
         public TodoistClient(ITodoistRestClient restClient)
         {
             _restClient = restClient ?? throw new ArgumentNullException(nameof(restClient));
