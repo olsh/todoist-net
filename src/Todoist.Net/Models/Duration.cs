@@ -10,6 +10,9 @@ namespace Todoist.Net.Models
     public class Duration
     {
 
+        private int _amount;
+        private DurationUnit _unit;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Duration" /> class.
         /// </summary>
@@ -17,11 +20,8 @@ namespace Todoist.Net.Models
         /// <param name="unit">The time unit.</param>
         public Duration(int amount, DurationUnit unit)
         {
-            Amount = amount > 0
-                ? amount
-                : throw new ArgumentOutOfRangeException(nameof(amount), "Parameter must be greater than zero.");
-            Unit = unit
-                ?? throw new ArgumentNullException(nameof(unit));
+            Amount = amount;
+            Unit = unit;
         }
 
         internal Duration()
@@ -37,8 +37,15 @@ namespace Todoist.Net.Models
         /// <value>
         /// The time amount.
         /// </value>
+        /// <exception cref="ArgumentOutOfRangeException">Duration amount must be greater than zero.</exception>"
         [JsonProperty("amount")]
-        public int Amount { get; set; }
+        public int Amount
+        {
+            get => _amount;
+            set => _amount = value > 0
+                ? value
+                : throw new ArgumentOutOfRangeException(nameof(Amount), "Duration amount must be greater than zero.");
+        }
 
         /// <summary>
         /// Gets or sets the duration time unit.
@@ -49,8 +56,13 @@ namespace Todoist.Net.Models
         /// <value>
         /// The duration unit.
         /// </value>
+        /// <exception cref="ArgumentNullException">Unit</exception>
         [JsonProperty("unit")]
-        public DurationUnit Unit { get; set; }
+        public DurationUnit Unit
+        {
+            get => _unit;
+            set => _unit = value ?? throw new ArgumentNullException(nameof(Unit));
+        }
 
 
         /// <summary>
