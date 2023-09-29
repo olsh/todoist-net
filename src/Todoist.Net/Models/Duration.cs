@@ -64,15 +64,15 @@ namespace Todoist.Net.Models
         {
             get
             {
-                if (Unit == DurationUnit.Minute)
+                switch (Unit)
                 {
-                    return TimeSpan.FromMinutes(Amount);
+                    case var _ when Unit == DurationUnit.Minute:
+                        return TimeSpan.FromMinutes(Amount);
+                    case var _ when Unit == DurationUnit.Day:
+                        return TimeSpan.FromDays(Amount);
+                    default:
+                        throw new NotImplementedException();
                 }
-                if (Unit == DurationUnit.Day)
-                {
-                    return TimeSpan.FromDays(Amount);
-                }
-                throw new NotImplementedException();
             }
         }
 
