@@ -112,7 +112,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The duration.
         /// </value>
-        [JsonProperty("duration")]
+        [JsonProperty("duration", NullValueHandling = NullValueHandling.Include)]
         public Duration Duration { get; set; }
 
         /// <summary>
