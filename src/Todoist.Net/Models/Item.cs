@@ -104,6 +104,18 @@ namespace Todoist.Net.Models
         public DueDate DueDate { get; set; }
 
         /// <summary>
+        /// Gets or sets the duration.
+        /// </summary>
+        /// <remarks>
+        /// Durations are only available for Todoist Premium users.
+        /// </remarks>
+        /// <value>
+        /// The duration.
+        /// </value>
+        [JsonProperty("duration")]
+        public Duration Duration { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether this instance is checked.
         /// </summary>
         /// <value><c>null</c> if [is checked] contains no value, <c>true</c> if [is checked]; otherwise, <c>false</c>.</value>
