@@ -60,11 +60,21 @@ namespace Todoist.Net.Models
         /// The <see cref="TimeSpan"/> value of the duration.
         /// </value>
         [JsonIgnore]
-        public TimeSpan TimeValue => Unit == DurationUnit.Minute
-            ? TimeSpan.FromMinutes(Amount)
-            : Unit == DurationUnit.Day
-            ? TimeSpan.FromDays(Amount)
-            : throw new NotImplementedException();
+        public TimeSpan TimeValue
+        {
+            get
+            {
+                if (Unit == DurationUnit.Minute)
+                {
+                    return TimeSpan.FromMinutes(Amount);
+                }
+                if (Unit == DurationUnit.Day)
+                {
+                    return TimeSpan.FromDays(Amount);
+                }
+                throw new NotImplementedException();
+            }
+        }
 
     }
 }
