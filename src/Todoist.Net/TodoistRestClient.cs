@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Todoist.Net
 {
-    internal sealed class TodoistRestClient : ICancellableTodoistRestClient
+    internal sealed class TodoistRestClient : ITodoistRestClient
     {
         private readonly HttpClient _httpClient;
 
@@ -52,15 +52,10 @@ namespace Todoist.Net
 
 
         /// <inheritdoc/>
-        public Task<HttpResponseMessage> PostAsync(
-            string resource,
-            IEnumerable<KeyValuePair<string, string>> parameters) => PostAsync(resource, parameters, CancellationToken.None);
-
-        /// <inheritdoc/>
         public async Task<HttpResponseMessage> PostAsync(
             string resource,
             IEnumerable<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken = default)
         {
             if (parameters == null)
             {
@@ -78,19 +73,12 @@ namespace Todoist.Net
             }
         }
 
-
-        /// <inheritdoc/>
-        public Task<HttpResponseMessage> PostFormAsync(
-            string resource,
-            IEnumerable<KeyValuePair<string, string>> parameters,
-            IEnumerable<ByteArrayContent> files) => PostFormAsync(resource, parameters, files, CancellationToken.None);
-
         /// <inheritdoc/>
         public async Task<HttpResponseMessage> PostFormAsync(
             string resource,
             IEnumerable<KeyValuePair<string, string>> parameters,
             IEnumerable<ByteArrayContent> files,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken = default)
         {
             using (var multipartFormDataContent = new MultipartFormDataContent())
             {

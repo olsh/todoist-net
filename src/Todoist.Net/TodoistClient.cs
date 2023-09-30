@@ -59,14 +59,6 @@ namespace Todoist.Net
         /// <summary>
         /// Initializes a new instance of the <see cref="TodoistClient" /> class.
         /// </summary>
-        /// <param name="cancellableRestClient">The cancellable rest client.</param>
-        /// <exception cref="System.ArgumentException">Value cannot be null or empty - restClient</exception>
-        public TodoistClient(ICancellableTodoistRestClient cancellableRestClient) : this((ITodoistRestClient)cancellableRestClient)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TodoistClient" /> class.
-        /// </summary>
         /// <param name="restClient">The rest client.</param>
         /// <exception cref="System.ArgumentException">Value cannot be null or empty - restClient</exception>
         public TodoistClient(ITodoistRestClient restClient)
@@ -341,9 +333,8 @@ namespace Todoist.Net
             IEnumerable<ByteArrayContent> files,
             CancellationToken cancellationToken)
         {
-            var response = _restClient is ICancellableTodoistRestClient cancellableClient
-                ? await cancellableClient.PostFormAsync(resource, parameters, files, cancellationToken).ConfigureAwait(false)
-                : await _restClient.PostFormAsync(resource, parameters, files).ConfigureAwait(false);
+            var response = await _restClient.PostFormAsync(resource, parameters, files, cancellationToken)
+                                    .ConfigureAwait(false);
 
             var responseContent = await ReadResponseAsync(response, cancellationToken)
                                       .ConfigureAwait(false);
@@ -364,9 +355,8 @@ namespace Todoist.Net
             ICollection<KeyValuePair<string, string>> parameters,
             CancellationToken cancellationToken)
         {
-            var response = _restClient is ICancellableTodoistRestClient cancellableClient
-                ? await cancellableClient.PostAsync(resource, parameters, cancellationToken).ConfigureAwait(false)
-                : await _restClient.PostAsync(resource, parameters).ConfigureAwait(false);
+            var response = await _restClient.PostAsync(resource, parameters, cancellationToken)
+                                .ConfigureAwait(false);
 
             var responseContent = await ReadResponseAsync(response, cancellationToken)
                                       .ConfigureAwait(false);
