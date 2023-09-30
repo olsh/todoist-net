@@ -197,5 +197,37 @@ namespace Todoist.Net.Tests.Services
 
             client.Items.DeleteAsync(item.Id).Wait();
         }
+
+
+        [Fact]
+        [Trait(Constants.TraitName, Constants.IntegrationPremiumTraitValue)]
+        public void CreateItemClearDurationAndDelete_Success()
+        {
+            var client = TodoistClientFactory.Create(_outputHelper);
+
+            var item = new Item("duration task")
+            {
+                DueDate = new DueDate("22 Dec 2021 at 9:15", language: Language.English),
+                Duration = new Duration(45, DurationUnit.Minute)
+            };
+            client.Items.AddAsync(item).Wait();
+
+            var itemInfo = client.Items.GetAsync(item.Id).Result;
+
+            Assert.True(itemInfo.Item.Content == item.Content);
+            Assert.Equal("2021-12-22T09:15:00", itemInfo.Item.DueDate.StringDate);
+
+            Assert.Equal(item.Duration.Amount, itemInfo.Item.Duration.Amount);
+            Assert.Equal(item.Duration.Unit, itemInfo.Item.Duration.Unit);
+
+            itemInfo.Item.Duration = null;
+            client.Items.UpdateAsync(itemInfo.Item).Wait();
+
+            itemInfo = client.Items.GetAsync(item.Id).Result;
+            Assert.Null(itemInfo.Item.Duration);
+
+            client.Items.DeleteAsync(item.Id).Wait();
+        }
+
     }
 }
