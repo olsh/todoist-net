@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -18,17 +18,13 @@ namespace Todoist.Net.Services
             _todoistClient = todoistClient;
         }
 
-        /// <summary>
-        /// Gets list of recent backup archives asynchronous.
-        /// </summary>
-        /// <returns>The backups information.</returns>
-        /// <remarks>Todoist creates a backup archive of users' data on a daily basis. Backup archives can also be accessed from the web app (Todoist Settings -> Backups).</remarks>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task<IEnumerable<Backup>> GetAsync()
+        /// <inheritdoc/>
+        public Task<IEnumerable<Backup>> GetAsync(CancellationToken cancellationToken = default)
         {
             return _todoistClient.PostAsync<IEnumerable<Backup>>(
                 "backups/get",
-                new List<KeyValuePair<string, string>>());
+                new List<KeyValuePair<string, string>>(),
+                cancellationToken);
         }
     }
 }

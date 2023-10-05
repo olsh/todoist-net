@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -19,17 +19,8 @@ namespace Todoist.Net.Services
         {
         }
 
-        /// <summary>
-        /// Adds a reminder asynchronous.
-        /// </summary>
-        /// <param name="reminder">The reminder.</param>
-        /// <returns>
-        /// The reminder ID.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="reminder" /> is <see langword="null" /></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<ComplexId> AddAsync(Reminder reminder)
+        /// <inheritdoc/>
+        public async Task<ComplexId> AddAsync(Reminder reminder, CancellationToken cancellationToken = default)
         {
             if (reminder == null)
             {
@@ -37,45 +28,27 @@ namespace Todoist.Net.Services
             }
 
             var command = CreateAddCommand(CommandType.AddReminder, reminder);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            await ExecuteCommandAsync(command, cancellationToken).ConfigureAwait(false);
 
             return reminder.Id;
         }
 
-        /// <summary>
-        /// Clears the locations list, which is used for the location reminders.
-        /// </summary>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        public Task ClearLocationsAsync()
+        /// <inheritdoc/>
+        public Task ClearLocationsAsync(CancellationToken cancellationToken = default)
         {
             var command = new Command(CommandType.ClearLocations, EmptyCommand.Instance);
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
-        /// <summary>
-        /// Deletes an existing reminder asynchronous.
-        /// </summary>
-        /// <param name="id">The ID of the reminder.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task DeleteAsync(ComplexId id)
+        /// <inheritdoc/>
+        public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             var command = CreateEntityCommand(CommandType.DeleteReminder, id);
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command,cancellationToken);
         }
 
-        /// <summary>
-        /// Updates a reminder asynchronous.
-        /// </summary>
-        /// <param name="reminder">The reminder.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="reminder"/> is <see langword="null"/></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task UpdateAsync(Reminder reminder)
+        /// <inheritdoc/>
+        public Task UpdateAsync(Reminder reminder, CancellationToken cancellationToken = default)
         {
             if (reminder == null)
             {
@@ -83,7 +56,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.UpdateReminder, reminder);
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
     }
 }

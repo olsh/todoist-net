@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -24,15 +24,8 @@ namespace Todoist.Net.Services
         {
         }
 
-        /// <summary>
-        /// Add a new section to a project.
-        /// </summary>
-        /// <param name="section">The section.</param>
-        /// <returns>The ID of the section.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="section" /> is <see langword="null" /></exception>
-        public async Task<ComplexId> AddAsync(Section section)
+        /// <inheritdoc/>
+        public async Task<ComplexId> AddAsync(Section section, CancellationToken cancellationToken = default)
         {
             if (section == null)
             {
@@ -40,51 +33,30 @@ namespace Todoist.Net.Services
             }
 
             var command = CreateAddCommand(CommandType.AddSection, section);
-            await ExecuteCommandAsync(command)
+            await ExecuteCommandAsync(command, cancellationToken)
                 .ConfigureAwait(false);
 
             return section.Id;
         }
 
-        /// <summary>
-        /// Archive a section and all its descendants tasks.
-        /// </summary>
-        /// <param name="id">The section ID.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task ArchiveAsync(ComplexId id)
+        /// <inheritdoc/>
+        public Task ArchiveAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             var command = CreateEntityCommand(CommandType.ArchiveSection, id);
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
-        /// <summary>
-        /// Delete a section and all its descendants items.
-        /// </summary>
-        /// <param name="id">The section ID.</param>
-        /// <returns> Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation. </returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task DeleteAsync(ComplexId id)
+        /// <inheritdoc/>
+        public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             var command = CreateEntityCommand(CommandType.DeleteSection, id);
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
-        /// <summary>
-        /// Updates the section.
-        /// </summary>
-        /// <param name="moveArgument">The move argument.</param>
-        /// <returns>
-        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="moveArgument" /> is <see langword="null" /></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task MoveAsync(SectionMoveArgument moveArgument)
+        /// <inheritdoc/>
+        public Task MoveAsync(SectionMoveArgument moveArgument, CancellationToken cancellationToken = default)
         {
             if (moveArgument == null)
             {
@@ -93,20 +65,14 @@ namespace Todoist.Net.Services
 
             var command = new Command(CommandType.MoveSection, moveArgument);
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
-        /// <summary>
-        /// Updates the section.
-        /// </summary>
-        /// <param name="orderEntries">The order entries.</param>
-        /// <returns>
-        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="orderEntries" /> is <see langword="null" /></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task ReorderAsync(params SectionOrderEntry[] orderEntries)
+        /// <inheritdoc/>
+        public Task ReorderAsync(params SectionOrderEntry[] orderEntries) => ReorderAsync(CancellationToken.None, orderEntries);
+
+        /// <inheritdoc/>
+        public Task ReorderAsync(CancellationToken cancellationToken, params SectionOrderEntry[] orderEntries)
         {
             if (orderEntries == null)
             {
@@ -115,32 +81,19 @@ namespace Todoist.Net.Services
 
             var command = new Command(CommandType.ReorderSection, new ReorderSectionArgument(orderEntries));
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
-        /// <summary>
-        /// Unarchive a section.
-        /// </summary>
-        /// <param name="id">The section ID.</param>
-        /// <returns> Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation. </returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task UnarchiveAsync(ComplexId id)
+        /// <inheritdoc/>
+        public Task UnarchiveAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             var command = CreateEntityCommand(CommandType.UnarchiveSection, id);
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
-        /// <summary>
-        /// Updates the section.
-        /// </summary>
-        /// <param name="section">The section.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="section" /> is <see langword="null" /></exception>
-        public Task UpdateAsync(Section section)
+        /// <inheritdoc/>
+        public Task UpdateAsync(Section section, CancellationToken cancellationToken = default)
         {
             if (section == null)
             {
@@ -149,7 +102,7 @@ namespace Todoist.Net.Services
 
             var command = new Command(CommandType.UpdateSection, section);
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
     }
 }

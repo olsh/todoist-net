@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -18,14 +18,10 @@ namespace Todoist.Net.Services
         {
         }
 
-        /// <summary>
-        /// Gets all live notifications.
-        /// </summary>
-        /// <returns>List of the notifications.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<IEnumerable<Notification>> GetAsync()
+        /// <inheritdoc/>
+        public async Task<IEnumerable<Notification>> GetAsync(CancellationToken cancellationToken = default)
         {
-            var response = await TodoistClient.GetResourcesAsync(ResourceType.Notifications).ConfigureAwait(false);
+            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Notifications).ConfigureAwait(false);
 
             return response.Notifications;
         }

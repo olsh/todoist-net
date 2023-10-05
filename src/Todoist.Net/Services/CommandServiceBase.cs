@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -40,14 +41,15 @@ namespace Todoist.Net.Services
         /// Executes the command asynchronous.
         /// </summary>
         /// <param name="command">The command.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
-        internal async Task ExecuteCommandAsync(Command command)
+        internal async Task ExecuteCommandAsync(Command command, CancellationToken cancellationToken = default)
         {
             if (_queue == null)
             {
-                await TodoistClient.ExecuteCommandsAsync(command).ConfigureAwait(false);
+                await TodoistClient.ExecuteCommandsAsync(cancellationToken, command).ConfigureAwait(false);
                 return;
             }
 

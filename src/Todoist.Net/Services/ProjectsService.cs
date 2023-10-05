@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -18,66 +18,45 @@ namespace Todoist.Net.Services
         {
         }
 
-        /// <summary>
-        /// Gets archived projects.
-        /// </summary>
-        /// <returns>
-        /// The archived projects.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task<IEnumerable<Project>> GetArchivedAsync()
+        /// <inheritdoc/>
+        public Task<IEnumerable<Project>> GetArchivedAsync(CancellationToken cancellationToken = default)
         {
             return TodoistClient.PostAsync<IEnumerable<Project>>(
                 "projects/get_archived",
-                new List<KeyValuePair<string, string>>());
+                new List<KeyValuePair<string, string>>(),
+                cancellationToken);
         }
 
-        /// <summary>
-        /// Gets all projects.
-        /// </summary>
-        /// <returns>The projects.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<IEnumerable<Project>> GetAsync()
+        /// <inheritdoc/>
+        public async Task<IEnumerable<Project>> GetAsync(CancellationToken cancellationToken = default)
         {
-            var response = await TodoistClient.GetResourcesAsync(ResourceType.Projects).ConfigureAwait(false);
+            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Projects).ConfigureAwait(false);
 
             return response.Projects;
         }
 
-        /// <summary>
-        /// Gets a project by ID.
-        /// </summary>
-        /// <param name="id">The ID of the project.</param>
-        /// <returns>
-        /// The project.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task<ProjectInfo> GetAsync(ComplexId id)
+        /// <inheritdoc/>
+        public Task<ProjectInfo> GetAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             return TodoistClient.PostAsync<ProjectInfo>(
                 "projects/get",
                 new List<KeyValuePair<string, string>>
                     {
                         new KeyValuePair<string, string>("project_id", id.ToString())
-                    });
+                    },
+                cancellationToken);
         }
 
-        /// <summary>
-        /// Gets a project’s uncompleted items.
-        /// </summary>
-        /// <param name="id">The ID of the project.</param>
-        /// <returns>
-        /// The project data.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task<ProjectData> GetDataAsync(ComplexId id)
+        /// <inheritdoc/>
+        public Task<ProjectData> GetDataAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             return TodoistClient.PostAsync<ProjectData>(
                 "projects/get_data",
                 new List<KeyValuePair<string, string>>
                     {
                         new KeyValuePair<string, string>("project_id", id.ToString())
-                    });
+                    },
+                cancellationToken);
         }
     }
 }

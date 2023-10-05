@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -18,31 +18,21 @@ namespace Todoist.Net.Services
         {
         }
 
-        /// <summary>
-        /// Gets all labels.
-        /// </summary>
-        /// <returns>The labels.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<IEnumerable<Label>> GetAsync()
+        /// <inheritdoc/>
+        public async Task<IEnumerable<Label>> GetAsync(CancellationToken cancellationToken = default)
         {
-            var response = await TodoistClient.GetResourcesAsync(ResourceType.Labels).ConfigureAwait(false);
+            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Labels).ConfigureAwait(false);
 
             return response.Labels;
         }
 
-        /// <summary>
-        /// Gets a label info by ID.
-        /// </summary>
-        /// <param name="id">The ID of the label.</param>
-        /// <returns>
-        /// The label info.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task<LabelInfo> GetAsync(ComplexId id)
+        /// <inheritdoc/>
+        public Task<LabelInfo> GetAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             return TodoistClient.PostAsync<LabelInfo>(
                 "labels/get",
-                new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("label_id", id.ToString()) });
+                new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("label_id", id.ToString()) },
+                cancellationToken);
         }
     }
 }

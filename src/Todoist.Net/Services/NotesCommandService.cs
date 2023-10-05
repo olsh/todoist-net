@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -24,18 +24,8 @@ namespace Todoist.Net.Services
         {
         }
 
-        /// <summary>
-        /// Adds the note asynchronous.
-        /// </summary>
-        /// <param name="note">The note.</param>
-        /// <param name="itemId">The item identifier.</param>
-        /// <returns>
-        /// The note ID.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="note" /> is <see langword="null" /></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<ComplexId> AddToItemAsync(Note note, ComplexId itemId)
+        /// <inheritdoc/>
+        public async Task<ComplexId> AddToItemAsync(Note note, ComplexId itemId, CancellationToken cancellationToken = default)
         {
             if (note == null)
             {
@@ -45,23 +35,13 @@ namespace Todoist.Net.Services
             note.ItemId = itemId;
 
             var command = CreateAddCommand(CommandType.AddNote, note);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            await ExecuteCommandAsync(command, cancellationToken).ConfigureAwait(false);
 
             return note.Id;
         }
 
-        /// <summary>
-        /// Adds the note asynchronous.
-        /// </summary>
-        /// <param name="note">The note.</param>
-        /// <param name="projectId">The project ID.</param>
-        /// <returns>
-        /// The note ID.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="note" /> is <see langword="null" /></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<ComplexId> AddToProjectAsync(Note note, ComplexId projectId)
+        /// <inheritdoc/>
+        public async Task<ComplexId> AddToProjectAsync(Note note, ComplexId projectId, CancellationToken cancellationToken = default)
         {
             if (note == null)
             {
@@ -71,33 +51,20 @@ namespace Todoist.Net.Services
             note.ProjectId = projectId;
 
             var command = CreateAddCommand(CommandType.AddNote, note);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            await ExecuteCommandAsync(command, cancellationToken).ConfigureAwait(false);
 
             return note.Id;
         }
 
-        /// <summary>
-        /// Deletes the note asynchronous.
-        /// </summary>
-        /// <param name="id">The ID of the note.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task DeleteAsync(ComplexId id)
+        /// <inheritdoc/>
+        public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             var command = CreateEntityCommand(CommandType.DeleteNote, id);
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
-        /// <summary>
-        /// Updates the note asynchronous.
-        /// </summary>
-        /// <param name="note">The note.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="note" /> is <see langword="null" /></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task UpdateAsync(Note note)
+        /// <inheritdoc/>
+        public Task UpdateAsync(Note note, CancellationToken cancellationToken = default)
         {
             if (note == null)
             {
@@ -105,7 +72,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.UpdateNote, note);
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
     }
 }

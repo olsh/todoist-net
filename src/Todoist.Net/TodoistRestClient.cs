@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Todoist.Net
@@ -49,19 +50,12 @@ namespace Todoist.Net
             _httpClient?.Dispose();
         }
 
-        /// <summary>
-        /// Posts the asynchronous.
-        /// </summary>
-        /// <param name="resource">The resource.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>
-        /// The response.
-        /// </returns>
-        /// <exception cref="System.ArgumentException">Value cannot be null or empty - resource</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="parameters" /> is <see langword="null" /></exception>
+
+        /// <inheritdoc/>
         public async Task<HttpResponseMessage> PostAsync(
             string resource,
-            IEnumerable<KeyValuePair<string, string>> parameters)
+            IEnumerable<KeyValuePair<string, string>> parameters,
+            CancellationToken cancellationToken = default)
         {
             if (parameters == null)
             {
@@ -75,21 +69,16 @@ namespace Todoist.Net
 
             using (var content = new FormUrlEncodedContent(parameters))
             {
-                return await _httpClient.PostAsync(resource, content).ConfigureAwait(false);
+                return await _httpClient.PostAsync(resource, content, cancellationToken).ConfigureAwait(false);
             }
         }
 
-        /// <summary>
-        /// Posts the form asynchronous.
-        /// </summary>
-        /// <param name="resource">The resource.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <param name="files">The files.</param>
-        /// <returns>The response.</returns>
+        /// <inheritdoc/>
         public async Task<HttpResponseMessage> PostFormAsync(
             string resource,
             IEnumerable<KeyValuePair<string, string>> parameters,
-            IEnumerable<ByteArrayContent> files)
+            IEnumerable<ByteArrayContent> files,
+            CancellationToken cancellationToken = default)
         {
             using (var multipartFormDataContent = new MultipartFormDataContent())
             {
@@ -103,7 +92,7 @@ namespace Todoist.Net
                     multipartFormDataContent.Add(file, Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
                 }
 
-                return await _httpClient.PostAsync(resource, multipartFormDataContent).ConfigureAwait(false);
+                return await _httpClient.PostAsync(resource, multipartFormDataContent, cancellationToken).ConfigureAwait(false);
             }
         }
     }

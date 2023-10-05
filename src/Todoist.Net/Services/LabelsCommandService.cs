@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -24,17 +24,8 @@ namespace Todoist.Net.Services
         {
         }
 
-        /// <summary>
-        /// Adds a label asynchronous.
-        /// </summary>
-        /// <param name="label">The label.</param>
-        /// <returns>
-        /// The label ID.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="label" /> is <see langword="null" /></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<ComplexId> AddAsync(Label label)
+        /// <inheritdoc/>
+        public async Task<ComplexId> AddAsync(Label label, CancellationToken cancellationToken = default)
         {
             if (label == null)
             {
@@ -42,33 +33,20 @@ namespace Todoist.Net.Services
             }
 
             var command = CreateAddCommand(CommandType.AddLabel, label);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            await ExecuteCommandAsync(command, cancellationToken).ConfigureAwait(false);
 
             return label.Id;
         }
 
-        /// <summary>
-        /// Deletes an existing label asynchronous.
-        /// </summary>
-        /// <param name="id">The ID of the label.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task DeleteAsync(ComplexId id)
+        /// <inheritdoc/>
+        public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             var command = CreateEntityCommand(CommandType.DeleteLabel, id);
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
-        /// <summary>
-        /// Updates a label asynchronous.
-        /// </summary>
-        /// <param name="label">The label.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="label"/> is <see langword="null"/></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task UpdateAsync(Label label)
+        /// <inheritdoc/>
+        public Task UpdateAsync(Label label, CancellationToken cancellationToken = default)
         {
             if (label == null)
             {
@@ -76,18 +54,14 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.UpdateLabel, label);
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
-        /// <summary>
-        /// Update the orders of multiple labels at once.
-        /// </summary>
-        /// <param name="orderEntries">The order entries.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="orderEntries"/> is <see langword="null"/></exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        public Task UpdateOrderAsync(params OrderEntry[] orderEntries)
+        /// <inheritdoc/>
+        public Task UpdateOrderAsync(params OrderEntry[] orderEntries) => UpdateOrderAsync(CancellationToken.None, orderEntries);
+
+        /// <inheritdoc/>
+        public Task UpdateOrderAsync(CancellationToken cancellationToken, params OrderEntry[] orderEntries)
         {
             if (orderEntries == null)
             {
@@ -95,7 +69,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.UpdateOrderLabel, new IdToOrderMappingArgument(orderEntries));
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
     }
 }

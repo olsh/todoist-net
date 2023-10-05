@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Xunit.Abstractions;
@@ -55,17 +56,19 @@ namespace Todoist.Net.Tests
 
         public async Task<HttpResponseMessage> PostAsync(
             string resource,
-            IEnumerable<KeyValuePair<string, string>> parameters)
+            IEnumerable<KeyValuePair<string, string>> parameters,
+            CancellationToken cancellationToken = default)
         {
-            return await ExecuteRequest(() => _restClient.PostAsync(resource, parameters)).ConfigureAwait(false);
+            return await ExecuteRequest(() => _restClient.PostAsync(resource, parameters, cancellationToken)).ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> PostFormAsync(
             string resource,
             IEnumerable<KeyValuePair<string, string>> parameters,
-            IEnumerable<ByteArrayContent> files)
+            IEnumerable<ByteArrayContent> files,
+            CancellationToken cancellationToken = default)
         {
-            return await ExecuteRequest(() => _restClient.PostFormAsync(resource, parameters, files))
+            return await ExecuteRequest(() => _restClient.PostFormAsync(resource, parameters, files, cancellationToken))
                        .ConfigureAwait(false);
         }
 

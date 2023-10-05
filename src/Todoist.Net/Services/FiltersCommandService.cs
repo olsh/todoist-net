@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -19,17 +19,8 @@ namespace Todoist.Net.Services
         {
         }
 
-        /// <summary>
-        /// Adds a filter asynchronous.
-        /// </summary>
-        /// <param name="filter">The filter.</param>
-        /// <returns>
-        /// The filter ID.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="filter" /> is <see langword="null" /></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public async Task<ComplexId> AddAsync(Filter filter)
+        /// <inheritdoc/>
+        public async Task<ComplexId> AddAsync(Filter filter, CancellationToken cancellationToken = default)
         {
             if (filter == null)
             {
@@ -37,33 +28,20 @@ namespace Todoist.Net.Services
             }
 
             var command = CreateAddCommand(CommandType.AddFilter, filter);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            await ExecuteCommandAsync(command, cancellationToken).ConfigureAwait(false);
 
             return filter.Id;
         }
 
-        /// <summary>
-        /// Deletes an existing filter asynchronous.
-        /// </summary>
-        /// <param name="id">The ID of the filter.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task DeleteAsync(ComplexId id)
+        /// <inheritdoc/>
+        public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             var command = CreateEntityCommand(CommandType.DeleteFilter, id);
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
-        /// <summary>
-        /// Updates a filter asynchronous.
-        /// </summary>
-        /// <param name="filter">The filter.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="filter"/> is <see langword="null"/></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task UpdateAsync(Filter filter)
+        /// <inheritdoc/>
+        public Task UpdateAsync(Filter filter, CancellationToken cancellationToken = default)
         {
             if (filter == null)
             {
@@ -71,18 +49,14 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.UpdateFilter, filter);
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
-        /// <summary>
-        /// Update the orders of multiple filters at once.
-        /// </summary>
-        /// <param name="orderEntries">The order entries.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="orderEntries"/> is <see langword="null"/></exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        public Task UpdateOrderAsync(params OrderEntry[] orderEntries)
+        /// <inheritdoc/>
+        public Task UpdateOrderAsync(params OrderEntry[] orderEntries) => UpdateOrderAsync(CancellationToken.None, orderEntries);
+
+        /// <inheritdoc/>
+        public Task UpdateOrderAsync(CancellationToken cancellationToken, params OrderEntry[] orderEntries)
         {
             if (orderEntries == null)
             {
@@ -90,7 +64,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.UpdateOrderFilter, new IdToOrderMappingArgument(orderEntries));
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
     }
 }

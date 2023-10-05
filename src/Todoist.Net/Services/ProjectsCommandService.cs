@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -24,15 +24,8 @@ namespace Todoist.Net.Services
         {
         }
 
-        /// <summary>
-        /// Adds a new project.
-        /// </summary>
-        /// <param name="project">The project.</param>
-        /// <returns>The ID of the project.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="project"/> is <see langword="null"/></exception>
-        public async Task<ComplexId> AddAsync(Project project)
+        /// <inheritdoc/>
+        public async Task<ComplexId> AddAsync(Project project, CancellationToken cancellationToken = default)
         {
             if (project == null)
             {
@@ -40,66 +33,37 @@ namespace Todoist.Net.Services
             }
 
             var command = CreateAddCommand(CommandType.AddProject, project);
-            await ExecuteCommandAsync(command).ConfigureAwait(false);
+            await ExecuteCommandAsync(command, cancellationToken).ConfigureAwait(false);
 
             return project.Id;
         }
 
-        /// <summary>
-        /// Archive a project and its descendants.
-        /// </summary>
-        /// <param name="id">The project ID.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <remarks>Only available for Todoist Premium users.</remarks>
-        public Task ArchiveAsync(ComplexId id)
+        /// <inheritdoc/>
+        public Task ArchiveAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             var command = CreateEntityCommand(CommandType.ArchiveProject, id);
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
-        /// <summary>
-        /// Delete an existing project and all its descendants.
-        /// </summary>
-        /// <param name="id">The project ID.</param>
-        /// <returns> Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation. </returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task DeleteAsync(ComplexId id)
+        /// <inheritdoc/>
+        public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             var command = CreateEntityCommand(CommandType.DeleteProject, id);
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
-        /// <summary>
-        /// Unarchive a project.
-        /// No ancestors will be unarchived along with the unarchived project.
-        /// Instead, the project is unarchived alone, loses any parent relationship (becomes a root project), and is placed at the end of the list of other root projects.
-        /// </summary>
-        /// <param name="id">The project ID.</param>
-        /// <returns> Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation. </returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <remarks>Only available for Todoist Premium users.</remarks>
-        public Task UnarchiveAsync(ComplexId id)
+        /// <inheritdoc/>
+        public Task UnarchiveAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
             var command = CreateEntityCommand(CommandType.UnarchiveProject, id);
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
-        /// <summary>
-        /// Updates the project.
-        /// </summary>
-        /// <param name="project">The project.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="project"/> is <see langword="null"/></exception>
-        public Task UpdateAsync(Project project)
+        /// <inheritdoc/>
+        public Task UpdateAsync(Project project, CancellationToken cancellationToken = default)
         {
             if (project == null)
             {
@@ -108,41 +72,25 @@ namespace Todoist.Net.Services
 
             var command = new Command(CommandType.UpdateProject, project);
 
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
-        /// <summary>
-        /// Updates parent project relationships of the project asynchronous.
-        /// </summary>
-        /// <param name="moveArgument">The move entry.</param>
-        /// <returns>
-        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="moveArgument" /> is <see langword="null" /></exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        public Task MoveAsync(MoveArgument moveArgument)
+        /// <inheritdoc/>
+        public Task MoveAsync(MoveArgument moveArgument, CancellationToken cancellationToken = default)
         {
             if (moveArgument == null)
             {
                 throw new ArgumentNullException(nameof(moveArgument));
             }
 
-            return ExecuteCommandAsync(new Command(CommandType.MoveProject, moveArgument));
+            return ExecuteCommandAsync(new Command(CommandType.MoveProject, moveArgument), cancellationToken);
         }
 
-        /// <summary>
-        /// Update the orders and indents of multiple projects at once asynchronous.
-        /// </summary>
-        /// <param name="reorderEntries">The reorder entries.</param>
-        /// <returns>
-        /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="reorderEntries" /> is <see langword="null" /></exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="T:System.ArgumentException">Value cannot be an empty collection.</exception>
-        public Task ReorderAsync(params ReorderEntry[] reorderEntries)
+        /// <inheritdoc/>
+        public Task ReorderAsync(params ReorderEntry[] reorderEntries) => ReorderAsync(CancellationToken.None, reorderEntries);
+
+        /// <inheritdoc/>
+        public Task ReorderAsync(CancellationToken cancellationToken, params ReorderEntry[] reorderEntries)
         {
             if (reorderEntries == null)
             {
@@ -154,7 +102,7 @@ namespace Todoist.Net.Services
                 throw new ArgumentException("Value cannot be an empty collection.", nameof(reorderEntries));
             }
 
-            return ExecuteCommandAsync(new Command(CommandType.ReorderProjects, new ReorderProjectsArgument(reorderEntries)));
+            return ExecuteCommandAsync(new Command(CommandType.ReorderProjects, new ReorderProjectsArgument(reorderEntries)), cancellationToken);
         }
     }
 }

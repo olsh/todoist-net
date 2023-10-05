@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -18,18 +18,12 @@ namespace Todoist.Net.Services
             _todoistClient = todoistClient;
         }
 
-        /// <summary>
-        /// Gets list of activity logs.
-        /// </summary>
-        /// <param name="filter">The filter.</param>
-        /// <returns>The activity log entries.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <remarks>The activity log is only available for Todoist Premium.</remarks>
-        public Task<Activity> GetAsync(LogFilter filter = null)
+        /// <inheritdoc/>
+        public Task<Activity> GetAsync(LogFilter filter = null, CancellationToken cancellationToken = default)
         {
             var parameters = filter != null ? filter.ToParameters() : new List<KeyValuePair<string, string>>();
 
-            return _todoistClient.PostAsync<Activity>("activity/get", parameters);
+            return _todoistClient.PostAsync<Activity>("activity/get", parameters, cancellationToken);
         }
     }
 }

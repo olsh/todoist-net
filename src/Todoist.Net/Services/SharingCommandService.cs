@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Models;
@@ -23,16 +23,8 @@ namespace Todoist.Net.Services
         {
         }
 
-        /// <summary>
-        /// Accepts an invitation.
-        /// </summary>
-        /// <param name="id">The invitation id.</param>
-        /// <param name="invitationSecret">The secret fetched from the live notification.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="ArgumentException">Value cannot be null or empty.</exception>
-        public Task AcceptInvitationAsync(long id, string invitationSecret)
+        /// <inheritdoc/>
+        public Task AcceptInvitationAsync(long id, string invitationSecret, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(invitationSecret))
             {
@@ -40,19 +32,11 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.AcceptInvitation, new Invitation(id, invitationSecret));
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
-        /// <summary>
-        /// Deletes a person from a shared project.
-        /// </summary>
-        /// <param name="id">The project ID to be affected.</param>
-        /// <param name="email">The user email with whom to share the project.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="ArgumentException">Value cannot be null or empty.</exception>
-        public Task DeleteCollaboratorAsync(ComplexId id, string email)
+        /// <inheritdoc/>
+        public Task DeleteCollaboratorAsync(ComplexId id, string email, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(email))
             {
@@ -60,32 +44,18 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.DeleteCollaborator, new ShareProjectArgument(id, email));
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
-        /// <summary>
-        /// Deletes an invitation.
-        /// </summary>
-        /// <param name="id">The invitation id.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        public Task DeleteInvitationAsync(long id)
+        /// <inheritdoc/>
+        public Task DeleteInvitationAsync(long id, CancellationToken cancellationToken = default)
         {
             var command = new Command(CommandType.DeleteInvitation, new BaseInvitation(id));
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
-        /// <summary>
-        /// Rejects an invitation.
-        /// </summary>
-        /// <param name="id">The invitation id.</param>
-        /// <param name="invitationSecret">The secret fetched from the live notification.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="ArgumentException">Value cannot be null or empty.</exception>
-        public Task RejectInvitationAsync(long id, string invitationSecret)
+        /// <inheritdoc/>
+        public Task RejectInvitationAsync(long id, string invitationSecret, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(invitationSecret))
             {
@@ -93,19 +63,11 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.RejectInvitation, new Invitation(id, invitationSecret));
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
 
-        /// <summary>
-        /// Shares a project.
-        /// </summary>
-        /// <param name="id">The project ID to be shared.</param>
-        /// <param name="email">The user email with whom to share the project.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="ArgumentException">Value cannot be null or empty.</exception>
-        public Task ShareProjectAsync(ComplexId id, string email)
+        /// <inheritdoc/>
+        public Task ShareProjectAsync(ComplexId id, string email, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(email))
             {
@@ -113,7 +75,7 @@ namespace Todoist.Net.Services
             }
 
             var command = new Command(CommandType.ShareProject, new ShareProjectArgument(id, email));
-            return ExecuteCommandAsync(command);
+            return ExecuteCommandAsync(command, cancellationToken);
         }
     }
 }
