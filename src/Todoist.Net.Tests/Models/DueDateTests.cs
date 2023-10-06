@@ -45,7 +45,7 @@ namespace Todoist.Net.Tests.Models
         [Fact]
         public void DateTimeAssignment_FloatingDueDateEvent_Success()
         {
-            var date = new DateTime(2018, 2, 5, 0, 0, 0, DateTimeKind.Utc);
+            var date = new DateTime(2018, 2, 5, 0, 0, 0, DateTimeKind.Unspecified);
 
             var dueDate = new DueDate(date);
 
