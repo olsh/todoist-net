@@ -11,10 +11,5 @@ namespace Todoist.Net.Tests
             var token = SettingsProvider.GetToken();
             return new TodoistClient(new RateLimitAwareRestClient(token, outputHelper));
         }
-
-        public static ITodoistTokenlessClient CreateTokenlessClient()
-        {
-            return new TodoistTokenlessClient();
-        }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
@@ -125,7 +126,7 @@ namespace Todoist.Net.Tests.Services
 
         [Fact]
         [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
-        public void MoveItemsToProject_Success()
+        public async Task MoveItemsToProject_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
@@ -133,22 +134,22 @@ namespace Todoist.Net.Tests.Services
             client.Items.AddAsync(item).Wait();
 
             item.DueDate = new DueDate("every fri");
-            client.Items.UpdateAsync(item).Wait();
+            await client.Items.UpdateAsync(item);
 
             var project = new Project(Guid.NewGuid().ToString());
-            client.Projects.AddAsync(project).Wait();
+            await client.Projects.AddAsync(project);
 
-            var itemInfo = client.Items.GetAsync(item.Id).Result;
+            var itemInfo = await client.Items.GetAsync(item.Id);
 
             Assert.True(project.Id != itemInfo.Project.Id);
 
-            client.Items.MoveAsync(ItemMoveArgument.CreateMoveToProject(itemInfo.Item.Id, project.Id)).Wait();
-            itemInfo = client.Items.GetAsync(itemInfo.Item.Id).Result;
+            await client.Items.MoveAsync(ItemMoveArgument.CreateMoveToProject(itemInfo.Item.Id, project.Id));
+            itemInfo = await client.Items.GetAsync(itemInfo.Item.Id);
 
             Assert.True(project.Id == itemInfo.Project.Id);
 
-            client.Projects.DeleteAsync(project.Id).Wait();
-            client.Items.DeleteAsync(itemInfo.Item.Id).Wait();
+            await client.Items.DeleteAsync(itemInfo.Item.Id);
+            await client.Projects.DeleteAsync(project.Id);
         }
 
         [Fact]
