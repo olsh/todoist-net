@@ -10,7 +10,6 @@ namespace Todoist.Net.Models
     /// </summary>
     public class DueDate
     {
-        private const string DefaultEventDateFormat = "yyyy-MM-ddTHH:mm:ssK"; // Roundtrip without milliseconds.
         private const string FullDayEventDateFormat = "yyyy-MM-dd";
 
         /// <summary>
@@ -125,7 +124,13 @@ namespace Todoist.Net.Models
                     return Date.Value.ToString(FullDayEventDateFormat);
                 }
 
-                return Date.Value.ToString(DefaultEventDateFormat);
+                var date = Date.Value.ToUniversalTime();
+                if (string.IsNullOrEmpty(Timezone))
+                {
+                    return date.ToString("s");
+                }
+
+                return date.ToString("s") + "Z";
             }
 
             set
@@ -138,7 +143,7 @@ namespace Todoist.Net.Models
                     return;
                 }
 
-                Date = DateTime.Parse(value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+                Date = DateTime.Parse(value, CultureInfo.InvariantCulture);
             }
         }
     }
