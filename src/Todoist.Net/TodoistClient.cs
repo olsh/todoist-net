@@ -200,7 +200,7 @@ namespace Todoist.Net
         /// <inheritdoc/>
         public Task<Resources> GetResourcesAsync(params ResourceType[] resourceTypes) =>
             GetResourcesAsync("*", resourceTypes);
-        
+
         /// <inheritdoc/>
         public Task<Resources> GetResourcesAsync(CancellationToken cancellationToken, params ResourceType[] resourceTypes) =>
             GetResourcesAsync("*", cancellationToken, resourceTypes);
