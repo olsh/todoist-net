@@ -10,8 +10,9 @@ namespace Todoist.Net.Models
     /// </summary>
     public class DueDate
     {
-        private const string DefaultEventDateFormat = "yyyy-MM-ddTHH:mm:ssK"; // Roundtrip without milliseconds.
         private const string FullDayEventDateFormat = "yyyy-MM-dd";
+        private const string FloatingEventDateFormat = "yyyy-MM-ddTHH:mm:ss";
+        private const string FixedEventDateFormat = "yyyy-MM-ddTHH:mm:ssZ";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DueDate" /> class.
@@ -125,7 +126,17 @@ namespace Todoist.Net.Models
                     return Date.Value.ToString(FullDayEventDateFormat);
                 }
 
-                return Date.Value.ToString(DefaultEventDateFormat);
+                if (string.IsNullOrEmpty(Timezone))
+                {
+                    return Date.Value.ToString(FloatingEventDateFormat);
+                }
+
+                if (Date.Value.Kind == DateTimeKind.Local)
+                {
+                    return Date.Value.ToUniversalTime().ToString(FixedEventDateFormat);
+                }
+
+                return Date.Value.ToString(FixedEventDateFormat); // Unspecified dates are assuemd UTC.
             }
 
             set
