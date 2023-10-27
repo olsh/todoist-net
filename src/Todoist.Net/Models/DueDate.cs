@@ -11,8 +11,7 @@ namespace Todoist.Net.Models
     public class DueDate
     {
         private const string FullDayEventDateFormat = "yyyy-MM-dd";
-        private const string FloatingEventDateFormat = "yyyy-MM-ddTHH:mm:ss";
-        private const string FixedEventDateFormat = "yyyy-MM-ddTHH:mm:ssZ";
+        private const string DefaultEventDateFormat = "yyyy-MM-ddTHH:mm:ssK";
 
         internal DueDate()
         {
@@ -96,17 +95,7 @@ namespace Todoist.Net.Models
                     return Date.Value.ToString(FullDayEventDateFormat);
                 }
 
-                if (string.IsNullOrEmpty(Timezone))
-                {
-                    return Date.Value.ToString(FloatingEventDateFormat);
-                }
-
-                if (Date.Value.Kind == DateTimeKind.Local)
-                {
-                    return Date.Value.ToUniversalTime().ToString(FixedEventDateFormat);
-                }
-
-                return Date.Value.ToString(FixedEventDateFormat); // Unspecified dates are assuemd UTC.
+                return Date.Value.ToString(DefaultEventDateFormat);
             }
 
             set
