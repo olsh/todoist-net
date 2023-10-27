@@ -193,7 +193,7 @@ namespace Todoist.Net.Tests.Services
 
             var itemInfo = client.Items.GetAsync(taskId).Result;
 
-            Assert.Equal(item.DueDate.Date, itemInfo.Item.DueDate.Date?.ToLocalTime());
+            Assert.Equal(item.DueDate.Date, itemInfo.Item.DueDate.Date);
 
             client.Items.DeleteAsync(item.Id).Wait();
         }
