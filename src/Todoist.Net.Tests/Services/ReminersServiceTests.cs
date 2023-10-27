@@ -30,7 +30,7 @@ namespace Todoist.Net.Tests.Services
 
             var itemId = await transaction.Items.AddAsync(new Item("Temp")).ConfigureAwait(false);
             var reminderId =
-                await transaction.Reminders.AddAsync(new Reminder(itemId) { DueDate = new DueDate(DateTime.UtcNow.AddDays(1)) }).ConfigureAwait(false);
+                await transaction.Reminders.AddAsync(new Reminder(itemId) { DueDate = DueDate.CreateFloating(DateTime.UtcNow.AddDays(1)) }).ConfigureAwait(false);
             await transaction.CommitAsync().ConfigureAwait(false);
 
             var reminders = await client.Reminders.GetAsync().ConfigureAwait(false);
@@ -50,7 +50,7 @@ namespace Todoist.Net.Tests.Services
 
             var item = new Item("Test")
             {
-                DueDate = new DueDate(DateTime.UtcNow.AddDays(1))
+                DueDate = DueDate.CreateFloating(DateTime.UtcNow.AddDays(1))
             };
 
             var taskId = await client.Items.AddAsync(item).ConfigureAwait(false);

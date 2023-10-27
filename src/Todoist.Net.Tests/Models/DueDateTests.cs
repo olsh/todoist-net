@@ -34,9 +34,9 @@ namespace Todoist.Net.Tests.Models
         [Fact]
         public void DateTimeAssignment_FullDayEvent_Success()
         {
-            var date = new DateTime(2018, 2, 5, 0, 0, 0, DateTimeKind.Utc);
+            var date = new DateTime(2018, 2, 5);
 
-            var dueDate = new DueDate(date, true);
+            var dueDate = DueDate.CreateFullDay(date);
 
             Assert.Equal("2018-02-05", dueDate.StringDate);
             Assert.True(dueDate.IsFullDay);
@@ -45,20 +45,20 @@ namespace Todoist.Net.Tests.Models
         [Fact]
         public void DateTimeAssignment_FloatingDueDateEvent_Success()
         {
-            var date = new DateTime(2018, 2, 5, 0, 0, 0, DateTimeKind.Unspecified);
+            var date = new DateTime(2018, 2, 5);
 
-            var dueDate = new DueDate(date);
+            var dueDate = DueDate.CreateFloating(date);
 
             Assert.Equal("2018-02-05T00:00:00", dueDate.StringDate);
             Assert.False(dueDate.IsFullDay);
         }
 
         [Fact]
-        public void DateTimeAssignment_FloatingDueDateWithTimezoneEvent_Success()
+        public void DateTimeAssignment_FixedTimeZoneDueDateEvent_Success()
         {
-            var date = new DateTime(2018, 2, 5, 0, 0, 0, DateTimeKind.Utc);
+            var date = new DateTime(2018, 2, 5);
 
-            var dueDate = new DueDate(date, false, "Asia/Jakarta");
+            var dueDate = DueDate.CreateFixedTimeZone(date, "Asia/Jakarta");
 
             Assert.Equal("2018-02-05T00:00:00Z", dueDate.StringDate);
             Assert.False(dueDate.IsFullDay);
