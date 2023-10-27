@@ -106,6 +106,8 @@ namespace Todoist.Net.Tests.Models
 
             // Act
             dueDate.StringDate = initialValue; // Set initial value.
+            dueDate.Timezone = "Asia/Jakarta"; // Set fixed timezone.
+
             string returnedValue = dueDate.StringDate; // Get.
             dueDate.StringDate = returnedValue; // Set returned value.
 
