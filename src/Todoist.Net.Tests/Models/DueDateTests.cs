@@ -16,12 +16,7 @@ namespace Todoist.Net.Tests.Models
 
         public DueDateTests()
         {
-            var timeZoneCollection = System.TimeZoneInfo.GetSystemTimeZones();
-
-            var randomIndex = new Random().Next(timeZoneCollection.Count);
-            var fakeTimeZoneInfo = timeZoneCollection[randomIndex];
-
-            _fakeLocalTimeZone = new FakeLocalTimeZone(fakeTimeZoneInfo);
+            _fakeLocalTimeZone = FakeLocalTimeZone.ChangeLocalTimeZone(TimeSpan.FromHours(5));
         }
 
         public void Dispose()
