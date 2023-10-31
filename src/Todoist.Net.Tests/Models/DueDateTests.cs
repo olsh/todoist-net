@@ -63,50 +63,41 @@ namespace Todoist.Net.Tests.Models
         [Fact]
         public void StringDateProperty_ShouldReturnExactAssignedValue_WhenValueIsFullDayDate()
         {
-            // Arrange
             var dueDate = new DueDate();
             string initialValue = "2016-12-01";
 
-            // Act
-            dueDate.StringDate = initialValue; // Set initial value.
-            string returnedValue = dueDate.StringDate; // Get.
-            dueDate.StringDate = returnedValue; // Set returned value.
+            dueDate.StringDate = initialValue;
+            string returnedValue = dueDate.StringDate;
+            dueDate.StringDate = returnedValue;
 
-            // Assert
             Assert.Equal(returnedValue, dueDate.StringDate);
         }
 
         [Fact]
         public void StringDateProperty_ShouldReturnExactAssignedValue_WhenValueIsFloatingDate()
         {
-            // Arrange
             var dueDate = new DueDate();
             string initialValue = "2016-12-03T12:00:00";
 
-            // Act
-            dueDate.StringDate = initialValue; // Set initial value.
-            string returnedValue = dueDate.StringDate; // Get.
-            dueDate.StringDate = returnedValue; // Set returned value.
+            dueDate.StringDate = initialValue;
+            string returnedValue = dueDate.StringDate;
+            dueDate.StringDate = returnedValue;
 
-            // Assert
             Assert.Equal(returnedValue, dueDate.StringDate);
         }
 
         [Fact]
         public void StringDateProperty_ShouldReturnExactAssignedValue_WhenValueIsFixedDate()
         {
-            // Arrange
             var dueDate = new DueDate();
             string initialValue = "2016-12-06T13:00:00Z";
 
-            // Act
-            dueDate.StringDate = initialValue; // Set initial value.
-            dueDate.Timezone = "Asia/Jakarta"; // Set fixed timezone.
+            dueDate.StringDate = initialValue;
+            dueDate.Timezone = "Asia/Jakarta";
 
-            string returnedValue = dueDate.StringDate; // Get.
-            dueDate.StringDate = returnedValue; // Set returned value.
+            string returnedValue = dueDate.StringDate;
+            dueDate.StringDate = returnedValue;
 
-            // Assert
             Assert.Equal(returnedValue, dueDate.StringDate);
         }
     }

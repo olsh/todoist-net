@@ -129,7 +129,7 @@ namespace Todoist.Net.Models
         };
 
         /// <summary>
-        /// Creates a full-day <see cref="DueDate"/> in the format of <c>YYYY-MM-DD</c> (<see href="https://datatracker.ietf.org/doc/html/rfc3339">RFC 3339</see>).
+        /// Creates a full-day <see cref="DueDate"/>.
         /// </summary>
         /// <param name="date">The full-day date.</param>
         /// <remarks>
@@ -148,7 +148,7 @@ namespace Todoist.Net.Models
         };
 
         /// <summary>
-        /// Creates a floating <see cref="DueDate"/> in the format of <c>YYYY-MM-DDTHH:MM:SS</c>.
+        /// Creates a floating <see cref="DueDate"/>.
         /// </summary>
         /// <param name="dateTime">The floating date.</param>
         /// <remarks>
@@ -173,7 +173,7 @@ namespace Todoist.Net.Models
         };
 
         /// <summary>
-        /// Creates a fixed timezone <see cref="DueDate"/> in the format of <c>YYYY-MM-DDTHH:MM:SSZ</c> (<see href="https://datatracker.ietf.org/doc/html/rfc3339">RFC 3339</see>).
+        /// Creates a fixed timezone <see cref="DueDate"/>.
         /// </summary>
         /// <param name="dateTime">The fixed timezone date.</param>
         /// <param name="timezone">The timezone of the due instance.</param>
