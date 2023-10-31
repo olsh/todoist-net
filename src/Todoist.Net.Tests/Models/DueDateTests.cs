@@ -21,8 +21,7 @@ namespace Todoist.Net.Tests.Models
 
         public void Dispose()
         {
-            _fakeLocalTimeZone.Dispose();
-            GC.SuppressFinalize(this);
+            _fakeLocalTimeZone?.Dispose();
         }
 
 
