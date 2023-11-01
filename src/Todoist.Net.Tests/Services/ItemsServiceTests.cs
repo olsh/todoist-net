@@ -89,7 +89,7 @@ namespace Todoist.Net.Tests.Services
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var item = new Item("demo task") { DueDate = new DueDate("22 Dec 2021", language: Language.English) };
+            var item = new Item("demo task") { DueDate = DueDate.FromText("22 Dec 2021", Language.English) };
             client.Items.AddAsync(item).Wait();
 
             var itemInfo = client.Items.GetAsync(item.Id).Result;
@@ -113,7 +113,7 @@ namespace Todoist.Net.Tests.Services
         {
             var client = TodoistClientFactory.Create(_outputHelper);
             var item = new Item("bad task");
-            item.DueDate = new DueDate("Invalid date string");
+            item.DueDate = DueDate.FromText("Invalid date string");
 
             var aggregateException = Assert.ThrowsAsync<AggregateException>(
                 async () =>
@@ -133,7 +133,7 @@ namespace Todoist.Net.Tests.Services
             var item = new Item("demo task");
             client.Items.AddAsync(item).Wait();
 
-            item.DueDate = new DueDate("every fri");
+            item.DueDate = DueDate.FromText("every fri");
             await client.Items.UpdateAsync(item);
 
             var project = new Project(Guid.NewGuid().ToString());
@@ -162,7 +162,7 @@ namespace Todoist.Net.Tests.Services
 
             Assert.NotNull(item);
 
-            client.Items.CompleteRecurringAsync(new CompleteRecurringItemArgument(item.Id, new DueDate(DateTime.UtcNow.AddMonths(1)))).Wait();
+            client.Items.CompleteRecurringAsync(new CompleteRecurringItemArgument(item.Id, DueDate.CreateFloating(DateTime.UtcNow.AddMonths(1)))).Wait();
             client.Items.CompleteRecurringAsync(item.Id).Wait();
 
             client.Items.DeleteAsync(item.Id).Wait();
@@ -189,12 +189,12 @@ namespace Todoist.Net.Tests.Services
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var item = new Item("New task") { DueDate = new DueDate(DateTime.Now.AddYears(1).Date) };
+            var item = new Item("New task") { DueDate = DueDate.CreateFloating(DateTime.Now.AddYears(1).Date) };
             var taskId = client.Items.AddAsync(item).Result;
 
             var itemInfo = client.Items.GetAsync(taskId).Result;
 
-            Assert.Equal(item.DueDate.Date, itemInfo.Item.DueDate.Date?.ToLocalTime());
+            Assert.Equal(item.DueDate.Date, itemInfo.Item.DueDate.Date);
 
             client.Items.DeleteAsync(item.Id).Wait();
         }
@@ -208,7 +208,7 @@ namespace Todoist.Net.Tests.Services
 
             var item = new Item("duration task")
             {
-                DueDate = new DueDate("22 Dec 2021 at 9:15", language: Language.English),
+                DueDate = DueDate.FromText("22 Dec 2021 at 9:15", Language.English),
                 Duration = new Duration(45, DurationUnit.Minute)
             };
             client.Items.AddAsync(item).Wait();

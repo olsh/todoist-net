@@ -11,36 +11,7 @@ namespace Todoist.Net.Models
     public class DueDate
     {
         private const string FullDayEventDateFormat = "yyyy-MM-dd";
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DueDate" /> class.
-        /// </summary>
-        /// <param name="date">The date time.</param>
-        /// <param name="isFullDay">if set to <c>true</c> then it's a full day event.</param>
-        /// <param name="timezone">The timezone.</param>
-        public DueDate(DateTime date, bool isFullDay = false, string timezone = null)
-        {
-            Date = date;
-            IsFullDay = isFullDay;
-            Timezone = timezone;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DueDate" /> class.
-        /// </summary>
-        /// <param name="text">The text (every day; each monday)</param>
-        /// <param name="date">The date time. this can be used with 'text' parameter to create a recurring from specific date</param>
-        /// <param name="isFullDay">if set to <c>true</c> then it's a full day event.</param>
-        /// <param name="timezone">The timezone.</param>
-        /// <param name="language">The language.</param>
-        public DueDate(string text, DateTime? date = null, bool isFullDay = false, string timezone = null, Language language = null)
-        {
-            Text = text;
-            Date = date;
-            IsFullDay = isFullDay;
-            Timezone = timezone;
-            Language = language;
-        }
+        private const string DefaultEventDateFormat = "yyyy-MM-ddTHH:mm:ssK";
 
         internal DueDate()
         {
@@ -124,13 +95,7 @@ namespace Todoist.Net.Models
                     return Date.Value.ToString(FullDayEventDateFormat);
                 }
 
-                var date = Date.Value.ToUniversalTime();
-                if (string.IsNullOrEmpty(Timezone))
-                {
-                    return date.ToString("s");
-                }
-
-                return date.ToString("s") + "Z";
+                return Date.Value.ToString(DefaultEventDateFormat);
             }
 
             set
@@ -143,8 +108,98 @@ namespace Todoist.Net.Models
                     return;
                 }
 
-                Date = DateTime.Parse(value, CultureInfo.InvariantCulture);
+                Date = DateTime.Parse(value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
             }
         }
+
+
+        /// <summary>
+        /// Creates a new instance of <see cref="DueDate"/> from text (every day; each Monday).
+        /// </summary>
+        /// <remarks>
+        /// See <see href="https://developer.todoist.com/sync/v9/#due-dates">Todoist documentation</see> for more information.
+        /// </remarks>
+        /// <param name="text">The human-readable representation of due date (every day; each Monday)</param>
+        /// <param name="language">The language of the text.</param>
+        /// <returns>The created <see cref="DueDate"/> instance.</returns>
+        public static DueDate FromText(string text, Language language = null) => new DueDate
+        {
+            Text = text,
+            Language = language
+        };
+
+        /// <summary>
+        /// Creates a full-day <see cref="DueDate"/>.
+        /// </summary>
+        /// <param name="date">The full-day date.</param>
+        /// <remarks>
+        /// <para>
+        /// Only the date component of the given <see cref="DateTime"/> is used, and any time data is truncated.
+        /// </para>
+        /// <para>
+        /// See <see href="https://developer.todoist.com/sync/v9/#due-dates">Todoist documentation</see> for more information.
+        /// </para>
+        /// </remarks>
+        /// <returns>The created <see cref="DueDate"/> instance.</returns>
+        public static DueDate CreateFullDay(DateTime date) => new DueDate
+        {
+            Date = date.Date,
+            IsFullDay = true
+        };
+
+        /// <summary>
+        /// Creates a floating <see cref="DueDate"/>.
+        /// </summary>
+        /// <param name="dateTime">The floating date.</param>
+        /// <remarks>
+        /// <para>
+        /// The given <see cref="DateTime"/> is treated as <see cref="DateTimeKind.Unspecified"/>, and any timezone data is truncated.
+        /// </para>
+        /// <para>
+        /// Floating due dates always represent an event in the current user's timezone.
+        /// <br/>
+        /// Note that it's not quite compatible with <see href="https://datatracker.ietf.org/doc/html/rfc3339">RFC 3339</see>,
+        /// because the concept of timezone is not applicable to this object.
+        /// </para>
+        /// <para>
+        /// See <see href="https://developer.todoist.com/sync/v9/#due-dates">Todoist documentation</see> for more information.
+        /// </para>
+        /// </remarks>
+        /// <returns>The created <see cref="DueDate"/> instance.</returns>
+        public static DueDate CreateFloating(DateTime dateTime) => new DueDate
+        {
+            Date = DateTime.SpecifyKind(dateTime, DateTimeKind.Unspecified), // Floating dates are unspecified.
+            IsFullDay = false
+        };
+
+        /// <summary>
+        /// Creates a fixed timezone <see cref="DueDate"/>.
+        /// </summary>
+        /// <param name="dateTime">The fixed timezone date.</param>
+        /// <param name="timezone">The timezone of the due instance.</param>
+        /// <remarks>
+        /// <para>
+        /// Fixed due date is stored in UTC, hence, <see cref="DateTime"/> of kind <see cref="DateTimeKind.Unspecified"/> is assumed UTC,
+        /// <br/>and <see cref="DateTime"/> of kind <see cref="DateTimeKind.Local"/> is converted to UTC based on the system timezone.
+        /// </para>
+        /// <para>
+        /// See <see href="https://developer.todoist.com/sync/v9/#due-dates">Todoist documentation</see> for more information.
+        /// </para>
+        /// </remarks>
+        /// <returns>The created <see cref="DueDate"/> instance.</returns>
+        public static DueDate CreateFixedTimeZone(DateTime dateTime, string timezone)
+        {
+            if (dateTime.Kind == DateTimeKind.Unspecified)
+            {
+                dateTime = DateTime.SpecifyKind(dateTime, DateTimeKind.Utc); // Unspecified dates are assumed UTC.
+            }
+            return new DueDate
+            {
+                Date = dateTime.ToUniversalTime(), // Local dates are converted to UTC.
+                IsFullDay = false,
+                Timezone = timezone
+            };
+        }
+
     }
 }
