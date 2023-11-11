@@ -1,4 +1,4 @@
-﻿namespace Todoist.Net.Models
+namespace Todoist.Net.Models
 {
     /// <summary>
     /// Contains Todoist resource types.
@@ -55,6 +55,12 @@
         /// </summary>
         /// <value>The projects.</value>
         public static ResourceType Projects { get; } = new ResourceType("projects");
+
+        /// <summary>
+        /// Gets the sections.
+        /// </summary>
+        /// <value>The sections.</value>
+        public static ResourceType Sections { get; } = new ResourceType("sections");
 
         /// <summary>
         /// Gets the reminders.
