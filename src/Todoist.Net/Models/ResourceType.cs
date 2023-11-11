@@ -63,6 +63,12 @@ namespace Todoist.Net.Models
         public static ResourceType Sections { get; } = new ResourceType("sections");
 
         /// <summary>
+        /// Gets the collaborators.
+        /// </summary>
+        /// <value>The collaborators.</value>
+        public static ResourceType Collaborators { get; } = new ResourceType("collaborators");
+
+        /// <summary>
         /// Gets the reminders.
         /// </summary>
         /// <value>The reminders.</value>
