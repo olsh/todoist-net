@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
@@ -47,44 +48,44 @@ namespace Todoist.Net.Tests.Services
 
         [Fact]
         [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
-        public void CreateProjectAndCreateItem_Success()
+        public async Task CreateProjectAndCreateItem_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
             var transaction = client.CreateTransaction();
 
             var project = new Project("Shopping List");
-            var projectId = transaction.Project.AddAsync(project).Result;
+            var projectId = await transaction.Project.AddAsync(project);
 
             var item = new Item("Buy milk")
             {
                 ProjectId = projectId
             };
-            transaction.Items.AddAsync(item).Wait();
+            await transaction.Items.AddAsync(item);
 
-            transaction.CommitAsync().Wait();
+            await transaction.CommitAsync();
 
             Assert.False(string.IsNullOrEmpty(project.Id.PersistentId));
             Assert.False(string.IsNullOrEmpty(item.Id.PersistentId));
 
 
-            var itemInfo = client.Items.GetAsync(item.Id).Result;
+            var itemInfo = await client.Items.GetAsync(item.Id);
 
             Assert.Equal(itemInfo.Item.Content, item.Content);
             Assert.Equal(itemInfo.Project.Name, project.Name);
             Assert.Equal(itemInfo.Project.Id.PersistentId, project.Id.PersistentId);
 
 
-            client.Projects.DeleteAsync(project.Id).Wait();
+            await client.Projects.DeleteAsync(project.Id);
 
-            var projects = client.Projects.GetAsync().Result;
+            var projects = await client.Projects.GetAsync();
 
             Assert.DoesNotContain(projects, p => p.Id.PersistentId == project.Id.PersistentId);
         }
 
         [Fact]
         [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
-        public void CreateProjectAndCreateItemWithPredefinedTempId_Success()
+        public async Task CreateProjectAndCreateItemWithPredefinedTempId_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
@@ -99,25 +100,25 @@ namespace Todoist.Net.Tests.Services
 
             var transaction = client.CreateTransaction();
 
-            transaction.Project.AddAsync(project).Wait();
-            transaction.Items.AddAsync(item).Wait();
+            await transaction.Project.AddAsync(project);
+            await transaction.Items.AddAsync(item);
 
-            transaction.CommitAsync().Wait();
+            await transaction.CommitAsync();
 
             Assert.False(string.IsNullOrEmpty(project.Id.PersistentId));
             Assert.False(string.IsNullOrEmpty(item.Id.PersistentId));
 
 
-            var itemInfo = client.Items.GetAsync(item.Id).Result;
+            var itemInfo = await client.Items.GetAsync(item.Id);
 
             Assert.Equal(itemInfo.Item.Content, item.Content);
             Assert.Equal(itemInfo.Project.Name, project.Name);
             Assert.Equal(itemInfo.Project.Id.PersistentId, project.Id.PersistentId);
 
 
-            client.Projects.DeleteAsync(project.Id).Wait();
+            await client.Projects.DeleteAsync(project.Id);
 
-            var projects = client.Projects.GetAsync().Result;
+            var projects = await client.Projects.GetAsync();
 
             Assert.DoesNotContain(projects, p => p.Id.PersistentId == project.Id.PersistentId);
         }
