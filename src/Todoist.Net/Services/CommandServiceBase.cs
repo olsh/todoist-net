@@ -26,7 +26,11 @@ namespace Todoist.Net.Services
 
         internal Command CreateAddCommand<T>(CommandType commandType, T entity) where T : BaseEntity
         {
-            var tempId = Guid.NewGuid();
+            var tempId = entity.Id.TempId;
+            if (tempId == default)
+            {
+                tempId = Guid.NewGuid();
+            }
             entity.Id = tempId;
 
             return new Command(commandType, entity, tempId);
