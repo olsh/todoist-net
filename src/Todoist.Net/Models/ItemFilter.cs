@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Todoist.Net.Extensions;
@@ -30,7 +30,7 @@ namespace Todoist.Net.Models
         /// Gets or sets the limit.
         /// </summary>
         /// <value>The limit.</value>
-        /// <remarks>Default is 30, and the maximum is 50.</remarks>
+        /// <remarks>Default is 30, and the maximum is 200.</remarks>
         public int? Limit { get; set; }
 
         /// <summary>
