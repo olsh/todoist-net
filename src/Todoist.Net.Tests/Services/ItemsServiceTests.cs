@@ -23,33 +23,33 @@ namespace Todoist.Net.Tests.Services
 
         [Fact]
         [Trait(Constants.TraitName, Constants.IntegrationPremiumTraitValue)]
-        public void CreateItemCompleteGetCloseAsync_Success()
+        public async Task CreateItemCompleteGetCloseAsync_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
             var transaction = client.CreateTransaction();
 
             var item = new Item("temp task");
-            transaction.Items.AddAsync(item).Wait();
-            transaction.Notes.AddToItemAsync(new Note("test note"), item.Id).Wait();
-            transaction.Items.CloseAsync(item.Id).Wait();
+            await transaction.Items.AddAsync(item);
+            await transaction.Notes.AddToItemAsync(new Note("test note"), item.Id);
+            await transaction.Items.CloseAsync(item.Id);
 
-            transaction.CommitAsync().Wait();
+            await transaction.CommitAsync();
 
             var completedTasks =
-                client.Items.GetCompletedAsync(
+                await client.Items.GetCompletedAsync(
                     new ItemFilter()
                     {
                         AnnotateItems = true,
                         AnnotateNotes = true,
                         Limit = 5,
                         Since = DateTime.Today.AddDays(-1)
-                    }).Result;
+                    });
 
             Assert.True(completedTasks.Items.Count > 0);
             Assert.All(completedTasks.Items, i => Assert.NotNull(i.ItemObject));
 
-            client.Items.DeleteAsync(item.Id).Wait();
+            await client.Items.DeleteAsync(item.Id);
         }
 
         [Fact]
