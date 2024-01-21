@@ -38,9 +38,16 @@ namespace Todoist.Net.Tests.Services
 
             var completedTasks =
                 client.Items.GetCompletedAsync(
-                    new ItemFilter() { AnnotateNotes = true, Limit = 5, Since = DateTime.Today.AddDays(-1) }).Result;
+                    new ItemFilter()
+                    {
+                        AnnotateItems = true,
+                        AnnotateNotes = true,
+                        Limit = 5,
+                        Since = DateTime.Today.AddDays(-1)
+                    }).Result;
 
             Assert.True(completedTasks.Items.Count > 0);
+            Assert.All(completedTasks.Items, i => Assert.NotNull(i.ItemObject));
 
             client.Items.DeleteAsync(item.Id).Wait();
         }
