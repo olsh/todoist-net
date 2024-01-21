@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Newtonsoft.Json;
@@ -90,5 +90,14 @@ namespace Todoist.Net.Models
         /// </value>
         [JsonProperty("user_id")]
         public long UserId { get; internal set; }
+
+        /// <summary>
+        /// Gets the full item object.
+        /// </summary>
+        /// <value>
+        /// The full item object.
+        /// </value>
+        [JsonProperty("item_object")]
+        public Item ItemObject { get; internal set; }
     }
 }
