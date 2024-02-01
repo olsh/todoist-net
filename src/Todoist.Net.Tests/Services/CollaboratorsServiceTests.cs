@@ -1,4 +1,6 @@
 using System.Linq;
+using System.Threading.Tasks;
+
 using Todoist.Net.Tests.Extensions;
 
 using Xunit;
@@ -18,21 +20,21 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        public void GetCollaborators_Success()
+        public async Task GetCollaborators_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var collaborators = client.Collaborators.GetAsync().Result;
+            var collaborators = await client.Collaborators.GetAsync();
 
             Assert.True(collaborators.Any());
         }
 
         [Fact]
-        public void GetCollaboratorStates_Success()
+        public async Task GetCollaboratorStates_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var collaboratorStates = client.Collaborators.GetStatesAsync().Result;
+            var collaboratorStates = await client.Collaborators.GetStatesAsync();
 
             Assert.True(collaboratorStates.Any());
         }
