@@ -37,7 +37,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value><c>true</c> if this collaborator is deleted; otherwise, <c>false</c>.</value>
         [JsonProperty("is_deleted")]
-        public string IsDeleted { get; internal set; }
+        public bool IsDeleted { get; internal set; }
 
     }
 }
