@@ -94,6 +94,10 @@ namespace Todoist.Net.Models
         /// <summary>
         /// Gets the full item object.
         /// </summary>
+        /// <remarks>
+        /// This property is only available when the <see cref="ItemFilter.AnnotateItems"/> property is set to <c>true</c> 
+        /// in the parameter passed to the <see cref="Services.IItemsService.GetCompletedAsync(ItemFilter, System.Threading.CancellationToken)"/> method.
+        /// </remarks>
         /// <value>
         /// The full item object.
         /// </value>
