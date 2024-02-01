@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Todoist.Net.Extensions;
@@ -11,6 +11,16 @@ namespace Todoist.Net.Models
     public class ItemFilter
     {
         /// <summary>
+        /// Gets or sets a value indicating whether to [annotate items].
+        /// </summary>
+        /// <remarks>
+        /// When this property is set to <c>true</c>, the <see cref="CompletedItem"/> returned will contain the
+        /// full item object contained in the <see cref="CompletedItem.ItemObject"/> property.
+        /// </remarks>
+        /// <value><c>null</c> if [annotate items] contains no value, <c>true</c> if [annotate items]; otherwise, <c>false</c>.</value>
+        public bool? AnnotateItems { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether [annotate notes].
         /// </summary>
         /// <value><c>null</c> if [annotate notes] contains no value, <c>true</c> if [annotate notes]; otherwise, <c>false</c>.</value>
@@ -20,7 +30,7 @@ namespace Todoist.Net.Models
         /// Gets or sets the limit.
         /// </summary>
         /// <value>The limit.</value>
-        /// <remarks>Default is 30, and the maximum is 50.</remarks>
+        /// <remarks>Default is 30, and the maximum is 200.</remarks>
         public int? Limit { get; set; }
 
         /// <summary>
@@ -79,6 +89,12 @@ namespace Todoist.Net.Models
             {
                 parameters.AddLast(
                     new KeyValuePair<string, string>("annotate_notes", AnnotateNotes == true ? "true" : "false"));
+            }
+
+            if (AnnotateItems.HasValue)
+            {
+                parameters.AddLast(
+                    new KeyValuePair<string, string>("annotate_items", AnnotateItems == true ? "true" : "false"));
             }
 
             return parameters;

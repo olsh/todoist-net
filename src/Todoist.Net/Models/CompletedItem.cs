@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Newtonsoft.Json;
@@ -90,5 +90,18 @@ namespace Todoist.Net.Models
         /// </value>
         [JsonProperty("user_id")]
         public long UserId { get; internal set; }
+
+        /// <summary>
+        /// Gets the full item object.
+        /// </summary>
+        /// <remarks>
+        /// This property is only available when the <see cref="ItemFilter.AnnotateItems"/> property is set to <c>true</c> 
+        /// in the parameter passed to the <see cref="Services.IItemsService.GetCompletedAsync(ItemFilter, System.Threading.CancellationToken)"/> method.
+        /// </remarks>
+        /// <value>
+        /// The full item object.
+        /// </value>
+        [JsonProperty("item_object")]
+        public Item ItemObject { get; internal set; }
     }
 }
