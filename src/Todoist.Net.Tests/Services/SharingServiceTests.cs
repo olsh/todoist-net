@@ -27,25 +27,33 @@ namespace Todoist.Net.Tests.Services
             var client = TodoistClientFactory.Create(_outputHelper);
 
             var projectId = await client.Projects.AddAsync(new Project(Guid.NewGuid().ToString()));
+            try
+            {
+                var email = "you@example.com";
+                await client.Sharing.ShareProjectAsync(projectId, email);
+                try
+                {
+                    var collaborators = await client.Sharing.GetCollaboratorsAsync();
+                    Assert.Contains(collaborators, c => c.Email == email);
 
-            var email = "you@example.com";
-            await client.Sharing.ShareProjectAsync(projectId, email);
+                    var collaboratorId = collaborators.First(c => c.Email == email).Id;
 
-            var collaborators = await client.Sharing.GetCollaboratorsAsync();
-            Assert.Contains(collaborators, c => c.Email == email);
+                    var collaboratorStates = await client.Sharing.GetCollaboratorStatesAsync();
+                    Assert.Contains(collaboratorStates, c => c.UserId == collaboratorId && c.ProjectId == projectId);
 
-            var collaboratorId = collaborators.First(c => c.Email == email).Id;
+                    var collaboratorStatus = collaboratorStates.First(c => c.UserId == collaboratorId && c.ProjectId == projectId).State;
 
-            var collaboratorStates = await client.Sharing.GetCollaboratorStatesAsync();
-            Assert.Contains(collaboratorStates, c => c.UserId == collaboratorId && c.ProjectId == projectId);
-
-            var collaboratorStatus = collaboratorStates.First(c => c.UserId == collaboratorId && c.ProjectId == projectId).State;
-
-            Assert.Equal(CollaboratorStatus.Invited, collaboratorStatus);
-
-            await client.Sharing.DeleteCollaboratorAsync(projectId, email);
-
-            await client.Projects.DeleteAsync(projectId);
+                    Assert.Equal(CollaboratorStatus.Invited, collaboratorStatus);
+                }
+                finally
+                {
+                    await client.Sharing.DeleteCollaboratorAsync(projectId, email);
+                }
+            }
+            finally
+            {
+                await client.Projects.DeleteAsync(projectId);
+            }
         }
     }
 }
