@@ -26,11 +26,11 @@ namespace Todoist.Net.Models
         public string ProjectId { get; internal set; }
 
         /// <summary>
-        /// Gets the collaborator state.
+        /// Gets the collaborator status.
         /// </summary>
-        /// <value>The state.</value>
+        /// <value>The status.</value>
         [JsonProperty("state")]
-        public string State { get; internal set; }
+        public CollaboratorStatus State { get; internal set; }
 
         /// <summary>
         /// Gets a value indicating whether this collaborator is deleted.
