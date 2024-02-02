@@ -80,7 +80,6 @@ namespace Todoist.Net
             Sharing = new SharingService(this);
             Emails = new EmailService(this);
             Sections = new SectionService(this);
-            Collaborators = new CollaboratorsService(this);
         }
 
         /// <summary>
@@ -153,14 +152,6 @@ namespace Todoist.Net
         /// The service.
         /// </value>
         public ISectionService Sections { get; }
-
-        /// <summary>
-        /// Gets the collaborators service.
-        /// </summary>
-        /// <value>
-        /// The service.
-        /// </value>
-        public ICollaboratorsService Collaborators { get; }
 
         /// <summary>
         /// Gets the sharing.

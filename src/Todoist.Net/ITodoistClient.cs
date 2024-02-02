@@ -120,14 +120,6 @@ namespace Todoist.Net
         ISectionService Sections { get; }
 
         /// <summary>
-        /// Gets the collaborators service.
-        /// </summary>
-        /// <value>
-        /// The service.
-        /// </value>
-        ICollaboratorsService Collaborators { get; }
-
-        /// <summary>
         /// Creates the transaction.
         /// </summary>
         /// <returns>The transaction.</returns>
