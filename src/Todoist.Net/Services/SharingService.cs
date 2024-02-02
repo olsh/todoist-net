@@ -1,3 +1,8 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Threading;
+using Todoist.Net.Models;
+
 namespace Todoist.Net.Services
 {
     /// <summary>
@@ -9,6 +14,22 @@ namespace Todoist.Net.Services
         public SharingService(IAdvancedTodoistClient todoistClient)
             : base(todoistClient)
         {
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<Collaborator>> GetCollaboratorsAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Collaborators).ConfigureAwait(false);
+
+            return response.Collaborators;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<CollaboratorState>> GetCollaboratorStatesAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Collaborators).ConfigureAwait(false);
+
+            return response.CollaboratorStates;
         }
     }
 }

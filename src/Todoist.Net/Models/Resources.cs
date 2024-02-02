@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 using Newtonsoft.Json;
 
@@ -80,6 +80,24 @@ namespace Todoist.Net.Models
         /// </value>
         [JsonProperty("sections")]
         public IReadOnlyCollection<Section> Sections { get; internal set; }
+
+        /// <summary>
+        /// Gets the collaborators.
+        /// </summary>
+        /// <value>
+        /// The collaborators.
+        /// </value>
+        [JsonProperty("collaborators")]
+        public IReadOnlyCollection<Collaborator> Collaborators { get; internal set; }
+
+        /// <summary>
+        /// Gets the collaborator states.
+        /// </summary>
+        /// <value>
+        /// The collaborator states.
+        /// </value>
+        [JsonProperty("collaborator_states")]
+        public IReadOnlyCollection<CollaboratorState> CollaboratorStates { get; internal set; }
 
         /// <summary>
         /// Gets the user information.
