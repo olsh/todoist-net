@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 
 using Todoist.Net.Tests.Extensions;
 
@@ -19,21 +20,21 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        public void GetNotification_Success()
+        public async Task GetNotification_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var notifications = client.Notifications.GetAsync().Result;
+            var notifications = await client.Notifications.GetAsync();
 
             Assert.True(notifications.Any());
         }
 
         [Fact]
-        public void MarkAllAsRead_Success()
+        public async Task MarkAllAsRead_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            client.Notifications.MarkAllReadAsync().Wait();
+            await client.Notifications.MarkAllReadAsync();
         }
     }
 }

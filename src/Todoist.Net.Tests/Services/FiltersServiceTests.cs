@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
@@ -21,42 +22,41 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        public void GetFilterInfo_Success()
+        public async Task GetFilterInfo_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var filters = client.Filters.GetAsync().Result.ToList();
+            var filters = (await client.Filters.GetAsync()).ToList();
 
             Assert.True(filters.Any());
 
-            var result = client.Filters.GetAsync(filters.First().Id).Result;
+            var result = await client.Filters.GetAsync(filters.First().Id);
 
-            Assert.True(result != null);
+            Assert.NotNull(result);
         }
 
         [Fact]
-        public void CreateUpdateDelete_Success()
+        public async Task CreateUpdateDelete_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
             var filter = new Filter(Guid.NewGuid().ToString(), "today");
-            client.Filters.AddAsync(filter).Wait();
+            await client.Filters.AddAsync(filter);
 
-            var filters = client.Filters.GetAsync().Result;
+            var filters = await client.Filters.GetAsync();
 
             Assert.Contains(filters, f => f.Name == filter.Name);
 
             filter.Query = "test";
-            client.Filters.UpdateAsync(filter)
-                .Wait();
+            await client.Filters.UpdateAsync(filter);
             var filterOrder = 2;
-            client.Filters.UpdateOrderAsync(new OrderEntry(filter.Id, filterOrder)).Wait();
+            await client.Filters.UpdateOrderAsync(new OrderEntry(filter.Id, filterOrder));
 
-            var filterInfo = client.Filters.GetAsync(filter.Id).Result;
+            var filterInfo = await client.Filters.GetAsync(filter.Id);
             Assert.Equal(filter.Query, filterInfo.Filter.Query);
             Assert.Equal(filterOrder, filterInfo.Filter.ItemOrder);
 
-            client.Filters.DeleteAsync(filter.Id).Wait();
+            await client.Filters.DeleteAsync(filter.Id);
         }
     }
 }

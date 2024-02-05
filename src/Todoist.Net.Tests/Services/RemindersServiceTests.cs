@@ -12,11 +12,11 @@ namespace Todoist.Net.Tests.Services
 {
     [Collection(Constants.TodoistApiTestCollectionName)]
     [Trait(Constants.TraitName, Constants.IntegrationPremiumTraitValue)]
-    public class ReminersServiceTests
+    public class RemindersServiceTests
     {
         private readonly ITestOutputHelper _outputHelper;
 
-        public ReminersServiceTests(ITestOutputHelper outputHelper)
+        public RemindersServiceTests(ITestOutputHelper outputHelper)
         {
             _outputHelper = outputHelper;
         }
@@ -28,18 +28,18 @@ namespace Todoist.Net.Tests.Services
 
             var transaction = client.CreateTransaction();
 
-            var itemId = await transaction.Items.AddAsync(new Item("Temp")).ConfigureAwait(false);
+            var itemId = await transaction.Items.AddAsync(new Item("Temp"));
             var reminderId =
-                await transaction.Reminders.AddAsync(new Reminder(itemId) { DueDate = DueDate.CreateFloating(DateTime.UtcNow.AddDays(1)) }).ConfigureAwait(false);
-            await transaction.CommitAsync().ConfigureAwait(false);
+                await transaction.Reminders.AddAsync(new Reminder(itemId) { DueDate = DueDate.CreateFloating(DateTime.UtcNow.AddDays(1)) });
+            await transaction.CommitAsync();
 
-            var reminders = await client.Reminders.GetAsync().ConfigureAwait(false);
+            var reminders = await client.Reminders.GetAsync();
             Assert.True(reminders.Any());
 
-            var reminderInfo = await client.Reminders.GetAsync(reminderId).ConfigureAwait(false);
+            var reminderInfo = await client.Reminders.GetAsync(reminderId);
             Assert.True(reminderInfo != null);
 
-            await client.Reminders.DeleteAsync(reminderInfo.Reminder.Id).ConfigureAwait(false);
+            await client.Reminders.DeleteAsync(reminderInfo.Reminder.Id);
             await client.Items.DeleteAsync(itemId);
         }
 
@@ -53,16 +53,16 @@ namespace Todoist.Net.Tests.Services
                 DueDate = DueDate.CreateFloating(DateTime.UtcNow.AddDays(1))
             };
 
-            var taskId = await client.Items.AddAsync(item).ConfigureAwait(false);
+            var taskId = await client.Items.AddAsync(item);
 
-            var user = await client.Users.GetCurrentAsync().ConfigureAwait(false);
+            var user = await client.Users.GetCurrentAsync();
             var reminder = new Reminder(taskId)
             {
                 MinuteOffset = 60,
                 NotifyUid = user.Id
             };
 
-            var reminderId = await client.Reminders.AddAsync(reminder).ConfigureAwait(false);
+            var reminderId = await client.Reminders.AddAsync(reminder);
 
             Assert.NotNull(reminderId.PersistentId);
 

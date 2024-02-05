@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
 
@@ -18,18 +20,18 @@ namespace Todoist.Net.Tests.Services
 
         [Fact]
         [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
-        public void CreateUpdateOrderGetInfoDelete_Success()
+        public async Task CreateUpdateOrderGetInfoDelete_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
             var label = new Label("Test label");
-            client.Labels.AddAsync(label).Wait();
+            await client.Labels.AddAsync(label);
 
-            client.Labels.UpdateOrderAsync(new OrderEntry(label.Id, 1)).Wait();
+            await client.Labels.UpdateOrderAsync(new OrderEntry(label.Id, 1));
 
-            var labelInfo = client.Labels.GetAsync(label.Id).Result;
+            var labelInfo = await client.Labels.GetAsync(label.Id);
 
-            client.Labels.DeleteAsync(labelInfo.Label.Id).Wait();
+            await client.Labels.DeleteAsync(labelInfo.Label.Id);
         }
     }
 }
