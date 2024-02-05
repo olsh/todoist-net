@@ -81,7 +81,7 @@ namespace Todoist.Net.Tests.Services
             await client.Notes.DeleteAsync(attachedNote.Id);
 
             projectInfo = await client.Projects.GetAsync(project.Id);
-            Assert.True(projectInfo.Notes.Count == 0);
+            Assert.Empty(projectInfo.Notes);
 
             await client.Projects.DeleteAsync(project.Id);
         }
