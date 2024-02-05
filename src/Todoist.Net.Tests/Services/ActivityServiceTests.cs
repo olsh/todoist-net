@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
 
@@ -18,26 +20,28 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        public void GetActivity_HasEntries()
+        public async Task TestActivityLogIsNotEmpty()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var logEntries = client.Activity.GetAsync(new LogFilter { Limit = 50 }).Result.Events;
+            const int LogEntriesLimit = 50;
+            var logFilter = new LogFilter { Limit = LogEntriesLimit };
+            var logEntries = await client.Activity.GetAsync(logFilter);
 
-            Assert.NotEmpty(logEntries);
+            Assert.NotEmpty(logEntries.Events);
         }
 
         [Fact]
-        public void GetActivityWithEventObjectFilter_HasEntries()
+        public async Task GetActivityWithEventObjectFilter_HasEntries()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
             var logFilter = new LogFilter();
-            logFilter.ObjectEventTypes.Add(new ObjectEventTypes() { ObjectType = "project" });
+            logFilter.ObjectEventTypes.Add(new ObjectEventTypes { ObjectType = "project" });
 
-            var logEntries = client.Activity.GetAsync(logFilter).Result.Events;
+            var logEntries = await client.Activity.GetAsync(logFilter);
 
-            Assert.NotEmpty(logEntries);
+            Assert.NotEmpty(logEntries.Events);
         }
     }
 }
