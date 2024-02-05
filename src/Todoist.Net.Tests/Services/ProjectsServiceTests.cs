@@ -32,14 +32,14 @@ namespace Todoist.Net.Tests.Services
             var projects = await client.Projects.GetAsync();
             var project = projects.FirstOrDefault(p => p.Name == projectName);
 
-            Assert.True(project != null);
+            Assert.NotNull(project);
 
             await client.Projects.DeleteAsync(project.Id);
 
             projects = await client.Projects.GetAsync();
             project = projects.FirstOrDefault(p => p.Name == projectName);
 
-            Assert.True(project == null);
+            Assert.Null(project);
         }
 
         [Fact]

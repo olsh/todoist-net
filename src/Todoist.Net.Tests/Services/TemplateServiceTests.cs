@@ -47,7 +47,7 @@ namespace Todoist.Net.Tests.Services
             var firstProject = (await client.Projects.GetAsync()).First();
             var template = await client.Templates.ExportAsShareableUrlAsync(firstProject.Id);
 
-            Assert.True(!string.IsNullOrEmpty(template.FileUrl));
+            Assert.False(string.IsNullOrEmpty(template.FileUrl));
         }
     }
 }

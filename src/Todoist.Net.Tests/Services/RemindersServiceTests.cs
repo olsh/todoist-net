@@ -37,7 +37,7 @@ namespace Todoist.Net.Tests.Services
             Assert.True(reminders.Any());
 
             var reminderInfo = await client.Reminders.GetAsync(reminderId);
-            Assert.True(reminderInfo != null);
+            Assert.NotNull(reminderInfo);
 
             await client.Reminders.DeleteAsync(reminderInfo.Reminder.Id);
             await client.Items.DeleteAsync(itemId);

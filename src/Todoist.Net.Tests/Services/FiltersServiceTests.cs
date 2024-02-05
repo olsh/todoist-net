@@ -28,7 +28,7 @@ namespace Todoist.Net.Tests.Services
 
             var filters = (await client.Filters.GetAsync()).ToList();
 
-            Assert.True(filters.Any());
+            Assert.True(filters.Count > 0);
 
             var result = await client.Filters.GetAsync(filters.First().Id);
 

@@ -75,13 +75,13 @@ namespace Todoist.Net.Tests.Services
 
             var projectInfo = await client.Projects.GetAsync(project.Id);
             var attachedNote = projectInfo.Notes.FirstOrDefault();
-            Assert.True(attachedNote != null);
+            Assert.NotNull(attachedNote);
             Assert.True(attachedNote.FileAttachment.FileName == fileName);
 
             await client.Notes.DeleteAsync(attachedNote.Id);
 
             projectInfo = await client.Projects.GetAsync(project.Id);
-            Assert.True(!projectInfo.Notes.Any());
+            Assert.True(projectInfo.Notes.Count == 0);
 
             await client.Projects.DeleteAsync(project.Id);
         }

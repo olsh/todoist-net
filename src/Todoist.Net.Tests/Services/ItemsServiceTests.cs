@@ -68,7 +68,7 @@ namespace Todoist.Net.Tests.Services
 
             var itemInfo = await client.Items.GetAsync(item.Id);
 
-            Assert.True(itemInfo.Item.IsChecked == true);
+            Assert.True(itemInfo.Item.IsChecked);
 
             await client.Items.UncompleteAsync(itemId);
 
