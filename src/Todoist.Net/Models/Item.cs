@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 using Newtonsoft.Json;
 
@@ -31,7 +30,6 @@ namespace Todoist.Net.Models
         {
             Content = content;
             ProjectId = projectId;
-            Labels = new Collection<string>();
         }
 
         internal Item()
