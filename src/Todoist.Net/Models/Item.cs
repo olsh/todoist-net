@@ -134,7 +134,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The labels.</value>
         [JsonProperty("labels")]
-        public ICollection<string> Labels { get; internal set; }
+        public ICollection<string> Labels { get; set; }
 
         /// <summary>
         /// Gets or sets the id of the parent task. Set to <see langword="null" /> for root tasks.
