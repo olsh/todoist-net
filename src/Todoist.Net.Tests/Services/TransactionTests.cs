@@ -20,30 +20,30 @@ namespace Todoist.Net.Tests.Services
 
         [Fact]
         [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
-        public void CreateProjectAndCreateNote_Success()
+        public async Task CreateProjectAndCreateNote_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
             var transaction = client.CreateTransaction();
 
             var project = new Project(Guid.NewGuid().ToString());
-            var projectId = transaction.Project.AddAsync(project).Result;
+            var projectId = await transaction.Project.AddAsync(project);
             var note = new Note("Demo note");
-            transaction.Notes.AddToProjectAsync(note, projectId).Wait();
+            await transaction.Notes.AddToProjectAsync(note, projectId);
 
-            var syncToken = transaction.CommitAsync().Result;
+            var syncToken = await transaction.CommitAsync();
 
-            var projectInfo = client.Projects.GetAsync(project.Id).Result;
+            var projectInfo = await client.Projects.GetAsync(project.Id);
 
             Assert.True(projectInfo.Notes.Count > 0);
             Assert.NotNull(syncToken);
 
             var deleteTransaction = client.CreateTransaction();
 
-            deleteTransaction.Notes.DeleteAsync(note.Id).Wait();
-            deleteTransaction.Project.DeleteAsync(project.Id).Wait();
+            await deleteTransaction.Notes.DeleteAsync(note.Id);
+            await deleteTransaction.Project.DeleteAsync(project.Id);
 
-            deleteTransaction.CommitAsync().Wait();
+            await deleteTransaction.CommitAsync();
         }
 
         [Fact]

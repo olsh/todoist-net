@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>A Todoist API client for .NET</Description>
-    <VersionPrefix>6.0.0</VersionPrefix>
+    <VersionPrefix>6.1.0</VersionPrefix>
     <Authors>Oleg Shevchenko</Authors>
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -19,12 +19,14 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
 
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">

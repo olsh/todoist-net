@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
@@ -22,31 +23,31 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        public void ExportAndImportTemplate_Success()
+        public async Task ExportAndImportTemplate_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var firstProject = client.Projects.GetAsync().Result.First();
+            var firstProject = (await client.Projects.GetAsync()).First();
 
-            var template = client.Templates.ExportAsFileAsync(firstProject.Id).Result;
+            var template = await client.Templates.ExportAsFileAsync(firstProject.Id);
 
             var tempProject = new Project(Guid.NewGuid().ToString());
-            client.Projects.AddAsync(tempProject).Wait();
+            await client.Projects.AddAsync(tempProject);
 
-            client.Templates.ImportIntoProjectAsync(tempProject.Id, Encoding.UTF8.GetBytes(template)).Wait();
+            await client.Templates.ImportIntoProjectAsync(tempProject.Id, Encoding.UTF8.GetBytes(template));
 
-            client.Projects.DeleteAsync(tempProject.Id);
+            await client.Projects.DeleteAsync(tempProject.Id);
         }
 
         [Fact]
-        public void ExportAsShareableUrl_Success()
+        public async Task ExportAsShareableUrl_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var firstProject = client.Projects.GetAsync().Result.First();
-            var template = client.Templates.ExportAsShareableUrlAsync(firstProject.Id).Result;
+            var firstProject = (await client.Projects.GetAsync()).First();
+            var template = await client.Templates.ExportAsShareableUrlAsync(firstProject.Id);
 
-            Assert.True(!string.IsNullOrEmpty(template.FileUrl));
+            Assert.False(string.IsNullOrEmpty(template.FileUrl));
         }
     }
 }

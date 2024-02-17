@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 using Todoist.Net.Tests.Extensions;
 
@@ -21,19 +22,19 @@ namespace Todoist.Net.Tests.Services
 
         [Fact]
         [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
-        public void CreateGetDeleteAsync_Success()
+        public async Task CreateGetDeleteAsync_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
             var fileName = $"{Guid.NewGuid()}.txt";
-            var upload = client.Uploads.UploadAsync(fileName, Encoding.UTF8.GetBytes("hello")).Result;
+            var upload = await client.Uploads.UploadAsync(fileName, Encoding.UTF8.GetBytes("hello"));
 
-            var allUploads = client.Uploads.GetAsync().Result;
+            var allUploads = await client.Uploads.GetAsync();
             Assert.Contains(allUploads, u => u.FileUrl == upload.FileUrl);
 
-            client.Uploads.DeleteAsync(upload.FileUrl).Wait();
+            await client.Uploads.DeleteAsync(upload.FileUrl);
 
-            allUploads = client.Uploads.GetAsync().Result;
+            allUploads = await client.Uploads.GetAsync();
             Assert.True(allUploads.All(u => u.FileUrl != upload.FileUrl));
         }
     }
