@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 
 using Todoist.Net.Tests.Extensions;
 
@@ -14,9 +13,10 @@ public class FakeLocalTimeZoneTests
     [Fact]
     public void FakeLocalTimeZone_ShouldChangeLocalTimeZoneWithinScope_AndResetItBackOutsideScope()
     {
-        var fakeTimeZoneOffset = TimeZoneInfo.Local.BaseUtcOffset + TimeSpan.FromHours(2);
-        var fakeLocalTimeZone = FakeLocalTimeZone.ChangeLocalTimeZone(fakeTimeZoneOffset);
+        var offsetDifference = TimeZoneInfo.Local.BaseUtcOffset < TimeSpan.FromHours(10) ? 2 : -2;
+        var fakeTimeZoneOffset = TimeZoneInfo.Local.BaseUtcOffset + TimeSpan.FromHours(offsetDifference);
 
+        var fakeLocalTimeZone = FakeLocalTimeZone.ChangeLocalTimeZone(fakeTimeZoneOffset);
         using (fakeLocalTimeZone)
         {
             Assert.Equal(fakeLocalTimeZone.FakeTimeZoneInfo, TimeZoneInfo.Local);
