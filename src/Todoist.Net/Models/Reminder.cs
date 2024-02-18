@@ -33,7 +33,7 @@ namespace Todoist.Net.Models
         /// The due date.
         /// </value>
         [JsonProperty("due")]
-        public DueDate DueDate { get; set; }
+        public DueDate DueDate { get; set; } = DueDate.Default;
 
         /// <summary>
         /// Gets a value indicating whether this instance is deleted.

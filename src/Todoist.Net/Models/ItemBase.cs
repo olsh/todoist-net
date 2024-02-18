@@ -71,8 +71,8 @@ namespace Todoist.Net.Models
         /// The due date.
         /// </value>
         [JsonProperty("due")]
-        public DueDate DueDate { get; set; }
-
+        public DueDate DueDate { get; set; } = DueDate.Default;
+        
         /// <summary>
         /// Gets or sets the duration.
         /// </summary>
@@ -82,8 +82,8 @@ namespace Todoist.Net.Models
         /// <value>
         /// The duration.
         /// </value>
-        [JsonProperty("duration", NullValueHandling = NullValueHandling.Include)]
-        public Duration Duration { get; set; }
+        [JsonProperty("duration")]
+        public Duration Duration { get; set; } = Duration.Default;
 
         /// <summary>
         /// Gets the labels.
