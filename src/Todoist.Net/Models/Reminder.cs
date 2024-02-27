@@ -17,6 +17,7 @@ namespace Todoist.Net.Models
         public Reminder(ComplexId itemId)
         {
             ItemId = itemId;
+            DueDate = DueDate.Default;
         }
 
         /// <summary>
