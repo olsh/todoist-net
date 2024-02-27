@@ -16,6 +16,8 @@ namespace Todoist.Net.Models
         public ItemBase(ComplexId itemId)
         {
             Id = itemId;
+            DueDate = DueDate.Default;
+            Duration = Duration.Default;
         }
 
         /// <summary>
@@ -28,6 +30,14 @@ namespace Todoist.Net.Models
         {
             Content = content;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ItemBase" /> class.
+        /// </summary>
+        internal ItemBase()
+        {
+        }
+
 
         /// <summary>
         /// Gets or sets the assigned by uid.
@@ -71,7 +81,7 @@ namespace Todoist.Net.Models
         /// The due date.
         /// </value>
         [JsonProperty("due")]
-        public DueDate DueDate { get; set; } = DueDate.Default;
+        public DueDate DueDate { get; set; }
         
         /// <summary>
         /// Gets or sets the duration.
@@ -83,7 +93,7 @@ namespace Todoist.Net.Models
         /// The duration.
         /// </value>
         [JsonProperty("duration")]
-        public Duration Duration { get; set; } = Duration.Default;
+        public Duration Duration { get; set; }
 
         /// <summary>
         /// Gets the labels.

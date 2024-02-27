@@ -17,6 +17,7 @@ namespace Todoist.Net.Models
         public Reminder(ComplexId itemId)
         {
             ItemId = itemId;
+            DueDate = DueDate.Default;
         }
 
         /// <summary>
@@ -33,7 +34,7 @@ namespace Todoist.Net.Models
         /// The due date.
         /// </value>
         [JsonProperty("due")]
-        public DueDate DueDate { get; set; } = DueDate.Default;
+        public DueDate DueDate { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is deleted.

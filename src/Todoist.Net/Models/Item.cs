@@ -16,8 +16,9 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <param name="content">The content.</param>
         public Item(string content)
-            : this(content, default)
         {
+            Content = content;
+            Labels = new Collection<string>();
         }
 
         /// <summary>
@@ -26,18 +27,15 @@ namespace Todoist.Net.Models
         /// <param name="content">The content.</param>
         /// <param name="projectId">The project identifier.</param>
         public Item(string content, ComplexId projectId)
-            : this()
+            : this(content)
         {
-            Content = content;
             ProjectId = projectId;
-            Labels = new Collection<string>();
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Item" /> class.
         /// </summary>
         internal Item()
-            : base(default)
         {
         }
 
