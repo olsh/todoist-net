@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -36,7 +36,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The size of the file.
         /// </value>
-        [JsonProperty("file_size")]
+        [JsonPropertyName("file_size")]
         public int FileSize { get; internal set; }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The type of the file.
         /// </value>
-        [JsonProperty("file_type")]
+        [JsonPropertyName("file_type")]
         public string FileType { get; internal set; }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The state of the upload.
         /// </value>
-        [JsonProperty("upload_state")]
+        [JsonPropertyName("upload_state")]
         public string UploadState { get; internal set; }
     }
 }

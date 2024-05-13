@@ -1,6 +1,5 @@
-﻿using System;
-
-using Newtonsoft.Json;
+using System;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -21,16 +20,16 @@ namespace Todoist.Net.Models
         {
         }
 
-        [JsonProperty("args")]
+        [JsonPropertyName("args")]
         public ICommandArgument Argument { get; }
 
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public CommandType CommandType { get; }
 
-        [JsonProperty("temp_id")]
+        [JsonPropertyName("temp_id")]
         public Guid? TempId { get; }
 
-        [JsonProperty("uuid")]
+        [JsonPropertyName("uuid")]
         public Guid Uid { get; }
     }
 }

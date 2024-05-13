@@ -1,7 +1,6 @@
 using System;
 using System.Globalization;
-
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -41,7 +40,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// <c>true</c> if this instance is recurring; otherwise, <c>false</c>.
         /// </value>
-        [JsonProperty("is_recurring")]
+        [JsonPropertyName("is_recurring")]
         public bool? IsRecurring { get; internal set; }
 
         /// <summary>
@@ -50,7 +49,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The language.
         /// </value>
-        [JsonProperty("lang")]
+        [JsonPropertyName("lang")]
         public Language Language { get; internal set; }
 
         /// <summary>
@@ -59,7 +58,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The text.
         /// </value>
-        [JsonProperty("string")]
+        [JsonPropertyName("string")]
         public string Text { get; internal set; }
 
         /// <summary>
@@ -68,7 +67,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The timezone.
         /// </value>
-        [JsonProperty("timezone")]
+        [JsonPropertyName("timezone")]
         public string Timezone { get; internal set; }
 
         /// <summary>
@@ -80,7 +79,7 @@ namespace Todoist.Net.Models
         /// <remarks>
         /// Format date according this rules https://developer.todoist.com/sync/v9/?shell#due-dates
         /// </remarks>
-        [JsonProperty("date")]
+        [JsonPropertyName("date")]
         internal string StringDate
         {
             get

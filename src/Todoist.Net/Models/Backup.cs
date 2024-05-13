@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -11,14 +11,14 @@ namespace Todoist.Net.Models
         /// Gets the URL.
         /// </summary>
         /// <value>The URL.</value>
-        [JsonProperty("url")]
+        [JsonPropertyName("url")]
         public string Url { get; internal set; }
 
         /// <summary>
         /// Gets the version.
         /// </summary>
         /// <value>The version.</value>
-        [JsonProperty("version")]
+        [JsonPropertyName("version")]
         public string Version { get; internal set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -17,7 +17,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The count.
         /// </value>
-        [JsonProperty("count")]
+        [JsonPropertyName("count")]
         public long Count { get; internal set; }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The events.
         /// </value>
-        [JsonProperty("events")]
+        [JsonPropertyName("events")]
         public LogEntry[] Events { get; internal set; }
     }
 }

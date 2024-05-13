@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -17,7 +17,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The email.
         /// </value>
-        [JsonProperty("email")]
+        [JsonPropertyName("email")]
         public string Email { get; internal set; }
     }
 }

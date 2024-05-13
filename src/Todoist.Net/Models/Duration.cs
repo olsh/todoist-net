@@ -1,6 +1,5 @@
 using System;
-
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -38,7 +37,7 @@ namespace Todoist.Net.Models
         /// The time amount.
         /// </value>
         /// <exception cref="ArgumentOutOfRangeException">Duration amount must be greater than zero.</exception>"
-        [JsonProperty("amount")]
+        [JsonPropertyName("amount")]
         public int Amount
         {
             get => _amount;
@@ -57,7 +56,7 @@ namespace Todoist.Net.Models
         /// The duration unit.
         /// </value>
         /// <exception cref="ArgumentNullException">Unit</exception>
-        [JsonProperty("unit")]
+        [JsonPropertyName("unit")]
         public DurationUnit Unit
         {
             get => _unit;

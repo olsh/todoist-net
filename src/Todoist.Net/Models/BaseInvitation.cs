@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -18,7 +18,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The identifier.
         /// </value>
-        [JsonProperty("invitation_id")]
+        [JsonPropertyName("invitation_id")]
         public long Id { get; set; }
     }
 }

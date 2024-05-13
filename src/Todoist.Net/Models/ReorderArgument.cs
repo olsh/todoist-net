@@ -1,6 +1,5 @@
-﻿using System;
-
-using Newtonsoft.Json;
+using System;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -32,7 +31,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The order.
         /// </value>
-        [JsonProperty("child_order")]
+        [JsonPropertyName("child_order")]
         public int ChildOrder { get; }
 
         /// <summary>
@@ -41,7 +40,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The identifier.
         /// </value>
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public ComplexId Id { get; }
     }
 }

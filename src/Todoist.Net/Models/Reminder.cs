@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 using Todoist.Net.Serialization.Converters;
 
@@ -32,7 +32,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The due date.
         /// </value>
-        [JsonProperty("due")]
+        [JsonPropertyName("due")]
         public DueDate DueDate { get; set; }
 
         /// <summary>
@@ -40,21 +40,21 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value><c>true</c> if this instance is deleted; otherwise, <c>false</c>.</value>
         [JsonConverter(typeof(BoolConverter))]
-        [JsonProperty("is_deleted")]
+        [JsonPropertyName("is_deleted")]
         public bool? IsDeleted { get; internal set; }
 
         /// <summary>
         /// Gets or sets the item identifier.
         /// </summary>
         /// <value>The item identifier.</value>
-        [JsonProperty("item_id")]
+        [JsonPropertyName("item_id")]
         public ComplexId ItemId { get; set; }
 
         /// <summary>
         /// Gets or sets the location trigger.
         /// </summary>
         /// <value>The location trigger.</value>
-        [JsonProperty("loc_trigger")]
+        [JsonPropertyName("loc_trigger")]
         public LocationTrigger LocationTrigger { get; set; }
 
         /// <summary>
@@ -63,21 +63,21 @@ namespace Todoist.Net.Models
         /// <value>The mm offset.</value>
         /// <remarks>The relative time in minutes before the due date of the item, in which the reminder should be triggered.
         /// Note, that the item should have a due date set in order to add a relative reminder.</remarks>
-        [JsonProperty("minute_offset")]
+        [JsonPropertyName("minute_offset")]
         public long? MinuteOffset { get; set; }
 
         /// <summary>
         /// Gets or sets the notify uid.
         /// </summary>
         /// <value>The notify uid.</value>
-        [JsonProperty("notify_uid")]
+        [JsonPropertyName("notify_uid")]
         public string NotifyUid { get; set; }
 
         /// <summary>
         /// Gets or sets the type.
         /// </summary>
         /// <value>The type.</value>
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public ReminderType Type { get; set; }
     }
 }

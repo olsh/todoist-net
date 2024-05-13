@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -10,7 +10,7 @@ namespace Todoist.Net.Models
             Secret = secret;
         }
 
-        [JsonProperty("invitation_secret")]
+        [JsonPropertyName("invitation_secret")]
         public string Secret { get; set; }
     }
 }

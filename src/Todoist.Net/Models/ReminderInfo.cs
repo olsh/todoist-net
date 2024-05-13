@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -11,7 +11,7 @@ namespace Todoist.Net.Models
         /// Gets the reminder.
         /// </summary>
         /// <value>The reminder.</value>
-        [JsonProperty("reminder")]
+        [JsonPropertyName("reminder")]
         public Reminder Reminder { get; internal set; }
     }
 }

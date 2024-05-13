@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -22,14 +22,14 @@ namespace Todoist.Net.Models
         /// Gets the identifier.
         /// </summary>
         /// <value>The identifier.</value>
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public ComplexId Id { get; }
 
         /// <summary>
         /// Gets the order.
         /// </summary>
         /// <value>The order.</value>
-        [JsonProperty("section_order")]
+        [JsonPropertyName("section_order")]
         public int Order { get; }
     }
 }

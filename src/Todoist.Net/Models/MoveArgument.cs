@@ -1,6 +1,5 @@
-﻿using System;
-
-using Newtonsoft.Json;
+using System;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -37,7 +36,7 @@ namespace Todoist.Net.Models
 
         /// <summary>Gets the parent entity identifier.</summary>
         /// <value>The parent entity identifier.</value>
-        [JsonProperty("parent_id")]
+        [JsonPropertyName("parent_id")]
         public ComplexId ParentId { get; internal set; }
     }
 }

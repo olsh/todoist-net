@@ -1,6 +1,5 @@
-﻿using System;
-
-using Newtonsoft.Json;
+using System;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -15,28 +14,28 @@ namespace Todoist.Net.Models
         /// <value>
         /// The client.
         /// </value>
-        [JsonProperty("client")]
+        [JsonPropertyName("client")]
         public string Client { get; internal set; }
 
         /// <summary>
         /// Gets the content.
         /// </summary>
         /// <value>The content.</value>
-        [JsonProperty("content")]
+        [JsonPropertyName("content")]
         public string Content { get; internal set; }
 
         /// <summary>
         /// Gets the due date.
         /// </summary>
         /// <value>The due date.</value>
-        [JsonProperty("due_date")]
+        [JsonPropertyName("due_date")]
         public DateTime? DueDate { get; internal set; }
 
         /// <summary>
         /// Gets the last due date.
         /// </summary>
         /// <value>The last due date.</value>
-        [JsonProperty("last_due_date")]
+        [JsonPropertyName("last_due_date")]
         public DateTime? LastDueDate { get; internal set; }
     }
 }

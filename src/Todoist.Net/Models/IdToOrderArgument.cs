@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-
-using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -15,7 +14,7 @@ namespace Todoist.Net.Models
             }
         }
 
-        [JsonProperty("ids_to_orders")]
+        [JsonPropertyName("ids_to_orders")]
         public IDictionary<ComplexId, int> Ids { get; set; }
     }
 }
