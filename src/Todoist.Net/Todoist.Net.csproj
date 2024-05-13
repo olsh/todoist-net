@@ -4,7 +4,7 @@
     <Description>A Todoist API client for .NET</Description>
     <VersionPrefix>6.1.0</VersionPrefix>
     <Authors>Oleg Shevchenko</Authors>
-    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net462</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Todoist.Net</AssemblyName>
 
@@ -29,7 +29,7 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
 
