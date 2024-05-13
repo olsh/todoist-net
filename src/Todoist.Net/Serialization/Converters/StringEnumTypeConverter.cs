@@ -1,25 +1,16 @@
 using System;
-
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 using Todoist.Net.Models;
 
 namespace Todoist.Net.Serialization.Converters
 {
-    internal class StringEnumTypeConverter : JsonConverter
+    internal class StringEnumTypeConverter : JsonConverter<StringEnum>
     {
-        public override bool CanConvert(Type objectType)
+        public override StringEnum Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return objectType == typeof(StringEnum);
-        }
-
-        public override object ReadJson(
-            JsonReader reader,
-            Type objectType,
-            object existingValue,
-            JsonSerializer serializer)
-        {
-            if (StringEnum.TryParse(reader.Value?.ToString(), objectType, out var stringEnum))
+            if (StringEnum.TryParse(reader.GetString(), typeToConvert, out var stringEnum))
             {
                 return stringEnum;
             }
@@ -27,9 +18,9 @@ namespace Todoist.Net.Serialization.Converters
             return null;
         }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void Write(Utf8JsonWriter writer, StringEnum value, JsonSerializerOptions options)
         {
-            writer.WriteValue(((StringEnum)value).Value);
+            writer.WriteStringValue(value.Value);
         }
     }
 }

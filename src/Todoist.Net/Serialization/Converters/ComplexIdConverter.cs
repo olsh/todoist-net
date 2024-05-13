@@ -1,25 +1,16 @@
 using System;
-
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 using Todoist.Net.Models;
 
 namespace Todoist.Net.Serialization.Converters
 {
-    internal class ComplexIdConverter : JsonConverter
+    internal class ComplexIdConverter : JsonConverter<ComplexId>
     {
-        public override bool CanConvert(Type objectType)
+        public override ComplexId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return objectType == typeof(ComplexId);
-        }
-
-        public override object ReadJson(
-            JsonReader reader,
-            Type objectType,
-            object existingValue,
-            JsonSerializer serializer)
-        {
-            var value = reader.Value?.ToString();
+            var value = reader.GetString();
             if (!string.IsNullOrEmpty(value))
             {
                 return new ComplexId(value);
@@ -28,16 +19,15 @@ namespace Todoist.Net.Serialization.Converters
             return new ComplexId();
         }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void Write(Utf8JsonWriter writer, ComplexId value, JsonSerializerOptions options)
         {
-            var complexId = (ComplexId)value;
-            if (complexId.IsEmpty)
+            if (value.IsEmpty)
             {
-                writer.WriteNull();
+                writer.WriteNullValue();
             }
             else
             {
-                writer.WriteValue(complexId.DynamicId);
+                writer.WriteStringValue(value.DynamicId.ToString());
             }
         }
     }

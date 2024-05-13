@@ -39,7 +39,6 @@ namespace Todoist.Net.Models
         /// Gets a value indicating whether this instance is deleted.
         /// </summary>
         /// <value><c>true</c> if this instance is deleted; otherwise, <c>false</c>.</value>
-        [JsonConverter(typeof(BoolConverter))]
         [JsonPropertyName("is_deleted")]
         public bool? IsDeleted { get; internal set; }
 
