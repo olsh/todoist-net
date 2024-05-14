@@ -6,21 +6,35 @@ using Todoist.Net.Models;
 
 namespace Todoist.Net.Serialization.Converters
 {
-    internal class StringEnumTypeConverter : JsonConverter<StringEnum>
+    internal class StringEnumTypeConverter : JsonConverterFactory
     {
-        public override StringEnum Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override bool CanConvert(Type typeToConvert)
         {
-            if (StringEnum.TryParse(reader.GetString(), typeToConvert, out var stringEnum))
-            {
-                return stringEnum;
-            }
-
-            return null;
+            return typeToConvert.IsSubclassOf(typeof(StringEnum));
         }
 
-        public override void Write(Utf8JsonWriter writer, StringEnum value, JsonSerializerOptions options)
+        public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(value.Value);
+            return (JsonConverter)Activator.CreateInstance(typeof(StringEnumTypeConverterInner<>).MakeGenericType(typeToConvert));
+        }
+
+
+        private class StringEnumTypeConverterInner<T> : JsonConverter<T> where T : StringEnum
+        {
+            public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                if (StringEnum.TryParse(reader.GetString(), out T stringEnum))
+                {
+                    return stringEnum;
+                }
+
+                return null;
+            }
+
+            public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
+            {
+                writer.WriteStringValue(value.Value);
+            }
         }
     }
 }
