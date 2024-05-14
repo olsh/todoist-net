@@ -7,7 +7,7 @@ namespace Todoist.Net.Models
     internal class SyncResponse
     {
         [JsonPropertyName("sync_status")]
-        public Dictionary<Guid, dynamic> SyncStatus { get; set; }
+        public Dictionary<Guid, CommandResult> SyncStatus { get; set; }
 
         [JsonPropertyName("temp_id_mapping")]
         public Dictionary<Guid, string> TempIdMappings { get; set; }

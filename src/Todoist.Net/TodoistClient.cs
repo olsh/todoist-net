@@ -38,6 +38,7 @@ namespace Todoist.Net
             Converters =
             {
                 new BoolConverter(),
+                new CommandResultConverter(),
                 new ComplexIdConverter(),
                 new StringEnumTypeConverter()
             }
@@ -421,11 +422,10 @@ namespace Todoist.Net
             LinkedList<TodoistException> exceptions = null;
             foreach (var syncStatus in syncResponse.SyncStatus)
             {
-                var dynamicStatus = syncStatus.Value;
-                var type = dynamicStatus.GetType();
+                var result = syncStatus.Value;
 
                 // an "ok" string which signals success of the command
-                if (type == typeof(string) || dynamicStatus.error_code == null)
+                if (result.IsSuccess)
                 {
                     continue;
                 }
@@ -437,9 +437,9 @@ namespace Todoist.Net
 
                 exceptions.AddLast(
                     new TodoistException(
-                        (long)dynamicStatus.error_code,
-                        dynamicStatus.error.ToString(),
-                        dynamicStatus));
+                        result.CommandError.ErrorCode,
+                        result.CommandError.Error,
+                        result.CommandError));
             }
 
             if (exceptions?.Any() == true)
