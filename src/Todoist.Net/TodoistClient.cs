@@ -27,6 +27,7 @@ namespace Todoist.Net
         private static readonly JsonSerializerOptions _serializerOptions = new JsonSerializerOptions
                 {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            NumberHandling = JsonNumberHandling.AllowReadingFromString,
             TypeInfoResolver = new DefaultJsonTypeInfoResolver
             {
                 Modifiers =
