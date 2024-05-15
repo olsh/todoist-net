@@ -8,6 +8,7 @@ namespace Todoist.Net.Models
     /// <seealso cref="Todoist.Net.Models.MoveArgument" />
     public class ItemMoveArgument : BaseEntity
     {
+        [JsonConstructor]
         internal ItemMoveArgument()
         {
         }

@@ -7,6 +7,7 @@ namespace Todoist.Net.Models
     /// </summary>
     internal class BaseInvitation : ICommandArgument
     {
+        [JsonConstructor]
         internal BaseInvitation(long id)
         {
             Id = id;

@@ -19,6 +19,7 @@ namespace Todoist.Net.Models
         {
         }
 
+        [JsonConstructor]
         internal User()
         {
         }

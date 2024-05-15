@@ -12,6 +12,7 @@ namespace Todoist.Net.Models
             Id = id;
         }
 
+        [JsonConstructor]
         internal BaseEntity()
         {
         }

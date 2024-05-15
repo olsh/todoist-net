@@ -12,6 +12,7 @@ namespace Todoist.Net.Models
         private const string FullDayEventDateFormat = "yyyy-MM-dd";
         private const string DefaultEventDateFormat = "yyyy-MM-ddTHH:mm:ssK";
 
+        [JsonConstructor]
         internal DueDate()
         {
         }
@@ -79,6 +80,7 @@ namespace Todoist.Net.Models
         /// <remarks>
         /// Format date according this rules https://developer.todoist.com/sync/v9/?shell#due-dates
         /// </remarks>
+        [JsonInclude]
         [JsonPropertyName("date")]
         internal string StringDate
         {

@@ -26,6 +26,7 @@ namespace Todoist.Net.Models
         {
         }
 
+        [JsonConstructor]
         internal FileAttachment()
         {
         }

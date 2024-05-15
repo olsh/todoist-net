@@ -7,6 +7,7 @@ namespace Todoist.Net.Models
     /// </summary>
     public class EmailInfo
     {
+        [JsonConstructor]
         internal EmailInfo()
         {
         }

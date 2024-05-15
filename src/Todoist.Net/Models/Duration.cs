@@ -23,6 +23,7 @@ namespace Todoist.Net.Models
             Unit = unit;
         }
 
+        [JsonConstructor]
         internal Duration()
         {
         }

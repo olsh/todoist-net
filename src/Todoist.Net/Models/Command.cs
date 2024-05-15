@@ -5,6 +5,7 @@ namespace Todoist.Net.Models
 {
     internal class Command
     {
+        [JsonConstructor]
         internal Command(CommandType commandType, ICommandArgument argument, Guid? tempId)
         {
             CommandType = commandType;

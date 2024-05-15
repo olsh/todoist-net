@@ -30,6 +30,7 @@ namespace Todoist.Net.Models
             ParentId = parentId;
         }
 
+        [JsonConstructor]
         internal MoveArgument()
         {
         }

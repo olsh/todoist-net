@@ -35,6 +35,7 @@ namespace Todoist.Net.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="Section"/> class.
         /// </summary>
+        [JsonConstructor]
         internal Section()
         {
         }

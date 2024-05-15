@@ -7,6 +7,7 @@ namespace Todoist.Net.Models
     /// </summary>
     public class Collaborator
     {
+        [JsonConstructor]
         internal Collaborator()
         {
         }

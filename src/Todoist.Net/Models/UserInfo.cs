@@ -13,6 +13,7 @@ namespace Todoist.Net.Models
         {
         }
 
+        [JsonConstructor]
         internal UserInfo()
         {
         }

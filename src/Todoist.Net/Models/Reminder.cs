@@ -1,7 +1,5 @@
 using System.Text.Json.Serialization;
 
-using Todoist.Net.Serialization.Converters;
-
 namespace Todoist.Net.Models
 {
     /// <summary>
@@ -22,6 +20,7 @@ namespace Todoist.Net.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="Reminder"/> class.
         /// </summary>
+        [JsonConstructor]
         internal Reminder()
         {
         }

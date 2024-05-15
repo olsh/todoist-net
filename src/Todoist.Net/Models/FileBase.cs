@@ -27,6 +27,7 @@ namespace Todoist.Net.Models
             FileUrl = fileUrl;
         }
 
+        [JsonConstructor]
         internal FileBase()
         {
         }

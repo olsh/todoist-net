@@ -9,6 +9,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="email">The email.</param>
+        [JsonConstructor]
         internal ShareProjectArgument(ComplexId id, string email)
         {
             Id = id;

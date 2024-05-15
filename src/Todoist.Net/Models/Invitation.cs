@@ -4,6 +4,7 @@ namespace Todoist.Net.Models
 {
     internal class Invitation : BaseInvitation
     {
+        [JsonConstructor]
         internal Invitation(long id, string secret)
             : base(id)
         {

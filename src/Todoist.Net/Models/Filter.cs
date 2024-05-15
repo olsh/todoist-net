@@ -36,6 +36,7 @@ namespace Todoist.Net.Models
             Query = query;
         }
 
+        [JsonConstructor]
         internal Filter()
         {
         }

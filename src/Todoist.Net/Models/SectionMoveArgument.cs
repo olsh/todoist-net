@@ -25,6 +25,7 @@ namespace Todoist.Net.Models
             ProjectId = projectId;
         }
 
+        [JsonConstructor]
         internal SectionMoveArgument()
         {
         }

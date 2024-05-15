@@ -33,6 +33,7 @@ namespace Todoist.Net.Models
             Labels = new Collection<string>();
         }
 
+        [JsonConstructor]
         internal Item()
         {
         }

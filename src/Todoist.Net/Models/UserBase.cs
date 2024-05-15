@@ -21,6 +21,7 @@ namespace Todoist.Net.Models
             Password = password;
         }
 
+        [JsonConstructor]
         internal UserBase()
         {
         }
