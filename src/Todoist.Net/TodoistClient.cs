@@ -37,12 +37,11 @@ namespace Todoist.Net
             },
             Converters =
             {
-                new BoolConverter(),
                 new CommandResultConverter(),
                 new ComplexIdConverter(),
                 new StringEnumTypeConverter()
             }
-                };
+        };
 
         private readonly ITodoistRestClient _restClient;
 

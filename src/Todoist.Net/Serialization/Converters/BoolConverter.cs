@@ -8,7 +8,23 @@ namespace Todoist.Net.Serialization.Converters
     {
         public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return reader.GetString() == "1";
+            switch (reader.TokenType)
+            {
+                case JsonTokenType.String:
+                    return reader.GetString() == "1";
+
+                case JsonTokenType.Number:
+                    return reader.GetInt32() == 1;
+
+                case JsonTokenType.True:
+                    return true;
+
+                case JsonTokenType.False:
+                    return false;
+
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         public override void Write(Utf8JsonWriter writer, bool value, JsonSerializerOptions options)
