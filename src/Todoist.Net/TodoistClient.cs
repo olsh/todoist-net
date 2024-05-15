@@ -25,7 +25,7 @@ namespace Todoist.Net
     public sealed class TodoistClient : IDisposable, IAdvancedTodoistClient
     {
         private static readonly JsonSerializerOptions _serializerOptions = new JsonSerializerOptions
-                {
+        {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             NumberHandling = JsonNumberHandling.AllowReadingFromString,
             TypeInfoResolver = new DefaultJsonTypeInfoResolver
@@ -38,9 +38,10 @@ namespace Todoist.Net
             },
             Converters =
             {
-                new CommandResultConverter(),
+                new StringEnumTypeConverter(),
                 new ComplexIdConverter(),
-                new StringEnumTypeConverter()
+                new CommandResultConverter(),
+                new CommandArgumentConverter()
             }
         };
 
