@@ -36,8 +36,7 @@ namespace Todoist.Net.Serialization.Converters
                 {
                     return new ComplexId(value);
                 }
-
-                return new ComplexId();
+                return default;
             }
 
             public override void Write(Utf8JsonWriter writer, ComplexId value, JsonSerializerOptions options)
@@ -50,6 +49,16 @@ namespace Todoist.Net.Serialization.Converters
                 {
                     writer.WriteStringValue(value.DynamicId.ToString());
                 }
+            }
+
+            public override ComplexId ReadAsPropertyName(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                return Read(ref reader, typeToConvert, options);
+            }
+
+            public override void WriteAsPropertyName(Utf8JsonWriter writer, ComplexId value, JsonSerializerOptions options)
+            {
+                writer.WritePropertyName(value.DynamicId.ToString());
             }
         }
 
@@ -88,6 +97,18 @@ namespace Todoist.Net.Serialization.Converters
                 {
                     writer.WriteStringValue(complexId.DynamicId.ToString());
                 }
+            }
+
+            public override ComplexId? ReadAsPropertyName(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                return Read(ref reader, typeToConvert, options);
+            }
+
+            public override void WriteAsPropertyName(Utf8JsonWriter writer, ComplexId? value, JsonSerializerOptions options)
+            {
+                var complexId = value ?? default;
+
+                writer.WritePropertyName(complexId.DynamicId.ToString());
             }
         }
 
