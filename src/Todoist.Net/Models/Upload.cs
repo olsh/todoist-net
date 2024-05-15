@@ -55,21 +55,21 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The item identifier.</value>
         [JsonPropertyName("item_id")]
-        public long ItemId { get; internal set; }
+        public long? ItemId { get; internal set; }
 
         /// <summary>
         /// Gets the note identifier.
         /// </summary>
         /// <value>The note identifier.</value>
         [JsonPropertyName("note_id")]
-        public long NoteId { get; internal set; }
+        public long? NoteId { get; internal set; }
 
         /// <summary>
         /// Gets the project identifier.
         /// </summary>
         /// <value>The project identifier.</value>
         [JsonPropertyName("project_id")]
-        public long ProjectId { get; internal set; }
+        public long? ProjectId { get; internal set; }
 
         /// <summary>
         /// Gets the uploaded.
