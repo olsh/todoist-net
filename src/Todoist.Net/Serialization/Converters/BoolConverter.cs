@@ -23,7 +23,7 @@ namespace Todoist.Net.Serialization.Converters
                     return false;
 
                 default:
-                    throw new NotImplementedException();
+                    throw new JsonException($"Token type not supported for boolean properties. Token: {reader.TokenType}");
             }
         }
 

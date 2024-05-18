@@ -5,7 +5,7 @@ namespace Todoist.Net.Models
         private CommandResult()
         { }
 
-        public CommandError CommandError { get; set; }
+        public CommandError CommandError { get; private set; }
 
 
         public bool IsSuccess => CommandError == null;
