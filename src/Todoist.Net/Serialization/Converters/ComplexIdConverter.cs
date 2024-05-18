@@ -6,7 +6,7 @@ using Todoist.Net.Models;
 
 namespace Todoist.Net.Serialization.Converters
 {
-    internal class ComplexIdConverter : JsonConverterFactory
+    internal sealed class ComplexIdConverter : JsonConverterFactory
     {
         public override bool CanConvert(Type typeToConvert)
         {
@@ -27,7 +27,7 @@ namespace Todoist.Net.Serialization.Converters
         }
 
 
-        private class NonNullableComplexIdConverter : JsonConverter<ComplexId>
+        private sealed class NonNullableComplexIdConverter : JsonConverter<ComplexId>
         {
             public override ComplexId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {
@@ -62,7 +62,7 @@ namespace Todoist.Net.Serialization.Converters
             }
         }
 
-        private class NullableComplexIdConverter : JsonConverter<ComplexId?>
+        private sealed class NullableComplexIdConverter : JsonConverter<ComplexId?>
         {
             public override bool HandleNull => true;
 

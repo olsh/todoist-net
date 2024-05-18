@@ -6,7 +6,7 @@ using Todoist.Net.Models;
 
 namespace Todoist.Net.Serialization.Converters
 {
-    internal class CommandResultConverter : JsonConverter<CommandResult>
+    internal sealed class CommandResultConverter : JsonConverter<CommandResult>
     {
         public override CommandResult Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {

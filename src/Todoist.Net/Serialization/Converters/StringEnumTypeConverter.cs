@@ -6,7 +6,7 @@ using Todoist.Net.Models;
 
 namespace Todoist.Net.Serialization.Converters
 {
-    internal class StringEnumTypeConverter : JsonConverterFactory
+    internal sealed class StringEnumTypeConverter : JsonConverterFactory
     {
         public override bool CanConvert(Type typeToConvert)
         {
@@ -19,7 +19,7 @@ namespace Todoist.Net.Serialization.Converters
         }
 
 
-        private class StringEnumTypeConverterInner<T> : JsonConverter<T> where T : StringEnum
+        private sealed class StringEnumTypeConverterInner<T> : JsonConverter<T> where T : StringEnum
         {
             public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {

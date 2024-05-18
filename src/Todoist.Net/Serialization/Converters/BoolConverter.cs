@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Serialization.Converters
 {
-    internal class BoolConverter : JsonConverter<bool>
+    internal sealed class BoolConverter : JsonConverter<bool>
     {
         public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
