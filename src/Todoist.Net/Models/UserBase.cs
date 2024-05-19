@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-
-using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -22,6 +21,7 @@ namespace Todoist.Net.Models
             Password = password;
         }
 
+        [JsonConstructor]
         internal UserBase()
         {
         }
@@ -30,35 +30,35 @@ namespace Todoist.Net.Models
         /// Gets or sets the email.
         /// </summary>
         /// <value>The email.</value>
-        [JsonProperty("email")]
+        [JsonPropertyName("email")]
         public string Email { get; set; }
 
         /// <summary>
         /// Gets or sets the full name.
         /// </summary>
         /// <value>The full name.</value>
-        [JsonProperty("full_name")]
+        [JsonPropertyName("full_name")]
         public string FullName { get; set; }
 
         /// <summary>
         /// Gets or sets the language.
         /// </summary>
         /// <value>The language.</value>
-        [JsonProperty("lang")]
+        [JsonPropertyName("lang")]
         public Language Language { get; set; }
 
         /// <summary>
         /// Gets or sets the password.
         /// </summary>
         /// <value>The password.</value>
-        [JsonProperty("password")]
+        [JsonPropertyName("password")]
         public string Password { get; set; }
 
         /// <summary>
         /// Gets or sets the time zone.
         /// </summary>
         /// <value>The time zone.</value>
-        [JsonProperty("timezone")]
+        [JsonPropertyName("timezone")]
         public string TimeZone { get; set; }
 
         internal ICollection<KeyValuePair<string, string>> ToParameters()

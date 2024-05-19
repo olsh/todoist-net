@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -11,7 +11,7 @@ namespace Todoist.Net.Models
         /// Gets the label.
         /// </summary>
         /// <value>The label.</value>
-        [JsonProperty("label")]
+        [JsonPropertyName("label")]
         public Label Label { get; internal set; }
     }
 }

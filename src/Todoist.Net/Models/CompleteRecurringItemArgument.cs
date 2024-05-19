@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -25,7 +25,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The due date.
         /// </value>
-        [JsonProperty("due")]
+        [JsonPropertyName("due")]
         public DueDate DueDate { get; }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The identifier.
         /// </value>
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public ComplexId Id { get; }
     }
 }

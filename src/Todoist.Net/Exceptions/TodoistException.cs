@@ -1,6 +1,8 @@
-﻿using System;
+using System;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+
+using Todoist.Net.Models;
 
 namespace Todoist.Net.Exceptions
 {
@@ -44,7 +46,7 @@ namespace Todoist.Net.Exceptions
         /// <param name="code">The code.</param>
         /// <param name="message">The message.</param>
         /// <param name="rawError">The raw error.</param>
-        public TodoistException(long code, string message, dynamic rawError)
+        public TodoistException(int code, string message, CommandError rawError)
             : base(message)
         {
             Code = code;
@@ -57,7 +59,7 @@ namespace Todoist.Net.Exceptions
         /// <param name="code">The code.</param>
         /// <param name="message">The message.</param>
         /// <param name="inner">The inner exception.</param>
-        public TodoistException(long code, string message, Exception inner)
+        public TodoistException(int code, string message, Exception inner)
             : base(message, inner)
         {
             Code = code;
@@ -67,20 +69,20 @@ namespace Todoist.Net.Exceptions
         private TodoistException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-            Code = info.GetInt64(nameof(Code));
+            Code = info.GetInt32(nameof(Code));
         }
 
         /// <summary>
         ///     Gets the code.
         /// </summary>
         /// <value>The code.</value>
-        public long Code { get; }
+        public int Code { get; }
 
         /// <summary>
         ///     Gets the raw error.
         /// </summary>
         /// <value>The raw error.</value>
-        public dynamic RawError { get; }
+        public CommandError RawError { get; }
 
         /// <inheritdoc />
         public override void GetObjectData(SerializationInfo info, StreamingContext context)

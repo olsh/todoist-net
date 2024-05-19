@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -11,7 +11,7 @@ namespace Todoist.Net.Models
         /// Gets the filter.
         /// </summary>
         /// <value>The filter.</value>
-        [JsonProperty("filter")]
+        [JsonPropertyName("filter")]
         public Filter Filter { get; internal set; }
     }
 }

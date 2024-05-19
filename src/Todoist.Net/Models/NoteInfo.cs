@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -11,7 +11,7 @@ namespace Todoist.Net.Models
         /// Gets the note.
         /// </summary>
         /// <value>The note.</value>
-        [JsonProperty("note")]
+        [JsonPropertyName("note")]
         public Note Note { get; internal set; }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Reflection;
 
 namespace Todoist.Net.Models
@@ -46,10 +45,9 @@ namespace Todoist.Net.Models
         /// Tries the parse.
         /// </summary>
         /// <param name="value">The value.</param>
-        /// <param name="type">The type.</param>
         /// <param name="result">The result.</param>
         /// <returns><c>true</c> if the parsing was successful, <c>false</c> otherwise.</returns>
-        public static bool TryParse(string value, Type type, out StringEnum result)
+        public static bool TryParse<T>(string value, out T result) where T : StringEnum
         {
             result = null;
 
@@ -58,15 +56,10 @@ namespace Todoist.Net.Models
                 return false;
             }
 
-            if (type == null || !type.GetTypeInfo().IsSubclassOf(typeof(StringEnum)))
+            var properties = typeof(T).GetTypeInfo().DeclaredProperties;
+            foreach (var property in properties)
             {
-                return false;
-            }
-
-            IEnumerable<PropertyInfo> properties = type.GetTypeInfo().DeclaredProperties;
-            foreach (PropertyInfo property in properties)
-            {
-                var stringEnum = property.GetValue(null) as StringEnum;
+                var stringEnum = property.GetValue(null) as T;
                 if (stringEnum != null && stringEnum.Value == value)
                 {
                     result = stringEnum;

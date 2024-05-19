@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -7,6 +7,7 @@ namespace Todoist.Net.Models
     /// </summary>
     public class Collaborator
     {
+        [JsonConstructor]
         internal Collaborator()
         {
         }
@@ -15,35 +16,35 @@ namespace Todoist.Net.Models
         /// Gets the collaborator id.
         /// </summary>
         /// <value>The collaborator id.</value>
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public string Id { get; internal set; }
 
         /// <summary>
         /// Gets the email.
         /// </summary>
         /// <value>The email.</value>
-        [JsonProperty("email")]
+        [JsonPropertyName("email")]
         public string Email { get; internal set; }
 
         /// <summary>
         /// Gets the full name.
         /// </summary>
         /// <value>The full name.</value>
-        [JsonProperty("full_name")]
+        [JsonPropertyName("full_name")]
         public string FullName { get; internal set; }
 
         /// <summary>
         /// Gets the time zone.
         /// </summary>
         /// <value>The time zone.</value>
-        [JsonProperty("timezone")]
+        [JsonPropertyName("timezone")]
         public string TimeZone { get; internal set; }
 
         /// <summary>
         /// Gets the image id.
         /// </summary>
         /// <value>The image id.</value>
-        [JsonProperty("image_id")]
+        [JsonPropertyName("image_id")]
         public string ImageId { get; internal set; }
     }
 }

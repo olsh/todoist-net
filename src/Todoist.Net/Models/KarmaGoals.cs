@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-
-using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 using Todoist.Net.Serialization.Converters;
 
@@ -23,14 +22,14 @@ namespace Todoist.Net.Models
         /// Gets or sets the daily goal.
         /// </summary>
         /// <value>The daily goal.</value>
-        [JsonProperty("daily_goal")]
+        [JsonPropertyName("daily_goal")]
         public int? DailyGoal { get; set; }
 
         /// <summary>
         /// Gets the ignore days.
         /// </summary>
         /// <value>The ignore days.</value>
-        [JsonProperty("ignore_days")]
+        [JsonPropertyName("ignore_days")]
         public ICollection<DayOfWeek> IgnoreDays { get; internal set; }
 
         /// <summary>
@@ -38,7 +37,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value><c>true</c> if [karma disabled]; otherwise, <c>false</c>.</value>
         [JsonConverter(typeof(BoolConverter))]
-        [JsonProperty("karma_disabled")]
+        [JsonPropertyName("karma_disabled")]
         public bool KarmaDisabled { get; set; }
 
         /// <summary>
@@ -46,14 +45,14 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value><c>true</c> if [vacation mode]; otherwise, <c>false</c>.</value>
         [JsonConverter(typeof(BoolConverter))]
-        [JsonProperty("vacation_mode")]
+        [JsonPropertyName("vacation_mode")]
         public bool VacationMode { get; set; }
 
         /// <summary>
         /// Gets or sets the weekly goal.
         /// </summary>
         /// <value>The weekly goal.</value>
-        [JsonProperty("weekly_goal")]
+        [JsonPropertyName("weekly_goal")]
         public int? WeeklyGoal { get; set; }
     }
 }

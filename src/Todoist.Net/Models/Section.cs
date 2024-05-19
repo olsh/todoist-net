@@ -1,6 +1,5 @@
 using System;
-
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -36,6 +35,7 @@ namespace Todoist.Net.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="Section"/> class.
         /// </summary>
+        [JsonConstructor]
         internal Section()
         {
         }
@@ -46,7 +46,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The date when the section was created.
         /// </value>
-        [JsonProperty("added_at")]
+        [JsonPropertyName("added_at")]
         public DateTime? AddedAt { get; internal set; }
 
         /// <summary>
@@ -55,14 +55,14 @@ namespace Todoist.Net.Models
         /// <value>
         /// The date when the section was archived (or null if not archived).
         /// </value>
-        [JsonProperty("archived_at")]
+        [JsonPropertyName("archived_at")]
         public DateTime? ArchivedAt { get; internal set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is archived.
         /// </summary>
         /// <value><c>true</c> if this instance is archived; otherwise, <c>false</c>.</value>
-        [JsonProperty("is_archived")]
+        [JsonPropertyName("is_archived")]
         public bool IsArchived { get; internal set; }
 
         /// <summary>
@@ -71,14 +71,14 @@ namespace Todoist.Net.Models
         /// <value>
         /// <c>true</c> if the section’s tasks are collapsed; otherwise, <c>false</c>.
         /// </value>
-        [JsonProperty("collapsed")]
+        [JsonPropertyName("collapsed")]
         public bool IsCollapsed { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is deleted.
         /// </summary>
         /// <value><c>true</c> if this instance is deleted; otherwise, <c>false</c>.</value>
-        [JsonProperty("is_deleted")]
+        [JsonPropertyName("is_deleted")]
         public bool IsDeleted { get; internal set; }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The name of the section..
         /// </value>
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// Project that the section resides in.
         /// </value>
-        [JsonProperty("project_id")]
+        [JsonPropertyName("project_id")]
         public ComplexId ProjectId { get; set; }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The order of section. Defines the position of the section among all the sections in the project.
         /// </value>
-        [JsonProperty("section_order")]
+        [JsonPropertyName("section_order")]
         public int SectionOrder { get; set; }
     }
 }

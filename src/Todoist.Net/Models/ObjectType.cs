@@ -1,4 +1,6 @@
-﻿namespace Todoist.Net.Models
+using System.Text.Json.Serialization;
+
+namespace Todoist.Net.Models
 {
     /// <summary>
     /// Represents a Todoist object type.
@@ -6,6 +8,7 @@
     /// <seealso cref="Todoist.Net.Models.StringEnum" />
     public class ObjectType : StringEnum
     {
+        [JsonConstructor]
         internal ObjectType(string value)
             : base(value)
         {

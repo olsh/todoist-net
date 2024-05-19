@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Newtonsoft.Json;
-
 using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
+using Todoist.Net.Serialization.Converters;
 using Todoist.Net.Serialization.Resolvers;
 using Todoist.Net.Services;
 
@@ -22,12 +24,26 @@ namespace Todoist.Net
     /// <seealso cref="Todoist.Net.IAdvancedTodoistClient" />
     public sealed class TodoistClient : IDisposable, IAdvancedTodoistClient
     {
-        private static readonly JsonSerializerSettings SerializerSettings =
-            new JsonSerializerSettings
+        private static readonly JsonSerializerOptions _serializerOptions = new JsonSerializerOptions
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            NumberHandling = JsonNumberHandling.AllowReadingFromString,
+            TypeInfoResolver = new DefaultJsonTypeInfoResolver
+            {
+                Modifiers =
                 {
-                    NullValueHandling = NullValueHandling.Ignore,
-                    ContractResolver = new ConverterContractResolver()
-                };
+                    JsonResolverModifiers.SerializeInternalSetters,
+                    JsonResolverModifiers.FilterSerializationByType
+                }
+            },
+            Converters =
+            {
+                new StringEnumTypeConverter(),
+                new ComplexIdConverter(),
+                new CommandResultConverter(),
+                new CommandArgumentConverter()
+            }
+        };
 
         private readonly ITodoistRestClient _restClient;
 
@@ -227,7 +243,7 @@ namespace Todoist.Net
             parameters.AddLast(
                 new KeyValuePair<string, string>(
                     "resource_types",
-                    JsonConvert.SerializeObject(resourceTypes, SerializerSettings)));
+                    JsonSerializer.Serialize(resourceTypes, _serializerOptions)));
 
             return ProcessSyncAsync<Resources>(parameters, cancellationToken);
         }
@@ -267,7 +283,7 @@ namespace Todoist.Net
             parameters.AddLast(
                 new KeyValuePair<string, string>(
                     "commands",
-                    JsonConvert.SerializeObject(commands, SerializerSettings)));
+                    JsonSerializer.Serialize(commands, _serializerOptions)));
 
             var syncResponse = await ProcessSyncAsync<SyncResponse>(parameters, cancellationToken)
                                    .ConfigureAwait(false);
@@ -314,7 +330,7 @@ namespace Todoist.Net
 
         private T DeserializeResponse<T>(string responseContent)
         {
-            return JsonConvert.DeserializeObject<T>(responseContent, SerializerSettings);
+            return JsonSerializer.Deserialize<T>(responseContent, _serializerOptions);
         }
 
         /// <summary>
@@ -407,11 +423,10 @@ namespace Todoist.Net
             LinkedList<TodoistException> exceptions = null;
             foreach (var syncStatus in syncResponse.SyncStatus)
             {
-                var dynamicStatus = syncStatus.Value;
-                var type = dynamicStatus.GetType();
+                var result = syncStatus.Value;
 
                 // an "ok" string which signals success of the command
-                if (type == typeof(string) || dynamicStatus.error_code == null)
+                if (result.IsSuccess)
                 {
                     continue;
                 }
@@ -423,9 +438,9 @@ namespace Todoist.Net
 
                 exceptions.AddLast(
                     new TodoistException(
-                        (long)dynamicStatus.error_code,
-                        dynamicStatus.error.ToString(),
-                        dynamicStatus));
+                        result.CommandError.ErrorCode,
+                        result.CommandError.Error,
+                        result.CommandError));
             }
 
             if (exceptions?.Any() == true)

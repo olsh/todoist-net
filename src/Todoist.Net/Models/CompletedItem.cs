@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
-
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -16,7 +15,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The completed date.
         /// </value>
-        [JsonProperty("completed_at")]
+        [JsonPropertyName("completed_at")]
         public DateTime CompletedAt { get; internal set; }
 
         /// <summary>
@@ -25,7 +24,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The content.
         /// </value>
-        [JsonProperty("content")]
+        [JsonPropertyName("content")]
         public string Content { get; internal set; }
 
         /// <summary>
@@ -34,7 +33,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The task id
         /// </value>
-        [JsonProperty("task_id")]
+        [JsonPropertyName("task_id")]
         public long TaskId { get; internal set; }
 
         /// <summary>
@@ -43,7 +42,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The identifier.
         /// </value>
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public long Id { get; internal set; }
 
         /// <summary>
@@ -52,7 +51,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The labels.
         /// </value>
-        [JsonProperty("labels")]
+        [JsonPropertyName("labels")]
         public IReadOnlyCollection<long> Labels { get; internal set; }
 
         /// <summary>
@@ -61,7 +60,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The note count.
         /// </value>
-        [JsonProperty("note_count")]
+        [JsonPropertyName("note_count")]
         public int NoteCount { get; internal set; }
 
         /// <summary>
@@ -70,7 +69,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The notes.
         /// </value>
-        [JsonProperty("notes")]
+        [JsonPropertyName("notes")]
         public IReadOnlyCollection<Note> Notes { get; internal set; }
 
         /// <summary>
@@ -79,7 +78,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The project identifier.
         /// </value>
-        [JsonProperty("project_id")]
+        [JsonPropertyName("project_id")]
         public long ProjectId { get; internal set; }
 
         /// <summary>
@@ -88,7 +87,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The user identifier.
         /// </value>
-        [JsonProperty("user_id")]
+        [JsonPropertyName("user_id")]
         public long UserId { get; internal set; }
 
         /// <summary>
@@ -101,7 +100,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The full item object.
         /// </value>
-        [JsonProperty("item_object")]
+        [JsonPropertyName("item_object")]
         public Item ItemObject { get; internal set; }
     }
 }

@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -21,35 +21,35 @@ namespace Todoist.Net.Models
         /// Gets or sets a value indicating whether this <see cref="Project"/> is collapsed.
         /// </summary>
         /// <value><c>null</c> if [collapsed] contains no value, <c>true</c> if [collapsed]; otherwise, <c>false</c>.</value>
-        [JsonProperty("collapsed")]
+        [JsonPropertyName("collapsed")]
         public bool? Collapsed { get; set; }
 
         /// <summary>
         /// Gets or sets the color.
         /// </summary>
         /// <value>The color.</value>
-        [JsonProperty("color")]
+        [JsonPropertyName("color")]
         public string Color { get; set; }
 
         /// <summary>
         /// Gets or sets the indent.
         /// </summary>
         /// <value>The indent.</value>
-        [JsonProperty("parent_id")]
+        [JsonPropertyName("parent_id")]
         public string ParentId { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is archived.
         /// </summary>
         /// <value><c>true</c> if this instance is archived; otherwise, <c>false</c>.</value>
-        [JsonProperty("is_archived")]
+        [JsonPropertyName("is_archived")]
         public bool IsArchived { get; internal set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is deleted.
         /// </summary>
         /// <value><c>true</c> if this instance is deleted; otherwise, <c>false</c>.</value>
-        [JsonProperty("is_deleted")]
+        [JsonPropertyName("is_deleted")]
         public bool IsDeleted { get; internal set; }
 
         /// <summary>
@@ -58,28 +58,28 @@ namespace Todoist.Net.Models
         /// <value>
         ///   <c>true</c> if this instance is favorite; otherwise, <c>false</c>.
         /// </value>
-        [JsonProperty("is_favorite")]
+        [JsonPropertyName("is_favorite")]
         public bool IsFavorite { get; internal set; }
 
         /// <summary>
         /// Gets or sets order of project. Defines the position of the project among all the projects with the same parent_id.
         /// </summary>
         /// <value>The project order.</value>
-        [JsonProperty("child_order")]
+        [JsonPropertyName("child_order")]
         public int? ChildOrder { get; set; }
 
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
         /// <value>The name.</value>
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="Project"/> is shared.
         /// </summary>
         /// <value><c>true</c> if shared; otherwise, <c>false</c>.</value>
-        [JsonProperty("shared")]
+        [JsonPropertyName("shared")]
         public bool Shared { get; internal set; }
     }
 }

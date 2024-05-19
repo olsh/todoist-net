@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -12,7 +11,7 @@ namespace Todoist.Net.Models
             OrderEntries = orderEntries ?? throw new ArgumentNullException(nameof(orderEntries));
         }
 
-        [JsonProperty("sections")]
+        [JsonPropertyName("sections")]
         public ICollection<SectionOrderEntry> OrderEntries { get; set; }
     }
 }

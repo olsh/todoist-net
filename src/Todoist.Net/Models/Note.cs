@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -27,56 +26,56 @@ namespace Todoist.Net.Models
         /// Gets or sets the content.
         /// </summary>
         /// <value>The content.</value>
-        [JsonProperty("content")]
+        [JsonPropertyName("content")]
         public string Content { get; set; }
 
         /// <summary>
         /// Gets or sets the file attachment.
         /// </summary>
         /// <value>The file attachment.</value>
-        [JsonProperty("file_attachment")]
+        [JsonPropertyName("file_attachment")]
         public FileAttachment FileAttachment { get; set; }
 
         /// <summary>
         /// Gets the is deleted.
         /// </summary>
         /// <value>The is deleted.</value>
-        [JsonProperty("is_deleted")]
+        [JsonPropertyName("is_deleted")]
         public bool? IsDeleted { get; internal set; }
 
         /// <summary>
         /// Gets or sets the item identifier.
         /// </summary>
         /// <value>The item identifier.</value>
-        [JsonProperty("item_id")]
+        [JsonPropertyName("item_id")]
         public ComplexId? ItemId { get; set; }
 
         /// <summary>
         /// Gets the posted.
         /// </summary>
         /// <value>The posted.</value>
-        [JsonProperty("posted_at")]
+        [JsonPropertyName("posted_at")]
         public DateTime? PostedAt { get; internal set; }
 
         /// <summary>
         /// Gets the posted user identifier.
         /// </summary>
         /// <value>The posted user identifier.</value>
-        [JsonProperty("posted_uid")]
+        [JsonPropertyName("posted_uid")]
         public string PostedUserId { get; internal set; }
 
         /// <summary>
         /// Gets the project identifier.
         /// </summary>
         /// <value>The project identifier.</value>
-        [JsonProperty("project_id")]
+        [JsonPropertyName("project_id")]
         public ComplexId? ProjectId { get; internal set; }
 
         /// <summary>
         /// Gets the user ids to notify.
         /// </summary>
         /// <value>The user ids to notify.</value>
-        [JsonProperty("uids_to_notify")]
+        [JsonPropertyName("uids_to_notify")]
         public ICollection<string> UserIdsToNotify { get; internal set; }
 
         /// <summary>

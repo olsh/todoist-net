@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -27,6 +27,7 @@ namespace Todoist.Net.Models
             FileUrl = fileUrl;
         }
 
+        [JsonConstructor]
         internal FileBase()
         {
         }
@@ -37,7 +38,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The name of the file.
         /// </value>
-        [JsonProperty("file_name")]
+        [JsonPropertyName("file_name")]
         public string FileName { get; set; }
 
         /// <summary>
@@ -46,7 +47,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The file URL.
         /// </value>
-        [JsonProperty("file_url")]
+        [JsonPropertyName("file_url")]
         public string FileUrl { get; set; }
     }
 }
