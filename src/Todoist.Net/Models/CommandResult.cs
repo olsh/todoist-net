@@ -2,6 +2,9 @@ namespace Todoist.Net.Models
 {
     internal class CommandResult
     {
+        internal const string SuccessValue = "ok";
+
+
         private CommandResult()
         { }
 

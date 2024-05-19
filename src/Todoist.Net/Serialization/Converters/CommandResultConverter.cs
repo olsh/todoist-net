@@ -12,9 +12,10 @@ namespace Todoist.Net.Serialization.Converters
         {
             if (reader.TokenType == JsonTokenType.String)
             {
-                if (reader.GetString() != "ok")
+                var stringValue = reader.GetString();
+                if (!string.Equals(stringValue, CommandResult.SuccessValue, StringComparison.OrdinalIgnoreCase))
                 {
-                    throw new JsonException("Invalid format for CommandResult object.");
+                    throw new JsonException($"Unable to parse the value '{stringValue}' to a {nameof(CommandResult)} object.");
                 }
                 return CommandResult.Success;
             }
