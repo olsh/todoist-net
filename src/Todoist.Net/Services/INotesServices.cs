@@ -20,16 +20,5 @@ namespace Todoist.Net.Services
         /// <returns>The notes.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task<IEnumerable<Note>> GetAsync(CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Gets a note by ID.
-        /// </summary>
-        /// <param name="id">The ID of the note.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>
-        /// The note.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<NoteInfo> GetAsync(ComplexId id, CancellationToken cancellationToken = default);
     }
 }

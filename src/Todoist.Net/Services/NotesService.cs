@@ -25,14 +25,5 @@ namespace Todoist.Net.Services
 
             return response.Notes;
         }
-
-        /// <inheritdoc/>
-        public Task<NoteInfo> GetAsync(ComplexId id, CancellationToken cancellationToken = default)
-        {
-            return TodoistClient.PostAsync<NoteInfo>(
-                "notes/get",
-                new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("note_id", id.ToString()) },
-                cancellationToken);
-        }
     }
 }
