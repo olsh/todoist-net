@@ -23,7 +23,7 @@ namespace Todoist.Net.Tests.Services
 
         [Fact]
         [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
-        public async Task AddNoteGetByIdAndDelete_Success()
+        public async Task AddNoteGetAndDelete_Success()
         {
             var todoistClient = TodoistClientFactory.Create(_outputHelper);
 
@@ -33,8 +33,8 @@ namespace Todoist.Net.Tests.Services
             var note = new Note("Hello");
             await todoistClient.Notes.AddToProjectAsync(note, project.Id.PersistentId);
 
-            var noteInfo = await todoistClient.Notes.GetAsync(note.Id);
-            Assert.True(noteInfo.Note.Content == note.Content);
+            var notes = await todoistClient.Notes.GetAsync();
+            Assert.Contains(notes, n => n.Id == note.Id);
 
             await todoistClient.Projects.DeleteAsync(project.Id);
         }
