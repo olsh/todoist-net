@@ -8,16 +8,8 @@ namespace Todoist.Net.Models
     /// <summary>
     /// Represents due dates for tasks and reminders.
     /// </summary>
-    public class DueDate : INonNullDefault
+    public class DueDate
     {
-        /// <summary>
-        /// A <see cref="DueDate"/> instance that represents the non-null default value.
-        /// </summary>
-        internal static readonly DueDate Default = new DueDate();
-
-        bool INonNullDefault.IsDefault => this == Default;
-
-
         private const string FullDayEventDateFormat = "yyyy-MM-dd";
         private const string DefaultEventDateFormat = "yyyy-MM-ddTHH:mm:ssK";
 

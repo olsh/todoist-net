@@ -7,15 +7,8 @@ namespace Todoist.Net.Models
     /// <summary>
     /// Represents durations for tasks.
     /// </summary>
-    public class Duration : INonNullDefault
+    public class Duration
     {
-        /// <summary>
-        /// A <see cref="Duration"/> instance that represents the non-null default value.
-        /// </summary>
-        internal static readonly Duration Default = new Duration();
-
-        bool INonNullDefault.IsDefault => this == Default;
-
 
         private int _amount;
         private DurationUnit _unit;

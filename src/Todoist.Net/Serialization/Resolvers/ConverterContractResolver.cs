@@ -34,14 +34,12 @@ namespace Todoist.Net.Serialization.Resolvers
             {
                 property.ShouldSerialize = instance => false;
             }
-            if (typeof(INonNullDefault).IsAssignableFrom(property.PropertyType) && member is PropertyInfo propertyInfo)
+
+            // Null DueDate == no DueDate, so we should always send the DueDate
+            // https://developer.todoist.com/sync/v9/#due-dates
+            else if (property.PropertyType == typeof(DueDate))
             {
                 property.NullValueHandling = NullValueHandling.Include;
-                property.ShouldSerialize = instance =>
-                {
-                    var value = propertyInfo.GetValue(instance, null) as INonNullDefault;
-                    return value?.IsDefault != true; // Serialize null and non-default values (as long as IsDefault isn't true).
-                };
             }
 
             return property;
