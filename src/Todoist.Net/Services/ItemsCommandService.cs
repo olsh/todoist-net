@@ -25,7 +25,7 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public async Task<ComplexId> AddAsync(Item item, CancellationToken cancellationToken = default)
+        public async Task<ComplexId> AddAsync(AddItem item, CancellationToken cancellationToken = default)
         {
             if (item == null)
             {
@@ -95,7 +95,7 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task UpdateAsync(Item item, CancellationToken cancellationToken = default)
+        public Task UpdateAsync(UpdateItem item, CancellationToken cancellationToken = default)
         {
             if (item == null)
             {
