@@ -95,7 +95,7 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task UpdateAsync(ItemBase item, CancellationToken cancellationToken = default)
+        public Task UpdateAsync(Item item, CancellationToken cancellationToken = default)
         {
             if (item == null)
             {

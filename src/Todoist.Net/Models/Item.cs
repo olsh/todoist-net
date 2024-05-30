@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 using Newtonsoft.Json;
 
@@ -9,13 +8,15 @@ namespace Todoist.Net.Models
     /// <summary>
     /// Represents a Todoist task.
     /// </summary>
-    public class Item : ItemBase, IWithRelationsArgument
+    public class Item : BaseEntity, IWithRelationsArgument
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Item" /> class.
         /// </summary>
         /// <param name="content">The content.</param>
         public Item(string content)
+
+            // ReSharper disable once IntroduceOptionalParameters.Global
             : this(content, default)
         {
         }
@@ -26,21 +27,28 @@ namespace Todoist.Net.Models
         /// <param name="content">The content.</param>
         /// <param name="projectId">The project identifier.</param>
         public Item(string content, ComplexId projectId)
-            : this()
         {
             Content = content;
             ProjectId = projectId;
-            Labels = new Collection<string>();
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Item" /> class.
-        /// </summary>
         internal Item()
-            : base(default)
         {
         }
 
+        /// <summary>
+        /// Gets or sets the added by uid.
+        /// </summary>
+        /// <value>The added by uid.</value>
+        [JsonProperty("added_by_uid")]
+        public string AddedByUid { get; set; }
+
+        /// <summary>
+        /// Gets or sets the assigned by uid.
+        /// </summary>
+        /// <value>The assigned by uid.</value>
+        [JsonProperty("assigned_by_uid")]
+        public string AssignedByUid { get; set; }
 
         /// <summary>
         /// Gets or sets order of project. Defines the position of the project among all the projects with the same parent_id.
@@ -50,46 +58,60 @@ namespace Todoist.Net.Models
         public int? ChildOrder { get; set; }
 
         /// <summary>
-        /// Gets or sets the id of the parent task. Set to <see langword="null" /> for root tasks.
+        /// Gets or sets a value indicating whether this <see cref="Item" /> is collapsed.
+        /// </summary>
+        /// <value><c>null</c> if [collapsed] contains no value, <c>true</c> if [collapsed]; otherwise, <c>false</c>.</value>
+        [JsonProperty("collapsed")]
+        public bool? Collapsed { get; set; }
+
+        /// <summary>
+        /// Gets or sets the content.
+        /// </summary>
+        /// <value>The content.</value>
+        [JsonProperty("content")]
+        public string Content { get; set; }
+
+        /// <summary>
+        /// Gets the date added.
+        /// </summary>
+        /// <value>The date added.</value>
+        [JsonProperty("added_at")]
+        public DateTime? AddedAt { get; internal set; }
+
+        /// <summary>
+        /// Gets or sets the day order.
+        /// </summary>
+        /// <value>The day order.</value>
+        [JsonProperty("day_order")]
+        public int? DayOrder { get; set; }
+
+        /// <summary>
+        /// Gets or sets the description.
+        /// </summary>
+        /// <value>The description.</value>
+        [JsonProperty("description")]
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Gets or sets the due date.
         /// </summary>
         /// <value>
-        /// The parent identifier.
+        /// The due date.
         /// </value>
-        [JsonProperty("parent_id")]
-        public string ParentId { get; set; }
+        [JsonProperty("due")]
+        public DueDate DueDate { get; set; }
 
         /// <summary>
-        /// Gets or sets the project identifier.
+        /// Gets or sets the duration.
         /// </summary>
-        /// <value>The project identifier.</value>
-        [JsonProperty("project_id")]
-        public ComplexId? ProjectId { get; set; }
-
-        /// <summary>
-        /// Gets or sets section of project. Defines the section that the task belongs to.
-        /// </summary>
-        /// <value>The project order.</value>
-        [JsonProperty("section_id")]
-        public string Section { get; set; }
-
-        /// <summary>
-        /// Gets a value indicating whether to add the default reminder to the new item if it has a due date.
-        /// </summary>
+        /// <remarks>
+        /// Durations are only available for Todoist Premium users.
+        /// </remarks>
         /// <value>
-        /// <c>null</c> if [auto reminder] contains no value, <c>true</c> to add the default reminder. Defaults to <c>false</c>.
+        /// The duration.
         /// </value>
-        [JsonProperty("auto_reminder")]
-        public bool? AutoReminder { get; set; }
-
-        /// <summary>
-        /// Gets a value indicating whether the labels should be parsed from the task content.
-        /// </summary>
-        /// <value>
-        /// <c>null</c> if [auto parse labels] contains no value, <c>true</c> to parse labels from content. Defaults to <c>false</c>.
-        /// </value>
-        [JsonProperty("auto_parse_labels")]
-        public bool? AutoParseLabels { get; set; }
-        
+        [JsonProperty("duration", NullValueHandling = NullValueHandling.Include)]
+        public Duration Duration { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is checked.
@@ -106,27 +128,49 @@ namespace Todoist.Net.Models
         public bool? IsDeleted { get; internal set; }
 
         /// <summary>
-        /// Gets the completed date.
+        /// Gets the labels.
+        /// </summary>
+        /// <value>The labels.</value>
+        [JsonProperty("labels")]
+        public ICollection<string> Labels { get; set; }
+
+        /// <summary>
+        /// Gets or sets the id of the parent task. Set to <see langword="null" /> for root tasks.
         /// </summary>
         /// <value>
-        /// The completed date.
+        /// The parent identifier.
         /// </value>
-        [JsonProperty("completed_at")]
-        public DateTime? CompletedAt { get; internal set; }
+        [JsonProperty("parent_id")]
+        public string ParentId { get; set; }
 
         /// <summary>
-        /// Gets the date added.
+        /// Gets or sets the priority.
         /// </summary>
-        /// <value>The date added.</value>
-        [JsonProperty("added_at")]
-        public DateTime? AddedAt { get; internal set; }
+        /// <value>The priority.</value>
+        [JsonProperty("priority")]
+        public Priority? Priority { get; set; }
 
         /// <summary>
-        /// Gets or sets the added by uid.
+        /// Gets or sets the project identifier.
         /// </summary>
-        /// <value>The added by uid.</value>
-        [JsonProperty("added_by_uid")]
-        public string AddedByUid { get; internal set; }
+        /// <value>The project identifier.</value>
+        [JsonProperty("project_id")]
+        public ComplexId? ProjectId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the responsible uid.
+        /// </summary>
+        /// <value>The responsible uid.</value>
+        [JsonProperty("responsible_uid")]
+        public string ResponsibleUid { get; set; }
+
+        /// <summary>
+        /// Gets or sets section of project. Defines the section that the task belongs to.
+        /// </summary>
+        /// <value>The project order.</value>
+        [JsonProperty("section_id")]
+        public string Section { get; set; }
+
 
         /// <summary>
         /// Gets the synchronize identifier.
@@ -141,7 +185,6 @@ namespace Todoist.Net.Models
         /// <value>The user identifier.</value>
         [JsonProperty("user_id")]
         public string UserId { get; internal set; }
-
 
         /// <summary>
         /// Updates the related temporary ids.
