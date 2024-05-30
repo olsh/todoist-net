@@ -101,7 +101,7 @@ namespace Todoist.Net.Tests.Services
             var transaction = client.CreateTransaction();
 
             var projectId = await transaction.Project.AddAsync(new Project("Test"));
-            await transaction.Items.AddAsync(new Item("Test task", projectId));
+            await transaction.Items.AddAsync(new AddItem("Test task", projectId));
 
             await transaction.CommitAsync();
 

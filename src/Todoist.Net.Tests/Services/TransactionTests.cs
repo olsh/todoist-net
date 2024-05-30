@@ -57,7 +57,7 @@ namespace Todoist.Net.Tests.Services
             var project = new Project("Shopping List");
             var projectId = await transaction.Project.AddAsync(project);
 
-            var item = new Item("Buy milk")
+            var item = new AddItem("Buy milk")
             {
                 ProjectId = projectId
             };
@@ -93,7 +93,7 @@ namespace Todoist.Net.Tests.Services
             {
                 Id = new ComplexId(Guid.NewGuid()) // predefined temp id
             };
-            var item = new Item("Buy milk")
+            var item = new AddItem("Buy milk")
             {
                 ProjectId = project.Id // predefined temp id
             };

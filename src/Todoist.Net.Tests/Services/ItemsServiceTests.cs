@@ -29,7 +29,7 @@ namespace Todoist.Net.Tests.Services
 
             var transaction = client.CreateTransaction();
 
-            var item = new Item("temp task");
+            var item = new AddItem("temp task");
             await transaction.Items.AddAsync(item);
             await transaction.Notes.AddToItemAsync(new Note("test note"), item.Id);
             await transaction.Items.CloseAsync(item.Id);
@@ -60,7 +60,7 @@ namespace Todoist.Net.Tests.Services
 
             var transaction = client.CreateTransaction();
 
-            var item = new Item("demo task");
+            var item = new AddItem("demo task");
             var itemId = await transaction.Items.AddAsync(item);
             await transaction.Items.CompleteAsync(new CompleteItemArgument(itemId));
 
@@ -95,7 +95,7 @@ namespace Todoist.Net.Tests.Services
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var item = new Item("demo task") { DueDate = DueDate.FromText("22 Dec 2021", Language.English) };
+            var item = new AddItem("demo task") { DueDate = DueDate.FromText("22 Dec 2021", Language.English) };
             await client.Items.AddAsync(item);
 
             var itemInfo = await client.Items.GetAsync(item.Id);
@@ -118,7 +118,7 @@ namespace Todoist.Net.Tests.Services
         public async Task CreateItem_InvalidPDueDate_ThrowsException()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
-            var item = new Item("bad task");
+            var item = new AddItem("bad task");
             item.DueDate = DueDate.FromText("Invalid date string");
 
             var aggregateException = await Assert.ThrowsAsync<AggregateException>(
@@ -136,16 +136,16 @@ namespace Todoist.Net.Tests.Services
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var item = new Item("demo task");
-            await client.Items.AddAsync(item);
+            var addItem = new AddItem("demo task");
+            var itemId = await client.Items.AddAsync(addItem);
 
-            item.DueDate = DueDate.FromText("every fri");
-            await client.Items.UpdateAsync(item);
+            var updateItem = new UpdateItem(itemId) { DueDate = DueDate.FromText("every fri") };
+            await client.Items.UpdateAsync(updateItem);
 
             var project = new Project(Guid.NewGuid().ToString());
             await client.Projects.AddAsync(project);
 
-            var itemInfo = await client.Items.GetAsync(item.Id);
+            var itemInfo = await client.Items.GetAsync(itemId);
 
             Assert.True(project.Id != itemInfo.Project.Id);
 
@@ -195,7 +195,7 @@ namespace Todoist.Net.Tests.Services
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var item = new Item("New task") { DueDate = DueDate.CreateFloating(DateTime.Now.AddYears(1).Date) };
+            var item = new AddItem("New task") { DueDate = DueDate.CreateFloating(DateTime.Now.AddYears(1).Date) };
             var taskId = await client.Items.AddAsync(item);
 
             var itemInfo = await client.Items.GetAsync(taskId);
@@ -212,7 +212,7 @@ namespace Todoist.Net.Tests.Services
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var item = new Item("duration task")
+            var item = new AddItem("duration task")
             {
                 DueDate = DueDate.FromText("22 Dec 2021 at 9:15", Language.English),
                 Duration = new Duration(45, DurationUnit.Minute)

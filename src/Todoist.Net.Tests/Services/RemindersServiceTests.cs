@@ -28,7 +28,7 @@ namespace Todoist.Net.Tests.Services
 
             var transaction = client.CreateTransaction();
 
-            var itemId = await transaction.Items.AddAsync(new Item("Temp"));
+            var itemId = await transaction.Items.AddAsync(new AddItem("Temp"));
             var reminderId =
                 await transaction.Reminders.AddAsync(new Reminder(itemId) { DueDate = DueDate.CreateFloating(DateTime.UtcNow.AddDays(1)) });
             await transaction.CommitAsync();
@@ -48,7 +48,7 @@ namespace Todoist.Net.Tests.Services
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var item = new Item("Test")
+            var item = new AddItem("Test")
             {
                 DueDate = DueDate.CreateFloating(DateTime.UtcNow.AddDays(1))
             };
