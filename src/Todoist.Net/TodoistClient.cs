@@ -33,7 +33,8 @@ namespace Todoist.Net
                 Modifiers =
                 {
                     JsonResolverModifiers.SerializeInternalSetters,
-                    JsonResolverModifiers.FilterSerializationByType
+                    JsonResolverModifiers.FilterSerializationByType,
+                    JsonResolverModifiers.IncludeUnsetProperties
                 }
             },
             Converters =
