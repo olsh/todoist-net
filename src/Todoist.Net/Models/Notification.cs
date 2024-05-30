@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
-
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -17,42 +16,42 @@ namespace Todoist.Net.Models
         /// Gets the created.
         /// </summary>
         /// <value>The created.</value>
-        [JsonProperty("created_at")]
+        [JsonPropertyName("created_at")]
         public DateTime CreatedAt { get; internal set; }
 
         /// <summary>
         /// Gets from uid.
         /// </summary>
         /// <value>From uid.</value>
-        [JsonProperty("from_uid")]
+        [JsonPropertyName("from_uid")]
         public string FromUid { get; internal set; }
 
         /// <summary>
         /// Gets the identifier.
         /// </summary>
         /// <value>The identifier.</value>
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public string Id { get; internal set; }
 
         /// <summary>
         /// Gets the notification key.
         /// </summary>
         /// <value>The notification key.</value>
-        [JsonProperty("notification_key")]
+        [JsonPropertyName("notification_key")]
         public string NotificationKey { get; internal set; }
 
         /// <summary>
         /// Gets the type of the notification.
         /// </summary>
         /// <value>The type of the notification.</value>
-        [JsonProperty("notification_type")]
+        [JsonPropertyName("notification_type")]
         public string NotificationType { get; internal set; }
 
         /// <summary>
         /// Gets the seq no.
         /// </summary>
         /// <value>The seq no.</value>
-        [JsonProperty("seq_no")]
+        [JsonPropertyName("seq_no")]
         public long SeqNo { get; internal set; }
 
         /// <summary>

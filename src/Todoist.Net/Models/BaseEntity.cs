@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -12,6 +12,7 @@ namespace Todoist.Net.Models
             Id = id;
         }
 
+        [JsonConstructor]
         internal BaseEntity()
         {
         }
@@ -22,16 +23,8 @@ namespace Todoist.Net.Models
         /// <value>
         /// The identifier.
         /// </value>
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public ComplexId Id { get; set; }
-
-        /// <summary>
-        /// Checks if the Id property should be serialized.
-        /// </summary>
-        /// <returns><c>True</c> if the property should be serialized, <c>false</c> otherwise.</returns>
-        public bool ShouldSerializeId()
-        {
-            return !Id.IsEmpty;
-        }
     }
 }

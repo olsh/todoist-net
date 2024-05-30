@@ -11,19 +11,15 @@ namespace Todoist.Net.Tests.Models
         [Fact]
         public void TryParse_InvalidValue_Fail()
         {
-            StringEnum result;
-
-            Assert.False(StringEnum.TryParse("all1", typeof(ResourceType), out result));
-            Assert.True(result == null);
+            Assert.False(StringEnum.TryParse("all1", out ResourceType result));
+            Assert.Null(result);
         }
 
         [Fact]
         public void TryParse_ValidValue_Success()
         {
-            StringEnum result;
-
-            Assert.True(StringEnum.TryParse("all", typeof(ResourceType), out result));
-            Assert.True(result != null);
+            Assert.True(StringEnum.TryParse("all", out ResourceType result));
+            Assert.NotNull(result);
         }
     }
 }

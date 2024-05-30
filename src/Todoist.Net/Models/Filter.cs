@@ -1,6 +1,5 @@
 using System;
-
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -37,6 +36,7 @@ namespace Todoist.Net.Models
             Query = query;
         }
 
+        [JsonConstructor]
         internal Filter()
         {
         }
@@ -47,7 +47,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The color.
         /// </value>
-        [JsonProperty("color")]
+        [JsonPropertyName("color")]
         public string Color { get; set; }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// <c>true</c> if this instance is deleted; otherwise, <c>false</c>.
         /// </value>
-        [JsonProperty("is_deleted")]
+        [JsonPropertyName("is_deleted")]
         public bool IsDeleted { get; internal set; }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Todoist.Net.Models
         /// <value>
         ///   <c>true</c> if this instance is favorite; otherwise, <c>false</c>.
         /// </value>
-        [JsonProperty("is_favorite")]
+        [JsonPropertyName("is_favorite")]
         public bool IsFavorite { get; internal set; }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Todoist.Net.Models
         /// The item order.
         /// </value>
         /// <remarks>Filter’s order in the filter list (where the smallest value should place the filter at the top).</remarks>
-        [JsonProperty("item_order")]
+        [JsonPropertyName("item_order")]
         public int ItemOrder { get; set; }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The name of the filter.
         /// </value>
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The query to search for.
         /// </value>
-        [JsonProperty("query")]
+        [JsonPropertyName("query")]
         public string Query { get; set; }
     }
 }

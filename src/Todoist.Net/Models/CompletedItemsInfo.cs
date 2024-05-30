@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-
-using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -15,7 +14,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The items.
         /// </value>
-        [JsonProperty("items")]
+        [JsonPropertyName("items")]
         public IReadOnlyCollection<CompletedItem> Items { get; internal set; }
 
         /// <summary>
@@ -24,7 +23,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The projects.
         /// </value>
-        [JsonProperty("projects")]
+        [JsonPropertyName("projects")]
         public IReadOnlyDictionary<long, Project> Projects { get; internal set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -9,16 +9,17 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="email">The email.</param>
+        [JsonConstructor]
         internal ShareProjectArgument(ComplexId id, string email)
         {
             Id = id;
             Email = email;
         }
 
-        [JsonProperty("email")]
+        [JsonPropertyName("email")]
         public string Email { get; set; }
 
-        [JsonProperty("project_id")]
+        [JsonPropertyName("project_id")]
         public ComplexId Id { get; }
     }
 }

@@ -1,28 +1,35 @@
-﻿using System;
-
-using Newtonsoft.Json;
+using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Serialization.Converters
 {
-    internal class BoolConverter : JsonConverter
+    internal sealed class BoolConverter : JsonConverter<bool>
     {
-        public override bool CanConvert(Type objectType)
+        public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return objectType == typeof(bool);
+            switch (reader.TokenType)
+            {
+                case JsonTokenType.String:
+                    return reader.GetString() == "1";
+
+                case JsonTokenType.Number:
+                    return reader.GetInt32() == 1;
+
+                case JsonTokenType.True:
+                    return true;
+
+                case JsonTokenType.False:
+                    return false;
+
+                default:
+                    throw new JsonException($"Token type not supported for boolean properties. Token: {reader.TokenType}");
+            }
         }
 
-        public override object ReadJson(
-            JsonReader reader,
-            Type objectType,
-            object existingValue,
-            JsonSerializer serializer)
+        public override void Write(Utf8JsonWriter writer, bool value, JsonSerializerOptions options)
         {
-            return reader.Value?.ToString() == "1";
-        }
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            writer.WriteValue(((bool)value) ? 1 : 0);
+            writer.WriteNumberValue(value ? 1 : 0);
         }
     }
 }

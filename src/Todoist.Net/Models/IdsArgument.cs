@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -22,7 +21,7 @@ namespace Todoist.Net.Models
             Ids = tempIds ?? throw new ArgumentNullException(nameof(tempIds));
         }
 
-        [JsonProperty("ids")]
+        [JsonPropertyName("ids")]
         public IEnumerable<ComplexId> Ids { get; }
     }
 }

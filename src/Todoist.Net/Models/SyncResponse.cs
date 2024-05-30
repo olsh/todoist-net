@@ -1,19 +1,18 @@
 using System;
 using System.Collections.Generic;
-
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
     internal class SyncResponse
     {
-        [JsonProperty("sync_status")]
-        public Dictionary<Guid, dynamic> SyncStatus { get; set; }
+        [JsonPropertyName("sync_status")]
+        public Dictionary<Guid, CommandResult> SyncStatus { get; set; }
 
-        [JsonProperty("temp_id_mapping")]
+        [JsonPropertyName("temp_id_mapping")]
         public Dictionary<Guid, string> TempIdMappings { get; set; }
 
-        [JsonProperty("sync_token")]
+        [JsonPropertyName("sync_token")]
         public string SyncToken { get; set; }
     }
 }

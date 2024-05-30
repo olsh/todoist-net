@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -8,6 +8,7 @@ namespace Todoist.Net.Models
     /// <seealso cref="Todoist.Net.Models.MoveArgument" />
     public class ItemMoveArgument : BaseEntity
     {
+        [JsonConstructor]
         internal ItemMoveArgument()
         {
         }
@@ -18,7 +19,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The project identifier.
         /// </value>
-        [JsonProperty("project_id")]
+        [JsonPropertyName("project_id")]
         public ComplexId? ProjectId { get; internal set; }
 
         /// <summary>
@@ -27,12 +28,12 @@ namespace Todoist.Net.Models
         /// <value>
         /// The section identifier.
         /// </value>
-        [JsonProperty("section_id")]
+        [JsonPropertyName("section_id")]
         public ComplexId? SectionId { get; internal set; }
 
         /// <summary>Gets the parent entity identifier.</summary>
         /// <value>The parent entity identifier.</value>
-        [JsonProperty("parent_id")]
+        [JsonPropertyName("parent_id")]
         public ComplexId? ParentId { get; internal set; }
 
         /// <summary>

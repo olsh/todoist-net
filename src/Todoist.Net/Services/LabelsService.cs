@@ -25,14 +25,5 @@ namespace Todoist.Net.Services
 
             return response.Labels;
         }
-
-        /// <inheritdoc/>
-        public Task<LabelInfo> GetAsync(ComplexId id, CancellationToken cancellationToken = default)
-        {
-            return TodoistClient.PostAsync<LabelInfo>(
-                "labels/get",
-                new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("label_id", id.ToString()) },
-                cancellationToken);
-        }
     }
 }

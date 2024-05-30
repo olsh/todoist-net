@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-
-using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -11,7 +10,7 @@ namespace Todoist.Net.Models
             ReorderEntries = reorderEntries;
         }
 
-        [JsonProperty("projects")]
+        [JsonPropertyName("projects")]
         public IEnumerable<ReorderEntry> ReorderEntries { get; }
     }
 }

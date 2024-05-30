@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -7,6 +7,7 @@ namespace Todoist.Net.Models
     /// </summary>
     public class CollaboratorState
     {
+        [JsonConstructor]
         internal CollaboratorState()
         {
         }
@@ -15,28 +16,28 @@ namespace Todoist.Net.Models
         /// Gets the user id of the collaborator.
         /// </summary>
         /// <value>The user id.</value>
-        [JsonProperty("user_id")]
+        [JsonPropertyName("user_id")]
         public string UserId { get; internal set; }
 
         /// <summary>
         /// Gets the shared project id.
         /// </summary>
         /// <value>The project id.</value>
-        [JsonProperty("project_id")]
+        [JsonPropertyName("project_id")]
         public string ProjectId { get; internal set; }
 
         /// <summary>
         /// Gets the collaborator status.
         /// </summary>
         /// <value>The status.</value>
-        [JsonProperty("state")]
+        [JsonPropertyName("state")]
         public CollaboratorStatus State { get; internal set; }
 
         /// <summary>
         /// Gets a value indicating whether this collaborator is deleted.
         /// </summary>
         /// <value><c>true</c> if this collaborator is deleted; otherwise, <c>false</c>.</value>
-        [JsonProperty("is_deleted")]
+        [JsonPropertyName("is_deleted")]
         public bool IsDeleted { get; internal set; }
 
     }

@@ -1,6 +1,5 @@
 using System;
-
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
@@ -29,7 +28,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The date completed.
         /// </value>
-        [JsonProperty("completed_at")]
+        [JsonPropertyName("completed_at")]
         public DateTime? CompletedAt { get; }
 
         /// <summary>
@@ -38,7 +37,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// The identifier.
         /// </value>
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public ComplexId Id { get; }
     }
 }
