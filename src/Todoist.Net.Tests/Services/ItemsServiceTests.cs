@@ -103,7 +103,7 @@ namespace Todoist.Net.Tests.Services
             Assert.True(itemInfo.Item.Content == item.Content);
             Assert.Equal("2021-12-22", itemInfo.Item.DueDate.StringDate);
 
-            itemInfo.Item.DueDate = null;
+            itemInfo.Item.Unset(i => i.DueDate);
             await client.Items.UpdateAsync(itemInfo.Item);
 
             itemInfo = await client.Items.GetAsync(item.Id);
@@ -227,7 +227,7 @@ namespace Todoist.Net.Tests.Services
             Assert.Equal(item.Duration.Amount, itemInfo.Item.Duration.Amount);
             Assert.Equal(item.Duration.Unit, itemInfo.Item.Duration.Unit);
 
-            itemInfo.Item.Duration = null;
+            itemInfo.Item.Unset(i => i.Duration);
             await client.Items.UpdateAsync(itemInfo.Item);
 
             itemInfo = await client.Items.GetAsync(item.Id);
