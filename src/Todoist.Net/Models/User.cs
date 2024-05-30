@@ -5,24 +5,42 @@ namespace Todoist.Net.Models
     /// <summary>
     /// Represents a Todoist user.
     /// </summary>
-    /// <seealso cref="Todoist.Net.Models.UserBase" />
-    public class User : UserBase
+    public class User : ICommandArgument
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="User"/> class.
+        /// Gets or sets the email.
         /// </summary>
-        /// <param name="email">The email.</param>
-        /// <param name="fullName">The full name.</param>
-        /// <param name="password">The password.</param>
-        public User(string email, string fullName, string password)
-            : base(email, fullName, password)
-        {
-        }
+        /// <value>The email.</value>
+        [JsonPropertyName("email")]
+        public string Email { get; set; }
 
-        [JsonConstructor]
-        internal User()
-        {
-        }
+        /// <summary>
+        /// Gets or sets the full name.
+        /// </summary>
+        /// <value>The full name.</value>
+        [JsonPropertyName("full_name")]
+        public string FullName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the language.
+        /// </summary>
+        /// <value>The language.</value>
+        [JsonPropertyName("lang")]
+        public Language Language { get; set; }
+
+        /// <summary>
+        /// Gets or sets the password.
+        /// </summary>
+        /// <value>The password.</value>
+        [JsonPropertyName("password")]
+        public string Password { get; set; }
+
+        /// <summary>
+        /// Gets or sets the time zone.
+        /// </summary>
+        /// <value>The time zone.</value>
+        [JsonPropertyName("timezone")]
+        public string TimeZone { get; set; }
 
         /// <summary>
         /// Gets or sets the automatic reminder.
