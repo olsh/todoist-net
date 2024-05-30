@@ -6,7 +6,7 @@ namespace Todoist.Net.Models
     /// <summary>
     /// Represents a Todoist task.
     /// </summary>
-    public class UpdateItem : BaseEntity
+    public class UpdateItem : BaseUnsetEntity
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="UpdateItem" /> class.

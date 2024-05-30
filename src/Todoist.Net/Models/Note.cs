@@ -9,7 +9,7 @@ namespace Todoist.Net.Models
     /// Represents a Todoist note.
     /// </summary>
     /// <seealso cref="Todoist.Net.Models.BaseEntity" />
-    public class Note : BaseEntity, IWithRelationsArgument
+    public class Note : BaseUnsetEntity, IWithRelationsArgument
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Note" /> class.

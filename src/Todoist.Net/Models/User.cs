@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Reflection;
 using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
@@ -5,8 +7,11 @@ namespace Todoist.Net.Models
     /// <summary>
     /// Represents a Todoist user.
     /// </summary>
-    public class User : ICommandArgument
+    public class User : ICommandArgument, IUnsettableProperties
     {
+        HashSet<PropertyInfo> IUnsettableProperties.UnsetProperties { get; } = new HashSet<PropertyInfo>();
+
+
         /// <summary>
         /// Gets or sets the email.
         /// </summary>
