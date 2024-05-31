@@ -32,15 +32,19 @@ namespace Todoist.Net.Tests.Services
             var reminderId =
                 await transaction.Reminders.AddAsync(new Reminder(itemId) { DueDate = DueDate.CreateFloating(DateTime.UtcNow.AddDays(1)) });
             await transaction.CommitAsync();
+            try
+            {
+                var reminders = await client.Reminders.GetAsync();
+                Assert.True(reminders.Any());
 
-            var reminders = await client.Reminders.GetAsync();
-            Assert.True(reminders.Any());
-
-            var reminderInfo = await client.Reminders.GetAsync(reminderId);
-            Assert.NotNull(reminderInfo);
-
-            await client.Reminders.DeleteAsync(reminderInfo.Reminder.Id);
-            await client.Items.DeleteAsync(itemId);
+                var reminderInfo = await client.Reminders.GetAsync(reminderId);
+                Assert.NotNull(reminderInfo);
+            }
+            finally
+            {
+                await client.Reminders.DeleteAsync(reminderId);
+                await client.Items.DeleteAsync(itemId);
+            }
         }
 
         [Fact]
@@ -54,19 +58,23 @@ namespace Todoist.Net.Tests.Services
             };
 
             var taskId = await client.Items.AddAsync(item);
-
-            var user = await client.Users.GetCurrentAsync();
-            var reminder = new Reminder(taskId)
+            try
             {
-                MinuteOffset = 60,
-                NotifyUid = user.Id
-            };
+                var user = await client.Users.GetCurrentAsync();
+                var reminder = new Reminder(taskId)
+                {
+                    MinuteOffset = 60,
+                    NotifyUid = user.Id
+                };
 
-            var reminderId = await client.Reminders.AddAsync(reminder);
+                var reminderId = await client.Reminders.AddAsync(reminder);
 
-            Assert.NotNull(reminderId.PersistentId);
-
-            await client.Items.DeleteAsync(item.Id);
+                Assert.NotNull(reminderId.PersistentId);
+            }
+            finally
+            {
+                await client.Items.DeleteAsync(item.Id);
+            }
         }
     }
 }

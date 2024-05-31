@@ -27,19 +27,20 @@ namespace Todoist.Net.Tests.Services
             var client = TodoistClientFactory.Create(_outputHelper);
 
             var projectName = Guid.NewGuid().ToString();
-            await client.Projects.AddAsync(new Project(projectName));
+            var projectId = await client.Projects.AddAsync(new Project(projectName));
+            try
+            {
+                var projects = await client.Projects.GetAsync();
 
-            var projects = await client.Projects.GetAsync();
-            var project = projects.FirstOrDefault(p => p.Name == projectName);
+                Assert.Contains(projects, p => p.Name == projectName);
+            }
+            finally
+            {
+                await client.Projects.DeleteAsync(projectId);
+            }
+            var otherProjects = await client.Projects.GetAsync();
 
-            Assert.NotNull(project);
-
-            await client.Projects.DeleteAsync(project.Id);
-
-            projects = await client.Projects.GetAsync();
-            project = projects.FirstOrDefault(p => p.Name == projectName);
-
-            Assert.Null(project);
+            Assert.DoesNotContain(otherProjects, p => p.Name == projectName);
         }
 
         [Fact]
@@ -51,23 +52,32 @@ namespace Todoist.Net.Tests.Services
             var projectName = Guid.NewGuid().ToString();
             var project = new Project(projectName);
             await client.Projects.AddAsync(project);
+            try
+            {
+                Assert.True(project.Id != default(string));
 
-            Assert.True(project.Id != default(string));
+                project.Name = "u_" + Guid.NewGuid();
 
-            project.Name = "u_" + Guid.NewGuid();
+                await client.Projects.UpdateAsync(project);
 
-            await client.Projects.UpdateAsync(project);
+                await client.Projects.ReorderAsync(new ReorderEntry(project.Id, 1));
 
-            await client.Projects.ReorderAsync(new ReorderEntry(project.Id, 1));
-
-            var parentProjectName = Guid.NewGuid().ToString();
-            var parentProject = new Project(parentProjectName);
-            await client.Projects.AddAsync(parentProject);
-
-            await client.Projects.MoveAsync(new MoveArgument(project.Id, parentProject.Id));
-
-            await client.Projects.DeleteAsync(project.Id);
-            await client.Projects.DeleteAsync(parentProject.Id);
+                var parentProjectName = Guid.NewGuid().ToString();
+                var parentProject = new Project(parentProjectName);
+                await client.Projects.AddAsync(parentProject);
+                try
+                {
+                    await client.Projects.MoveAsync(new MoveArgument(project.Id, parentProject.Id));
+                }
+                finally
+                {
+                    await client.Projects.DeleteAsync(parentProject.Id);
+                }
+            }
+            finally
+            {
+                await client.Projects.DeleteAsync(project.Id);
+            }
         }
 
         [Fact]
@@ -79,17 +89,21 @@ namespace Todoist.Net.Tests.Services
             var projectName = Guid.NewGuid().ToString();
             var newProject = new Project(projectName);
             await client.Projects.AddAsync(newProject);
+            try
+            {
+                await client.Projects.ArchiveAsync(newProject.Id);
+                var projectInfo = await client.Projects.GetAsync(newProject.Id);
+                Assert.True(projectInfo.Project.IsArchived);
 
-            await client.Projects.ArchiveAsync(newProject.Id);
-            var projectInfo = await client.Projects.GetAsync(newProject.Id);
-            Assert.True(projectInfo.Project.IsArchived);
 
-
-            await client.Projects.UnarchiveAsync(newProject.Id);
-            projectInfo = await client.Projects.GetAsync(newProject.Id);
-            Assert.False(projectInfo.Project.IsArchived);
-
-            await client.Projects.DeleteAsync(projectInfo.Project.Id);
+                await client.Projects.UnarchiveAsync(newProject.Id);
+                projectInfo = await client.Projects.GetAsync(newProject.Id);
+                Assert.False(projectInfo.Project.IsArchived);
+            }
+            finally
+            {
+                await client.Projects.DeleteAsync(newProject.Id);
+            }
         }
 
         [Fact]
@@ -104,12 +118,16 @@ namespace Todoist.Net.Tests.Services
             await transaction.Items.AddAsync(new AddItem("Test task", projectId));
 
             await transaction.CommitAsync();
+            try
+            {
+                var projectData = await client.Projects.GetDataAsync(projectId);
 
-            var projectData = await client.Projects.GetDataAsync(projectId);
-
-            Assert.Single(projectData.Items);
-
-            await client.Projects.DeleteAsync(projectId);
+                Assert.Single(projectData.Items);
+            }
+            finally
+            {
+                await client.Projects.DeleteAsync(projectId);
+            }
         }
     }
 }

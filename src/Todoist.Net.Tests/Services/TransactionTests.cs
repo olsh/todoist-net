@@ -32,18 +32,22 @@ namespace Todoist.Net.Tests.Services
             await transaction.Notes.AddToProjectAsync(note, projectId);
 
             var syncToken = await transaction.CommitAsync();
+            try
+            {
+                var projectInfo = await client.Projects.GetAsync(project.Id);
 
-            var projectInfo = await client.Projects.GetAsync(project.Id);
+                Assert.True(projectInfo.Notes.Count > 0);
+                Assert.NotNull(syncToken);
+            }
+            finally
+            {
+                var deleteTransaction = client.CreateTransaction();
 
-            Assert.True(projectInfo.Notes.Count > 0);
-            Assert.NotNull(syncToken);
+                await deleteTransaction.Notes.DeleteAsync(note.Id);
+                await deleteTransaction.Project.DeleteAsync(project.Id);
 
-            var deleteTransaction = client.CreateTransaction();
-
-            await deleteTransaction.Notes.DeleteAsync(note.Id);
-            await deleteTransaction.Project.DeleteAsync(project.Id);
-
-            await deleteTransaction.CommitAsync();
+                await deleteTransaction.CommitAsync();
+            }
         }
 
         [Fact]
@@ -64,20 +68,22 @@ namespace Todoist.Net.Tests.Services
             await transaction.Items.AddAsync(item);
 
             await transaction.CommitAsync();
-
-            Assert.False(string.IsNullOrEmpty(project.Id.PersistentId));
-            Assert.False(string.IsNullOrEmpty(item.Id.PersistentId));
-
-
-            var itemInfo = await client.Items.GetAsync(item.Id);
-
-            Assert.Equal(itemInfo.Item.Content, item.Content);
-            Assert.Equal(itemInfo.Project.Name, project.Name);
-            Assert.Equal(itemInfo.Project.Id.PersistentId, project.Id.PersistentId);
+            try
+            {
+                Assert.False(string.IsNullOrEmpty(project.Id.PersistentId));
+                Assert.False(string.IsNullOrEmpty(item.Id.PersistentId));
 
 
-            await client.Projects.DeleteAsync(project.Id);
+                var itemInfo = await client.Items.GetAsync(item.Id);
 
+                Assert.Equal(itemInfo.Item.Content, item.Content);
+                Assert.Equal(itemInfo.Project.Name, project.Name);
+                Assert.Equal(itemInfo.Project.Id.PersistentId, project.Id.PersistentId);
+            }
+            finally
+            {
+                await client.Projects.DeleteAsync(project.Id);
+            }
             var projects = await client.Projects.GetAsync();
 
             Assert.DoesNotContain(projects, p => p.Id.PersistentId == project.Id.PersistentId);
@@ -104,20 +110,22 @@ namespace Todoist.Net.Tests.Services
             await transaction.Items.AddAsync(item);
 
             await transaction.CommitAsync();
-
-            Assert.False(string.IsNullOrEmpty(project.Id.PersistentId));
-            Assert.False(string.IsNullOrEmpty(item.Id.PersistentId));
-
-
-            var itemInfo = await client.Items.GetAsync(item.Id);
-
-            Assert.Equal(itemInfo.Item.Content, item.Content);
-            Assert.Equal(itemInfo.Project.Name, project.Name);
-            Assert.Equal(itemInfo.Project.Id.PersistentId, project.Id.PersistentId);
+            try
+            {
+                Assert.False(string.IsNullOrEmpty(project.Id.PersistentId));
+                Assert.False(string.IsNullOrEmpty(item.Id.PersistentId));
 
 
-            await client.Projects.DeleteAsync(project.Id);
+                var itemInfo = await client.Items.GetAsync(item.Id);
 
+                Assert.Equal(itemInfo.Item.Content, item.Content);
+                Assert.Equal(itemInfo.Project.Name, project.Name);
+                Assert.Equal(itemInfo.Project.Id.PersistentId, project.Id.PersistentId);
+            }
+            finally
+            {
+                await client.Projects.DeleteAsync(project.Id);
+            }
             var projects = await client.Projects.GetAsync();
 
             Assert.DoesNotContain(projects, p => p.Id.PersistentId == project.Id.PersistentId);

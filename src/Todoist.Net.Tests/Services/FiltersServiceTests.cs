@@ -42,21 +42,25 @@ namespace Todoist.Net.Tests.Services
 
             var filter = new Filter(Guid.NewGuid().ToString(), "today");
             await client.Filters.AddAsync(filter);
+            try
+            {
+                var filters = await client.Filters.GetAsync();
 
-            var filters = await client.Filters.GetAsync();
+                Assert.Contains(filters, f => f.Name == filter.Name);
 
-            Assert.Contains(filters, f => f.Name == filter.Name);
+                filter.Query = "test";
+                await client.Filters.UpdateAsync(filter);
+                var filterOrder = 2;
+                await client.Filters.UpdateOrderAsync(new OrderEntry(filter.Id, filterOrder));
 
-            filter.Query = "test";
-            await client.Filters.UpdateAsync(filter);
-            var filterOrder = 2;
-            await client.Filters.UpdateOrderAsync(new OrderEntry(filter.Id, filterOrder));
-
-            var filterInfo = await client.Filters.GetAsync(filter.Id);
-            Assert.Equal(filter.Query, filterInfo.Filter.Query);
-            Assert.Equal(filterOrder, filterInfo.Filter.ItemOrder);
-
-            await client.Filters.DeleteAsync(filter.Id);
+                var filterInfo = await client.Filters.GetAsync(filter.Id);
+                Assert.Equal(filter.Query, filterInfo.Filter.Query);
+                Assert.Equal(filterOrder, filterInfo.Filter.ItemOrder);
+            }
+            finally
+            {
+                await client.Filters.DeleteAsync(filter.Id);
+            }
         }
     }
 }

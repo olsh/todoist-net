@@ -33,10 +33,14 @@ namespace Todoist.Net.Tests.Services
 
             var tempProject = new Project(Guid.NewGuid().ToString());
             await client.Projects.AddAsync(tempProject);
-
-            await client.Templates.ImportIntoProjectAsync(tempProject.Id, Encoding.UTF8.GetBytes(template));
-
-            await client.Projects.DeleteAsync(tempProject.Id);
+            try
+            {
+                await client.Templates.ImportIntoProjectAsync(tempProject.Id, Encoding.UTF8.GetBytes(template));
+            }
+            finally
+            {
+                await client.Projects.DeleteAsync(tempProject.Id);
+            }
         }
 
         [Fact]
