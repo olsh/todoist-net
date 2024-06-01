@@ -8,7 +8,7 @@ namespace Todoist.Net.Models
     /// Represents a base entity that implements <see cref="IUnsettableProperties"/>.
     /// </summary>
     /// <seealso cref="IUnsettableProperties"/>
-    public class BaseUnsetEntity : BaseEntity, IUnsettableProperties
+    public abstract class BaseUnsetEntity : BaseEntity, IUnsettableProperties
     {
         HashSet<PropertyInfo> IUnsettableProperties.UnsetProperties { get; } = new HashSet<PropertyInfo>();
 
