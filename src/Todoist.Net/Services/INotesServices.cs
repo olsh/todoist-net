@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +18,6 @@ namespace Todoist.Net.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The notes.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<IEnumerable<Note>> GetAsync(CancellationToken cancellationToken = default);
+        Task<NotesInfo> GetAsync(CancellationToken cancellationToken = default);
     }
 }
