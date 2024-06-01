@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,8 +23,7 @@ namespace Todoist.Net.Services
         {
             var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Notes).ConfigureAwait(false);
 
-            return response.Notes
-                .Concat(response.ProjectNotes);
+            return response.Notes;
         }
     }
 }
