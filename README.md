@@ -63,3 +63,27 @@ await transaction.Notes.AddToItemAsync(new Note("Task description"), taskId);
 await transaction.CommitAsync();
 
 ```
+
+### Sending null values when updating entities.
+When updating entities, Todoist API only updates properties included in the request body, using a `PATCH` request style.
+That's why all properties with `null` values are not included by default, to allow updating without fetching the entity first.
+
+So, if you want to send a `null` value to the API, you need to use the `Unset` extension method.
+
+For example, the following code will not work and the due date will remain unchanged ❌
+```csharp
+// This code won't have an effect.
+var task = new UpdateItem("TASK_ID");
+task.DueDate = null;
+
+await client.Items.UpdateAsync(task);
+```
+
+However, using `Unset` will send a `due` property with a `null` value ✔️
+```csharp
+// This code removes a task's due date.
+var task = new UpdateItem("TASK_ID");
+task.Unset(t => t.DueDate);
+
+await client.Items.UpdateAsync(task);
+```
