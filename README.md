@@ -15,15 +15,8 @@ Install-Package Todoist.Net
 
 ### Creating Todoist client
 
-With token (preferred way).
 ```csharp
 ITodoistClient client = new TodoistClient("API token");
-```
-
-With email and password.
-```csharp
-ITodoistTokenlessClient tokenlessClient = new TodoistTokenlessClient();
-ITodoistClient client = await tokenlessClient.LoginAsync("email", "password");
 ```
 
 ### Quick add
