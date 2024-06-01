@@ -12,12 +12,19 @@ namespace Todoist.Net
     public static class UnsettablePropertiesExtensions
     {
         /// <summary>
-        /// Specifies that the targeted property should be included in the outgoing requests with no value (<see langword="null"/>).
+        /// Specifies that the targeted property should be included in the outgoing requests with no value (<see langword="null"/>)
         /// </summary>
+        /// <remarks>
+        /// This method can be used as follows:
+        /// <code>
+        /// item.Unset(x => x.DueDate);
+        /// </code>
+        /// </remarks>
         /// <typeparam name="T">The type of the <see cref="IUnsettableProperties"/> entity.</typeparam>
         /// <typeparam name="TProp">The type of the targeted property.</typeparam>
         /// <param name="entity">The entity to unset its property.</param>
         /// <param name="propertyExpression">A lambda expression representing the property to be unset (x => x.MyProperty).</param>
+        /// <exception cref="InvalidOperationException"><typeparamref name="TProp"/> is not a nullable property.</exception>
         /// <exception cref="ArgumentException"><paramref name="propertyExpression"/> is not a lambda for property.</exception>
         public static void Unset<T, TProp>(this T entity, Expression<Func<T, TProp>> propertyExpression) where T : IUnsettableProperties
         {

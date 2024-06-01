@@ -38,6 +38,18 @@ namespace Todoist.Net.Tests.Models
         }
 
         [Fact]
+        public void UnitInstantiation_UnsetValue_HasNoTime()
+        {
+            var duration = new Duration();
+
+            Assert.Equal(duration.TimeValue, TimeSpan.Zero);
+
+            duration.Amount = 15;
+
+            Assert.Equal(duration.TimeValue, TimeSpan.Zero);
+        }
+
+        [Fact]
         public void TimeValueEvaluation_Success()
         {
             var duration = new Duration(15, DurationUnit.Minute);
