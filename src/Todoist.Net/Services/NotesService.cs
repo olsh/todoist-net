@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,11 +18,15 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<Note>> GetAsync(CancellationToken cancellationToken = default)
+        public async Task<NotesInfo> GetAsync(CancellationToken cancellationToken = default)
         {
             var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Notes).ConfigureAwait(false);
 
-            return response.Notes;
+            return new NotesInfo
+            {
+                ItemNotes = response.Notes,
+                ProjectNotes = response.ProjectNotes
+            };
         }
     }
 }

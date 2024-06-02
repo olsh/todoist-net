@@ -34,8 +34,8 @@ namespace Todoist.Net.Tests.Services
                 var note = new Note("Hello");
                 await todoistClient.Notes.AddToProjectAsync(note, project.Id.PersistentId);
 
-                var notes = await todoistClient.Notes.GetAsync();
-                Assert.Contains(notes, n => n.Id == note.Id);
+                var notesInfo = await todoistClient.Notes.GetAsync();
+                Assert.Contains(notesInfo.ProjectNotes, n => n.Id == note.Id);
             }
             finally
             {
