@@ -8,12 +8,12 @@ namespace Todoist.Net.Models
     /// </summary>
     public abstract class BaseItem : BaseUnsetEntity
     {
-        internal BaseItem(ComplexId id)
+        private protected BaseItem(ComplexId id)
             : base(id)
         {
         }
 
-        internal BaseItem()
+        private protected BaseItem()
         {
         }
 

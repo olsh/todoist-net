@@ -12,13 +12,13 @@ namespace Todoist.Net.Models
     {
         HashSet<PropertyInfo> IUnsettableProperties.UnsetProperties { get; } = new HashSet<PropertyInfo>();
 
-        internal BaseUnsetEntity(ComplexId id)
+        private protected BaseUnsetEntity(ComplexId id)
             : base(id)
         {
         }
 
         [JsonConstructor]
-        internal BaseUnsetEntity()
+        private protected BaseUnsetEntity()
         {
         }
     }
