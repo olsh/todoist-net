@@ -29,14 +29,18 @@ namespace Todoist.Net.Tests.Services
 
             var project = new Project(Guid.NewGuid().ToString());
             await todoistClient.Projects.AddAsync(project);
+            try
+            {
+                var note = new Note("Hello");
+                await todoistClient.Notes.AddToProjectAsync(note, project.Id.PersistentId);
 
-            var note = new Note("Hello");
-            await todoistClient.Notes.AddToProjectAsync(note, project.Id.PersistentId);
-
-            var notesInfo = await todoistClient.Notes.GetAsync();
-            Assert.Contains(notesInfo.ProjectNotes, n => n.Id == note.Id);
-
-            await todoistClient.Projects.DeleteAsync(project.Id);
+                var notesInfo = await todoistClient.Notes.GetAsync();
+                Assert.Contains(notesInfo.ProjectNotes, n => n.Id == note.Id);
+            }
+            finally
+            {
+                await todoistClient.Projects.DeleteAsync(project.Id);
+            }
         }
 
         [Fact]
@@ -47,14 +51,18 @@ namespace Todoist.Net.Tests.Services
 
             var project = new Project(Guid.NewGuid().ToString());
             await todoistClient.Projects.AddAsync(project);
+            try
+            {
+                var note = new Note("Hello");
+                await todoistClient.Notes.AddToProjectAsync(note, project.Id.PersistentId);
 
-            var note = new Note("Hello");
-            await todoistClient.Notes.AddToProjectAsync(note, project.Id.PersistentId);
-
-            note.Content = "Updated";
-            await todoistClient.Notes.UpdateAsync(note);
-
-            await todoistClient.Projects.DeleteAsync(project.Id);
+                note.Content = "Updated";
+                await todoistClient.Notes.UpdateAsync(note);
+            }
+            finally
+            {
+                await todoistClient.Projects.DeleteAsync(project.Id);
+            }
         }
 
         [Fact]
@@ -65,25 +73,29 @@ namespace Todoist.Net.Tests.Services
 
             var project = new Project(Guid.NewGuid().ToString());
             await client.Projects.AddAsync(project);
+            try
+            {
+                var note = new Note("Hello");
+                var fileName = "test.txt";
+                var upload = await client.Uploads.UploadAsync(fileName, Encoding.UTF8.GetBytes("hello"));
+                note.FileAttachment = upload;
 
-            var note = new Note("Hello");
-            var fileName = "test.txt";
-            var upload = await client.Uploads.UploadAsync(fileName, Encoding.UTF8.GetBytes("hello"));
-            note.FileAttachment = upload;
+                await client.Notes.AddToProjectAsync(note, project.Id.PersistentId);
 
-            await client.Notes.AddToProjectAsync(note, project.Id.PersistentId);
+                var projectInfo = await client.Projects.GetAsync(project.Id);
+                var attachedNote = projectInfo.Notes.FirstOrDefault();
+                Assert.NotNull(attachedNote);
+                Assert.True(attachedNote.FileAttachment.FileName == fileName);
 
-            var projectInfo = await client.Projects.GetAsync(project.Id);
-            var attachedNote = projectInfo.Notes.FirstOrDefault();
-            Assert.NotNull(attachedNote);
-            Assert.True(attachedNote.FileAttachment.FileName == fileName);
+                await client.Notes.DeleteAsync(attachedNote.Id);
 
-            await client.Notes.DeleteAsync(attachedNote.Id);
-
-            projectInfo = await client.Projects.GetAsync(project.Id);
-            Assert.Empty(projectInfo.Notes);
-
-            await client.Projects.DeleteAsync(project.Id);
+                projectInfo = await client.Projects.GetAsync(project.Id);
+                Assert.Empty(projectInfo.Notes);
+            }
+            finally
+            {
+                await client.Projects.DeleteAsync(project.Id);
+            }
         }
     }
 }

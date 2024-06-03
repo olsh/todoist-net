@@ -23,7 +23,7 @@ namespace Todoist.Net.Services
         /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<ComplexId> AddAsync(Item item, CancellationToken cancellationToken = default);
+        Task<ComplexId> AddAsync(AddItem item, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Closes a task asynchronous.
@@ -93,7 +93,7 @@ namespace Todoist.Net.Services
         /// <exception cref="ArgumentNullException"><paramref name="item"/> is <see langword="null"/></exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task UpdateAsync(Item item, CancellationToken cancellationToken = default);
+        Task UpdateAsync(UpdateItem item, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Updates the day orders of multiple items at once.

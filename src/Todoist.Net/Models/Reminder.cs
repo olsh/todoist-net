@@ -6,7 +6,7 @@ namespace Todoist.Net.Models
     /// Class Reminder.
     /// </summary>
     /// <seealso cref="Todoist.Net.Models.BaseEntity" />
-    public class Reminder : BaseEntity
+    public class Reminder : BaseUnsetEntity
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Reminder" /> class.

@@ -8,11 +8,6 @@ namespace Todoist.Net.Models
     /// </summary>
     public class UserInfo : User
     {
-        internal UserInfo(string email, string fullName, string password)
-            : base(email, fullName, password)
-        {
-        }
-
         [JsonConstructor]
         internal UserInfo()
         {

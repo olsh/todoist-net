@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 
@@ -11,15 +12,6 @@ namespace Todoist.Net.Serialization.Resolvers
     {
         public static void SerializeInternalSetters(JsonTypeInfo typeInfo)
         {
-            string GetPropertyName(PropertyInfo property)
-            {
-                var propertyNameAttribute = property.GetCustomAttribute<JsonPropertyNameAttribute>();
-
-                return propertyNameAttribute?.Name
-                    ?? typeInfo.Options.PropertyNamingPolicy?.ConvertName(property.Name)
-                    ?? property.Name;
-            }
-
             var internalSetterProperties = typeInfo.Type
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public)
                 .Where(property => property.SetMethod?.IsAssembly == true);
@@ -31,7 +23,7 @@ namespace Todoist.Net.Serialization.Resolvers
                 .Select(property => new
                 {
                     Property = property,
-                    Name = GetPropertyName(property)
+                    Name = GetPropertyName(property, typeInfo.Options)
                 })
                 .Join(nullSetterJsonProperties, x => x.Name, y => y.Name, (x, y) => new
                 {
@@ -53,17 +45,72 @@ namespace Todoist.Net.Serialization.Resolvers
                 {
                     propertyInfo.ShouldSerialize = (obj, value) => false;
                 }
+            }
+        }
+
+        public static void IncludeUnsetProperties(JsonTypeInfo typeInfo)
+        {
+            // There's no use for this contract if the default ignore condition is set to Never.
+            if (typeInfo.Options.DefaultIgnoreCondition is JsonIgnoreCondition.Never)
+            {
+                return;
+            }
+            if (!typeof(IUnsettableProperties).IsAssignableFrom(typeInfo.Type))
+            {
                 return;
             }
             foreach (var propertyInfo in typeInfo.Properties)
             {
-                // Null DueDate == no DueDate, so we should always send the DueDate
-                // https://developer.todoist.com/sync/v9/#due-dates
-                if (propertyInfo.PropertyType == typeof(DueDate))
+                if (propertyInfo.ShouldSerialize != null)
                 {
-                    propertyInfo.ShouldSerialize = (obj, value) => true;
+                    // Ignore properties that have been configured by previous modifiers.
+                    // Note: ShouldSerialize equals null by default unless modified on purpose.
+                    continue;
                 }
+                propertyInfo.ShouldSerialize = (obj, value) =>
+                {
+                    if (value != null)
+                    {
+                        // Return default behavior if the property has a value.
+                        return ShouldSerializeByDefault(propertyInfo);
+                    }
+                    return ((IUnsettableProperties)obj)
+                        .UnsetProperties
+                        .Any(property => GetPropertyName(property, typeInfo.Options) == propertyInfo.Name);
+                };
             }
         }
+
+
+        private static bool ShouldSerializeByDefault(JsonPropertyInfo propertyInfo)
+        {
+            // Properties that has no setter delegate are assumed to be readonly,
+            // while properties that has a setter delegate should be serialized normally.
+            if (propertyInfo.Set != null)
+            {
+                return true;
+            }
+            var options = propertyInfo.Options;
+
+            if (options.IgnoreReadOnlyFields && options.IncludeFields)
+            {
+                return false;
+            }
+            if (options.IgnoreReadOnlyProperties)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private static string GetPropertyName(PropertyInfo property, JsonSerializerOptions options)
+        {
+            var propertyNameAttribute = property.GetCustomAttribute<JsonPropertyNameAttribute>();
+
+            return propertyNameAttribute?.Name
+                ?? options.PropertyNamingPolicy?.ConvertName(property.Name)
+                ?? property.Name;
+        }
+
     }
 }

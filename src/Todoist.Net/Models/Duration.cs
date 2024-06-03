@@ -83,7 +83,7 @@ namespace Todoist.Net.Models
                     case var _ when Unit == DurationUnit.Day:
                         return TimeSpan.FromDays(Amount);
                     default:
-                        throw new NotImplementedException();
+                        return TimeSpan.Zero; // In case 'Unit' is unset, there's no duration.
                 }
             }
         }
