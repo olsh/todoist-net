@@ -300,6 +300,21 @@ namespace Todoist.Net
         }
 
         /// <inheritdoc/>
+        async Task<T> IAdvancedTodoistClient.GetAsync<T>(
+            string resource,
+            ICollection<KeyValuePair<string, string>> parameters,
+            CancellationToken cancellationToken)
+        {
+            var response = await _restClient.GetAsync(resource, parameters, cancellationToken)
+                                .ConfigureAwait(false);
+
+            var responseContent = await ReadResponseAsync(response, cancellationToken)
+                                      .ConfigureAwait(false);
+
+            return DeserializeResponse<T>(responseContent);
+        }
+
+        /// <inheritdoc/>
         Task<T> IAdvancedTodoistClient.PostAsync<T>(
             string resource,
             ICollection<KeyValuePair<string, string>> parameters,

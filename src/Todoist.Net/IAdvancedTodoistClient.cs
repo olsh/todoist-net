@@ -40,6 +40,19 @@ namespace Todoist.Net
         Task<string> ExecuteCommandsAsync(CancellationToken cancellationToken, params Command[] commands);
 
         /// <summary>
+        /// Sends a <c>GET</c> request, and handles response asynchronously.
+        /// </summary>
+        /// <typeparam name="T">Type of the result.</typeparam>
+        /// <param name="resource">The resource.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>
+        /// The result.
+        /// </returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        Task<T> GetAsync<T>(string resource, ICollection<KeyValuePair<string, string>> parameters, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Posts the request asynchronous.
         /// </summary>
         /// <typeparam name="T">Type of the result.</typeparam>

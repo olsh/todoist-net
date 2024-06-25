@@ -52,6 +52,31 @@ namespace Todoist.Net
 
 
         /// <inheritdoc/>
+        public async Task<HttpResponseMessage> GetAsync(
+            string resource,
+            IEnumerable<KeyValuePair<string, string>> parameters,
+            CancellationToken cancellationToken = default)
+        {
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
+            if (string.IsNullOrEmpty(resource))
+            {
+                throw new ArgumentException("Value cannot be null or empty.", nameof(resource));
+            }
+
+            var requestUri = string.Empty;
+            using (var content = new FormUrlEncodedContent(parameters))
+            {
+                var query = await content.ReadAsStringAsync().ConfigureAwait(false);
+                requestUri = $"{resource}?{query}";
+            }
+            return await _httpClient.GetAsync(requestUri, cancellationToken).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
         public async Task<HttpResponseMessage> PostAsync(
             string resource,
             IEnumerable<KeyValuePair<string, string>> parameters,
