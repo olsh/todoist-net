@@ -11,12 +11,13 @@ namespace Todoist.Net
     internal sealed class TodoistRestClient : ITodoistRestClient
     {
         private readonly HttpClient _httpClient;
+        private readonly bool _disposeHttpClient;
 
-        public TodoistRestClient() : this(null, null)
+        public TodoistRestClient() : this(null, (IWebProxy)null)
         {
         }
 
-        public TodoistRestClient(string token) : this(token, null)
+        public TodoistRestClient(string token) : this(token, (IWebProxy)null)
         {
         }
 
@@ -43,11 +44,27 @@ namespace Todoist.Net
             {
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
+
+            _disposeHttpClient = true;
+        }
+
+        public TodoistRestClient(string token, HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+
+            _httpClient.BaseAddress = new Uri("https://api.todoist.com/sync/v9/");
+            if (!string.IsNullOrEmpty(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
         }
 
         public void Dispose()
         {
-            _httpClient?.Dispose();
+            if (_disposeHttpClient)
+            {
+                _httpClient?.Dispose(); 
+            }
         }
 
 
