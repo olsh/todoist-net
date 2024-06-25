@@ -21,7 +21,7 @@ namespace Todoist.Net.Services
         /// <inheritdoc/>
         public Task<IEnumerable<Backup>> GetAsync(CancellationToken cancellationToken = default)
         {
-            return _todoistClient.PostAsync<IEnumerable<Backup>>(
+            return _todoistClient.GetAsync<IEnumerable<Backup>>(
                 "backups/get",
                 new List<KeyValuePair<string, string>>(),
                 cancellationToken);

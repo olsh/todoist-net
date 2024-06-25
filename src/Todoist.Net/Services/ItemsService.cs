@@ -50,7 +50,7 @@ namespace Todoist.Net.Services
         {
             var parameters = filter == null ? new List<KeyValuePair<string, string>>() : filter.ToParameters();
 
-            return TodoistClient.PostAsync<CompletedItemsInfo>("completed/get_all", parameters, cancellationToken);
+            return TodoistClient.GetAsync<CompletedItemsInfo>("completed/get_all", parameters, cancellationToken);
         }
 
         /// <inheritdoc/>

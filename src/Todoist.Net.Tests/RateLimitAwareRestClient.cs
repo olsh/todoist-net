@@ -54,6 +54,14 @@ namespace Todoist.Net.Tests
             return result;
         }
 
+        public async Task<HttpResponseMessage> GetAsync(
+            string resource,
+            IEnumerable<KeyValuePair<string, string>> parameters,
+            CancellationToken cancellationToken = default)
+        {
+            return await ExecuteRequest(() => _restClient.GetAsync(resource, parameters, cancellationToken)).ConfigureAwait(false);
+        }
+
         public async Task<HttpResponseMessage> PostAsync(
             string resource,
             IEnumerable<KeyValuePair<string, string>> parameters,

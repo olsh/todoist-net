@@ -33,7 +33,7 @@ namespace Todoist.Net.Services
         /// <inheritdoc/>
         public Task<IEnumerable<Upload>> GetAsync(CancellationToken cancellationToken = default)
         {
-            return _todoistClient.PostAsync<IEnumerable<Upload>>(
+            return _todoistClient.GetAsync<IEnumerable<Upload>>(
                 "uploads/get",
                 new List<KeyValuePair<string, string>>(),
                 cancellationToken);
