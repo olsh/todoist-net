@@ -23,7 +23,7 @@ namespace Todoist.Net.Services
         {
             var parameters = filter != null ? filter.ToParameters() : new List<KeyValuePair<string, string>>();
 
-            return _todoistClient.PostAsync<Activity>("activity/get", parameters, cancellationToken);
+            return _todoistClient.GetAsync<Activity>("activity/get", parameters, cancellationToken);
         }
     }
 }
