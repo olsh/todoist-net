@@ -94,18 +94,5 @@ namespace Todoist.Net
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task<string> PostRawAsync(string resource, ICollection<KeyValuePair<string, string>> parameters, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Processes the request asynchronous.
-        /// </summary>
-        /// <typeparam name="T">The type of the result.</typeparam>
-        /// <param name="resource">The resource.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>
-        /// The result of the operation.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<T> ProcessPostAsync<T>(string resource, ICollection<KeyValuePair<string, string>> parameters, CancellationToken cancellationToken = default);
     }
 }

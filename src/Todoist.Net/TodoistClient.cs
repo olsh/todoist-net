@@ -319,7 +319,7 @@ namespace Todoist.Net
             ICollection<KeyValuePair<string, string>> parameters,
             CancellationToken cancellationToken)
         {
-            return ((IAdvancedTodoistClient)this).ProcessPostAsync<T>(resource, parameters, cancellationToken);
+            return ProcessPostAsync<T>(resource, parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -357,8 +357,18 @@ namespace Todoist.Net
             return DeserializeResponse<T>(responseContent);
         }
 
-        /// <inheritdoc/>
-        async Task<T> IAdvancedTodoistClient.ProcessPostAsync<T>(
+        /// <summary>
+        /// Processes the request asynchronous.
+        /// </summary>
+        /// <typeparam name="T">The type of the result.</typeparam>
+        /// <param name="resource">The resource.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>
+        /// The result of the operation.
+        /// </returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        private async Task<T> ProcessPostAsync<T>(
             string resource,
             ICollection<KeyValuePair<string, string>> parameters,
             CancellationToken cancellationToken)
@@ -400,7 +410,7 @@ namespace Todoist.Net
         /// <exception cref="HttpRequestException">API exception.</exception>
         private Task<T> ProcessSyncAsync<T>(ICollection<KeyValuePair<string, string>> parameters, CancellationToken cancellationToken)
         {
-            return ((IAdvancedTodoistClient)this).ProcessPostAsync<T>("sync", parameters, cancellationToken);
+            return ProcessPostAsync<T>("sync", parameters, cancellationToken);
         }
 
         /// <summary>
