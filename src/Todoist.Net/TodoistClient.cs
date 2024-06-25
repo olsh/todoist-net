@@ -99,6 +99,7 @@ namespace Todoist.Net
             Sections = new SectionService(this);
         }
 
+
         /// <summary>
         /// Gets the activity service.
         /// </summary>
@@ -214,6 +215,7 @@ namespace Todoist.Net
             _restClient?.Dispose();
         }
 
+
         /// <inheritdoc/>
         public Task<Resources> GetResourcesAsync(params ResourceType[] resourceTypes) =>
             GetResourcesAsync("*", resourceTypes);
@@ -250,25 +252,11 @@ namespace Todoist.Net
         }
 
         /// <inheritdoc/>
-        public Task<T> PostFormAsync<T>(
-            string resource,
-            ICollection<KeyValuePair<string, string>> parameters,
-            IEnumerable<ByteArrayContent> files,
-            CancellationToken cancellationToken = default)
-        {
-            return ProcessFormAsync<T>(resource, parameters, files, cancellationToken);
-        }
-
-        /// <inheritdoc/>
         Task<string> IAdvancedTodoistClient.ExecuteCommandsAsync(params Command[] commands) =>
-            ExecuteCommandsAsync(CancellationToken.None, commands);
+            ((IAdvancedTodoistClient)this).ExecuteCommandsAsync(CancellationToken.None, commands);
 
         /// <inheritdoc/>
-        Task<string> IAdvancedTodoistClient.ExecuteCommandsAsync(CancellationToken cancellationToken, params Command[] commands) =>
-            ExecuteCommandsAsync(cancellationToken, commands);
-
-        /// <inheritdoc cref="IAdvancedTodoistClient.ExecuteCommandsAsync(CancellationToken, Command[])"/>
-        private async Task<string> ExecuteCommandsAsync(CancellationToken cancellationToken, params Command[] commands)
+        async Task<string> IAdvancedTodoistClient.ExecuteCommandsAsync(CancellationToken cancellationToken, params Command[] commands)
         {
             if (commands == null)
             {
@@ -297,6 +285,17 @@ namespace Todoist.Net
             }
 
             return syncResponse.SyncToken;
+        }
+
+
+        /// <inheritdoc/>
+        Task<T> IAdvancedTodoistClient.PostFormAsync<T>(
+            string resource,
+            ICollection<KeyValuePair<string, string>> parameters,
+            IEnumerable<ByteArrayContent> files,
+            CancellationToken cancellationToken)
+        {
+            return ProcessFormAsync<T>(resource, parameters, files, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -332,22 +331,6 @@ namespace Todoist.Net
             return ProcessRawPostAsync(resource, parameters, cancellationToken);
         }
 
-        /// <inheritdoc/>
-        async Task<T> IAdvancedTodoistClient.ProcessPostAsync<T>(
-            string resource,
-            ICollection<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken)
-        {
-            var responseContent = await ProcessRawPostAsync(resource, parameters, cancellationToken)
-                                      .ConfigureAwait(false);
-
-            return DeserializeResponse<T>(responseContent);
-        }
-
-        private T DeserializeResponse<T>(string responseContent)
-        {
-            return JsonSerializer.Deserialize<T>(responseContent, _serializerOptions);
-        }
 
         /// <summary>
         /// Processes the form asynchronous.
@@ -369,6 +352,18 @@ namespace Todoist.Net
                                     .ConfigureAwait(false);
 
             var responseContent = await ReadResponseAsync(response, cancellationToken)
+                                      .ConfigureAwait(false);
+
+            return DeserializeResponse<T>(responseContent);
+        }
+
+        /// <inheritdoc/>
+        async Task<T> IAdvancedTodoistClient.ProcessPostAsync<T>(
+            string resource,
+            ICollection<KeyValuePair<string, string>> parameters,
+            CancellationToken cancellationToken)
+        {
+            var responseContent = await ProcessRawPostAsync(resource, parameters, cancellationToken)
                                       .ConfigureAwait(false);
 
             return DeserializeResponse<T>(responseContent);
@@ -427,6 +422,11 @@ namespace Todoist.Net
             }
 
             return responseContent;
+        }
+
+        private T DeserializeResponse<T>(string responseContent)
+        {
+            return JsonSerializer.Deserialize<T>(responseContent, _serializerOptions);
         }
 
         /// <summary>
