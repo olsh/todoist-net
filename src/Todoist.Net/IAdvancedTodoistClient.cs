@@ -53,7 +53,7 @@ namespace Todoist.Net
         Task<T> GetAsync<T>(string resource, ICollection<KeyValuePair<string, string>> parameters, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Posts the request asynchronous.
+        /// Sends a <c>POST</c> request, and handles response asynchronously.
         /// </summary>
         /// <typeparam name="T">Type of the result.</typeparam>
         /// <param name="resource">The resource.</param>
@@ -66,7 +66,7 @@ namespace Todoist.Net
         Task<T> PostAsync<T>(string resource, ICollection<KeyValuePair<string, string>> parameters, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Posts the asynchronous and returns a raw content.
+        /// Sends a <c>POST</c> request with form data, and handles response asynchronously.
         /// </summary>
         /// <typeparam name="T">The result type.</typeparam>
         /// <param name="resource">The resource.</param>
@@ -84,7 +84,7 @@ namespace Todoist.Net
             CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Posts the asynchronous and returns a raw content.
+        /// Sends a <c>POST</c> request asynchronously, and returns raw content.
         /// </summary>
         /// <param name="resource">The resource.</param>
         /// <param name="parameters">The parameters.</param>
