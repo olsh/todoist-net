@@ -21,7 +21,7 @@ namespace Todoist.Net.Services
         /// <inheritdoc/>
         public Task<IEnumerable<Project>> GetArchivedAsync(CancellationToken cancellationToken = default)
         {
-            return TodoistClient.PostAsync<IEnumerable<Project>>(
+            return TodoistClient.GetAsync<IEnumerable<Project>>(
                 "projects/get_archived",
                 new List<KeyValuePair<string, string>>(),
                 cancellationToken);
