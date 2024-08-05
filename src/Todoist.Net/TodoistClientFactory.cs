@@ -1,3 +1,5 @@
+#if NETSTANDARD2_0
+
 using System.Net.Http;
 
 namespace Todoist.Net
@@ -21,3 +23,5 @@ namespace Todoist.Net
         }
     }
 }
+
+#endif

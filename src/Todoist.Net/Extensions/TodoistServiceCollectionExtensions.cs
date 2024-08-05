@@ -1,3 +1,5 @@
+#if NETSTANDARD2_0
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Todoist.Net.Extensions
@@ -21,3 +23,5 @@ namespace Todoist.Net.Extensions
         }
     }
 }
+
+#endif
