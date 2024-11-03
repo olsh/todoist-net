@@ -115,7 +115,7 @@ class Build : NukeBuild
         .Executes(() =>
         {
             SonarScannerEnd(s => s
-                .SetLogin(SonarQubeApiKey)
+                .SetToken(SonarQubeApiKey)
                 .SetFramework("net5.0"));
         });
 }
