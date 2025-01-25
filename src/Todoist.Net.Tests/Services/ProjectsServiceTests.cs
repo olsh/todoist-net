@@ -76,7 +76,16 @@ namespace Todoist.Net.Tests.Services
             }
             finally
             {
-                await client.Projects.DeleteAsync(project.Id);
+                try
+                {
+                    await client.Projects.DeleteAsync(project.Id);
+                }
+                // Parent project removes child projects too
+                // So the project may be deleted already
+                catch
+                {
+                    // ignored
+                }
             }
         }
 

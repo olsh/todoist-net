@@ -240,6 +240,25 @@ namespace Todoist.Net.Tests.Services
             }
         }
 
+        [Fact]
+        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
+        public async Task CreateNewItem_DeadlineIsLocal_DeadlaneNotChanged()
+        {
+            var client = TodoistClientFactory.Create(_outputHelper);
+
+            var item = new AddItem("New task") { Deadline = new Deadline(DateTime.Now.AddYears(1).Date) };
+            var taskId = await client.Items.AddAsync(item);
+            try
+            {
+                var itemInfo = await client.Items.GetAsync(taskId);
+
+                Assert.Equal(item.Deadline.Date, itemInfo.Item.Deadline.Date);
+            }
+            finally
+            {
+                await client.Items.DeleteAsync(item.Id);
+            }
+        }
 
         [Fact]
         [Trait(Constants.TraitName, Constants.IntegrationPremiumTraitValue)]

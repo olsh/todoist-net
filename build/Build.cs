@@ -2,8 +2,8 @@ using Nuke.Common;
 using Nuke.Common.CI;
 using Nuke.Common.CI.AppVeyor;
 using Nuke.Common.ProjectModel;
+using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
-using Nuke.Common.Tools.Git;
 using Nuke.Common.Tools.SonarScanner;
 
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
