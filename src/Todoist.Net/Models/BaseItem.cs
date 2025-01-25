@@ -93,5 +93,12 @@ namespace Todoist.Net.Models
         /// <value>The responsible uid.</value>
         [JsonPropertyName("responsible_uid")]
         public string ResponsibleUid { get; set; }
+
+        /// <summary>
+        /// Gets or sets the deadline for the task.
+        /// </summary>
+        /// <value>The deadline.</value>
+        [JsonPropertyName("deadline")]
+        public Deadline Deadline { get; set; }
     }
 }
