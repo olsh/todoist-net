@@ -99,6 +99,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The deadline.</value>
         [JsonPropertyName("deadline")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
         public Deadline Deadline { get; set; }
     }
 }
