@@ -299,6 +299,15 @@ namespace Todoist.Net
         }
 
         /// <inheritdoc/>
+        Task<T> IAdvancedTodoistClient.PostFormAsync<T>(
+            string resource,
+            MultipartFormDataContent data,
+            CancellationToken cancellationToken)
+        {
+            return ProcessFormAsync<T>(resource, data, cancellationToken);
+        }
+
+        /// <inheritdoc/>
         async Task<T> IAdvancedTodoistClient.GetAsync<T>(
             string resource,
             ICollection<KeyValuePair<string, string>> parameters,
@@ -356,6 +365,29 @@ namespace Todoist.Net
 
             return DeserializeResponse<T>(responseContent);
         }
+
+        /// <summary>
+        /// Processes the form asynchronous.
+        /// </summary>
+        /// <typeparam name="T">The type of the response.</typeparam>
+        /// <param name="resource">The resource.</param>
+        /// <param name="data">The form data.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <returns>The response.</returns>
+        private async Task<T> ProcessFormAsync<T>(
+            string resource,
+            MultipartFormDataContent data,
+            CancellationToken cancellationToken)
+        {
+            var response = await _restClient.PostFormAsync(resource, data, cancellationToken).ConfigureAwait(false);
+
+            var responseContent = await ReadResponseAsync(response, cancellationToken)
+                .ConfigureAwait(false);
+
+            return DeserializeResponse<T>(responseContent);
+        }
+
 
         /// <summary>
         /// Processes the request asynchronous.
