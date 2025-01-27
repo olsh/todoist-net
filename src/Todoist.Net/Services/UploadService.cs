@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -40,15 +41,38 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task<FileAttachment> UploadAsync(string fileName, byte[] fileContent, CancellationToken cancellationToken = default)
+        public Task<FileAttachment> UploadAsync(
+            string fileName, byte[] fileContent, CancellationToken cancellationToken = default
+        )
         {
-            var parameters = new List<KeyValuePair<string, string>>
-                                 {
-                                     new KeyValuePair<string, string>("file_name", fileName)
-                                 };
-            var files = new[] { new ByteArrayContent(fileContent) };
+            var data = new MultipartFormDataContent
+            {
+                {
+                    new ByteArrayContent(fileContent), "file", fileName
+                }
+            };
 
-            return _todoistClient.PostFormAsync<FileAttachment>("uploads/add", parameters, files, cancellationToken);
+            return _todoistClient.PostFormAsync<FileAttachment>("uploads/add", data, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<FileAttachment> UploadAsync(
+            string fileName, string mimeType, byte[] fileContent, CancellationToken cancellationToken = default
+        )
+        {
+            var mime = mimeType != null ? MediaTypeHeaderValue.Parse(mimeType) : null;
+            var data = new MultipartFormDataContent
+            {
+                {
+                    new ByteArrayContent(fileContent)
+                    {
+                        Headers = { ContentType = mime }
+                    },
+                    "file", fileName
+                }
+            };
+
+            return _todoistClient.PostFormAsync<FileAttachment>("uploads/add", data, cancellationToken);
         }
     }
 }
