@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
+using Todoist.Net.Serialization.Converters;
+
 namespace Todoist.Net.Models
 {
     /// <summary>
@@ -85,6 +87,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The priority.</value>
         [JsonPropertyName("priority")]
+        [JsonConverter(typeof(PriorityConverter))]
         public Priority? Priority { get; set; }
 
         /// <summary>
