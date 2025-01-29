@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
@@ -301,9 +302,24 @@ namespace Todoist.Net
         /// <inheritdoc/>
         Task<T> IAdvancedTodoistClient.PostFormAsync<T>(
             string resource,
-            MultipartFormDataContent data,
+            ICollection<KeyValuePair<string, string>> parameters,
+            IEnumerable<FormFile> files,
             CancellationToken cancellationToken)
         {
+            var data = new MultipartFormDataContent();
+
+            foreach (var file in files)
+            {
+                var mime    = file.MimeType != null ? MediaTypeHeaderValue.Parse(file.MimeType) : null;
+                var content = new ByteArrayContent(file.Content) { Headers = { ContentType = mime } };
+                data.Add(content, "file", file.Filename);
+            }
+
+            foreach (var keyValuePair in parameters)
+            {
+                data.Add(new StringContent(keyValuePair.Value), $"\"{keyValuePair.Key}\"");
+            }
+
             return ProcessFormAsync<T>(resource, data, cancellationToken);
         }
 

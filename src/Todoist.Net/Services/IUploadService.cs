@@ -40,17 +40,5 @@ namespace Todoist.Net.Services
         /// <returns>The uploaded file.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task<FileAttachment> UploadAsync(string fileName, byte[] fileContent, CancellationToken cancellationToken = default);
-
-
-        /// <summary>
-        /// Uploads a file asynchronous.
-        /// </summary>
-        /// <param name="fileName">Name of the file.</param>
-        /// <param name="fileContent">Content of the file.</param>
-        /// <param name="mimeType">MIME type of the file.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The uploaded file.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<FileAttachment> UploadAsync(string fileName, string mimeType, byte[] fileContent, CancellationToken cancellationToken = default);
     }
 }
