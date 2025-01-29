@@ -80,6 +80,15 @@ namespace Todoist.Net.Tests
                        .ConfigureAwait(false);
         }
 
+        public async Task<HttpResponseMessage> PostFormAsync(
+            string resource,
+            MultipartFormDataContent data,
+            CancellationToken cancellationToken = default)
+        {
+            return await ExecuteRequest(() => _restClient.PostFormAsync(resource, data, cancellationToken))
+                .ConfigureAwait(false);
+        }
+
         public async Task<TimeSpan> GetRateLimitCooldown(HttpResponseMessage response)
         {
             var defaultCooldown = TimeSpan.FromSeconds(30);

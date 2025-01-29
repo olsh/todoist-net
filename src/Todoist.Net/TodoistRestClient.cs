@@ -63,7 +63,7 @@ namespace Todoist.Net
         {
             if (_disposeHttpClient)
             {
-                _httpClient?.Dispose(); 
+                _httpClient?.Dispose();
             }
         }
 
@@ -134,8 +134,19 @@ namespace Todoist.Net
                     multipartFormDataContent.Add(file, Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
                 }
 
-                return await _httpClient.PostAsync(resource, multipartFormDataContent, cancellationToken).ConfigureAwait(false);
+                return await _httpClient.PostAsync(resource, multipartFormDataContent, cancellationToken)
+                                        .ConfigureAwait(false);
             }
+        }
+
+        /// <inheritdoc/>
+        public async Task<HttpResponseMessage> PostFormAsync(
+            string resource,
+            MultipartFormDataContent data,
+            CancellationToken cancellationToken = default
+        )
+        {
+            return await _httpClient.PostAsync(resource, data, cancellationToken).ConfigureAwait(false);
         }
     }
 }
