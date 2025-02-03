@@ -29,20 +29,18 @@ namespace Todoist.Net.Tests.Services
             var transaction = client.CreateTransaction();
 
             var itemId = await transaction.Items.AddAsync(new AddItem("Temp"));
-            var reminderId =
-                await transaction.Reminders.AddAsync(new Reminder(itemId) { DueDate = DueDate.CreateFloating(DateTime.UtcNow.AddDays(1)) });
+            var reminder = new Reminder(itemId) { DueDate = DueDate.CreateFloating(DateTime.UtcNow.AddDays(1)) };
+            await transaction.Reminders.AddAsync(reminder);
             await transaction.CommitAsync();
             try
             {
                 var reminders = await client.Reminders.GetAsync();
-                Assert.True(reminders.Any());
 
-                var reminderInfo = await client.Reminders.GetAsync(reminderId);
-                Assert.NotNull(reminderInfo);
+                Assert.Contains(reminders, r => r.Id == reminder.Id);
             }
             finally
             {
-                await client.Reminders.DeleteAsync(reminderId);
+                await client.Reminders.DeleteAsync(reminder.Id);
                 await client.Items.DeleteAsync(itemId);
             }
         }
