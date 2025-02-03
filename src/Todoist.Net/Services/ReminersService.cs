@@ -23,19 +23,5 @@ namespace Todoist.Net.Services
 
             return response.Reminders;
         }
-
-        /// <inheritdoc/>
-        public Task<ReminderInfo> GetAsync(ComplexId id, CancellationToken cancellationToken = default)
-        {
-            return TodoistClient.PostAsync<ReminderInfo>(
-                "reminders/get",
-                new List<KeyValuePair<string, string>>
-                    {
-                        new KeyValuePair<string, string>(
-                            "reminder_id",
-                            id.ToString())
-                    },
-                cancellationToken);
-        }
     }
 }
