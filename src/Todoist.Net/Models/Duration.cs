@@ -1,6 +1,8 @@
 using System;
 using System.Text.Json.Serialization;
 
+using Todoist.Net.Extensions;
+
 namespace Todoist.Net.Models
 {
     /// <summary>
@@ -21,6 +23,16 @@ namespace Todoist.Net.Models
         {
             Amount = amount;
             Unit = unit;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Duration" /> class.
+        /// </summary>
+        /// <param name="businessDaysAmount">Business Days amount</param>
+        public Duration(int businessDaysAmount)
+        {
+            Unit = DurationUnit.Day;
+            Amount = (int)(DateTime.Now.Date.AddBusinessDays(businessDaysAmount) - DateTime.Now.Date).TotalDays;
         }
 
         [JsonConstructor]
