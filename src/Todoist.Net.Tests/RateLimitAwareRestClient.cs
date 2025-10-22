@@ -6,6 +6,8 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Todoist.Net.Models;
+
 using Xunit.Abstractions;
 
 namespace Todoist.Net.Tests
@@ -73,20 +75,11 @@ namespace Todoist.Net.Tests
         public async Task<HttpResponseMessage> PostFormAsync(
             string resource,
             IEnumerable<KeyValuePair<string, string>> parameters,
-            IEnumerable<ByteArrayContent> files,
+            IEnumerable<UploadFile> files,
             CancellationToken cancellationToken = default)
         {
             return await ExecuteRequest(() => _restClient.PostFormAsync(resource, parameters, files, cancellationToken))
                        .ConfigureAwait(false);
-        }
-
-        public async Task<HttpResponseMessage> PostFormAsync(
-            string resource,
-            MultipartFormDataContent data,
-            CancellationToken cancellationToken = default)
-        {
-            return await ExecuteRequest(() => _restClient.PostFormAsync(resource, data, cancellationToken))
-                .ConfigureAwait(false);
         }
 
         public async Task<TimeSpan> GetRateLimitCooldown(HttpResponseMessage response)

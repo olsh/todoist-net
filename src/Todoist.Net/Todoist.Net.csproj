@@ -31,7 +31,6 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Web" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,7 +46,6 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.3.0" />
   </ItemGroup>
 
 </Project>

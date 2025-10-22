@@ -6,6 +6,8 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Todoist.Net.Models;
+
 namespace Todoist.Net
 {
     internal sealed class TodoistRestClient : ITodoistRestClient
@@ -119,7 +121,7 @@ namespace Todoist.Net
         public async Task<HttpResponseMessage> PostFormAsync(
             string resource,
             IEnumerable<KeyValuePair<string, string>> parameters,
-            IEnumerable<ByteArrayContent> files,
+            IEnumerable<UploadFile> files,
             CancellationToken cancellationToken = default)
         {
             using (var multipartFormDataContent = new MultipartFormDataContent())
@@ -131,22 +133,18 @@ namespace Todoist.Net
 
                 foreach (var file in files)
                 {
-                    multipartFormDataContent.Add(file, Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+                    var content = new ByteArrayContent(file.Content);
+                    if (file.MimeType != null)
+                    {
+                        content.Headers.ContentType = MediaTypeHeaderValue.Parse(file.MimeType);
+                    }
+
+                    multipartFormDataContent.Add(content, "file", file.Filename);
                 }
 
                 return await _httpClient.PostAsync(resource, multipartFormDataContent, cancellationToken)
                                         .ConfigureAwait(false);
             }
-        }
-
-        /// <inheritdoc/>
-        public async Task<HttpResponseMessage> PostFormAsync(
-            string resource,
-            MultipartFormDataContent data,
-            CancellationToken cancellationToken = default
-        )
-        {
-            return await _httpClient.PostAsync(resource, data, cancellationToken).ConfigureAwait(false);
         }
     }
 }

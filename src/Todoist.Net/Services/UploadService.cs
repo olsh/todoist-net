@@ -4,12 +4,6 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
-#if NETSTANDARD2_0
-using Microsoft.AspNetCore.StaticFiles;
-#else
-using System.Web;
-#endif
-
 using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
@@ -21,10 +15,6 @@ namespace Todoist.Net.Services
     internal class UploadService : IUploadService
     {
         private readonly IAdvancedTodoistClient _todoistClient;
-
-        #if NETSTANDARD2_0
-        private static readonly FileExtensionContentTypeProvider MimeProvider = new FileExtensionContentTypeProvider();
-        #endif
 
         internal UploadService(IAdvancedTodoistClient todoistClient)
         {
@@ -55,14 +45,10 @@ namespace Todoist.Net.Services
             string fileName, byte[] fileContent, CancellationToken cancellationToken = default
         )
         {
-#if NETSTANDARD2_0
-            MimeProvider.TryGetContentType(fileName, out var mimeType);
-#else
-            var mimeType = MimeMapping.GetMimeMapping(fileName);
-#endif
+            MimeTypeProvider.TryGetMimeType(fileName, out var mimeType);
 
             var parameters = new Dictionary<string, string>();
-            var file = new FormFile(fileContent, fileName, mimeType);
+            var file = new UploadFile(fileContent, fileName, mimeType);
             var files = new[] { file };
 
             return _todoistClient.PostFormAsync<FileAttachment>("uploads/add", parameters, files, cancellationToken);

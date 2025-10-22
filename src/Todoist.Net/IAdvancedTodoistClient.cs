@@ -71,7 +71,7 @@ namespace Todoist.Net
         /// <typeparam name="T">The result type.</typeparam>
         /// <param name="resource">The resource.</param>
         /// <param name="parameters">The parameters.</param>
-        /// <param name="files">The files.</param>
+        /// <param name="files">The files to upload.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>
         /// The result.
@@ -80,25 +80,7 @@ namespace Todoist.Net
         Task<T> PostFormAsync<T>(
             string resource,
             ICollection<KeyValuePair<string, string>> parameters,
-            IEnumerable<ByteArrayContent> files,
-            CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Sends a <c>POST</c> request with form data, and handles response asynchronously.
-        /// </summary>
-        /// <typeparam name="T">The result type.</typeparam>
-        /// <param name="resource">The resource.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <param name="files">The files.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>
-        /// The result.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<T> PostFormAsync<T>(
-            string resource,
-            ICollection<KeyValuePair<string, string>> parameters,
-            IEnumerable<FormFile> files,
+            IEnumerable<UploadFile> files,
             CancellationToken cancellationToken = default);
 
         /// <summary>

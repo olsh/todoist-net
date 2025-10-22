@@ -293,34 +293,10 @@ namespace Todoist.Net
         Task<T> IAdvancedTodoistClient.PostFormAsync<T>(
             string resource,
             ICollection<KeyValuePair<string, string>> parameters,
-            IEnumerable<ByteArrayContent> files,
+            IEnumerable<UploadFile> files,
             CancellationToken cancellationToken)
         {
             return ProcessFormAsync<T>(resource, parameters, files, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        Task<T> IAdvancedTodoistClient.PostFormAsync<T>(
-            string resource,
-            ICollection<KeyValuePair<string, string>> parameters,
-            IEnumerable<FormFile> files,
-            CancellationToken cancellationToken)
-        {
-            var data = new MultipartFormDataContent();
-
-            foreach (var file in files)
-            {
-                var mime    = file.MimeType != null ? MediaTypeHeaderValue.Parse(file.MimeType) : null;
-                var content = new ByteArrayContent(file.Content) { Headers = { ContentType = mime } };
-                data.Add(content, "file", file.Filename);
-            }
-
-            foreach (var keyValuePair in parameters)
-            {
-                data.Add(new StringContent(keyValuePair.Value), $"\"{keyValuePair.Key}\"");
-            }
-
-            return ProcessFormAsync<T>(resource, data, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -363,14 +339,14 @@ namespace Todoist.Net
         /// <typeparam name="T">The type of the response.</typeparam>
         /// <param name="resource">The resource.</param>
         /// <param name="parameters">The parameters.</param>
-        /// <param name="files">The files.</param>
+        /// <param name="files">The files to upload.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <returns>The response.</returns>
         private async Task<T> ProcessFormAsync<T>(
             string resource,
             ICollection<KeyValuePair<string, string>> parameters,
-            IEnumerable<ByteArrayContent> files,
+            IEnumerable<UploadFile> files,
             CancellationToken cancellationToken)
         {
             var response = await _restClient.PostFormAsync(resource, parameters, files, cancellationToken)
@@ -378,28 +354,6 @@ namespace Todoist.Net
 
             var responseContent = await ReadResponseAsync(response, cancellationToken)
                                       .ConfigureAwait(false);
-
-            return DeserializeResponse<T>(responseContent);
-        }
-
-        /// <summary>
-        /// Processes the form asynchronous.
-        /// </summary>
-        /// <typeparam name="T">The type of the response.</typeparam>
-        /// <param name="resource">The resource.</param>
-        /// <param name="data">The form data.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <returns>The response.</returns>
-        private async Task<T> ProcessFormAsync<T>(
-            string resource,
-            MultipartFormDataContent data,
-            CancellationToken cancellationToken)
-        {
-            var response = await _restClient.PostFormAsync(resource, data, cancellationToken).ConfigureAwait(false);
-
-            var responseContent = await ReadResponseAsync(response, cancellationToken)
-                .ConfigureAwait(false);
 
             return DeserializeResponse<T>(responseContent);
         }
