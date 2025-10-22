@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Nuke.Common;
 using Nuke.Common.CI;
 using Nuke.Common.CI.GitHubActions;
@@ -79,14 +80,15 @@ class Build : NukeBuild
                     .SetProjectKey("todoist-net")
                     .SetName("Todoist.Net")
                     .SetOrganization("olsh")
-                    .SetVersion("1.0.0.0");
+                    .SetVersion("1.0.0.0")
+                    .SetAdditionalParameters(new Dictionary<string, string> { ["sonar.scanner.skipJreProvisioning"] = "true" });
 
                 if (GitHubActions != null)
                 {
                     if (GitHubActions.IsPullRequest)
                     {
                         s = s
-                            .SetPullRequestKey(GitHubActions.RunNumber.ToString())
+                            .SetPullRequestKey(GitHubActions.PullRequestNumber.ToString())
                             .SetPullRequestBase(GitHubActions.BaseRef)
                             .SetPullRequestBranch(GitHubActions.HeadRef);
                     }
