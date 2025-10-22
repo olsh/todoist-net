@@ -45,8 +45,15 @@ jobs:
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
+    - name: Get package name
+      id: package
+      run: |
+        $packageFile = Get-ChildItem -Path artifacts/*.nupkg | Select-Object -First 1
+        $packageName = $packageFile.BaseName
+        echo "name=$packageName" >> $env:GITHUB_OUTPUT
+      shell: pwsh
+
     - name: Upload NuGet package
       uses: actions/upload-artifact@v4
       with:
-        name: nuget-package
         path: artifacts/*.nupkg
