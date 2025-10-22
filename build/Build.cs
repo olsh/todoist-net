@@ -1,6 +1,6 @@
 using Nuke.Common;
 using Nuke.Common.CI;
-using Nuke.Common.CI.AppVeyor;
+using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
@@ -20,14 +20,14 @@ class Build : NukeBuild
 
     [Solution(GenerateProjects = true)] readonly Solution Solution;
 
-    [CI] readonly AppVeyor AppVeyor;
+    [CI] readonly GitHubActions GitHubActions;
 
     Target UpdateBuildVersion => _ => _
-        .Requires(() => AppVeyor)
+        .Requires(() => GitHubActions)
         .Before(Compile)
         .Executes(() =>
         {
-            AppVeyor.Instance.UpdateBuildVersion($"{Solution.src.Todoist_Net.GetProperty("Version")}.{AppVeyor.BuildNumber}");
+            GitHubActions.Instance.SetOutputParameter("version", $"{Solution.src.Todoist_Net.GetProperty("Version")}.{GitHubActions.RunNumber}");
         });
 
     Target Compile => _ => _
@@ -90,19 +90,19 @@ class Build : NukeBuild
                     .SetOrganization("olsh")
                     .SetVersion("1.0.0.0");
 
-                if (AppVeyor != null)
+                if (GitHubActions != null)
                 {
-                    if (AppVeyor.PullRequestNumber != null)
+                    if (GitHubActions.IsPullRequest)
                     {
                         s = s
-                            .SetPullRequestKey(AppVeyor.PullRequestNumber.ToString())
-                            .SetPullRequestBase(AppVeyor.RepositoryBranch)
-                            .SetPullRequestBranch(AppVeyor.PullRequestHeadRepositoryBranch);
+                            .SetPullRequestKey(GitHubActions.RunNumber.ToString())
+                            .SetPullRequestBase(GitHubActions.BaseRef)
+                            .SetPullRequestBranch(GitHubActions.HeadRef);
                     }
                     else
                     {
                         s = s
-                            .SetBranchName(AppVeyor.RepositoryBranch);
+                            .SetBranchName(GitHubActions.RefName);
                     }
                 }
 
@@ -115,7 +115,6 @@ class Build : NukeBuild
         .Executes(() =>
         {
             SonarScannerEnd(s => s
-                .SetToken(SonarQubeApiKey)
-                .SetFramework("net5.0"));
+                .SetToken(SonarQubeApiKey));
         });
 }
