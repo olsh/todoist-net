@@ -36,9 +36,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ~/.sonar/cache
-        key: ${{ runner.os }}-sonar-${{ hashFiles('**/*.csproj') }}
-        restore-keys: |
-          ${{ runner.os }}-sonar-
+        key: ${{ runner.os }}-sonar
 
     - name: Build and Test
       run: .\build.cmd sonar unit-test nuget-pack --configuration Release
@@ -49,3 +47,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         path: artifacts/*.nupkg
+        compression-level: 0
