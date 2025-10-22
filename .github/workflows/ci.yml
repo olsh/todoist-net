@@ -11,21 +11,21 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: 9.x
 
-    - name: Setup Java 17
+    - name: Setup Java
       uses: actions/setup-java@v5
       with:
         distribution: 'temurin'
         java-version: '21'
 
     - name: Build and Test
-      run: .\build.cmd update-build-version sonar unit-test nuget-pack --configuration Release
+      run: .\build.cmd sonar unit-test nuget-pack --configuration Release
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 

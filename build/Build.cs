@@ -16,19 +16,11 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Parameter("SonarQube API key", Name = "sonar:apikey")] readonly string SonarQubeApiKey;
+    [Parameter("SonarQube token", Name = "SONAR_TOKEN")] readonly string SonarQubeToken;
 
     [Solution(GenerateProjects = true)] readonly Solution Solution;
 
     [CI] readonly GitHubActions GitHubActions;
-
-    Target UpdateBuildVersion => _ => _
-        .Requires(() => GitHubActions)
-        .Before(Compile)
-        .Executes(() =>
-        {
-            GitHubActions.Instance.SetOutputParameter("version", $"{Solution.src.Todoist_Net.GetProperty("Version")}.{GitHubActions.RunNumber}");
-        });
 
     Target Compile => _ => _
         .Executes(() =>
@@ -83,8 +75,7 @@ class Build : NukeBuild
             {
                 s = s
                     .SetServer("https://sonarcloud.io")
-                    .SetFramework("net5.0")
-                    .SetToken(SonarQubeApiKey)
+                    .SetToken(SonarQubeToken)
                     .SetProjectKey("todoist-net")
                     .SetName("Todoist.Net")
                     .SetOrganization("olsh")
@@ -115,6 +106,6 @@ class Build : NukeBuild
         .Executes(() =>
         {
             SonarScannerEnd(s => s
-                .SetToken(SonarQubeApiKey));
+                .SetToken(SonarQubeToken));
         });
 }
