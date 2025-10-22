@@ -43,7 +43,8 @@ namespace Todoist.Net.Services
                                  {
                                      new KeyValuePair<string, string>("project_id", projectId.ToString())
                                  };
-            var files = new[] { new ByteArrayContent(fileContent) };
+            var file = new UploadFile(fileContent, "template.csv", "text/csv");
+            var files = new[] { file };
 
             return _todoistClient.PostFormAsync<dynamic>("templates/import_into_project", parameters, files, cancellationToken);
         }

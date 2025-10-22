@@ -480,3 +480,5 @@ fabric.properties
 # SonarQube
 .sonarqube/
 
+# Claude
+.claude/
