@@ -1,6 +1,7 @@
+using System.Collections.Generic;
 using Nuke.Common;
 using Nuke.Common.CI;
-using Nuke.Common.CI.AppVeyor;
+using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
@@ -16,19 +17,11 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Parameter("SonarQube API key", Name = "sonar:apikey")] readonly string SonarQubeApiKey;
+    [Parameter("SonarQube token", Name = "SONAR_TOKEN")] readonly string SonarQubeToken;
 
     [Solution(GenerateProjects = true)] readonly Solution Solution;
 
-    [CI] readonly AppVeyor AppVeyor;
-
-    Target UpdateBuildVersion => _ => _
-        .Requires(() => AppVeyor)
-        .Before(Compile)
-        .Executes(() =>
-        {
-            AppVeyor.Instance.UpdateBuildVersion($"{Solution.src.Todoist_Net.GetProperty("Version")}.{AppVeyor.BuildNumber}");
-        });
+    [CI] readonly GitHubActions GitHubActions;
 
     Target Compile => _ => _
         .Executes(() =>
@@ -83,26 +76,26 @@ class Build : NukeBuild
             {
                 s = s
                     .SetServer("https://sonarcloud.io")
-                    .SetFramework("net5.0")
-                    .SetToken(SonarQubeApiKey)
+                    .SetToken(SonarQubeToken)
                     .SetProjectKey("todoist-net")
                     .SetName("Todoist.Net")
                     .SetOrganization("olsh")
-                    .SetVersion("1.0.0.0");
+                    .SetVersion("1.0.0.0")
+                    .SetAdditionalParameters(new Dictionary<string, string> { ["sonar.scanner.skipJreProvisioning"] = "true" });
 
-                if (AppVeyor != null)
+                if (GitHubActions != null)
                 {
-                    if (AppVeyor.PullRequestNumber != null)
+                    if (GitHubActions.IsPullRequest)
                     {
                         s = s
-                            .SetPullRequestKey(AppVeyor.PullRequestNumber.ToString())
-                            .SetPullRequestBase(AppVeyor.RepositoryBranch)
-                            .SetPullRequestBranch(AppVeyor.PullRequestHeadRepositoryBranch);
+                            .SetPullRequestKey(GitHubActions.PullRequestNumber.ToString())
+                            .SetPullRequestBase(GitHubActions.BaseRef)
+                            .SetPullRequestBranch(GitHubActions.HeadRef);
                     }
                     else
                     {
                         s = s
-                            .SetBranchName(AppVeyor.RepositoryBranch);
+                            .SetBranchName(GitHubActions.RefName);
                     }
                 }
 
@@ -115,7 +108,6 @@ class Build : NukeBuild
         .Executes(() =>
         {
             SonarScannerEnd(s => s
-                .SetToken(SonarQubeApiKey)
-                .SetFramework("net5.0"));
+                .SetToken(SonarQubeToken));
         });
 }
