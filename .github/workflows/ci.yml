@@ -47,4 +47,3 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         path: artifacts/*.nupkg
-        compression-level: 0
