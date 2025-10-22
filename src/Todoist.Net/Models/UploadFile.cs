@@ -1,3 +1,5 @@
+using System;
+
 namespace Todoist.Net.Models
 {
     /// <summary>
@@ -13,8 +15,30 @@ namespace Todoist.Net.Models
         /// <param name="content">The file content as byte array.</param>
         /// <param name="filename">The filename.</param>
         /// <param name="mimeType">The MIME type of the file. Optional.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="content"/> or <paramref name="filename"/> is null.</exception>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="content"/> is empty or <paramref name="filename"/> is empty or whitespace.</exception>
         public UploadFile(byte[] content, string filename, string mimeType = null)
         {
+            if (content == null)
+            {
+                throw new ArgumentNullException(nameof(content));
+            }
+
+            if (filename == null)
+            {
+                throw new ArgumentNullException(nameof(filename));
+            }
+
+            if (content.Length == 0)
+            {
+                throw new ArgumentException("File content cannot be empty.", nameof(content));
+            }
+
+            if (string.IsNullOrWhiteSpace(filename))
+            {
+                throw new ArgumentException("Filename cannot be empty or whitespace.", nameof(filename));
+            }
+
             Content = content;
             Filename = filename;
             MimeType = mimeType;

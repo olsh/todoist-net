@@ -134,9 +134,9 @@ namespace Todoist.Net
                 foreach (var file in files)
                 {
                     var content = new ByteArrayContent(file.Content);
-                    if (file.MimeType != null)
+                    if (file.MimeType != null && MediaTypeHeaderValue.TryParse(file.MimeType, out var mediaType))
                     {
-                        content.Headers.ContentType = MediaTypeHeaderValue.Parse(file.MimeType);
+                        content.Headers.ContentType = mediaType;
                     }
 
                     multipartFormDataContent.Add(content, "file", file.Filename);
