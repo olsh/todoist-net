@@ -43,4 +43,10 @@ jobs:
           user: ${{ secrets.NUGET_USER }}
 
     - name: NuGet push
-      run: dotnet nuget push artifacts/*.nupkg --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
+      run: |
+          $packages = Get-ChildItem -Path artifacts/*.nupkg
+          if ($packages.Count -ne 1) {
+            throw "Expected exactly 1 package, found $($packages.Count)"
+          }
+          dotnet nuget push $packages[0].FullName --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
+      shell: pwsh
