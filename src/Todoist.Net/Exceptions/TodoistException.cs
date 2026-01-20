@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 #if NETFRAMEWORK
 using System.Runtime.Serialization;
-using System.Security.Permissions;
+#endif
 
 using Todoist.Net.Models;
 
@@ -12,7 +12,9 @@ namespace Todoist.Net.Exceptions
     ///     Represents an errors that occur during requests to Todoist API.
     /// </summary>
     /// <seealso cref="System.Exception" />
+#if NETFRAMEWORK
     [Serializable]
+#endif
     public sealed class TodoistException : Exception
     {
         /// <summary>
@@ -74,7 +76,7 @@ namespace Todoist.Net.Exceptions
             Code = code;
         }
 
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+#if NETFRAMEWORK
         private TodoistException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
@@ -84,6 +86,7 @@ namespace Todoist.Net.Exceptions
             HttpCode = info.GetInt32(nameof(HttpCode));
             ErrorExtra = (Dictionary<string, object>)info.GetValue(nameof(ErrorExtra), typeof(Dictionary<string, object>));
         }
+#endif
 
         /// <summary>
         ///     Gets the error code.
@@ -121,11 +124,9 @@ namespace Todoist.Net.Exceptions
         {
             if (info == null)
             {
-                // ReSharper disable once ExceptionNotDocumented
                 throw new ArgumentNullException(nameof(info));
             }
 
-            // ReSharper disable once ExceptionNotDocumented
             info.AddValue(nameof(Code), Code);
             info.AddValue(nameof(RawError), RawError);
             info.AddValue(nameof(ErrorTag), ErrorTag);
@@ -134,5 +135,6 @@ namespace Todoist.Net.Exceptions
 
             base.GetObjectData(info, context);
         }
+#endif
     }
 }
