@@ -6,16 +6,19 @@ namespace Todoist.Net.Models
     /// <summary>
     /// Represents information about completed tasks.
     /// </summary>
-    public class CompletedItemsInfo
+    public class CompletedTasksInfo
     {
         /// <summary>
-        /// Gets the items.
+        /// Gets the tasks.
         /// </summary>
         /// <value>
-        /// The items.
+        /// The tasks.
         /// </value>
+        /// <remarks>
+        /// The JSON property name remains "items" for backwards compatibility with Sync API.
+        /// </remarks>
         [JsonPropertyName("items")]
-        public IReadOnlyCollection<CompletedItem> Items { get; internal set; }
+        public IReadOnlyCollection<CompletedTask> Tasks { get; internal set; }
 
         /// <summary>
         /// Gets the projects.

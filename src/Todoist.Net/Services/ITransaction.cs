@@ -18,10 +18,10 @@ namespace Todoist.Net.Services
         IFiltersCommandService Filters { get; set; }
 
         /// <summary>
-        /// Gets the items service.
+        /// Gets the tasks service.
         /// </summary>
-        /// <value>The items service.</value>
-        IItemsCommandService Items { get; }
+        /// <value>The tasks service.</value>
+        ITasksCommandService Tasks { get; }
 
         /// <summary>
         /// Gets the labels service.
@@ -30,10 +30,10 @@ namespace Todoist.Net.Services
         ILabelsCommandService Labels { get; }
 
         /// <summary>
-        /// Gets the notes service.
+        /// Gets the comments service.
         /// </summary>
-        /// <value>The notes service.</value>
-        INotesCommandServices Notes { get; }
+        /// <value>The comments service.</value>
+        ICommentsCommandService Comments { get; }
 
         /// <summary>
         /// Gets the notifications service.

@@ -7,7 +7,7 @@ namespace Todoist.Net.Models
     /// <summary>
     /// Represents a completed task.
     /// </summary>
-    public class CompletedItem
+    public class CompletedTask
     {
         /// <summary>
         /// Gets the completed date.
@@ -28,10 +28,10 @@ namespace Todoist.Net.Models
         public string Content { get; internal set; }
 
         /// <summary>
-        /// Gets the task id
+        /// Gets the task id.
         /// </summary>
         /// <value>
-        /// The task id
+        /// The task id.
         /// </value>
         [JsonPropertyName("task_id")]
         public long TaskId { get; internal set; }
@@ -55,22 +55,16 @@ namespace Todoist.Net.Models
         public IReadOnlyCollection<long> Labels { get; internal set; }
 
         /// <summary>
-        /// Gets the note count.
+        /// Gets the comments.
         /// </summary>
         /// <value>
-        /// The note count.
+        /// The comments.
         /// </value>
-        [JsonPropertyName("note_count")]
-        public int NoteCount { get; internal set; }
-
-        /// <summary>
-        /// Gets the notes.
-        /// </summary>
-        /// <value>
-        /// The notes.
-        /// </value>
+        /// <remarks>
+        /// The JSON property name remains "notes" for backwards compatibility with Sync API.
+        /// </remarks>
         [JsonPropertyName("notes")]
-        public IReadOnlyCollection<Note> Notes { get; internal set; }
+        public IReadOnlyCollection<Comment> Comments { get; internal set; }
 
         /// <summary>
         /// Gets the project identifier.
@@ -91,16 +85,17 @@ namespace Todoist.Net.Models
         public long UserId { get; internal set; }
 
         /// <summary>
-        /// Gets the full item object.
+        /// Gets the full task object.
         /// </summary>
         /// <remarks>
-        /// This property is only available when the <see cref="ItemFilter.AnnotateItems"/> property is set to <c>true</c> 
-        /// in the parameter passed to the <see cref="Services.IItemsService.GetCompletedAsync(ItemFilter, System.Threading.CancellationToken)"/> method.
+        /// This property is only available when the <see cref="TaskFilter.AnnotateTasks"/> property is set to <c>true</c> 
+        /// in the parameter passed to the <see cref="Services.ITasksService.GetCompletedAsync(TaskFilter, System.Threading.CancellationToken)"/> method.
+        /// The JSON property name remains "item_object" for backwards compatibility with Sync API.
         /// </remarks>
         /// <value>
-        /// The full item object.
+        /// The full task object.
         /// </value>
         [JsonPropertyName("item_object")]
-        public Item ItemObject { get; internal set; }
+        public DetailedTask TaskObject { get; internal set; }
     }
 }

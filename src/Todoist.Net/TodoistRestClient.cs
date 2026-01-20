@@ -39,7 +39,7 @@ namespace Todoist.Net
             // ReSharper disable once ExceptionNotDocumented
             _httpClient = new HttpClient(httpClientHandler)
             {
-                BaseAddress = new Uri("https://api.todoist.com/sync/v9/")
+                BaseAddress = new Uri("https://api.todoist.com/api/v1/")
             };
 
             if (!string.IsNullOrEmpty(token))
@@ -54,7 +54,7 @@ namespace Todoist.Net
         {
             _httpClient = httpClient;
 
-            _httpClient.BaseAddress = new Uri("https://api.todoist.com/sync/v9/");
+            _httpClient.BaseAddress = new Uri("https://api.todoist.com/api/v1/");
             if (!string.IsNullOrEmpty(token))
             {
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -145,6 +145,53 @@ namespace Todoist.Net
                 return await _httpClient.PostAsync(resource, multipartFormDataContent, cancellationToken)
                                         .ConfigureAwait(false);
             }
+        }
+
+        /// <inheritdoc/>
+        public async Task<HttpResponseMessage> PostJsonAsync(
+            string resource,
+            string jsonContent,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(resource))
+            {
+                throw new ArgumentException("Value cannot be null or empty.", nameof(resource));
+            }
+
+            using (var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json"))
+            {
+                return await _httpClient.PostAsync(resource, content, cancellationToken).ConfigureAwait(false);
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<HttpResponseMessage> PutAsync(
+            string resource,
+            string jsonContent,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(resource))
+            {
+                throw new ArgumentException("Value cannot be null or empty.", nameof(resource));
+            }
+
+            using (var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json"))
+            {
+                return await _httpClient.PutAsync(resource, content, cancellationToken).ConfigureAwait(false);
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<HttpResponseMessage> DeleteAsync(
+            string resource,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(resource))
+            {
+                throw new ArgumentException("Value cannot be null or empty.", nameof(resource));
+            }
+
+            return await _httpClient.DeleteAsync(resource, cancellationToken).ConfigureAwait(false);
         }
     }
 }

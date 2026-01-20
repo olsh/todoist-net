@@ -3,13 +3,13 @@ using System.Text.Json.Serialization;
 namespace Todoist.Net.Models
 {
     /// <summary>
-    /// Represents a item move argument.
+    /// Represents a task move argument.
     /// </summary>
     /// <seealso cref="Todoist.Net.Models.MoveArgument" />
-    public class ItemMoveArgument : BaseEntity
+    public class TaskMoveArgument : BaseEntity
     {
         [JsonConstructor]
-        internal ItemMoveArgument()
+        internal TaskMoveArgument()
         {
         }
 
@@ -39,36 +39,36 @@ namespace Todoist.Net.Models
         /// <summary>
         /// Creates the move to project argument.
         /// </summary>
-        /// <param name="itemId">The item identifier.</param>
-        /// <param name="parentItemId">Id of the destination parent task. The task becomes the last child task of the parent task.</param>
+        /// <param name="taskId">The task identifier.</param>
+        /// <param name="parentTaskId">Id of the destination parent task. The task becomes the last child task of the parent task.</param>
         /// <returns>
-        /// Instance of <see cref="ItemMoveArgument" />
+        /// Instance of <see cref="TaskMoveArgument" />
         /// </returns>
-        public static ItemMoveArgument CreateMoveToParent(ComplexId itemId, ComplexId parentItemId)
+        public static TaskMoveArgument CreateMoveToParent(ComplexId taskId, ComplexId parentTaskId)
         {
-            return new ItemMoveArgument { Id = itemId, ParentId = parentItemId };
+            return new TaskMoveArgument { Id = taskId, ParentId = parentTaskId };
         }
 
         /// <summary>
         /// Creates the move to project argument.
         /// </summary>
-        /// <param name="itemId">The item identifier.</param>
+        /// <param name="taskId">The task identifier.</param>
         /// <param name="projectId">Id of the destination project. The task becomes the last root task of the project.</param>
-        /// <returns>Instance of <see cref="ItemMoveArgument" /></returns>
-        public static ItemMoveArgument CreateMoveToProject(ComplexId itemId, ComplexId projectId)
+        /// <returns>Instance of <see cref="TaskMoveArgument" /></returns>
+        public static TaskMoveArgument CreateMoveToProject(ComplexId taskId, ComplexId projectId)
         {
-            return new ItemMoveArgument { Id = itemId, ProjectId = projectId };
+            return new TaskMoveArgument { Id = taskId, ProjectId = projectId };
         }
 
         /// <summary>
         /// Creates the move to project argument.
         /// </summary>
-        /// <param name="itemId">The item identifier.</param>
+        /// <param name="taskId">The task identifier.</param>
         /// <param name="sectionId">Id of the destination section. The task becomes the last root task of the section.</param>
-        /// <returns>Instance of <see cref="ItemMoveArgument" /></returns>
-        public static ItemMoveArgument CreateMoveToSection(ComplexId itemId, ComplexId sectionId)
+        /// <returns>Instance of <see cref="TaskMoveArgument" /></returns>
+        public static TaskMoveArgument CreateMoveToSection(ComplexId taskId, ComplexId sectionId)
         {
-            return new ItemMoveArgument { Id = itemId, SectionId = sectionId };
+            return new TaskMoveArgument { Id = taskId, SectionId = sectionId };
         }
     }
 }

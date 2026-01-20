@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+#if NETFRAMEWORK
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
@@ -51,6 +53,13 @@ namespace Todoist.Net.Exceptions
         {
             Code = code;
             RawError = rawError;
+
+            if (rawError != null)
+            {
+                ErrorTag = rawError.ErrorTag;
+                HttpCode = rawError.HttpCode;
+                ErrorExtra = rawError.ErrorExtra;
+            }
         }
 
         /// <summary>
@@ -70,12 +79,16 @@ namespace Todoist.Net.Exceptions
             : base(info, context)
         {
             Code = info.GetInt32(nameof(Code));
+            RawError = (CommandError)info.GetValue(nameof(RawError), typeof(CommandError));
+            ErrorTag = info.GetString(nameof(ErrorTag));
+            HttpCode = info.GetInt32(nameof(HttpCode));
+            ErrorExtra = (Dictionary<string, object>)info.GetValue(nameof(ErrorExtra), typeof(Dictionary<string, object>));
         }
 
         /// <summary>
-        ///     Gets the code.
+        ///     Gets the error code.
         /// </summary>
-        /// <value>The code.</value>
+        /// <value>The error code.</value>
         public int Code { get; }
 
         /// <summary>
@@ -84,6 +97,25 @@ namespace Todoist.Net.Exceptions
         /// <value>The raw error.</value>
         public CommandError RawError { get; }
 
+        /// <summary>
+        ///     Gets the error tag.
+        /// </summary>
+        /// <value>The error tag (e.g., "NOT_FOUND", "INVALID_ARGUMENT_VALUE").</value>
+        public string ErrorTag { get; }
+
+        /// <summary>
+        ///     Gets the HTTP status code.
+        /// </summary>
+        /// <value>The HTTP status code.</value>
+        public int HttpCode { get; }
+
+        /// <summary>
+        ///     Gets the extra error information.
+        /// </summary>
+        /// <value>A dictionary containing additional error details.</value>
+        public Dictionary<string, object> ErrorExtra { get; }
+
+#if NETFRAMEWORK
         /// <inheritdoc />
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -95,6 +127,10 @@ namespace Todoist.Net.Exceptions
 
             // ReSharper disable once ExceptionNotDocumented
             info.AddValue(nameof(Code), Code);
+            info.AddValue(nameof(RawError), RawError);
+            info.AddValue(nameof(ErrorTag), ErrorTag);
+            info.AddValue(nameof(HttpCode), HttpCode);
+            info.AddValue(nameof(ErrorExtra), ErrorExtra);
 
             base.GetObjectData(info, context);
         }

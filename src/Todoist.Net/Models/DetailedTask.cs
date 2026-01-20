@@ -4,12 +4,12 @@ using System.Text.Json.Serialization;
 namespace Todoist.Net.Models
 {
     /// <summary>
-    /// Represents a Todoist task.
+    /// Represents a Todoist task with full details.
     /// </summary>
-    public class Item : UpdateItem
+    public class DetailedTask : UpdateTask
     {
         [JsonConstructor]
-        internal Item()
+        internal DetailedTask()
             : base(default)
         {
         }

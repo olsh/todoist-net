@@ -1,28 +1,28 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Todoist.Net.Models
 {
     /// <summary>
     /// Represents a quick add task.
     /// </summary>
-    public class QuickAddItem
+    public class QuickAddTask
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="QuickAddItem"/> class.
+        /// Initializes a new instance of the <see cref="QuickAddTask"/> class.
         /// </summary>
         /// <param name="text">The text of the task that is parsed. It can include a due date in free form text, a project name starting with the # character, a label starting with the @ character, and an assignee starting with the + character.</param>
-        public QuickAddItem(string text)
+        public QuickAddTask(string text)
         {
             Text = text;
         }
 
         /// <summary>
-        /// Gets or sets the content of the note.
+        /// Gets or sets the content of the comment.
         /// </summary>
         /// <value>
-        /// The content of the note.
+        /// The content of the comment.
         /// </value>
-        public string Note { get; set; }
+        public string Comment { get; set; }
 
         /// <summary>
         /// Gets or sets the reminder. The date of the reminder, added in free form text.
@@ -48,9 +48,9 @@ namespace Todoist.Net.Models
 
             parameters.AddLast(new KeyValuePair<string, string>("text", Text));
 
-            if (string.IsNullOrEmpty(Note))
+            if (string.IsNullOrEmpty(Comment))
             {
-                parameters.AddLast(new KeyValuePair<string, string>("note", Note));
+                parameters.AddLast(new KeyValuePair<string, string>("note", Comment));
             }
 
             if (string.IsNullOrEmpty(Text))
