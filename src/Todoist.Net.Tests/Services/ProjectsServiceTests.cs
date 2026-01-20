@@ -124,14 +124,14 @@ namespace Todoist.Net.Tests.Services
             var transaction = client.CreateTransaction();
 
             var projectId = await transaction.Project.AddAsync(new Project("Test"));
-            await transaction.Items.AddAsync(new AddItem("Test task", projectId));
+            await transaction.Tasks.AddAsync(new AddTask("Test task", projectId));
 
             await transaction.CommitAsync();
             try
             {
                 var projectData = await client.Projects.GetDataAsync(projectId);
 
-                Assert.Single(projectData.Items);
+                Assert.Single(projectData.Tasks);
             }
             finally
             {

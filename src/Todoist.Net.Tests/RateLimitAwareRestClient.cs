@@ -82,6 +82,32 @@ namespace Todoist.Net.Tests
                        .ConfigureAwait(false);
         }
 
+        public async Task<HttpResponseMessage> PostJsonAsync(
+            string resource,
+            string jsonContent,
+            CancellationToken cancellationToken = default)
+        {
+            return await ExecuteRequest(() => _restClient.PostJsonAsync(resource, jsonContent, cancellationToken))
+                       .ConfigureAwait(false);
+        }
+
+        public async Task<HttpResponseMessage> PutAsync(
+            string resource,
+            string jsonContent,
+            CancellationToken cancellationToken = default)
+        {
+            return await ExecuteRequest(() => _restClient.PutAsync(resource, jsonContent, cancellationToken))
+                       .ConfigureAwait(false);
+        }
+
+        public async Task<HttpResponseMessage> DeleteAsync(
+            string resource,
+            CancellationToken cancellationToken = default)
+        {
+            return await ExecuteRequest(() => _restClient.DeleteAsync(resource, cancellationToken))
+                       .ConfigureAwait(false);
+        }
+
         public async Task<TimeSpan> GetRateLimitCooldown(HttpResponseMessage response)
         {
             var defaultCooldown = TimeSpan.FromSeconds(30);

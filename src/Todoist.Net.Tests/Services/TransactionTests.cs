@@ -20,7 +20,7 @@ namespace Todoist.Net.Tests.Services
 
         [Fact]
         [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
-        public async Task CreateProjectAndCreateNote_Success()
+        public async Task CreateProjectAndCreateComment_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
@@ -28,22 +28,22 @@ namespace Todoist.Net.Tests.Services
 
             var project = new Project(Guid.NewGuid().ToString());
             var projectId = await transaction.Project.AddAsync(project);
-            var note = new Note("Demo note");
-            await transaction.Notes.AddToProjectAsync(note, projectId);
+            var comment = new Comment("Demo comment");
+            await transaction.Comments.AddToProjectAsync(comment, projectId);
 
             var syncToken = await transaction.CommitAsync();
             try
             {
                 var projectInfo = await client.Projects.GetAsync(project.Id);
 
-                Assert.True(projectInfo.Notes.Count > 0);
+                Assert.True(projectInfo.Comments.Count > 0);
                 Assert.NotNull(syncToken);
             }
             finally
             {
                 var deleteTransaction = client.CreateTransaction();
 
-                await deleteTransaction.Notes.DeleteAsync(note.Id);
+                await deleteTransaction.Comments.DeleteAsync(comment.Id);
                 await deleteTransaction.Project.DeleteAsync(project.Id);
 
                 await deleteTransaction.CommitAsync();
@@ -52,7 +52,7 @@ namespace Todoist.Net.Tests.Services
 
         [Fact]
         [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
-        public async Task CreateProjectAndCreateItem_Success()
+        public async Task CreateProjectAndCreateTask_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
@@ -61,24 +61,24 @@ namespace Todoist.Net.Tests.Services
             var project = new Project("Shopping List");
             var projectId = await transaction.Project.AddAsync(project);
 
-            var item = new AddItem("Buy milk")
+            var task = new AddTask("Buy milk")
             {
                 ProjectId = projectId
             };
-            await transaction.Items.AddAsync(item);
+            await transaction.Tasks.AddAsync(task);
 
             await transaction.CommitAsync();
             try
             {
                 Assert.False(string.IsNullOrEmpty(project.Id.PersistentId));
-                Assert.False(string.IsNullOrEmpty(item.Id.PersistentId));
+                Assert.False(string.IsNullOrEmpty(task.Id.PersistentId));
 
 
-                var itemInfo = await client.Items.GetAsync(item.Id);
+                var taskInfo = await client.Tasks.GetAsync(task.Id);
 
-                Assert.Equal(itemInfo.Item.Content, item.Content);
-                Assert.Equal(itemInfo.Project.Name, project.Name);
-                Assert.Equal(itemInfo.Project.Id.PersistentId, project.Id.PersistentId);
+                Assert.Equal(taskInfo.Task.Content, task.Content);
+                Assert.Equal(taskInfo.Project.Name, project.Name);
+                Assert.Equal(taskInfo.Project.Id.PersistentId, project.Id.PersistentId);
             }
             finally
             {
@@ -91,7 +91,7 @@ namespace Todoist.Net.Tests.Services
 
         [Fact]
         [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
-        public async Task CreateProjectAndCreateItemWithPredefinedTempId_Success()
+        public async Task CreateProjectAndCreateTaskWithPredefinedTempId_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
@@ -99,7 +99,7 @@ namespace Todoist.Net.Tests.Services
             {
                 Id = new ComplexId(Guid.NewGuid()) // predefined temp id
             };
-            var item = new AddItem("Buy milk")
+            var task = new AddTask("Buy milk")
             {
                 ProjectId = project.Id // predefined temp id
             };
@@ -107,20 +107,20 @@ namespace Todoist.Net.Tests.Services
             var transaction = client.CreateTransaction();
 
             await transaction.Project.AddAsync(project);
-            await transaction.Items.AddAsync(item);
+            await transaction.Tasks.AddAsync(task);
 
             await transaction.CommitAsync();
             try
             {
                 Assert.False(string.IsNullOrEmpty(project.Id.PersistentId));
-                Assert.False(string.IsNullOrEmpty(item.Id.PersistentId));
+                Assert.False(string.IsNullOrEmpty(task.Id.PersistentId));
 
 
-                var itemInfo = await client.Items.GetAsync(item.Id);
+                var taskInfo = await client.Tasks.GetAsync(task.Id);
 
-                Assert.Equal(itemInfo.Item.Content, item.Content);
-                Assert.Equal(itemInfo.Project.Name, project.Name);
-                Assert.Equal(itemInfo.Project.Id.PersistentId, project.Id.PersistentId);
+                Assert.Equal(taskInfo.Task.Content, task.Content);
+                Assert.Equal(taskInfo.Project.Name, project.Name);
+                Assert.Equal(taskInfo.Project.Id.PersistentId, project.Id.PersistentId);
             }
             finally
             {

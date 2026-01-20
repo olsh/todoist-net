@@ -12,18 +12,18 @@ using Xunit.Abstractions;
 namespace Todoist.Net.Tests.Services
 {
     [Collection(Constants.TodoistApiTestCollectionName)]
-    public class NotesServiceTests
+    public class CommentsServiceTests
     {
         private readonly ITestOutputHelper _outputHelper;
 
-        public NotesServiceTests(ITestOutputHelper outputHelper)
+        public CommentsServiceTests(ITestOutputHelper outputHelper)
         {
             _outputHelper = outputHelper;
         }
 
         [Fact]
         [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
-        public async Task AddNoteGetAndDelete_Success()
+        public async Task AddCommentGetAndDelete_Success()
         {
             var todoistClient = TodoistClientFactory.Create(_outputHelper);
 
@@ -31,11 +31,11 @@ namespace Todoist.Net.Tests.Services
             await todoistClient.Projects.AddAsync(project);
             try
             {
-                var note = new Note("Hello");
-                await todoistClient.Notes.AddToProjectAsync(note, project.Id.PersistentId);
+                var comment = new Comment("Hello");
+                await todoistClient.Comments.AddToProjectAsync(comment, project.Id.PersistentId);
 
-                var notesInfo = await todoistClient.Notes.GetAsync();
-                Assert.Contains(notesInfo.ProjectNotes, n => n.Id == note.Id);
+                var commentsInfo = await todoistClient.Comments.GetAsync();
+                Assert.Contains(commentsInfo.ProjectComments, c => c.Id == comment.Id);
             }
             finally
             {
@@ -45,7 +45,7 @@ namespace Todoist.Net.Tests.Services
 
         [Fact]
         [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
-        public async Task AddNoteToNewProjectAndUpdateIt_Success()
+        public async Task AddCommentToNewProjectAndUpdateIt_Success()
         {
             var todoistClient = TodoistClientFactory.Create(_outputHelper);
 
@@ -53,11 +53,11 @@ namespace Todoist.Net.Tests.Services
             await todoistClient.Projects.AddAsync(project);
             try
             {
-                var note = new Note("Hello");
-                await todoistClient.Notes.AddToProjectAsync(note, project.Id.PersistentId);
+                var comment = new Comment("Hello");
+                await todoistClient.Comments.AddToProjectAsync(comment, project.Id.PersistentId);
 
-                note.Content = "Updated";
-                await todoistClient.Notes.UpdateAsync(note);
+                comment.Content = "Updated";
+                await todoistClient.Comments.UpdateAsync(comment);
             }
             finally
             {
@@ -67,7 +67,7 @@ namespace Todoist.Net.Tests.Services
 
         [Fact]
         [Trait(Constants.TraitName, Constants.IntegrationPremiumTraitValue)]
-        public async Task AddNoteToNewProjectAttachFileAndDeleteIt_Success()
+        public async Task AddCommentToNewProjectAttachFileAndDeleteIt_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
@@ -75,22 +75,22 @@ namespace Todoist.Net.Tests.Services
             await client.Projects.AddAsync(project);
             try
             {
-                var note = new Note("Hello");
+                var comment = new Comment("Hello");
                 var fileName = "test.txt";
                 var upload = await client.Uploads.UploadAsync(fileName, Encoding.UTF8.GetBytes("hello"));
-                note.FileAttachment = upload;
+                comment.FileAttachment = upload;
 
-                await client.Notes.AddToProjectAsync(note, project.Id.PersistentId);
+                await client.Comments.AddToProjectAsync(comment, project.Id.PersistentId);
 
                 var projectInfo = await client.Projects.GetAsync(project.Id);
-                var attachedNote = projectInfo.Notes.FirstOrDefault();
-                Assert.NotNull(attachedNote);
-                Assert.True(attachedNote.FileAttachment.FileName == fileName);
+                var attachedComment = projectInfo.Comments.FirstOrDefault();
+                Assert.NotNull(attachedComment);
+                Assert.True(attachedComment.FileAttachment.FileName == fileName);
 
-                await client.Notes.DeleteAsync(attachedNote.Id);
+                await client.Comments.DeleteAsync(attachedComment.Id);
 
                 projectInfo = await client.Projects.GetAsync(project.Id);
-                Assert.Empty(projectInfo.Notes);
+                Assert.Empty(projectInfo.Comments);
             }
             finally
             {
