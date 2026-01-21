@@ -133,7 +133,7 @@ namespace Todoist.Net.Models
         {
             unchecked
             {
-                return (PersistentId.GetHashCode() * 397) ^ TempId.GetHashCode();
+                return ((PersistentId?.GetHashCode() ?? 0) * 397) ^ TempId.GetHashCode();
             }
         }
 

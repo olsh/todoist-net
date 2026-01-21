@@ -55,18 +55,6 @@ namespace Todoist.Net.Models
         public IReadOnlyCollection<long> Labels { get; internal set; }
 
         /// <summary>
-        /// Gets the comments count.
-        /// </summary>
-        /// <value>
-        /// The comments count.
-        /// </value>
-        /// <remarks>
-        /// The JSON property name remains "note_count" for backwards compatibility with Sync API.
-        /// </remarks>
-        [JsonPropertyName("note_count")]
-        public int CommentCount { get; internal set; }
-
-        /// <summary>
         /// Gets the comments.
         /// </summary>
         /// <value>

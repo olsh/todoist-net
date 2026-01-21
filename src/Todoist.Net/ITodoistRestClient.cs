@@ -49,5 +49,34 @@ namespace Todoist.Net
             IEnumerable<UploadFile> files,
             CancellationToken cancellationToken = default
         );
+
+        /// <summary>
+        /// Sends a <c>POST</c> request with JSON content, and handles response asynchronously.
+        /// </summary>
+        /// <param name="resource">The resource.</param>
+        /// <param name="jsonContent">The JSON content to send.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
+        /// <exception cref="System.ArgumentException">Value cannot be null or empty - resource</exception>
+        Task<HttpResponseMessage> PostJsonAsync(string resource, string jsonContent, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Sends a <c>PUT</c> request with JSON content, and handles response asynchronously.
+        /// </summary>
+        /// <param name="resource">The resource.</param>
+        /// <param name="jsonContent">The JSON content to send.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
+        /// <exception cref="System.ArgumentException">Value cannot be null or empty - resource</exception>
+        Task<HttpResponseMessage> PutAsync(string resource, string jsonContent, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Sends a <c>DELETE</c> request, and handles response asynchronously.
+        /// </summary>
+        /// <param name="resource">The resource.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
+        /// <exception cref="System.ArgumentException">Value cannot be null or empty - resource</exception>
+        Task<HttpResponseMessage> DeleteAsync(string resource, CancellationToken cancellationToken = default);
     }
 }

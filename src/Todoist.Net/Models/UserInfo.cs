@@ -94,13 +94,6 @@ namespace Todoist.Net.Models
         public string InboxProjectId { get; internal set; }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is biz admin.
-        /// </summary>
-        /// <value><c>true</c> if this instance is biz admin; otherwise, <c>false</c>.</value>
-        [JsonPropertyName("is_biz_admin")]
-        public bool IsBizAdmin { get; internal set; }
-
-        /// <summary>
         /// Gets a value indicating whether this instance is premium.
         /// </summary>
         /// <value><c>true</c> if this instance is premium; otherwise, <c>false</c>.</value>
