@@ -8,70 +8,70 @@ using Todoist.Net.Models;
 namespace Todoist.Net.Services
 {
     /// <summary>
-    /// Contains operations for notes management which can be executes in a transaction.
+    /// Contains operations for comments management which can be executed in a transaction.
     /// </summary>
     /// <seealso cref="CommandServiceBase" />
-    /// <seealso cref="Todoist.Net.Services.INotesCommandServices" />
-    internal class NotesCommandService : CommandServiceBase, INotesCommandServices
+    /// <seealso cref="Todoist.Net.Services.ICommentsCommandService" />
+    internal class CommentsCommandService : CommandServiceBase, ICommentsCommandService
     {
-        internal NotesCommandService(IAdvancedTodoistClient todoistClient)
+        internal CommentsCommandService(IAdvancedTodoistClient todoistClient)
             : base(todoistClient)
         {
         }
 
-        internal NotesCommandService(ICollection<Command> queue)
+        internal CommentsCommandService(ICollection<Command> queue)
             : base(queue)
         {
         }
 
         /// <inheritdoc/>
-        public async Task<ComplexId> AddToItemAsync(Note note, ComplexId itemId, CancellationToken cancellationToken = default)
+        public async Task<ComplexId> AddToTaskAsync(Comment comment, ComplexId taskId, CancellationToken cancellationToken = default)
         {
-            if (note == null)
+            if (comment == null)
             {
-                throw new ArgumentNullException(nameof(note));
+                throw new ArgumentNullException(nameof(comment));
             }
 
-            note.ItemId = itemId;
+            comment.TaskId = taskId;
 
-            var command = CreateAddCommand(CommandType.AddNote, note);
+            var command = CreateAddCommand(CommandType.AddComment, comment);
             await ExecuteCommandAsync(command, cancellationToken).ConfigureAwait(false);
 
-            return note.Id;
+            return comment.Id;
         }
 
         /// <inheritdoc/>
-        public async Task<ComplexId> AddToProjectAsync(Note note, ComplexId projectId, CancellationToken cancellationToken = default)
+        public async Task<ComplexId> AddToProjectAsync(Comment comment, ComplexId projectId, CancellationToken cancellationToken = default)
         {
-            if (note == null)
+            if (comment == null)
             {
-                throw new ArgumentNullException(nameof(note));
+                throw new ArgumentNullException(nameof(comment));
             }
 
-            note.ProjectId = projectId;
+            comment.ProjectId = projectId;
 
-            var command = CreateAddCommand(CommandType.AddNote, note);
+            var command = CreateAddCommand(CommandType.AddComment, comment);
             await ExecuteCommandAsync(command, cancellationToken).ConfigureAwait(false);
 
-            return note.Id;
+            return comment.Id;
         }
 
         /// <inheritdoc/>
         public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
-            var command = CreateEntityCommand(CommandType.DeleteNote, id);
+            var command = CreateEntityCommand(CommandType.DeleteComment, id);
             return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task UpdateAsync(Note note, CancellationToken cancellationToken = default)
+        public Task UpdateAsync(Comment comment, CancellationToken cancellationToken = default)
         {
-            if (note == null)
+            if (comment == null)
             {
-                throw new ArgumentNullException(nameof(note));
+                throw new ArgumentNullException(nameof(comment));
             }
 
-            var command = new Command(CommandType.UpdateNote, note);
+            var command = new Command(CommandType.UpdateComment, comment);
             return ExecuteCommandAsync(command, cancellationToken);
         }
     }

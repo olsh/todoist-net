@@ -6,26 +6,26 @@ using Todoist.Net.Models;
 namespace Todoist.Net.Services
 {
     /// <summary>
-    /// Contains operations for notes management.
+    /// Contains operations for comments management.
     /// </summary>
-    /// <seealso cref="Todoist.Net.Services.NotesCommandService" />
-    /// <seealso cref="Todoist.Net.Services.INotesServices" />
-    internal class NotesService : NotesCommandService, INotesServices
+    /// <seealso cref="Todoist.Net.Services.CommentsCommandService" />
+    /// <seealso cref="Todoist.Net.Services.ICommentsService" />
+    internal class CommentsService : CommentsCommandService, ICommentsService
     {
-        internal NotesService(IAdvancedTodoistClient todoistClient)
+        internal CommentsService(IAdvancedTodoistClient todoistClient)
             : base(todoistClient)
         {
         }
 
         /// <inheritdoc/>
-        public async Task<NotesInfo> GetAsync(CancellationToken cancellationToken = default)
+        public async Task<CommentsInfo> GetAsync(CancellationToken cancellationToken = default)
         {
-            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Notes).ConfigureAwait(false);
+            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Comments).ConfigureAwait(false);
 
-            return new NotesInfo
+            return new CommentsInfo
             {
-                ItemNotes = response.Notes,
-                ProjectNotes = response.ProjectNotes
+                TaskComments = response.Comments,
+                ProjectComments = response.ProjectComments
             };
         }
     }

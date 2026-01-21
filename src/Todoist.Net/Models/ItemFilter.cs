@@ -6,25 +6,25 @@ using Todoist.Net.Extensions;
 namespace Todoist.Net.Models
 {
     /// <summary>
-    /// Represents a completed items query filter.
+    /// Represents a completed tasks query filter.
     /// </summary>
-    public class ItemFilter
+    public class TaskFilter
     {
         /// <summary>
-        /// Gets or sets a value indicating whether to [annotate items].
+        /// Gets or sets a value indicating whether to [annotate tasks].
         /// </summary>
         /// <remarks>
-        /// When this property is set to <c>true</c>, the <see cref="CompletedItem"/> returned will contain the
-        /// full item object contained in the <see cref="CompletedItem.ItemObject"/> property.
+        /// When this property is set to <c>true</c>, the <see cref="CompletedTask"/> returned will contain the
+        /// full task object contained in the <see cref="CompletedTask.TaskObject"/> property.
         /// </remarks>
-        /// <value><c>null</c> if [annotate items] contains no value, <c>true</c> if [annotate items]; otherwise, <c>false</c>.</value>
-        public bool? AnnotateItems { get; set; }
+        /// <value><c>null</c> if [annotate tasks] contains no value, <c>true</c> if [annotate tasks]; otherwise, <c>false</c>.</value>
+        public bool? AnnotateTasks { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether [annotate notes].
+        /// Gets or sets a value indicating whether [annotate comments].
         /// </summary>
-        /// <value><c>null</c> if [annotate notes] contains no value, <c>true</c> if [annotate notes]; otherwise, <c>false</c>.</value>
-        public bool? AnnotateNotes { get; set; }
+        /// <value><c>null</c> if [annotate comments] contains no value, <c>true</c> if [annotate comments]; otherwise, <c>false</c>.</value>
+        public bool? AnnotateComments { get; set; }
 
         /// <summary>
         /// Gets or sets the limit.
@@ -85,16 +85,16 @@ namespace Todoist.Net.Models
                 parameters.AddLast(new KeyValuePair<string, string>("since", Since.Value.ToFilterParameter()));
             }
 
-            if (AnnotateNotes.HasValue)
+            if (AnnotateComments.HasValue)
             {
                 parameters.AddLast(
-                    new KeyValuePair<string, string>("annotate_notes", AnnotateNotes == true ? "true" : "false"));
+                    new KeyValuePair<string, string>("annotate_notes", AnnotateComments == true ? "true" : "false"));
             }
 
-            if (AnnotateItems.HasValue)
+            if (AnnotateTasks.HasValue)
             {
                 parameters.AddLast(
-                    new KeyValuePair<string, string>("annotate_items", AnnotateItems == true ? "true" : "false"));
+                    new KeyValuePair<string, string>("annotate_items", AnnotateTasks == true ? "true" : "false"));
             }
 
             return parameters;

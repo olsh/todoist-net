@@ -4,23 +4,29 @@ using System.Text.Json.Serialization;
 namespace Todoist.Net.Models
 {
     /// <summary>
-    /// Represents an information about a Todoist task.
+    /// Represents information about a Todoist task.
     /// </summary>
-    public class ItemInfo
+    public class TaskInfo
     {
         /// <summary>
-        /// Gets the item.
+        /// Gets the task.
         /// </summary>
-        /// <value>The item.</value>
+        /// <value>The task.</value>
+        /// <remarks>
+        /// The JSON property name remains "item" for backwards compatibility with Sync API.
+        /// </remarks>
         [JsonPropertyName("item")]
-        public Item Item { get; internal set; }
+        public DetailedTask Task { get; internal set; }
 
         /// <summary>
-        /// Gets the notes.
+        /// Gets the comments.
         /// </summary>
-        /// <value>The notes.</value>
+        /// <value>The comments.</value>
+        /// <remarks>
+        /// The JSON property name remains "notes" for backwards compatibility with Sync API.
+        /// </remarks>
         [JsonPropertyName("notes")]
-        public IReadOnlyCollection<Note> Notes { get; internal set; }
+        public IReadOnlyCollection<Comment> Comments { get; internal set; }
 
         /// <summary>
         /// Gets the project.

@@ -3,24 +3,24 @@ using System.Collections.Generic;
 namespace Todoist.Net.Models
 {
     /// <summary>
-    /// Represents collections of item and project notes.
+    /// Represents collections of task and project comments.
     /// </summary>
-    public class NotesInfo
+    public class CommentsInfo
     {
         /// <summary>
-        /// Gets the item notes.
+        /// Gets the task comments.
         /// </summary>
         /// <value>
-        /// The item notes.
+        /// The task comments.
         /// </value>
-        public IReadOnlyCollection<Note> ItemNotes { get; internal set; }
+        public IReadOnlyCollection<Comment> TaskComments { get; internal set; }
 
         /// <summary>
-        /// Gets the project notes.
+        /// Gets the project comments.
         /// </summary>
         /// <value>
-        /// The project notes.
+        /// The project comments.
         /// </value>
-        public IReadOnlyCollection<Note> ProjectNotes { get; internal set; }
+        public IReadOnlyCollection<Comment> ProjectComments { get; internal set; }
     }
 }

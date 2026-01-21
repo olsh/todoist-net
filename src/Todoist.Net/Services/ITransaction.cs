@@ -11,17 +11,17 @@ namespace Todoist.Net.Services
     public interface ITransaction
     {
         /// <summary>
-        /// Gets or sets the filters.
+        /// Gets the filters.
         /// </summary>
         /// <value>The filters.</value>
         /// <remarks>Filters are only available for Todoist Premium users.</remarks>
-        IFiltersCommandService Filters { get; set; }
+        IFiltersCommandService Filters { get; }
 
         /// <summary>
-        /// Gets the items service.
+        /// Gets the tasks service.
         /// </summary>
-        /// <value>The items service.</value>
-        IItemsCommandService Items { get; }
+        /// <value>The tasks service.</value>
+        ITasksCommandService Tasks { get; }
 
         /// <summary>
         /// Gets the labels service.
@@ -30,10 +30,10 @@ namespace Todoist.Net.Services
         ILabelsCommandService Labels { get; }
 
         /// <summary>
-        /// Gets the notes service.
+        /// Gets the comments service.
         /// </summary>
-        /// <value>The notes service.</value>
-        INotesCommandServices Notes { get; }
+        /// <value>The comments service.</value>
+        ICommentsCommandService Comments { get; }
 
         /// <summary>
         /// Gets the notifications service.
@@ -53,6 +53,12 @@ namespace Todoist.Net.Services
         /// <value>The reminders.</value>
         /// <remarks>Reminders are only available for Todoist Premium users.</remarks>
         IRemindersCommandService Reminders { get; }
+
+        /// <summary>
+        /// Gets the sections.
+        /// </summary>
+        /// <value>The sections.</value>
+        ISectionsCommandService Sections { get; }
 
         /// <summary>
         /// Gets the sharing.

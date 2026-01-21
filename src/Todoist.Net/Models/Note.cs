@@ -6,16 +6,16 @@ using System.Text.Json.Serialization;
 namespace Todoist.Net.Models
 {
     /// <summary>
-    /// Represents a Todoist note.
+    /// Represents a Todoist comment.
     /// </summary>
     /// <seealso cref="Todoist.Net.Models.BaseEntity" />
-    public class Note : BaseUnsetEntity, IWithRelationsArgument
+    public class Comment : BaseUnsetEntity, IWithRelationsArgument
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Note" /> class.
+        /// Initializes a new instance of the <see cref="Comment" /> class.
         /// </summary>
         /// <param name="content">The content.</param>
-        public Note(string content)
+        public Comment(string content)
         {
             Content = content;
 
@@ -44,11 +44,14 @@ namespace Todoist.Net.Models
         public bool? IsDeleted { get; internal set; }
 
         /// <summary>
-        /// Gets or sets the item identifier.
+        /// Gets or sets the task identifier.
         /// </summary>
-        /// <value>The item identifier.</value>
+        /// <value>The task identifier.</value>
+        /// <remarks>
+        /// The JSON property name remains "item_id" for backwards compatibility with Sync API.
+        /// </remarks>
         [JsonPropertyName("item_id")]
-        public ComplexId? ItemId { get; set; }
+        public ComplexId? TaskId { get; set; }
 
         /// <summary>
         /// Gets the posted.
@@ -89,9 +92,9 @@ namespace Todoist.Net.Models
                 ProjectId = new ComplexId(persistentProjectId);
             }
 
-            if (ItemId.HasValue && map.TryGetValue(ItemId.Value.TempId, out var persistentItemId))
+            if (TaskId.HasValue && map.TryGetValue(TaskId.Value.TempId, out var persistentTaskId))
             {
-                ItemId = new ComplexId(persistentItemId);
+                TaskId = new ComplexId(persistentTaskId);
             }
         }
     }

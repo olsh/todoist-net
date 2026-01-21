@@ -9,13 +9,16 @@ namespace Todoist.Net.Models
     public class ProjectData
     {
         /// <summary>
-        /// Gets the items.
+        /// Gets the tasks.
         /// </summary>
         /// <value>
-        /// The items.
+        /// The tasks.
         /// </value>
+        /// <remarks>
+        /// The JSON property name remains "items" for backwards compatibility with Sync API.
+        /// </remarks>
         [JsonPropertyName("items")]
-        public IReadOnlyCollection<Item> Items { get; internal set; }
+        public IReadOnlyCollection<DetailedTask> Tasks { get; internal set; }
 
         /// <summary>
         /// Gets the project.

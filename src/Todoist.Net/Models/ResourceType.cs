@@ -21,10 +21,13 @@ namespace Todoist.Net.Models
         public static ResourceType Filters { get; } = new ResourceType("filters");
 
         /// <summary>
-        /// Gets the items.
+        /// Gets the tasks.
         /// </summary>
-        /// <value>The items.</value>
-        public static ResourceType Items { get; } = new ResourceType("items");
+        /// <value>The tasks.</value>
+        /// <remarks>
+        /// The sync API value remains "items" for backwards compatibility.
+        /// </remarks>
+        public static ResourceType Tasks { get; } = new ResourceType("items");
 
         /// <summary>
         /// Gets the labels.
@@ -39,10 +42,13 @@ namespace Todoist.Net.Models
         public static ResourceType Locations { get; } = new ResourceType("locations");
 
         /// <summary>
-        /// Gets the notes.
+        /// Gets the comments.
         /// </summary>
-        /// <value>The notes.</value>
-        public static ResourceType Notes { get; } = new ResourceType("notes");
+        /// <value>The comments.</value>
+        /// <remarks>
+        /// The sync API value remains "notes" for backwards compatibility.
+        /// </remarks>
+        public static ResourceType Comments { get; } = new ResourceType("notes");
 
         /// <summary>
         /// Gets the live notifications.

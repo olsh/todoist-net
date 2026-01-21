@@ -9,11 +9,14 @@ namespace Todoist.Net.Models
     public class ProjectInfo
     {
         /// <summary>
-        /// Gets the notes.
+        /// Gets the comments.
         /// </summary>
-        /// <value>The notes.</value>
+        /// <value>The comments.</value>
+        /// <remarks>
+        /// The JSON property name remains "notes" for backwards compatibility with Sync API.
+        /// </remarks>
         [JsonPropertyName("notes")]
-        public IReadOnlyCollection<Note> Notes { get; internal set; }
+        public IReadOnlyCollection<Comment> Comments { get; internal set; }
 
         /// <summary>
         /// Gets the project.

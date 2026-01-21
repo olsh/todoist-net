@@ -6,15 +6,15 @@ using System.Text.Json.Serialization;
 namespace Todoist.Net.Models
 {
     /// <summary>
-    /// Represents a Todoist task.
+    /// Represents a Todoist task to be added.
     /// </summary>
-    public class AddItem : BaseItem, IWithRelationsArgument
+    public class AddTask : BaseTask, IWithRelationsArgument
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AddItem" /> class.
+        /// Initializes a new instance of the <see cref="AddTask" /> class.
         /// </summary>
         /// <param name="content">The content.</param>
-        public AddItem(string content)
+        public AddTask(string content)
 
             // ReSharper disable once IntroduceOptionalParameters.Global
             : this(content, default)
@@ -22,11 +22,11 @@ namespace Todoist.Net.Models
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AddItem" /> class.
+        /// Initializes a new instance of the <see cref="AddTask" /> class.
         /// </summary>
         /// <param name="content">The content.</param>
         /// <param name="projectId">The project identifier.</param>
-        public AddItem(string content, ComplexId projectId)
+        public AddTask(string content, ComplexId projectId)
         {
             Content = content;
             ProjectId = projectId;
@@ -65,7 +65,7 @@ namespace Todoist.Net.Models
         public string Section { get; set; }
 
         /// <summary>
-        /// Gets a value indicating whether to add the default reminder to the new item if it has a due date.
+        /// Gets a value indicating whether to add the default reminder to the new task if it has a due date.
         /// </summary>
         /// <value>
         /// <c>null</c> if [auto reminder] contains no value, <c>true</c> to add the default reminder. Defaults to <c>false</c>.

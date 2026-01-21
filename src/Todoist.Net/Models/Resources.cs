@@ -16,11 +16,14 @@ namespace Todoist.Net.Models
         public IReadOnlyCollection<Filter> Filters { get; internal set; }
 
         /// <summary>
-        /// Gets the items.
+        /// Gets the tasks.
         /// </summary>
-        /// <value>The items.</value>
+        /// <value>The tasks.</value>
+        /// <remarks>
+        /// The JSON property name remains "items" for backwards compatibility with Sync API.
+        /// </remarks>
         [JsonPropertyName("items")]
-        public IReadOnlyCollection<Item> Items { get; internal set; }
+        public IReadOnlyCollection<DetailedTask> Tasks { get; internal set; }
 
         /// <summary>
         /// Gets the labels.
@@ -37,11 +40,14 @@ namespace Todoist.Net.Models
         public long? LastReadNotificationId { get; set; }
 
         /// <summary>
-        /// Gets the notes.
+        /// Gets the comments.
         /// </summary>
-        /// <value>The notes.</value>
+        /// <value>The comments.</value>
+        /// <remarks>
+        /// The JSON property name remains "notes" for backwards compatibility with Sync API.
+        /// </remarks>
         [JsonPropertyName("notes")]
-        public IReadOnlyCollection<Note> Notes { get; internal set; }
+        public IReadOnlyCollection<Comment> Comments { get; internal set; }
 
         /// <summary>
         /// Gets the notifications.
@@ -51,11 +57,14 @@ namespace Todoist.Net.Models
         public IReadOnlyCollection<Notification> Notifications { get; internal set; }
 
         /// <summary>
-        /// Gets the project notes.
+        /// Gets the project comments.
         /// </summary>
-        /// <value>The project notes.</value>
+        /// <value>The project comments.</value>
+        /// <remarks>
+        /// The JSON property name remains "project_notes" for backwards compatibility with Sync API.
+        /// </remarks>
         [JsonPropertyName("project_notes")]
-        public IReadOnlyCollection<Note> ProjectNotes { get; internal set; }
+        public IReadOnlyCollection<Comment> ProjectComments { get; internal set; }
 
         /// <summary>
         /// Gets the projects.

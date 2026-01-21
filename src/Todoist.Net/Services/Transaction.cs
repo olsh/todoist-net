@@ -27,29 +27,32 @@ namespace Todoist.Net.Services
             _commands = new LinkedList<Command>();
 
             Project = new ProjectsCommandService(_commands);
-            Notes = new NotesCommandService(_commands);
-            Items = new ItemsCommandService(_commands);
+            Comments = new CommentsCommandService(_commands);
+            Tasks = new TasksCommandService(_commands);
             Labels = new LabelsCommandService(_commands);
             Notifications = new NotificationsCommandService(_commands);
             Filters = new FiltersCommandService(_commands);
             Reminders = new RemindersCommandService(_commands);
+            Sections = new SectionsCommandService(_commands);
             Users = new UsersCommandService(_commands);
             Sharing = new SharingCommandService(_commands);
         }
 
-        public IFiltersCommandService Filters { get; set; }
+        public IFiltersCommandService Filters { get; }
 
-        public IItemsCommandService Items { get; }
+        public ITasksCommandService Tasks { get; }
 
         public ILabelsCommandService Labels { get; }
 
-        public INotesCommandServices Notes { get; }
+        public ICommentsCommandService Comments { get; }
 
         public INotificationsCommandService Notifications { get; }
 
         public IProjectCommandService Project { get; }
 
         public IRemindersCommandService Reminders { get; }
+
+        public ISectionsCommandService Sections { get; }
 
         public ISharingCommandService Sharing { get; }
 

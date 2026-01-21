@@ -10,31 +10,31 @@ namespace Todoist.Net.Services
     /// <summary>
     /// Contains methods for Todoist tasks management.
     /// </summary>
-    /// <seealso cref="Todoist.Net.Services.ItemsCommandService" />
-    /// <seealso cref="Todoist.Net.Services.IItemsService" />
-    internal class ItemsService : ItemsCommandService, IItemsService
+    /// <seealso cref="Todoist.Net.Services.TasksCommandService" />
+    /// <seealso cref="Todoist.Net.Services.ITasksService" />
+    internal class TasksService : TasksCommandService, ITasksService
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ItemsService"/> class.
+        /// Initializes a new instance of the <see cref="TasksService"/> class.
         /// </summary>
         /// <param name="todoistClient">The todoist client.</param>
-        internal ItemsService(IAdvancedTodoistClient todoistClient)
+        internal TasksService(IAdvancedTodoistClient todoistClient)
             : base(todoistClient)
         {
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<Item>> GetAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<DetailedTask>> GetAsync(CancellationToken cancellationToken = default)
         {
-            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Items).ConfigureAwait(false);
+            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Tasks).ConfigureAwait(false);
 
-            return response.Items;
+            return response.Tasks;
         }
 
         /// <inheritdoc/>
-        public Task<ItemInfo> GetAsync(ComplexId id, CancellationToken cancellationToken = default)
+        public Task<TaskInfo> GetAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
-            return TodoistClient.PostAsync<ItemInfo>(
+            return TodoistClient.PostAsync<TaskInfo>(
                 "items/get",
                 new List<KeyValuePair<string, string>>
                     {
@@ -46,22 +46,22 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task<CompletedItemsInfo> GetCompletedAsync(ItemFilter filter = null, CancellationToken cancellationToken = default)
+        public Task<CompletedTasksInfo> GetCompletedAsync(TaskFilter filter = null, CancellationToken cancellationToken = default)
         {
             var parameters = filter == null ? new List<KeyValuePair<string, string>>() : filter.ToParameters();
 
-            return TodoistClient.GetAsync<CompletedItemsInfo>("completed/get_all", parameters, cancellationToken);
+            return TodoistClient.GetAsync<CompletedTasksInfo>("completed/get_all", parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<Item> QuickAddAsync(QuickAddItem quickAddItem, CancellationToken cancellationToken = default)
+        public Task<DetailedTask> QuickAddAsync(QuickAddTask quickAddTask, CancellationToken cancellationToken = default)
         {
-            if (quickAddItem == null)
+            if (quickAddTask == null)
             {
-                throw new ArgumentNullException(nameof(quickAddItem));
+                throw new ArgumentNullException(nameof(quickAddTask));
             }
 
-            return TodoistClient.PostAsync<Item>("quick/add", quickAddItem.ToParameters(), cancellationToken);
+            return TodoistClient.PostAsync<DetailedTask>("quick/add", quickAddTask.ToParameters(), cancellationToken);
         }
     }
 }

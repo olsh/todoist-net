@@ -28,8 +28,8 @@ namespace Todoist.Net.Tests.Services
 
             var transaction = client.CreateTransaction();
 
-            var itemId = await transaction.Items.AddAsync(new AddItem("Temp"));
-            var reminder = new Reminder(itemId) { DueDate = DueDate.CreateFloating(DateTime.UtcNow.AddDays(1)) };
+            var taskId = await transaction.Tasks.AddAsync(new AddTask("Temp"));
+            var reminder = new Reminder(taskId) { DueDate = DueDate.CreateFloating(DateTime.UtcNow.AddDays(1)) };
             await transaction.Reminders.AddAsync(reminder);
             await transaction.CommitAsync();
             try
@@ -41,7 +41,7 @@ namespace Todoist.Net.Tests.Services
             finally
             {
                 await client.Reminders.DeleteAsync(reminder.Id);
-                await client.Items.DeleteAsync(itemId);
+                await client.Tasks.DeleteAsync(taskId);
             }
         }
 
@@ -50,12 +50,12 @@ namespace Todoist.Net.Tests.Services
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var item = new AddItem("Test")
+            var task = new AddTask("Test")
             {
                 DueDate = DueDate.CreateFloating(DateTime.UtcNow.AddDays(1))
             };
 
-            var taskId = await client.Items.AddAsync(item);
+            var taskId = await client.Tasks.AddAsync(task);
             try
             {
                 var user = await client.Users.GetCurrentAsync();
@@ -71,7 +71,7 @@ namespace Todoist.Net.Tests.Services
             }
             finally
             {
-                await client.Items.DeleteAsync(item.Id);
+                await client.Tasks.DeleteAsync(task.Id);
             }
         }
     }

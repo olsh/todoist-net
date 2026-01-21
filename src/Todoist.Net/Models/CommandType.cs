@@ -11,11 +11,11 @@ namespace Todoist.Net.Models
 
         public static CommandType AddFilter { get; } = new CommandType("filter_add");
 
-        public static CommandType AddItem { get; } = new CommandType("item_add");
+        public static CommandType AddTask { get; } = new CommandType("item_add");
 
         public static CommandType AddLabel { get; } = new CommandType("label_add");
 
-        public static CommandType AddNote { get; } = new CommandType("note_add");
+        public static CommandType AddComment { get; } = new CommandType("note_add");
 
         public static CommandType AddProject { get; } = new CommandType("project_add");
 
@@ -29,11 +29,11 @@ namespace Todoist.Net.Models
 
         public static CommandType ClearLocations { get; } = new CommandType("clear_locations");
 
-        public static CommandType CloseItem { get; } = new CommandType("item_close");
+        public static CommandType CloseTask { get; } = new CommandType("item_close");
 
-        public static CommandType CompleteItem { get; } = new CommandType("item_complete");
+        public static CommandType CompleteTask { get; } = new CommandType("item_complete");
 
-        public static CommandType CompleteRecurringItem { get; } = new CommandType("item_update_date_complete");
+        public static CommandType CompleteRecurringTask { get; } = new CommandType("item_update_date_complete");
 
         public static CommandType DeleteCollaborator { get; } = new CommandType("delete_collaborator");
 
@@ -41,11 +41,11 @@ namespace Todoist.Net.Models
 
         public static CommandType DeleteInvitation { get; } = new CommandType("delete_invitation");
 
-        public static CommandType DeleteItem { get; } = new CommandType("item_delete");
+        public static CommandType DeleteTask { get; } = new CommandType("item_delete");
 
         public static CommandType DeleteLabel { get; } = new CommandType("label_delete");
 
-        public static CommandType DeleteNote { get; } = new CommandType("note_delete");
+        public static CommandType DeleteComment { get; } = new CommandType("note_delete");
 
         public static CommandType DeleteProject { get; } = new CommandType("project_delete");
 
@@ -53,7 +53,7 @@ namespace Todoist.Net.Models
 
         public static CommandType DeleteSection { get; } = new CommandType("section_delete");
 
-        public static CommandType MoveItem { get; } = new CommandType("item_move");
+        public static CommandType MoveTask { get; } = new CommandType("item_move");
 
         public static CommandType MoveProject { get; } = new CommandType("project_move");
 
@@ -61,7 +61,7 @@ namespace Todoist.Net.Models
 
         public static CommandType RejectInvitation { get; } = new CommandType("reject_invitation");
 
-        public static CommandType ReorderItems { get; } = new CommandType("item_reorder");
+        public static CommandType ReorderTasks { get; } = new CommandType("item_reorder");
 
         public static CommandType ReorderProjects { get; } = new CommandType("project_reorder");
 
@@ -76,19 +76,19 @@ namespace Todoist.Net.Models
 
         public static CommandType UnarchiveSection { get; } = new CommandType("section_unarchive");
 
-        public static CommandType UncompleteItem { get; } = new CommandType("item_uncomplete");
+        public static CommandType UncompleteTask { get; } = new CommandType("item_uncomplete");
 
-        public static CommandType UpdateDayOrderItem { get; } = new CommandType("item_update_day_orders");
+        public static CommandType UpdateDayOrderTask { get; } = new CommandType("item_update_day_orders");
 
         public static CommandType UpdateFilter { get; } = new CommandType("filter_update");
 
-        public static CommandType UpdateItem { get; } = new CommandType("item_update");
+        public static CommandType UpdateTask { get; } = new CommandType("item_update");
 
         public static CommandType UpdateKarmaGoals { get; } = new CommandType("update_goals");
 
         public static CommandType UpdateLabel { get; } = new CommandType("label_update");
 
-        public static CommandType UpdateNote { get; } = new CommandType("note_update");
+        public static CommandType UpdateComment { get; } = new CommandType("note_update");
 
         public static CommandType UpdateOrderFilter { get; } = new CommandType("filter_update_orders");
 

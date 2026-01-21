@@ -33,12 +33,12 @@ namespace Todoist.Net
         IFiltersService Filters { get; }
 
         /// <summary>
-        /// Gets the items service.
+        /// Gets the tasks service.
         /// </summary>
         /// <value>
-        /// The items service.
+        /// The tasks service.
         /// </value>
-        IItemsService Items { get; }
+        ITasksService Tasks { get; }
 
         /// <summary>
         /// Gets the labels.
@@ -47,12 +47,12 @@ namespace Todoist.Net
         ILabelsService Labels { get; }
 
         /// <summary>
-        /// Gets the notes service.
+        /// Gets the comments service.
         /// </summary>
         /// <value>
-        /// The notes service.
+        /// The comments service.
         /// </value>
-        INotesServices Notes { get; }
+        ICommentsService Comments { get; }
 
         /// <summary>
         /// Gets the notifications service.
