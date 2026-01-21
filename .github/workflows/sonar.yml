@@ -1,0 +1,84 @@
+name: Sonar
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+jobs:
+  sonar:
+    runs-on: windows-latest
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request'
+
+    steps:
+    - name: Download PR metadata
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            run_id: context.payload.workflow_run.id,
+          });
+          const matchArtifact = artifacts.data.artifacts.find(a => a.name === 'pr-metadata');
+          if (!matchArtifact) {
+            core.setFailed('PR metadata artifact not found');
+            return;
+          }
+          const download = await github.rest.actions.downloadArtifact({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            artifact_id: matchArtifact.id,
+            archive_format: 'zip',
+          });
+          const fs = require('fs');
+          fs.writeFileSync('${{ runner.temp }}/pr-metadata.zip', Buffer.from(download.data));
+
+    - name: Extract PR metadata
+      run: |
+        Expand-Archive -Path "${{ runner.temp }}/pr-metadata.zip" -DestinationPath "${{ runner.temp }}/pr-metadata"
+        echo "PR_NUMBER=$(Get-Content '${{ runner.temp }}/pr-metadata/pr_number')" >> $env:GITHUB_ENV
+        echo "PR_BASE=$(Get-Content '${{ runner.temp }}/pr-metadata/pr_base')" >> $env:GITHUB_ENV
+        echo "PR_BRANCH=$(Get-Content '${{ runner.temp }}/pr-metadata/pr_branch')" >> $env:GITHUB_ENV
+        echo "PR_SHA=$(Get-Content '${{ runner.temp }}/pr-metadata/pr_sha')" >> $env:GITHUB_ENV
+
+    - uses: actions/checkout@v5
+      with:
+        ref: ${{ env.PR_SHA }}
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 10.x
+
+    - name: Setup Java
+      uses: actions/setup-java@v5
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Cache SonarQube
+      uses: actions/cache@v4
+      with:
+        path: ~/.sonar/cache
+        key: ${{ runner.os }}-sonar
+
+    - name: Run Sonar Analysis
+      run: |
+        .\build.cmd sonar --configuration Release `
+          --pr-number ${{ env.PR_NUMBER }} `
+          --pr-base ${{ env.PR_BASE }} `
+          --pr-branch ${{ env.PR_BRANCH }}
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
