@@ -19,6 +19,10 @@ class Build : NukeBuild
 
     [Parameter("SonarQube token", Name = "SONAR_TOKEN")] readonly string SonarQubeToken;
 
+    [Parameter("Pull request number")] readonly int? PrNumber;
+    [Parameter("Pull request base branch")] readonly string PrBase;
+    [Parameter("Pull request head branch")] readonly string PrBranch;
+
     [Solution(GenerateProjects = true)] readonly Solution Solution;
 
     [CI] readonly GitHubActions GitHubActions;
@@ -83,7 +87,15 @@ class Build : NukeBuild
                     .SetVersion("1.0.0.0")
                     .SetAdditionalParameters(new Dictionary<string, string> { ["sonar.scanner.skipJreProvisioning"] = "true" });
 
-                if (GitHubActions != null)
+                // Priority: CLI params > GitHubActions context
+                if (PrNumber.HasValue)
+                {
+                    s = s
+                        .SetPullRequestKey(PrNumber.Value.ToString())
+                        .SetPullRequestBase(PrBase)
+                        .SetPullRequestBranch(PrBranch);
+                }
+                else if (GitHubActions != null)
                 {
                     if (GitHubActions.IsPullRequest)
                     {
