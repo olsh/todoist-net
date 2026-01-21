@@ -21,6 +21,7 @@ jobs:
         dotnet-version: 10.x
 
     - name: Setup Java
+      if: github.event_name == 'push'
       uses: actions/setup-java@v5
       with:
         distribution: 'temurin'
@@ -35,6 +36,7 @@ jobs:
           ${{ runner.os }}-nuget-
 
     - name: Cache SonarQube
+      if: github.event_name == 'push'
       uses: actions/cache@v4
       with:
         path: ~/.sonar/cache
