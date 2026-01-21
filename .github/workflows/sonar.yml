@@ -34,7 +34,9 @@ jobs:
             archive_format: 'zip',
           });
           const fs = require('fs');
-          fs.writeFileSync('${{ runner.temp }}/pr-metadata.zip', Buffer.from(download.data));
+          const path = require('path');
+          const zipPath = path.join(process.env.RUNNER_TEMP, 'pr-metadata.zip');
+          fs.writeFileSync(zipPath, Buffer.from(download.data));
 
     - name: Extract PR metadata
       run: |

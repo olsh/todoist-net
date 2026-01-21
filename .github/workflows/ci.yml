@@ -56,10 +56,15 @@ jobs:
       if: github.event_name == 'pull_request'
       run: |
         mkdir pr-metadata
-        echo "${{ github.event.pull_request.number }}" > pr-metadata/pr_number
-        echo "${{ github.event.pull_request.base.ref }}" > pr-metadata/pr_base
-        echo "${{ github.event.pull_request.head.ref }}" > pr-metadata/pr_branch
-        echo "${{ github.event.pull_request.head.sha }}" > pr-metadata/pr_sha
+        echo "$env:PR_NUMBER" > pr-metadata/pr_number
+        echo "$env:PR_BASE" > pr-metadata/pr_base
+        echo "$env:PR_BRANCH" > pr-metadata/pr_branch
+        echo "$env:PR_SHA" > pr-metadata/pr_sha
+      env:
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        PR_BASE: ${{ github.event.pull_request.base.ref }}
+        PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+        PR_SHA: ${{ github.event.pull_request.head.sha }}
 
     - name: Upload PR metadata
       if: github.event_name == 'pull_request'
