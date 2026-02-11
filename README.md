@@ -22,13 +22,13 @@ ITodoistClient client = new TodoistClient("API token");
 
 Implementation of the Quick Add Task available in the official clients.
 ```csharp
-var quickAddItem = new QuickAddItem("Task title @Label1 #Project1 +ExampleUser");
-var task = await client.Items.QuickAddAsync(quickAddItem);
+var quickAddTask = new QuickAddTask("Task title @Label1 #Project1 +ExampleUser");
+var task = await client.Tasks.QuickAddAsync(quickAddTask);
 ```
 
 ### Simple API calls
 ```csharp
-// Get all resources (labels, projects, tasks, notes etc.).
+// Get all resources (labels, projects, tasks, comments etc.).
 var resources = await client.GetResourcesAsync();
 
 // Get only projects and labels.
@@ -40,9 +40,9 @@ var projectsOnly = await client.GetResourcesAsync(ResourceType.Projects);
 // Alternatively you can use this API to get projects.
 var projects = await client.Projects.GetAsync();
 
-// Add a task with a note.
-var taskId = await client.Items.AddAsync(new Item("New task"));
-await client.Notes.AddToItemAsync(new Note("Task description"), taskId);
+// Add a task with a comment.
+var taskId = await client.Tasks.AddAsync(new AddTask("New task"));
+await client.Comments.AddToTaskAsync(new Comment("Task description"), taskId);
 ```
 
 ### Transactions (Batching)
@@ -55,8 +55,8 @@ var transaction = client.CreateTransaction();
 
 // These requests are queued and will be executed later.
 var projectId = await transaction.Project.AddAsync(new Project("New project"));
-var taskId = await transaction.Items.AddAsync(new Item("New task", projectId));
-await transaction.Notes.AddToItemAsync(new Note("Task description"), taskId);
+var taskId = await transaction.Tasks.AddAsync(new AddTask("New task", projectId));
+await transaction.Comments.AddToTaskAsync(new Comment("Task description"), taskId);
 
 // Execute all the requests in the transaction in a single HTTP request.
 await transaction.CommitAsync();
@@ -71,8 +71,8 @@ since including `null` properties will update them to `null`.
 However, if you want to intentionally send a `null` value to the API, you need to use the `Unset` extension method, for example:
 ```csharp
 // This code removes a task's due date.
-var task = new UpdateItem("TASK_ID");
+var task = new UpdateTask("TASK_ID");
 task.Unset(t => t.DueDate);
 
-await client.Items.UpdateAsync(task);
+await client.Tasks.UpdateAsync(task);
 ```

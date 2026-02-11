@@ -11,10 +11,10 @@ namespace Todoist.Net.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="Reminder" /> class.
         /// </summary>
-        /// <param name="itemId">An ID of a task.</param>
-        public Reminder(ComplexId itemId)
+        /// <param name="taskId">An ID of a task.</param>
+        public Reminder(ComplexId taskId)
         {
-            ItemId = itemId;
+            TaskId = taskId;
         }
 
         /// <summary>
@@ -42,11 +42,11 @@ namespace Todoist.Net.Models
         public bool? IsDeleted { get; internal set; }
 
         /// <summary>
-        /// Gets or sets the item identifier.
+        /// Gets or sets the task identifier.
         /// </summary>
-        /// <value>The item identifier.</value>
+        /// <value>The task identifier.</value>
         [JsonPropertyName("item_id")]
-        public ComplexId ItemId { get; set; }
+        public ComplexId TaskId { get; set; }
 
         /// <summary>
         /// Gets or sets the location trigger.
