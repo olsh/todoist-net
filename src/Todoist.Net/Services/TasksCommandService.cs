@@ -11,49 +11,49 @@ namespace Todoist.Net.Services
     /// Contains methods for Todoist tasks management which can be executed in a transaction.
     /// </summary>
     /// <seealso cref="CommandServiceBase" />
-    /// <seealso cref="Todoist.Net.Services.IItemsCommandService" />
-    internal class ItemsCommandService : CommandServiceBase, IItemsCommandService
+    /// <seealso cref="Todoist.Net.Services.ITasksCommandService" />
+    internal class TasksCommandService : CommandServiceBase, ITasksCommandService
     {
-        internal ItemsCommandService(IAdvancedTodoistClient todoistClient)
+        internal TasksCommandService(IAdvancedTodoistClient todoistClient)
             : base(todoistClient)
         {
         }
 
-        internal ItemsCommandService(ICollection<Command> queue)
+        internal TasksCommandService(ICollection<Command> queue)
             : base(queue)
         {
         }
 
         /// <inheritdoc/>
-        public async Task<ComplexId> AddAsync(AddItem item, CancellationToken cancellationToken = default)
+        public async Task<ComplexId> AddAsync(AddTask task, CancellationToken cancellationToken = default)
         {
-            if (item == null)
+            if (task == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(task));
             }
 
-            var command = CreateAddCommand(CommandType.AddItem, item);
+            var command = CreateAddCommand(CommandType.AddTask, task);
             await ExecuteCommandAsync(command, cancellationToken).ConfigureAwait(false);
 
-            return item.Id;
+            return task.Id;
         }
 
         /// <inheritdoc/>
         public Task CloseAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
-            var command = CreateEntityCommand(CommandType.CloseItem, id);
+            var command = CreateEntityCommand(CommandType.CloseTask, id);
             return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task CompleteAsync(CompleteItemArgument completeItemArgument, CancellationToken cancellationToken = default)
+        public Task CompleteAsync(CompleteTaskArgument completeTaskArgument, CancellationToken cancellationToken = default)
         {
-            if (completeItemArgument == null)
+            if (completeTaskArgument == null)
             {
-                throw new ArgumentNullException(nameof(completeItemArgument));
+                throw new ArgumentNullException(nameof(completeTaskArgument));
             }
 
-            var command = new Command(CommandType.CompleteItem, completeItemArgument);
+            var command = new Command(CommandType.CompleteTask, completeTaskArgument);
 
             return ExecuteCommandAsync(command, cancellationToken);
         }
@@ -61,19 +61,19 @@ namespace Todoist.Net.Services
         /// <inheritdoc/>
         public Task CompleteRecurringAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
-            var command = CreateEntityCommand(CommandType.CompleteRecurringItem, id);
+            var command = CreateEntityCommand(CommandType.CompleteRecurringTask, id);
             return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task CompleteRecurringAsync(CompleteRecurringItemArgument completeRecurringItemArgument, CancellationToken cancellationToken = default)
+        public Task CompleteRecurringAsync(CompleteRecurringTaskArgument completeRecurringTaskArgument, CancellationToken cancellationToken = default)
         {
-            if (completeRecurringItemArgument == null)
+            if (completeRecurringTaskArgument == null)
             {
-                throw new ArgumentNullException(nameof(completeRecurringItemArgument));
+                throw new ArgumentNullException(nameof(completeRecurringTaskArgument));
             }
 
-            var command = new Command(CommandType.CompleteRecurringItem, completeRecurringItemArgument);
+            var command = new Command(CommandType.CompleteRecurringTask, completeRecurringTaskArgument);
 
             return ExecuteCommandAsync(command, cancellationToken);
         }
@@ -81,7 +81,7 @@ namespace Todoist.Net.Services
         /// <inheritdoc/>
         public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
-            var command = CreateEntityCommand(CommandType.DeleteItem, id);
+            var command = CreateEntityCommand(CommandType.DeleteTask, id);
 
             return ExecuteCommandAsync(command, cancellationToken);
         }
@@ -89,20 +89,20 @@ namespace Todoist.Net.Services
         /// <inheritdoc/>
         public Task UncompleteAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
-            var command = CreateEntityCommand(CommandType.UncompleteItem, id);
+            var command = CreateEntityCommand(CommandType.UncompleteTask, id);
 
             return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task UpdateAsync(UpdateItem item, CancellationToken cancellationToken = default)
+        public Task UpdateAsync(UpdateTask task, CancellationToken cancellationToken = default)
         {
-            if (item == null)
+            if (task == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(task));
             }
 
-            var command = new Command(CommandType.UpdateItem, item);
+            var command = new Command(CommandType.UpdateTask, task);
             return ExecuteCommandAsync(command, cancellationToken);
         }
 
@@ -117,19 +117,19 @@ namespace Todoist.Net.Services
                 throw new ArgumentNullException(nameof(idsToOrder));
             }
 
-            var command = new Command(CommandType.UpdateDayOrderItem, new IdToOrderArgument(idsToOrder));
+            var command = new Command(CommandType.UpdateDayOrderTask, new IdToOrderArgument(idsToOrder));
             return ExecuteCommandAsync(command, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task MoveAsync(ItemMoveArgument moveArgument, CancellationToken cancellationToken = default)
+        public Task MoveAsync(TaskMoveArgument moveArgument, CancellationToken cancellationToken = default)
         {
             if (moveArgument == null)
             {
                 throw new ArgumentNullException(nameof(moveArgument));
             }
 
-            return ExecuteCommandAsync(new Command(CommandType.MoveItem, moveArgument), cancellationToken);
+            return ExecuteCommandAsync(new Command(CommandType.MoveTask, moveArgument), cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -148,7 +148,7 @@ namespace Todoist.Net.Services
                 throw new ArgumentException("Value cannot be an empty collection.", nameof(reorderEntries));
             }
 
-            return ExecuteCommandAsync(new Command(CommandType.ReorderItems, new ReorderItemsArgument(reorderEntries)), cancellationToken);
+            return ExecuteCommandAsync(new Command(CommandType.ReorderTasks, new ReorderTasksArgument(reorderEntries)), cancellationToken);
         }
     }
 }

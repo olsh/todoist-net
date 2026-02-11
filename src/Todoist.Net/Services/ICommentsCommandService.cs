@@ -8,42 +8,42 @@ using Todoist.Net.Models;
 namespace Todoist.Net.Services
 {
     /// <summary>
-    /// Contains operations for notes management which can be executes in a transaction.
+    /// Contains operations for comments management which can be executed in a transaction.
     /// </summary>
-    public interface INotesCommandServices
+    public interface ICommentsCommandService
     {
         /// <summary>
-        /// Adds the note asynchronous.
+        /// Adds the comment to a task asynchronous.
         /// </summary>
-        /// <param name="note">The note.</param>
-        /// <param name="itemId">The item identifier.</param>
+        /// <param name="comment">The comment.</param>
+        /// <param name="taskId">The task identifier.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>
-        /// The temporary ID of the note.
+        /// The temporary ID of the comment.
         /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="note" /> is <see langword="null" /></exception>
+        /// <exception cref="ArgumentNullException"><paramref name="comment" /> is <see langword="null" /></exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<ComplexId> AddToItemAsync(Note note, ComplexId itemId, CancellationToken cancellationToken = default);
+        Task<ComplexId> AddToTaskAsync(Comment comment, ComplexId taskId, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Adds the note asynchronous.
+        /// Adds the comment to a project asynchronous.
         /// </summary>
-        /// <param name="note">The note.</param>
+        /// <param name="comment">The comment.</param>
         /// <param name="projectId">The project ID.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>
-        /// The note ID.
+        /// The comment ID.
         /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="note" /> is <see langword="null" /></exception>
+        /// <exception cref="ArgumentNullException"><paramref name="comment" /> is <see langword="null" /></exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<ComplexId> AddToProjectAsync(Note note, ComplexId projectId, CancellationToken cancellationToken = default);
+        Task<ComplexId> AddToProjectAsync(Comment comment, ComplexId projectId, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Deletes the note asynchronous.
+        /// Deletes the comment asynchronous.
         /// </summary>
-        /// <param name="id">The id of the note.</param>
+        /// <param name="id">The id of the comment.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
@@ -51,14 +51,14 @@ namespace Todoist.Net.Services
         Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Updates the note asynchronous.
+        /// Updates the comment asynchronous.
         /// </summary>
-        /// <param name="note">The note.</param>
+        /// <param name="comment">The comment.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="note" /> is <see langword="null" /></exception>
+        /// <exception cref="ArgumentNullException"><paramref name="comment" /> is <see langword="null" /></exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task UpdateAsync(Note note, CancellationToken cancellationToken = default);
+        Task UpdateAsync(Comment comment, CancellationToken cancellationToken = default);
     }
 }

@@ -84,9 +84,9 @@ namespace Todoist.Net
 
             Projects = new ProjectsService(this);
             Templates = new TemplateService(this);
-            Items = new ItemsService(this);
+            Tasks = new TasksService(this);
             Labels = new LabelsService(this);
-            Notes = new NotesService(this);
+            Comments = new CommentsService(this);
             Uploads = new UploadService(this);
             Filters = new FiltersService(this);
             Activity = new ActivityService(this);
@@ -127,10 +127,10 @@ namespace Todoist.Net
         public IFiltersService Filters { get; }
 
         /// <summary>
-        /// Gets the items service.
+        /// Gets the tasks service.
         /// </summary>
-        /// <value>The items service.</value>
-        public IItemsService Items { get; }
+        /// <value>The tasks service.</value>
+        public ITasksService Tasks { get; }
 
         /// <summary>
         /// Gets the labels.
@@ -139,10 +139,10 @@ namespace Todoist.Net
         public ILabelsService Labels { get; }
 
         /// <summary>
-        /// Gets the notes service.
+        /// Gets the comments service.
         /// </summary>
-        /// <value>The notes service.</value>
-        public INotesServices Notes { get; }
+        /// <value>The comments service.</value>
+        public ICommentsService Comments { get; }
 
         /// <summary>
         /// Gets the notifications service.

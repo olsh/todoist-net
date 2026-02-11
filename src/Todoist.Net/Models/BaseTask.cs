@@ -6,14 +6,14 @@ namespace Todoist.Net.Models
     /// <summary>
     /// Represents a base for Todoist tasks.
     /// </summary>
-    public abstract class BaseItem : BaseUnsetEntity
+    public abstract class BaseTask : BaseUnsetEntity
     {
-        private protected BaseItem(ComplexId id)
+        private protected BaseTask(ComplexId id)
             : base(id)
         {
         }
 
-        private protected BaseItem()
+        private protected BaseTask()
         {
         }
 
@@ -25,7 +25,7 @@ namespace Todoist.Net.Models
         public string AssignedByUid { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="Item" /> is collapsed.
+        /// Gets or sets a value indicating whether this task is collapsed.
         /// </summary>
         /// <value><c>null</c> if [collapsed] contains no value, <c>true</c> if [collapsed]; otherwise, <c>false</c>.</value>
         [JsonPropertyName("collapsed")]

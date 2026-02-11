@@ -10,38 +10,38 @@ namespace Todoist.Net.Services
     /// <summary>
     /// Contains methods for Todoist tasks management which can be executed in a transaction.
     /// </summary>
-    public interface IItemsCommandService
+    public interface ITasksCommandService
     {
         /// <summary>
-        /// Adds a new task to a project asynchronous. By default the task is added to the user’s Inbox project.
+        /// Adds a new task to a project asynchronous. By default the task is added to the user's Inbox project.
         /// </summary>
-        /// <param name="item">The item.</param>
+        /// <param name="task">The task.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>
-        /// The temporary ID of the item.
+        /// The temporary ID of the task.
         /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
+        /// <exception cref="ArgumentNullException"><paramref name="task" /> is <see langword="null" /></exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<ComplexId> AddAsync(AddItem item, CancellationToken cancellationToken = default);
+        Task<ComplexId> AddAsync(AddTask task, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Closes a task asynchronous.
         /// </summary>
-        /// <param name="id">The item ID.</param>
+        /// <param name="id">The task ID.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <remarks>
-        /// A simplified version of item_complete / item_update_date_complete.
+        /// A simplified version of task_complete / task_update_date_complete.
         /// The command does exactly what official clients do when you close a task: regular task is completed and moved to history,
         /// subtask is checked (marked as done, but not moved to history), recurring task is moved forward (due date is updated).
         /// </remarks>
         Task CloseAsync(ComplexId id, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Completes a recurring task. See also <see cref="ItemsCommandService.CloseAsync" /> for a simplified version of the command.
+        /// Completes a recurring task. See also <see cref="TasksCommandService.CloseAsync" /> for a simplified version of the command.
         /// </summary>
         /// <param name="id">The recurring task ID.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -53,15 +53,15 @@ namespace Todoist.Net.Services
         /// <summary>
         /// Completes a recurring task. See also <see cref="CloseAsync" /> for a simplified version of the command.
         /// </summary>
-        /// <param name="completeRecurringItemArgument">The complete recurring item argument.</param>
+        /// <param name="completeRecurringTaskArgument">The complete recurring task argument.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>
         /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="completeRecurringItemArgument"/> is <see langword="null"/></exception>
-        Task CompleteRecurringAsync(CompleteRecurringItemArgument completeRecurringItemArgument, CancellationToken cancellationToken = default);
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="completeRecurringTaskArgument"/> is <see langword="null"/></exception>
+        Task CompleteRecurringAsync(CompleteRecurringTaskArgument completeRecurringTaskArgument, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Deletes an existing task asynchronous.
@@ -87,16 +87,16 @@ namespace Todoist.Net.Services
         /// <summary>
         /// Updates a task asynchronous.
         /// </summary>
-        /// <param name="item">The item.</param>
+        /// <param name="task">The task.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="item"/> is <see langword="null"/></exception>
+        /// <exception cref="ArgumentNullException"><paramref name="task"/> is <see langword="null"/></exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task UpdateAsync(UpdateItem item, CancellationToken cancellationToken = default);
+        Task UpdateAsync(UpdateTask task, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Updates the day orders of multiple items at once.
+        /// Updates the day orders of multiple tasks at once.
         /// </summary>
         /// <param name="idsToOrder">The ids to order.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
@@ -106,7 +106,7 @@ namespace Todoist.Net.Services
         Task UpdateDayOrdersAsync(params OrderEntry[] idsToOrder);
 
         /// <summary>
-        /// Updates the day orders of multiple items at once.
+        /// Updates the day orders of multiple tasks at once.
         /// </summary>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <param name="idsToOrder">The ids to order.</param>
@@ -127,10 +127,10 @@ namespace Todoist.Net.Services
         /// <exception cref="ArgumentNullException"><paramref name="moveArgument" /> is <see langword="null" /></exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
-        Task MoveAsync(ItemMoveArgument moveArgument, CancellationToken cancellationToken = default);
+        Task MoveAsync(TaskMoveArgument moveArgument, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Update the orders and indents of multiple items at once asynchronous.
+        /// Update the orders and indents of multiple tasks at once asynchronous.
         /// </summary>
         /// <param name="reorderEntries">The reorder entries.</param>
         /// <returns>
@@ -143,7 +143,7 @@ namespace Todoist.Net.Services
         Task ReorderAsync(params ReorderEntry[] reorderEntries);
 
         /// <summary>
-        /// Update the orders and indents of multiple items at once asynchronous.
+        /// Update the orders and indents of multiple tasks at once asynchronous.
         /// </summary>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <param name="reorderEntries">The reorder entries.</param>
@@ -157,16 +157,16 @@ namespace Todoist.Net.Services
         Task ReorderAsync(CancellationToken cancellationToken, params ReorderEntry[] reorderEntries);
 
         /// <summary>
-        /// Completes tasks and optionally move them to history. See also <see cref="ItemsCommandService.CloseAsync" /> for a simplified version of the command.
+        /// Completes tasks and optionally move them to history. See also <see cref="TasksCommandService.CloseAsync" /> for a simplified version of the command.
         /// </summary>
-        /// <param name="completeItemArgument">The complete item argument.</param>
+        /// <param name="completeTaskArgument">The complete task argument.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>
         /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="completeItemArgument"/> is <see langword="null"/></exception>
-        Task CompleteAsync(CompleteItemArgument completeItemArgument, CancellationToken cancellationToken = default);
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="completeTaskArgument"/> is <see langword="null"/></exception>
+        Task CompleteAsync(CompleteTaskArgument completeTaskArgument, CancellationToken cancellationToken = default);
     }
 }

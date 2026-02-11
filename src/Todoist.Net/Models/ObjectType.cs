@@ -17,6 +17,9 @@ namespace Todoist.Net.Models
         /// <summary>
         /// Gets the item type.
         /// </summary>
+        /// <remarks>
+        /// Todoist API uses the legacy "item" string for tasks in sync endpoints.
+        /// </remarks>
         /// <value>
         /// The item type.
         /// </value>

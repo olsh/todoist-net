@@ -26,7 +26,7 @@ namespace Todoist.Net.Services
         Task<ComplexId> AddAsync(Reminder reminder, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Update the orders of multiple filters at once.
+        /// Clears the locations of all location-based reminders.
         /// </summary>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
