@@ -95,19 +95,3 @@ task.Unset(t => t.DueDate);
 
 await client.Tasks.UpdateAsync(task);
 ```
-
-## Local integration-test token workflow
-
-To reduce rate-limit pressure during integration tests, local token files are stored under `.temp/`:
-
-- `.temp/.env`
-- `.temp/.env.nonpremuim`
-- `.temp/.env.nonpremuim.backup`
-
-Use the local split runner:
-
-```powershell
-pwsh -NoProfile -ExecutionPolicy Bypass -File ./.temp/run-tests-token-split.ps1 -SkipManualCurlChecks
-```
-
-The runner splits non-premium test load across the two non-premium tokens and uses `.temp/.env` for premium tests.
