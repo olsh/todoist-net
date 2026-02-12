@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+
 #if NETFRAMEWORK
 using System.Runtime.Serialization;
 #endif
@@ -101,21 +103,15 @@ namespace Todoist.Net.Exceptions
             {
                 throw new ArgumentException("Error tag cannot be empty.", nameof(errorTag));
             }
-
             if (httpCode < 0 || httpCode > 999)
             {
                 throw new ArgumentOutOfRangeException(nameof(httpCode), httpCode, "HTTP code must be between 0 and 999.");
             }
 
-            if (errorExtra != null)
+            var errorExtraHasNullKey = errorExtra?.Keys.Any(k => k == null);
+            if (errorExtraHasNullKey == true)
             {
-                foreach (var key in errorExtra.Keys)
-                {
-                    if (key == null)
-                    {
-                        throw new ArgumentException("Error extra contains a null key.", nameof(errorExtra));
-                    }
-                }
+                throw new ArgumentException("Error extra contains a null key.", nameof(errorExtra));
             }
         }
 

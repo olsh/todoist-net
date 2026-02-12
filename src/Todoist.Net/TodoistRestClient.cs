@@ -14,6 +14,7 @@ namespace Todoist.Net
     {
         private readonly HttpClient _httpClient;
         private readonly bool _disposeHttpClient;
+        private const string ValueCannotBeNullOrEmpty = "Value cannot be null or empty.";
 
         public TodoistRestClient() : this(null, (IWebProxy)null)
         {
@@ -83,7 +84,7 @@ namespace Todoist.Net
 
             if (string.IsNullOrEmpty(resource))
             {
-                throw new ArgumentException("Value cannot be null or empty.", nameof(resource));
+                throw new ArgumentException(ValueCannotBeNullOrEmpty, nameof(resource));
             }
 
             string requestUri;
@@ -108,7 +109,7 @@ namespace Todoist.Net
 
             if (string.IsNullOrEmpty(resource))
             {
-                throw new ArgumentException("Value cannot be null or empty.", nameof(resource));
+                throw new ArgumentException(ValueCannotBeNullOrEmpty, nameof(resource));
             }
 
             using (var content = new FormUrlEncodedContent(parameters))
@@ -155,7 +156,7 @@ namespace Todoist.Net
         {
             if (string.IsNullOrEmpty(resource))
             {
-                throw new ArgumentException("Value cannot be null or empty.", nameof(resource));
+                throw new ArgumentException(ValueCannotBeNullOrEmpty, nameof(resource));
             }
 
             using (var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json"))
@@ -172,7 +173,7 @@ namespace Todoist.Net
         {
             if (string.IsNullOrEmpty(resource))
             {
-                throw new ArgumentException("Value cannot be null or empty.", nameof(resource));
+                throw new ArgumentException(ValueCannotBeNullOrEmpty, nameof(resource));
             }
 
             using (var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json"))
@@ -188,7 +189,7 @@ namespace Todoist.Net
         {
             if (string.IsNullOrEmpty(resource))
             {
-                throw new ArgumentException("Value cannot be null or empty.", nameof(resource));
+                throw new ArgumentException(ValueCannotBeNullOrEmpty, nameof(resource));
             }
 
             return await _httpClient.DeleteAsync(resource, cancellationToken).ConfigureAwait(false);
