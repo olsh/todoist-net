@@ -56,14 +56,12 @@ namespace Todoist.Net.Exceptions
             Code = code;
             RawError = rawError;
 
-            if (rawError != null)
-            {
-                ErrorTag = rawError.ErrorTag;
-                HttpCode = rawError.HttpCode;
-                ErrorExtra = rawError.ErrorExtra;
+            ExtractRawErrorDetails(rawError, out var errorTag, out var httpCode, out var errorExtra);
+            ErrorTag = errorTag;
+            HttpCode = httpCode;
+            ErrorExtra = errorExtra;
 
-                ValidateApiErrorDetails(ErrorTag, HttpCode, ErrorExtra);
-            }
+            ValidateApiErrorDetails(ErrorTag, HttpCode, ErrorExtra);
         }
 
         /// <summary>
@@ -119,6 +117,21 @@ namespace Todoist.Net.Exceptions
                     }
                 }
             }
+        }
+
+        private static void ExtractRawErrorDetails(CommandError rawError, out string errorTag, out int httpCode, out Dictionary<string, object> errorExtra)
+        {
+            if (rawError == null)
+            {
+                errorTag = null;
+                httpCode = 0;
+                errorExtra = null;
+                return;
+            }
+
+            errorTag = rawError.ErrorTag;
+            httpCode = rawError.HttpCode;
+            errorExtra = rawError.ErrorExtra;
         }
 
         /// <summary>
