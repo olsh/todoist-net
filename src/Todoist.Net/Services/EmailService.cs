@@ -68,7 +68,7 @@ namespace Todoist.Net.Services
                 return "task";
             }
 
-            return objectType.ToString();
+            return objectType?.ToString();
         }
     }
 }

@@ -61,6 +61,8 @@ namespace Todoist.Net.Exceptions
                 ErrorTag = rawError.ErrorTag;
                 HttpCode = rawError.HttpCode;
                 ErrorExtra = rawError.ErrorExtra;
+
+                ValidateApiErrorDetails(ErrorTag, HttpCode, ErrorExtra);
             }
         }
 
@@ -90,8 +92,34 @@ namespace Todoist.Net.Exceptions
             ErrorTag = info.GetString(nameof(ErrorTag));
             HttpCode = info.GetInt32(nameof(HttpCode));
             ErrorExtra = (Dictionary<string, object>)info.GetValue(nameof(ErrorExtra), typeof(Dictionary<string, object>));
+
+            ValidateApiErrorDetails(ErrorTag, HttpCode, ErrorExtra);
         }
 #endif
+
+        private static void ValidateApiErrorDetails(string errorTag, int httpCode, Dictionary<string, object> errorExtra)
+        {
+            if (errorTag != null && errorTag.Length == 0)
+            {
+                throw new ArgumentException("Error tag cannot be empty.", nameof(errorTag));
+            }
+
+            if (httpCode < 0 || httpCode > 999)
+            {
+                throw new ArgumentOutOfRangeException(nameof(httpCode), httpCode, "HTTP code must be between 0 and 999.");
+            }
+
+            if (errorExtra != null)
+            {
+                foreach (var key in errorExtra.Keys)
+                {
+                    if (key == null)
+                    {
+                        throw new ArgumentException("Error extra contains a null key.", nameof(errorExtra));
+                    }
+                }
+            }
+        }
 
         /// <summary>
         ///     Gets the error code.
