@@ -4,7 +4,7 @@ using System.Reflection;
 
 using Todoist.Net.Models;
 
-namespace Todoist.Net
+namespace Todoist.Net.Extensions
 {
     /// <summary>
     /// Provides extension methods to the <see cref="IUnsettableProperties"/> interface.

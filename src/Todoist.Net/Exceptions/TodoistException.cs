@@ -82,7 +82,6 @@ namespace Todoist.Net.Exceptions
         /// </summary>
         /// <param name="info">The serialization info.</param>
         /// <param name="context">The streaming context.</param>
-        [Obsolete("This constructor is for serialization purposes only.", error: true)]
         private TodoistException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

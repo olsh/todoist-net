@@ -18,10 +18,7 @@ namespace Todoist.Net.Tests
 
         private readonly TodoistRestClient _restClient;
         private static readonly TimeSpan DefaultCooldown = TimeSpan.FromSeconds(30);
-        private static readonly TimeSpan MaxCooldown = TimeSpan.FromSeconds(60);
         private const int MaxRetryCount = 60;
-        private const int Max429RetryCount = 4;
-        private static readonly TimeSpan Max429RetryWindow = TimeSpan.FromSeconds(45);
 
         public RateLimitAwareRestClient(string token, ITestOutputHelper outputHelper)
         {
@@ -40,8 +37,6 @@ namespace Todoist.Net.Tests
 
             // For each user, you can make a maximum of 450 requests within a 15 minute period.
             int retryCount = 0;
-            int retry429Count = 0;
-            var waitedFor429 = TimeSpan.Zero;
             do
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -54,21 +49,6 @@ namespace Todoist.Net.Tests
 
                 var cooldown = await GetRateLimitCooldown(result).ConfigureAwait(false);
                 retryCount++;
-
-                if (result.StatusCode == HttpStatusCode.TooManyRequests)
-                {
-                    retry429Count++;
-                    waitedFor429 += cooldown;
-                    if (retry429Count >= Max429RetryCount || waitedFor429 >= Max429RetryWindow)
-                    {
-                        _outputHelper.WriteLine(
-                            "[{0:G}] Stopping retries for sustained 429 (count={1}, waited={2}). Returning 429 for caller fallback.",
-                            DateTime.UtcNow,
-                            retry429Count,
-                            waitedFor429);
-                        return result;
-                    }
-                }
 
                 _outputHelper.WriteLine("[{0:G}] Received [{1}] status code from Todoist API, retry #{2} in {3}", DateTime.UtcNow, result.StatusCode, retryCount, cooldown);
                 result.Dispose();
@@ -135,14 +115,14 @@ namespace Todoist.Net.Tests
 
         public async Task<TimeSpan> GetRateLimitCooldown(HttpResponseMessage response)
         {
-            if (response.Headers.RetryAfter?.Delta is TimeSpan retryAfterDelta)
+            if (response.Headers.RetryAfter?.Delta is { } retryAfterDelta)
             {
-                return ClampCooldown(retryAfterDelta);
+                return retryAfterDelta;
             }
 
             if (response.Headers.TryGetValues("x-ratelimit-reset", out var resetValues))
             {
-                var resetValue = resetValues is null ? null : System.Linq.Enumerable.FirstOrDefault(resetValues);
+                var resetValue = System.Linq.Enumerable.FirstOrDefault(resetValues);
                 if (long.TryParse(resetValue, out var resetUnixSeconds))
                 {
                     var resetAt = DateTimeOffset.FromUnixTimeSeconds(resetUnixSeconds);
@@ -152,7 +132,7 @@ namespace Todoist.Net.Tests
                         return TimeSpan.FromSeconds(1);
                     }
 
-                    return ClampCooldown(remaining);
+                    return remaining;
                 }
             }
 
@@ -163,7 +143,7 @@ namespace Todoist.Net.Tests
                     var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     JObject json = JObject.Parse(content);
                     var retryAfterSeconds = json["error_extra"]?["retry_after"]?.Value<double>() ?? DefaultCooldown.TotalSeconds;
-                    return ClampCooldown(TimeSpan.FromSeconds(retryAfterSeconds));
+                    return TimeSpan.FromSeconds(retryAfterSeconds);
                 }
                 catch
                 {
@@ -173,21 +153,6 @@ namespace Todoist.Net.Tests
 
             // Default cooldown
             return DefaultCooldown;
-        }
-
-        private static TimeSpan ClampCooldown(TimeSpan cooldown)
-        {
-            if (cooldown < TimeSpan.FromSeconds(1))
-            {
-                return TimeSpan.FromSeconds(1);
-            }
-
-            if (cooldown > MaxCooldown)
-            {
-                return MaxCooldown;
-            }
-
-            return cooldown;
         }
     }
 }

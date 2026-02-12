@@ -86,7 +86,7 @@ namespace Todoist.Net
                 throw new ArgumentException("Value cannot be null or empty.", nameof(resource));
             }
 
-            var requestUri = string.Empty;
+            string requestUri;
             using (var content = new FormUrlEncodedContent(parameters))
             {
                 var query = await content.ReadAsStringAsync().ConfigureAwait(false);

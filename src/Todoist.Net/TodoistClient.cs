@@ -24,7 +24,7 @@ namespace Todoist.Net
     /// <seealso cref="Todoist.Net.IAdvancedTodoistClient" />
     public sealed class TodoistClient : IDisposable, IAdvancedTodoistClient
     {
-        private static readonly JsonSerializerOptions _serializerOptions = new JsonSerializerOptions
+        private static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             NumberHandling = JsonNumberHandling.AllowReadingFromString,
@@ -246,7 +246,7 @@ namespace Todoist.Net
             parameters.AddLast(
                 new KeyValuePair<string, string>(
                     "resource_types",
-                    JsonSerializer.Serialize(resourceTypes, _serializerOptions)));
+                    JsonSerializer.Serialize(resourceTypes, SerializerOptions)));
 
             return ProcessSyncAsync<Resources>(parameters, cancellationToken);
         }
@@ -272,7 +272,7 @@ namespace Todoist.Net
             parameters.AddLast(
                 new KeyValuePair<string, string>(
                     "commands",
-                    JsonSerializer.Serialize(commands, _serializerOptions)));
+                    JsonSerializer.Serialize(commands, SerializerOptions)));
 
             var syncResponse = await ProcessSyncAsync<SyncResponse>(parameters, cancellationToken)
                                    .ConfigureAwait(false);
@@ -452,7 +452,7 @@ namespace Todoist.Net
             Func<string, string, CancellationToken, Task<HttpResponseMessage>> restCall,
             CancellationToken cancellationToken)
         {
-            var jsonContent = JsonSerializer.Serialize(content, _serializerOptions);
+            var jsonContent = JsonSerializer.Serialize(content, SerializerOptions);
             var response = await restCall(resource, jsonContent, cancellationToken)
                                 .ConfigureAwait(false);
             var responseContent = await ReadResponseAsync(response, cancellationToken)
@@ -510,7 +510,7 @@ namespace Todoist.Net
 
         private T DeserializeResponse<T>(string responseContent)
         {
-            return JsonSerializer.Deserialize<T>(responseContent, _serializerOptions);
+            return JsonSerializer.Deserialize<T>(responseContent, SerializerOptions);
         }
 
         /// <summary>

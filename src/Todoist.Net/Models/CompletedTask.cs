@@ -88,7 +88,7 @@ namespace Todoist.Net.Models
         /// Gets the full task object.
         /// </summary>
         /// <remarks>
-        /// This property is only available when the <see cref="TaskFilter.AnnotateTasks"/> property is set to <c>true</c> 
+        /// This property is only available when the <see cref="TaskFilter.AnnotateTasks"/> property is set to <c>true</c>
         /// in the parameter passed to the <see cref="Services.ITasksService.GetCompletedByCompletionDateAsync(TaskFilter, System.Threading.CancellationToken)"/> method.
         /// The JSON property name remains "item_object" for backwards compatibility with Sync API.
         /// </remarks>

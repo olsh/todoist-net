@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Todoist.Net.Exceptions;
+using Todoist.Net.Extensions;
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
 
