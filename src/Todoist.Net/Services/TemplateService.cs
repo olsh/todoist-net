@@ -23,7 +23,7 @@ namespace Todoist.Net.Services
                                  {
                                      new KeyValuePair<string, string>("project_id", projectId.ToString())
                                  };
-            return _todoistClient.PostRawAsync("templates/export_as_file", parameters, cancellationToken);
+            return _todoistClient.GetRawAsync("templates/file", parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -33,7 +33,7 @@ namespace Todoist.Net.Services
                                  {
                                      new KeyValuePair<string, string>("project_id", projectId.ToString())
                                  };
-            return _todoistClient.PostAsync<FileBase>("templates/export_as_url", parameters, cancellationToken);
+            return _todoistClient.GetAsync<FileBase>("templates/url", parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -46,7 +46,7 @@ namespace Todoist.Net.Services
             var file = new UploadFile(fileContent, "template.csv", "text/csv");
             var files = new[] { file };
 
-            return _todoistClient.PostFormAsync<dynamic>("templates/import_into_project", parameters, files, cancellationToken);
+            return _todoistClient.PostFormAsync<dynamic>("templates/import_into_project_from_file", parameters, files, cancellationToken);
         }
     }
 }

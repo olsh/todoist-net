@@ -22,7 +22,7 @@ namespace Todoist.Net.Services
         public Task<IEnumerable<Backup>> GetAsync(CancellationToken cancellationToken = default)
         {
             return _todoistClient.GetAsync<IEnumerable<Backup>>(
-                "backups/get",
+                "backups",
                 new List<KeyValuePair<string, string>>(),
                 cancellationToken);
         }

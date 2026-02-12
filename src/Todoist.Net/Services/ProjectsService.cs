@@ -19,10 +19,10 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task<IEnumerable<Project>> GetArchivedAsync(CancellationToken cancellationToken = default)
+        public Task<PaginatedResponse<Project>> GetArchivedAsync(CancellationToken cancellationToken = default)
         {
-            return TodoistClient.GetAsync<IEnumerable<Project>>(
-                "projects/get_archived",
+            return TodoistClient.GetAsync<PaginatedResponse<Project>>(
+                "projects/archived",
                 new List<KeyValuePair<string, string>>(),
                 cancellationToken);
         }
@@ -36,26 +36,20 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task<ProjectInfo> GetAsync(ComplexId id, CancellationToken cancellationToken = default)
+        public Task<Project> GetAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
-            return TodoistClient.PostAsync<ProjectInfo>(
-                "projects/get",
-                new List<KeyValuePair<string, string>>
-                    {
-                        new KeyValuePair<string, string>("project_id", id.ToString())
-                    },
+            return TodoistClient.GetAsync<Project>(
+                $"projects/{id}",
+                new List<KeyValuePair<string, string>>(),
                 cancellationToken);
         }
 
         /// <inheritdoc/>
         public Task<ProjectData> GetDataAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
-            return TodoistClient.PostAsync<ProjectData>(
-                "projects/get_data",
-                new List<KeyValuePair<string, string>>
-                    {
-                        new KeyValuePair<string, string>("project_id", id.ToString())
-                    },
+            return TodoistClient.GetAsync<ProjectData>(
+                $"projects/{id}/full",
+                new List<KeyValuePair<string, string>>(),
                 cancellationToken);
         }
     }

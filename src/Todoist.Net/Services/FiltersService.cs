@@ -24,16 +24,5 @@ namespace Todoist.Net.Services
             return response.Filters;
         }
 
-        /// <inheritdoc/>
-        public Task<FilterInfo> GetAsync(ComplexId id, CancellationToken cancellationToken = default)
-        {
-            return TodoistClient.PostAsync<FilterInfo>(
-                "filters/get",
-                new List<KeyValuePair<string, string>>
-                    {
-                        new KeyValuePair<string, string>("filter_id", id.ToString())
-                    },
-                cancellationToken);
-        }
     }
 }

@@ -32,25 +32,34 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task<TaskInfo> GetAsync(ComplexId id, CancellationToken cancellationToken = default)
+        public Task<DetailedTask> GetAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
-            return TodoistClient.PostAsync<TaskInfo>(
-                "items/get",
-                new List<KeyValuePair<string, string>>
-                    {
-                        new KeyValuePair<string, string>(
-                            "item_id",
-                            id.ToString())
-                    },
+            return TodoistClient.GetAsync<DetailedTask>(
+                $"tasks/{id}",
+                new List<KeyValuePair<string, string>>(),
                 cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<CompletedTasksInfo> GetCompletedAsync(TaskFilter filter = null, CancellationToken cancellationToken = default)
+        public Task<PaginatedItemsResponse<CompletedTask>> GetCompletedByCompletionDateAsync(TaskFilter filter = null, CancellationToken cancellationToken = default)
         {
             var parameters = filter == null ? new List<KeyValuePair<string, string>>() : filter.ToParameters();
 
-            return TodoistClient.GetAsync<CompletedTasksInfo>("completed/get_all", parameters, cancellationToken);
+            return TodoistClient.GetAsync<PaginatedItemsResponse<CompletedTask>>(
+                "tasks/completed/by_completion_date",
+                parameters,
+                cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<PaginatedItemsResponse<CompletedTask>> GetCompletedByDueDateAsync(TaskFilter filter = null, CancellationToken cancellationToken = default)
+        {
+            var parameters = filter == null ? new List<KeyValuePair<string, string>>() : filter.ToParameters();
+
+            return TodoistClient.GetAsync<PaginatedItemsResponse<CompletedTask>>(
+                "tasks/completed/by_due_date",
+                parameters,
+                cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -61,7 +70,13 @@ namespace Todoist.Net.Services
                 throw new ArgumentNullException(nameof(quickAddTask));
             }
 
-            return TodoistClient.PostAsync<DetailedTask>("quick/add", quickAddTask.ToParameters(), cancellationToken);
+            var request = new
+            {
+                text = quickAddTask.Text,
+                note = quickAddTask.Comment,
+                reminder = quickAddTask.Reminder
+            };
+            return TodoistClient.PostJsonAsync<DetailedTask>("tasks/quick", request, cancellationToken);
         }
     }
 }

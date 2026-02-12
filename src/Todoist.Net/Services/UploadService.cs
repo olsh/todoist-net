@@ -28,16 +28,7 @@ namespace Todoist.Net.Services
                                  {
                                      new KeyValuePair<string, string>("file_url", fileUrl)
                                  };
-            return _todoistClient.PostRawAsync("uploads/delete", parameters, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task<IEnumerable<Upload>> GetAsync(CancellationToken cancellationToken = default)
-        {
-            return _todoistClient.GetAsync<IEnumerable<Upload>>(
-                "uploads/get",
-                new List<KeyValuePair<string, string>>(),
-                cancellationToken);
+            return _todoistClient.DeleteRawAsync("uploads", parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -51,7 +42,7 @@ namespace Todoist.Net.Services
             var file = new UploadFile(fileContent, fileName, mimeType);
             var files = new[] { file };
 
-            return _todoistClient.PostFormAsync<FileAttachment>("uploads/add", parameters, files, cancellationToken);
+            return _todoistClient.PostFormAsync<FileAttachment>("uploads", parameters, files, cancellationToken);
         }
     }
 }

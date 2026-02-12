@@ -22,16 +22,6 @@ namespace Todoist.Net.Services
         Task DeleteAsync(string fileUrl, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Gets all uploads.
-        /// </summary>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>
-        /// The uploads.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<IEnumerable<Upload>> GetAsync(CancellationToken cancellationToken = default);
-
-        /// <summary>
         /// Uploads a file asynchronous.
         /// </summary>
         /// <param name="fileName">Name of the file.</param>
