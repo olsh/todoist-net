@@ -34,7 +34,7 @@ namespace Todoist.Net.Models
         /// The task id.
         /// </value>
         [JsonPropertyName("task_id")]
-        public long TaskId { get; internal set; }
+        public ComplexId TaskId { get; internal set; }
 
         /// <summary>
         /// Gets the identifier.
@@ -43,7 +43,7 @@ namespace Todoist.Net.Models
         /// The identifier.
         /// </value>
         [JsonPropertyName("id")]
-        public long Id { get; internal set; }
+        public ComplexId Id { get; internal set; }
 
         /// <summary>
         /// Gets the labels.
@@ -73,7 +73,7 @@ namespace Todoist.Net.Models
         /// The project identifier.
         /// </value>
         [JsonPropertyName("project_id")]
-        public long ProjectId { get; internal set; }
+        public ComplexId ProjectId { get; internal set; }
 
         /// <summary>
         /// Gets the user identifier.
@@ -89,7 +89,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <remarks>
         /// This property is only available when the <see cref="TaskFilter.AnnotateTasks"/> property is set to <c>true</c> 
-        /// in the parameter passed to the <see cref="Services.ITasksService.GetCompletedAsync(TaskFilter, System.Threading.CancellationToken)"/> method.
+        /// in the parameter passed to the <see cref="Services.ITasksService.GetCompletedByCompletionDateAsync(TaskFilter, System.Threading.CancellationToken)"/> method.
         /// The JSON property name remains "item_object" for backwards compatibility with Sync API.
         /// </remarks>
         /// <value>

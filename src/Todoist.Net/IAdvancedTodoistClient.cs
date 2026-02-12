@@ -94,5 +94,47 @@ namespace Todoist.Net
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task<string> PostRawAsync(string resource, ICollection<KeyValuePair<string, string>> parameters, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Sends a <c>GET</c> request asynchronously, and returns raw content.
+        /// </summary>
+        /// <param name="resource">The resource.</param>
+        /// <param name="parameters">The query parameters.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>The raw response content.</returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        Task<string> GetRawAsync(string resource, ICollection<KeyValuePair<string, string>> parameters, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Sends a <c>POST</c> request with a JSON body, and handles response asynchronously.
+        /// </summary>
+        /// <typeparam name="T">Type of the result.</typeparam>
+        /// <param name="resource">The resource.</param>
+        /// <param name="content">The JSON body object.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>The result.</returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        Task<T> PostJsonAsync<T>(string resource, object content, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Sends a <c>PUT</c> request with a JSON body, and handles response asynchronously.
+        /// </summary>
+        /// <typeparam name="T">Type of the result.</typeparam>
+        /// <param name="resource">The resource.</param>
+        /// <param name="content">The JSON body object.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>The result.</returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        Task<T> PutJsonAsync<T>(string resource, object content, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Sends a <c>DELETE</c> request with query parameters, and handles response asynchronously.
+        /// </summary>
+        /// <param name="resource">The resource.</param>
+        /// <param name="parameters">The query parameters.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>The raw response content.</returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        Task<string> DeleteRawAsync(string resource, ICollection<KeyValuePair<string, string>> parameters, CancellationToken cancellationToken = default);
     }
 }

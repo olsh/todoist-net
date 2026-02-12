@@ -48,12 +48,12 @@ namespace Todoist.Net.Models
 
             parameters.AddLast(new KeyValuePair<string, string>("text", Text));
 
-            if (string.IsNullOrEmpty(Comment))
+            if (!string.IsNullOrEmpty(Comment))
             {
                 parameters.AddLast(new KeyValuePair<string, string>("note", Comment));
             }
 
-            if (string.IsNullOrEmpty(Text))
+            if (!string.IsNullOrEmpty(Reminder))
             {
                 parameters.AddLast(new KeyValuePair<string, string>("reminder", Reminder));
             }

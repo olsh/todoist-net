@@ -331,6 +331,51 @@ namespace Todoist.Net
             return ProcessRawPostAsync(resource, parameters, cancellationToken);
         }
 
+        /// <inheritdoc/>
+        async Task<string> IAdvancedTodoistClient.GetRawAsync(
+            string resource,
+            ICollection<KeyValuePair<string, string>> parameters,
+            CancellationToken cancellationToken)
+        {
+            var response = await _restClient.GetAsync(resource, parameters, cancellationToken)
+                                .ConfigureAwait(false);
+
+            return await ReadResponseAsync(response, cancellationToken)
+                       .ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        Task<T> IAdvancedTodoistClient.PostJsonAsync<T>(
+            string resource,
+            object content,
+            CancellationToken cancellationToken)
+        {
+            return ProcessJsonAsync<T>(resource, content, _restClient.PostJsonAsync, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        Task<T> IAdvancedTodoistClient.PutJsonAsync<T>(
+            string resource,
+            object content,
+            CancellationToken cancellationToken)
+        {
+            return ProcessJsonAsync<T>(resource, content, _restClient.PutAsync, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        async Task<string> IAdvancedTodoistClient.DeleteRawAsync(
+            string resource,
+            ICollection<KeyValuePair<string, string>> parameters,
+            CancellationToken cancellationToken)
+        {
+            var requestUri = CreateRequestUri(resource, parameters);
+            var response = await _restClient.DeleteAsync(requestUri, cancellationToken)
+                                .ConfigureAwait(false);
+
+            return await ReadResponseAsync(response, cancellationToken)
+                       .ConfigureAwait(false);
+        }
+
 
         /// <summary>
         /// Processes the form asynchronous.
@@ -399,6 +444,34 @@ namespace Todoist.Net
             var responseContent = await ReadResponseAsync(response, cancellationToken)
                                       .ConfigureAwait(false);
             return responseContent;
+        }
+
+        private async Task<T> ProcessJsonAsync<T>(
+            string resource,
+            object content,
+            Func<string, string, CancellationToken, Task<HttpResponseMessage>> restCall,
+            CancellationToken cancellationToken)
+        {
+            var jsonContent = JsonSerializer.Serialize(content, _serializerOptions);
+            var response = await restCall(resource, jsonContent, cancellationToken)
+                                .ConfigureAwait(false);
+            var responseContent = await ReadResponseAsync(response, cancellationToken)
+                                      .ConfigureAwait(false);
+            return DeserializeResponse<T>(responseContent);
+        }
+
+        private static string CreateRequestUri(string resource, ICollection<KeyValuePair<string, string>> parameters)
+        {
+            if (parameters == null || parameters.Count == 0)
+            {
+                return resource;
+            }
+
+            var query = string.Join(
+                "&",
+                parameters.Select(
+                    p => $"{Uri.EscapeDataString(p.Key)}={Uri.EscapeDataString(p.Value ?? string.Empty)}"));
+            return $"{resource}?{query}";
         }
 
         /// <summary>
