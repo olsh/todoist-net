@@ -1,4 +1,6 @@
 using System.Threading.Tasks;
+using System;
+using System.Linq;
 
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
@@ -24,15 +26,24 @@ namespace Todoist.Net.Tests.Services
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
-            var label = new Label("Test label");
+            var label = new Label($"Test label {Guid.NewGuid()}");
+            var createdLabelId = default(ComplexId);
             try
             {
                 await client.Labels.AddAsync(label);
-                await client.Labels.UpdateOrderAsync(new OrderEntry(label.Id, 1));
+
+                var labels = (await client.Labels.GetAsync()).ToList();
+                var createdLabel = labels.Single(l => l.Name == label.Name);
+                createdLabelId = createdLabel.Id;
+
+                await client.Labels.UpdateOrderAsync(new OrderEntry(createdLabelId, 1));
             }
             finally
             {
-                await client.Labels.DeleteAsync(label.Id);
+                if (!createdLabelId.IsEmpty)
+                {
+                    await client.Labels.DeleteAsync(createdLabelId);
+                }
             }
         }
     }

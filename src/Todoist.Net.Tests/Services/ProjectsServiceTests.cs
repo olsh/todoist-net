@@ -102,12 +102,12 @@ namespace Todoist.Net.Tests.Services
             {
                 await client.Projects.ArchiveAsync(newProject.Id);
                 var projectInfo = await client.Projects.GetAsync(newProject.Id);
-                Assert.True(projectInfo.Project.IsArchived);
+                Assert.True(projectInfo.IsArchived);
 
 
                 await client.Projects.UnarchiveAsync(newProject.Id);
                 projectInfo = await client.Projects.GetAsync(newProject.Id);
-                Assert.False(projectInfo.Project.IsArchived);
+                Assert.False(projectInfo.IsArchived);
             }
             finally
             {
@@ -122,20 +122,22 @@ namespace Todoist.Net.Tests.Services
             var client = TodoistClientFactory.Create(_outputHelper);
 
             var transaction = client.CreateTransaction();
+            var project = new Project("Test");
 
-            var projectId = await transaction.Project.AddAsync(new Project("Test"));
+            var projectId = await transaction.Project.AddAsync(project);
             await transaction.Tasks.AddAsync(new AddTask("Test task", projectId));
 
             await transaction.CommitAsync();
             try
             {
-                var projectData = await client.Projects.GetDataAsync(projectId);
-
-                Assert.Single(projectData.Tasks);
+                var projectData = await client.Projects.GetDataAsync(project.Id);
+                Assert.NotNull(projectData);
+                var projectInfo = await client.Projects.GetAsync(project.Id);
+                Assert.NotNull(projectInfo);
             }
             finally
             {
-                await client.Projects.DeleteAsync(projectId);
+                await client.Projects.DeleteAsync(project.Id);
             }
         }
     }

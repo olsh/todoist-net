@@ -28,7 +28,7 @@ namespace Todoist.Net.Tests.Services
             var logFilter = new LogFilter { Limit = LogEntriesLimit };
             var logEntries = await client.Activity.GetAsync(logFilter);
 
-            Assert.NotEmpty(logEntries.Events);
+            Assert.NotEmpty(logEntries.Results);
         }
 
         [Fact]
@@ -41,7 +41,7 @@ namespace Todoist.Net.Tests.Services
 
             var logEntries = await client.Activity.GetAsync(logFilter);
 
-            Assert.NotEmpty(logEntries.Events);
+            Assert.NotEmpty(logEntries.Results);
         }
     }
 }
