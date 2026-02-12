@@ -2,7 +2,26 @@
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=todoist-net&metric=alert_status)](https://sonarcloud.io/dashboard?id=todoist-net)
 [![NuGet](https://img.shields.io/nuget/v/Todoist.Net.svg)](https://www.nuget.org/packages/Todoist.Net/)
 
-A [Todoist Sync API](https://developer.todoist.com/sync/v9/) client for .NET.
+A Todoist API client for .NET.
+
+## Important: Todoist API migration and breaking changes
+
+Todoist old APIs (Sync v9 / REST v2 legacy paths) are deprecated in favor of the unified Todoist API v1. You should update to the latest `Todoist.Net` package version and migrate your code accordingly.
+
+This branch includes compatibility updates for `/api/v1` and introduces breaking changes to align with the new API behavior.
+
+### Breaking changes summary
+
+- IDs are now treated as opaque string IDs in more places; do not assume numeric IDs.
+- Filters API surface changed: single-filter read by ID (`Filters.GetAsync(id)`) is removed; use `Filters.GetAsync()` and select the filter from the returned collection.
+- Upload listing endpoint behavior is constrained by current API behavior; use upload/delete workflows accordingly.
+- Activity and completed-task payload handling was updated for v1 response shapes.
+
+### Migration notes
+
+- Review Todoist's migration docs and endpoint renames for `/api/v1`.
+- Rebuild and rerun tests after migration because service signatures and payload expectations changed.
+
 ## Installation
 
 The library is available as a [Nuget package](https://www.nuget.org/packages/Todoist.Net/).
@@ -76,3 +95,19 @@ task.Unset(t => t.DueDate);
 
 await client.Tasks.UpdateAsync(task);
 ```
+
+## Local integration-test token workflow
+
+To reduce rate-limit pressure during integration tests, local token files are stored under `.temp/`:
+
+- `.temp/.env`
+- `.temp/.env.nonpremuim`
+- `.temp/.env.nonpremuim.backup`
+
+Use the local split runner:
+
+```powershell
+pwsh -NoProfile -ExecutionPolicy Bypass -File ./.temp/run-tests-token-split.ps1 -SkipManualCurlChecks
+```
+
+The runner splits non-premium test load across the two non-premium tokens and uses `.temp/.env` for premium tests.
