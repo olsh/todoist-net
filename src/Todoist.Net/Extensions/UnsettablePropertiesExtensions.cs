@@ -4,7 +4,8 @@ using System.Reflection;
 
 using Todoist.Net.Models;
 
-namespace Todoist.Net.Extensions
+// ReSharper disable once CheckNamespace
+namespace Todoist.Net
 {
     /// <summary>
     /// Provides extension methods to the <see cref="IUnsettableProperties"/> interface.
