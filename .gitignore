@@ -482,3 +482,12 @@ fabric.properties
 
 # Claude
 .claude/
+
+# Serena MCP
+.serena/
+
+# Temporary files
+.temp/
+
+# VS Code local workspace settings
+.vscode/

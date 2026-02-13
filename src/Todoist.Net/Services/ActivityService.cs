@@ -19,11 +19,11 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task<Activity> GetAsync(LogFilter filter = null, CancellationToken cancellationToken = default)
+        public Task<PaginatedResponse<LogEntry>> GetAsync(LogFilter filter = null, CancellationToken cancellationToken = default)
         {
             var parameters = filter != null ? filter.ToParameters() : new List<KeyValuePair<string, string>>();
 
-            return _todoistClient.GetAsync<Activity>("activity/get", parameters, cancellationToken);
+            return _todoistClient.GetAsync<PaginatedResponse<LogEntry>>("activities", parameters, cancellationToken);
         }
     }
 }

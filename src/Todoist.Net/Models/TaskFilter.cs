@@ -34,10 +34,10 @@ namespace Todoist.Net.Models
         public int? Limit { get; set; }
 
         /// <summary>
-        /// Gets or sets the offset.
+        /// Gets or sets the cursor.
         /// </summary>
-        /// <value>The offset.</value>
-        public int? Offset { get; set; }
+        /// <value>The cursor.</value>
+        public string Cursor { get; set; }
 
         /// <summary>
         /// Gets or sets the project identifier.
@@ -70,9 +70,9 @@ namespace Todoist.Net.Models
                 parameters.AddLast(new KeyValuePair<string, string>("limit", Limit.ToString()));
             }
 
-            if (Offset.HasValue)
+            if (!string.IsNullOrEmpty(Cursor))
             {
-                parameters.AddLast(new KeyValuePair<string, string>("offset", Offset.ToString()));
+                parameters.AddLast(new KeyValuePair<string, string>("cursor", Cursor));
             }
 
             if (Until.HasValue)

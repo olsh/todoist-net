@@ -33,15 +33,17 @@ namespace Todoist.Net.Tests.Services
                 await client.Sharing.ShareProjectAsync(projectId, email);
                 try
                 {
-                    var collaborators = await client.Sharing.GetCollaboratorsAsync();
+                    var enumerable = await client.Sharing.GetCollaboratorsAsync();
+                    var collaborators = enumerable.ToList();
                     Assert.Contains(collaborators, c => c.Email == email);
 
                     var collaboratorId = collaborators.First(c => c.Email == email).Id;
 
                     var collaboratorStates = await client.Sharing.GetCollaboratorStatesAsync();
-                    Assert.Contains(collaboratorStates, c => c.UserId == collaboratorId && c.ProjectId == projectId);
+                    var collection = collaboratorStates.ToList();
+                    Assert.Contains(collection, c => c.UserId == collaboratorId && c.ProjectId == projectId);
 
-                    var collaboratorStatus = collaboratorStates.First(c => c.UserId == collaboratorId && c.ProjectId == projectId).State;
+                    var collaboratorStatus = collection.First(c => c.UserId == collaboratorId && c.ProjectId == projectId).State;
 
                     Assert.Equal(CollaboratorStatus.Invited, collaboratorStatus);
                 }

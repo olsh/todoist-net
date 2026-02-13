@@ -22,17 +22,13 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        public async Task GetFilterInfo_Success()
+        public async Task GetFilters_Success()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
 
             var filters = (await client.Filters.GetAsync()).ToList();
 
             Assert.True(filters.Count > 0);
-
-            var result = await client.Filters.GetAsync(filters.First().Id);
-
-            Assert.NotNull(result);
         }
 
         [Fact]
@@ -53,9 +49,10 @@ namespace Todoist.Net.Tests.Services
                 var filterOrder = 2;
                 await client.Filters.UpdateOrderAsync(new OrderEntry(filter.Id, filterOrder));
 
-                var filterInfo = await client.Filters.GetAsync(filter.Id);
-                Assert.Equal(filter.Query, filterInfo.Filter.Query);
-                Assert.Equal(filterOrder, filterInfo.Filter.ItemOrder);
+                var updatedFilters = (await client.Filters.GetAsync()).ToList();
+                var updatedFilter = updatedFilters.Single(f => f.Id == filter.Id);
+                Assert.Equal(filter.Query, updatedFilter.Query);
+                Assert.Equal(filterOrder, updatedFilter.ItemOrder);
             }
             finally
             {

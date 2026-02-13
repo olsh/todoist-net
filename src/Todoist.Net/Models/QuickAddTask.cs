@@ -41,24 +41,5 @@ namespace Todoist.Net.Models
         /// </value>
         /// <remarks>Example: Task1 @Label1 #Project1 +ExampleUser</remarks>
         public string Text { get; }
-
-        internal ICollection<KeyValuePair<string, string>> ToParameters()
-        {
-            var parameters = new LinkedList<KeyValuePair<string, string>>();
-
-            parameters.AddLast(new KeyValuePair<string, string>("text", Text));
-
-            if (string.IsNullOrEmpty(Comment))
-            {
-                parameters.AddLast(new KeyValuePair<string, string>("note", Comment));
-            }
-
-            if (string.IsNullOrEmpty(Text))
-            {
-                parameters.AddLast(new KeyValuePair<string, string>("reminder", Reminder));
-            }
-
-            return parameters;
-        }
     }
 }

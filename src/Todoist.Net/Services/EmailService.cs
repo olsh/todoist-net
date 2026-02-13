@@ -25,15 +25,20 @@ namespace Todoist.Net.Services
         {
             var parameters = CreateParameters(objectType, objectId);
 
-            return _todoistClient.PostRawAsync("emails/disable", parameters, cancellationToken);
+            return _todoistClient.DeleteRawAsync("emails", parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
         public Task<EmailInfo> GetOrCreateAsync(ObjectType objectType, ComplexId objectId, CancellationToken cancellationToken = default)
         {
             var parameters = CreateParameters(objectType, objectId);
+            var requestBody = new
+            {
+                obj_type = parameters[0].Value,
+                obj_id = parameters[1].Value
+            };
 
-            return _todoistClient.PostAsync<EmailInfo>("emails/get_or_create", parameters, cancellationToken);
+            return _todoistClient.PutJsonAsync<EmailInfo>("emails", requestBody, cancellationToken);
         }
 
         private static List<KeyValuePair<string, string>> CreateParameters(ObjectType objectType, ComplexId objectId)
@@ -48,12 +53,22 @@ namespace Todoist.Net.Services
                     {
                         new KeyValuePair<string, string>(
                             "obj_type",
-                            objectType.ToString()),
+                            ConvertObjectType(objectType)),
                         new KeyValuePair<string, string>(
                             "obj_id",
                             objectId.ToString())
                     };
             return parameters;
+        }
+
+        private static string ConvertObjectType(ObjectType objectType)
+        {
+            if (objectType?.ToString() == ObjectType.Item.ToString())
+            {
+                return "task";
+            }
+
+            return objectType?.ToString();
         }
     }
 }

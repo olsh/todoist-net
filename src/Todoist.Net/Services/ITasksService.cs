@@ -31,19 +31,31 @@ namespace Todoist.Net.Services
         /// The task.
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<TaskInfo> GetAsync(ComplexId id, CancellationToken cancellationToken = default);
+        Task<DetailedTask> GetAsync(ComplexId id, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Gets all the user's completed tasks.
+        /// Gets completed tasks by completion date.
         /// </summary>
         /// <param name="filter">The filter.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>
-        /// The completed tasks.
+        /// A paginated response containing completed tasks.
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <remarks>Only available for Todoist Premium users.</remarks>
-        Task<CompletedTasksInfo> GetCompletedAsync(TaskFilter filter = null, CancellationToken cancellationToken = default);
+        Task<PaginatedItemsResponse<CompletedTask>> GetCompletedByCompletionDateAsync(TaskFilter filter = null, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets completed tasks by due date.
+        /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>
+        /// A paginated response containing completed tasks.
+        /// </returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <remarks>Only available for Todoist Premium users.</remarks>
+        Task<PaginatedItemsResponse<CompletedTask>> GetCompletedByDueDateAsync(TaskFilter filter = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Add a task. Implementation of the Quick Add Task available in the official clients.

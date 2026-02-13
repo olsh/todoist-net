@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Todoist.Net.Exceptions;
+using Todoist.Net.Extensions;
 using Todoist.Net.Models;
 using Todoist.Net.Tests.Extensions;
 
@@ -38,17 +39,17 @@ namespace Todoist.Net.Tests.Services
             try
             {
                 var completedTasks =
-                    await client.Tasks.GetCompletedAsync(
+                    await client.Tasks.GetCompletedByCompletionDateAsync(
                         new TaskFilter()
                         {
                             AnnotateTasks = true,
                             AnnotateComments = true,
                             Limit = 5,
-                            Since = DateTime.Today.AddDays(-1)
+                            Since = DateTime.Today.AddDays(-1),
+                            Until = DateTime.UtcNow
                         });
 
-                Assert.True(completedTasks.Tasks.Count > 0);
-                Assert.All(completedTasks.Tasks, t => Assert.NotNull(t.TaskObject));
+                Assert.True(completedTasks.Items.Count > 0);
             }
             finally
             {
@@ -73,7 +74,7 @@ namespace Todoist.Net.Tests.Services
             {
                 var taskInfo = await client.Tasks.GetAsync(task.Id);
 
-                Assert.True(taskInfo.Task.IsChecked);
+                Assert.True(taskInfo.IsChecked);
 
                 await client.Tasks.UncompleteAsync(taskId);
 
@@ -81,15 +82,15 @@ namespace Todoist.Net.Tests.Services
                 await client.Tasks.MoveAsync(TaskMoveArgument.CreateMoveToParent(task.Id, anotherTask.Id));
 
                 taskInfo = await client.Tasks.GetAsync(task.Id);
-                Assert.Equal(anotherTask.Id.PersistentId, taskInfo.Task.ParentId);
+                Assert.Equal(anotherTask.Id.PersistentId, taskInfo.ParentId);
 
                 await client.Tasks.CompleteAsync(new CompleteTaskArgument(taskId));
                 taskInfo = await client.Tasks.GetAsync(task.Id);
-                Assert.True(taskInfo.Task.IsChecked);
+                Assert.True(taskInfo.IsChecked);
 
                 await client.Tasks.UncompleteAsync(taskId);
                 taskInfo = await client.Tasks.GetAsync(task.Id);
-                Assert.False(taskInfo.Task.IsChecked);
+                Assert.False(taskInfo.IsChecked);
             }
             finally
             {
@@ -109,14 +110,14 @@ namespace Todoist.Net.Tests.Services
             {
                 var taskInfo = await client.Tasks.GetAsync(task.Id);
 
-                Assert.True(taskInfo.Task.Content == task.Content);
-                Assert.Equal("2021-12-22", taskInfo.Task.DueDate.StringDate);
+                Assert.True(taskInfo.Content == task.Content);
+                Assert.Equal("2021-12-22", taskInfo.DueDate.StringDate);
 
-                taskInfo.Task.Unset(t => t.DueDate);
-                await client.Tasks.UpdateAsync(taskInfo.Task);
+                taskInfo.Unset(t => t.DueDate);
+                await client.Tasks.UpdateAsync(taskInfo);
 
                 taskInfo = await client.Tasks.GetAsync(task.Id);
-                Assert.Null(taskInfo.Task.DueDate);
+                Assert.Null(taskInfo.DueDate);
             }
             finally
             {
@@ -163,12 +164,12 @@ namespace Todoist.Net.Tests.Services
                 {
                     var taskInfo = await client.Tasks.GetAsync(taskId);
 
-                    Assert.True(project.Id != taskInfo.Project.Id);
+                    Assert.NotEqual(project.Id.PersistentId, taskInfo.ProjectId);
 
-                    await client.Tasks.MoveAsync(TaskMoveArgument.CreateMoveToProject(taskInfo.Task.Id, project.Id));
-                    taskInfo = await client.Tasks.GetAsync(taskInfo.Task.Id);
+                    await client.Tasks.MoveAsync(TaskMoveArgument.CreateMoveToProject(taskInfo.Id, project.Id));
+                    taskInfo = await client.Tasks.GetAsync(taskInfo.Id);
 
-                    Assert.True(project.Id == taskInfo.Project.Id);
+                    Assert.Equal(project.Id.PersistentId, taskInfo.ProjectId);
                 }
                 finally
                 {
@@ -232,7 +233,7 @@ namespace Todoist.Net.Tests.Services
             {
                 var taskInfo = await client.Tasks.GetAsync(taskId);
 
-                Assert.Equal(task.DueDate.Date, taskInfo.Task.DueDate.Date);
+                Assert.Equal(task.DueDate.Date, taskInfo.DueDate.Date);
             }
             finally
             {
@@ -241,7 +242,7 @@ namespace Todoist.Net.Tests.Services
         }
 
         [Fact]
-        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
+        [Trait(Constants.TraitName, Constants.IntegrationPremiumTraitValue)]
         public async Task CreateNewTask_DeadlineIsLocal_DeadlineNotChanged()
         {
             var client = TodoistClientFactory.Create(_outputHelper);
@@ -252,7 +253,7 @@ namespace Todoist.Net.Tests.Services
             {
                 var taskInfo = await client.Tasks.GetAsync(taskId);
 
-                Assert.Equal(task.Deadline.Date, taskInfo.Task.Deadline.Date);
+                Assert.Equal(task.Deadline.Date, taskInfo.Deadline.Date);
             }
             finally
             {
@@ -276,17 +277,17 @@ namespace Todoist.Net.Tests.Services
             {
                 var taskInfo = await client.Tasks.GetAsync(task.Id);
 
-                Assert.True(taskInfo.Task.Content == task.Content);
-                Assert.Equal("2021-12-22T09:15:00", taskInfo.Task.DueDate.StringDate);
+                Assert.True(taskInfo.Content == task.Content);
+                Assert.Equal("2021-12-22T09:15:00", taskInfo.DueDate.StringDate);
 
-                Assert.Equal(task.Duration.Amount, taskInfo.Task.Duration.Amount);
-                Assert.Equal(task.Duration.Unit, taskInfo.Task.Duration.Unit);
+                Assert.Equal(task.Duration.Amount, taskInfo.Duration.Amount);
+                Assert.Equal(task.Duration.Unit, taskInfo.Duration.Unit);
 
-                taskInfo.Task.Unset(t => t.Duration);
-                await client.Tasks.UpdateAsync(taskInfo.Task);
+                taskInfo.Unset(t => t.Duration);
+                await client.Tasks.UpdateAsync(taskInfo);
 
                 taskInfo = await client.Tasks.GetAsync(task.Id);
-                Assert.Null(taskInfo.Task.Duration);
+                Assert.Null(taskInfo.Duration);
             }
             finally
             {

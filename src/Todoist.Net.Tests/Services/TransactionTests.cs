@@ -35,9 +35,9 @@ namespace Todoist.Net.Tests.Services
             var syncToken = await transaction.CommitAsync();
             try
             {
-                var projectInfo = await client.Projects.GetAsync(project.Id);
+                var commentsInfo = await client.Comments.GetAsync();
 
-                Assert.True(projectInfo.Comments.Count > 0);
+                Assert.Contains(commentsInfo.ProjectComments, c => c.ProjectId == project.Id);
                 Assert.NotNull(syncToken);
             }
             finally
@@ -77,9 +77,8 @@ namespace Todoist.Net.Tests.Services
 
                 var taskInfo = await client.Tasks.GetAsync(task.Id);
 
-                Assert.Equal(taskInfo.Task.Content, task.Content);
-                Assert.Equal(taskInfo.Project.Name, project.Name);
-                Assert.Equal(taskInfo.Project.Id.PersistentId, project.Id.PersistentId);
+                Assert.Equal(taskInfo.Content, task.Content);
+                Assert.Equal(taskInfo.ProjectId, project.Id.PersistentId);
             }
             finally
             {
@@ -119,9 +118,8 @@ namespace Todoist.Net.Tests.Services
 
                 var taskInfo = await client.Tasks.GetAsync(task.Id);
 
-                Assert.Equal(taskInfo.Task.Content, task.Content);
-                Assert.Equal(taskInfo.Project.Name, project.Name);
-                Assert.Equal(taskInfo.Project.Id.PersistentId, project.Id.PersistentId);
+                Assert.Equal(taskInfo.Content, task.Content);
+                Assert.Equal(taskInfo.ProjectId, project.Id.PersistentId);
             }
             finally
             {

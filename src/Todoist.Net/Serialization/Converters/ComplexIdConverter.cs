@@ -1,4 +1,6 @@
 using System;
+using System.Buffers;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -31,7 +33,7 @@ namespace Todoist.Net.Serialization.Converters
         {
             public override ComplexId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {
-                var value = reader.GetString();
+                var value = ReadTokenValueAsString(ref reader);
                 if (!string.IsNullOrEmpty(value))
                 {
                     return new ComplexId(value);
@@ -68,7 +70,7 @@ namespace Todoist.Net.Serialization.Converters
 
             public override ComplexId? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {
-                var value = reader.GetString();
+                var value = ReadTokenValueAsString(ref reader);
                 if (value is null)
                 {
                     return null;
@@ -109,6 +111,31 @@ namespace Todoist.Net.Serialization.Converters
                 var complexId = value ?? default;
 
                 writer.WritePropertyName(complexId.DynamicId.ToString());
+            }
+        }
+
+        private static string ReadTokenValueAsString(ref Utf8JsonReader reader)
+        {
+            switch (reader.TokenType)
+            {
+                case JsonTokenType.String:
+                    return reader.GetString();
+                case JsonTokenType.Number:
+                    if (reader.TryGetInt64(out var int64Value))
+                    {
+                        return int64Value.ToString();
+                    }
+
+                    if (reader.HasValueSequence)
+                    {
+                        return Encoding.UTF8.GetString(reader.ValueSequence.ToArray());
+                    }
+
+                    return Encoding.UTF8.GetString(reader.ValueSpan.ToArray());
+                case JsonTokenType.Null:
+                    return null;
+                default:
+                    throw new JsonException($"Unsupported token type for ComplexId: {reader.TokenType}");
             }
         }
 

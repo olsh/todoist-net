@@ -21,7 +21,7 @@ namespace Todoist.Net.Services
         /// The archived projects.
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<IEnumerable<Project>> GetArchivedAsync(CancellationToken cancellationToken = default);
+        Task<PaginatedResponse<Project>> GetArchivedAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets all projects.
@@ -40,7 +40,7 @@ namespace Todoist.Net.Services
         /// The project.
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<ProjectInfo> GetAsync(ComplexId id, CancellationToken cancellationToken = default);
+        Task<Project> GetAsync(ComplexId id, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets a project’s uncompleted items.

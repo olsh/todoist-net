@@ -2,7 +2,8 @@
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=todoist-net&metric=alert_status)](https://sonarcloud.io/dashboard?id=todoist-net)
 [![NuGet](https://img.shields.io/nuget/v/Todoist.Net.svg)](https://www.nuget.org/packages/Todoist.Net/)
 
-A [Todoist Sync API](https://developer.todoist.com/sync/v9/) client for .NET.
+A [Todoist API](https://developer.todoist.com) client for .NET.
+
 ## Installation
 
 The library is available as a [Nuget package](https://www.nuget.org/packages/Todoist.Net/).

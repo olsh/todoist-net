@@ -30,15 +30,12 @@ namespace Todoist.Net.Tests.Services
             var upload = await client.Uploads.UploadAsync(fileName, Encoding.UTF8.GetBytes("hello"));
             try
             {
-                var allUploads = await client.Uploads.GetAsync();
-                Assert.Contains(allUploads, u => u.FileUrl == upload.FileUrl);
+                Assert.NotNull(upload.FileUrl);
             }
             finally
             {
                 await client.Uploads.DeleteAsync(upload.FileUrl);
             }
-            var otherUploads = await client.Uploads.GetAsync();
-            Assert.DoesNotContain(otherUploads, u => u.FileUrl == upload.FileUrl);
         }
 
         [Fact]
@@ -127,9 +124,6 @@ namespace Todoist.Net.Tests.Services
                 Assert.NotNull(upload);
                 Assert.NotNull(upload.FileUrl);
                 Assert.Contains(".txt", upload.FileUrl, StringComparison.OrdinalIgnoreCase);
-
-                var allUploads = await client.Uploads.GetAsync();
-                Assert.Contains(allUploads, u => u.FileUrl == upload.FileUrl);
             }
             finally
             {

@@ -24,7 +24,7 @@ namespace Todoist.Net
     /// <seealso cref="Todoist.Net.IAdvancedTodoistClient" />
     public sealed class TodoistClient : IDisposable, IAdvancedTodoistClient
     {
-        private static readonly JsonSerializerOptions _serializerOptions = new JsonSerializerOptions
+        private static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             NumberHandling = JsonNumberHandling.AllowReadingFromString,
@@ -246,7 +246,7 @@ namespace Todoist.Net
             parameters.AddLast(
                 new KeyValuePair<string, string>(
                     "resource_types",
-                    JsonSerializer.Serialize(resourceTypes, _serializerOptions)));
+                    JsonSerializer.Serialize(resourceTypes, SerializerOptions)));
 
             return ProcessSyncAsync<Resources>(parameters, cancellationToken);
         }
@@ -272,7 +272,7 @@ namespace Todoist.Net
             parameters.AddLast(
                 new KeyValuePair<string, string>(
                     "commands",
-                    JsonSerializer.Serialize(commands, _serializerOptions)));
+                    JsonSerializer.Serialize(commands, SerializerOptions)));
 
             var syncResponse = await ProcessSyncAsync<SyncResponse>(parameters, cancellationToken)
                                    .ConfigureAwait(false);
@@ -329,6 +329,51 @@ namespace Todoist.Net
             CancellationToken cancellationToken)
         {
             return ProcessRawPostAsync(resource, parameters, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        async Task<string> IAdvancedTodoistClient.GetRawAsync(
+            string resource,
+            ICollection<KeyValuePair<string, string>> parameters,
+            CancellationToken cancellationToken)
+        {
+            var response = await _restClient.GetAsync(resource, parameters, cancellationToken)
+                                .ConfigureAwait(false);
+
+            return await ReadResponseAsync(response, cancellationToken)
+                       .ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        Task<T> IAdvancedTodoistClient.PostJsonAsync<T>(
+            string resource,
+            object content,
+            CancellationToken cancellationToken)
+        {
+            return ProcessJsonAsync<T>(resource, content, _restClient.PostJsonAsync, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        Task<T> IAdvancedTodoistClient.PutJsonAsync<T>(
+            string resource,
+            object content,
+            CancellationToken cancellationToken)
+        {
+            return ProcessJsonAsync<T>(resource, content, _restClient.PutAsync, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        async Task<string> IAdvancedTodoistClient.DeleteRawAsync(
+            string resource,
+            ICollection<KeyValuePair<string, string>> parameters,
+            CancellationToken cancellationToken)
+        {
+            var requestUri = CreateRequestUri(resource, parameters);
+            var response = await _restClient.DeleteAsync(requestUri, cancellationToken)
+                                .ConfigureAwait(false);
+
+            return await ReadResponseAsync(response, cancellationToken)
+                       .ConfigureAwait(false);
         }
 
 
@@ -401,6 +446,34 @@ namespace Todoist.Net
             return responseContent;
         }
 
+        private async Task<T> ProcessJsonAsync<T>(
+            string resource,
+            object content,
+            Func<string, string, CancellationToken, Task<HttpResponseMessage>> restCall,
+            CancellationToken cancellationToken)
+        {
+            var jsonContent = JsonSerializer.Serialize(content, SerializerOptions);
+            var response = await restCall(resource, jsonContent, cancellationToken)
+                                .ConfigureAwait(false);
+            var responseContent = await ReadResponseAsync(response, cancellationToken)
+                                      .ConfigureAwait(false);
+            return DeserializeResponse<T>(responseContent);
+        }
+
+        private static string CreateRequestUri(string resource, ICollection<KeyValuePair<string, string>> parameters)
+        {
+            if (parameters == null || parameters.Count == 0)
+            {
+                return resource;
+            }
+
+            var query = string.Join(
+                "&",
+                parameters.Select(
+                    p => $"{Uri.EscapeDataString(p.Key)}={Uri.EscapeDataString(p.Value ?? string.Empty)}"));
+            return $"{resource}?{query}";
+        }
+
         /// <summary>
         /// Processes the synchronize request asynchronous.
         /// </summary>
@@ -437,7 +510,7 @@ namespace Todoist.Net
 
         private T DeserializeResponse<T>(string responseContent)
         {
-            return JsonSerializer.Deserialize<T>(responseContent, _serializerOptions);
+            return JsonSerializer.Deserialize<T>(responseContent, SerializerOptions);
         }
 
         /// <summary>

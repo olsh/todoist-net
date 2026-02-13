@@ -23,6 +23,12 @@ namespace Todoist.Net.Models
         public string EventType { get; set; }
 
         /// <summary>
+        /// Gets or sets the cursor.
+        /// </summary>
+        /// <value>The cursor.</value>
+        public string Cursor { get; set; }
+
+        /// <summary>
         /// Gets or sets the initiator identifier.
         /// </summary>
         /// <value>The initiator identifier.</value>
@@ -136,6 +142,11 @@ namespace Todoist.Net.Models
             if (Offset.HasValue)
             {
                 parameters.AddLast(new KeyValuePair<string, string>("offset", Offset.Value.ToString()));
+            }
+
+            if (!string.IsNullOrEmpty(Cursor))
+            {
+                parameters.AddLast(new KeyValuePair<string, string>("cursor", Cursor));
             }
 
             return parameters;
