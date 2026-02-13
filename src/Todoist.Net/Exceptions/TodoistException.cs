@@ -58,12 +58,9 @@ namespace Todoist.Net.Exceptions
             Code = code;
             RawError = rawError;
 
-            ExtractRawErrorDetails(rawError, out var errorTag, out var httpCode, out var errorExtra);
-            ErrorTag = errorTag;
-            HttpCode = httpCode;
-            ErrorExtra = errorExtra;
-
-            ValidateApiErrorDetails(ErrorTag, HttpCode, ErrorExtra);
+            ErrorTag = rawError?.ErrorTag;
+            HttpCode = rawError?.HttpCode ?? 0;
+            ErrorExtra = rawError?.ErrorExtra;
         }
 
         /// <summary>
@@ -92,43 +89,8 @@ namespace Todoist.Net.Exceptions
             ErrorTag = info.GetString(nameof(ErrorTag));
             HttpCode = info.GetInt32(nameof(HttpCode));
             ErrorExtra = (Dictionary<string, object>)info.GetValue(nameof(ErrorExtra), typeof(Dictionary<string, object>));
-
-            ValidateApiErrorDetails(ErrorTag, HttpCode, ErrorExtra);
         }
 #endif
-
-        private static void ValidateApiErrorDetails(string errorTag, int httpCode, Dictionary<string, object> errorExtra)
-        {
-            if (errorTag != null && errorTag.Length == 0)
-            {
-                throw new ArgumentException("Error tag cannot be empty.", nameof(errorTag));
-            }
-            if (httpCode < 0 || httpCode > 999)
-            {
-                throw new ArgumentOutOfRangeException(nameof(httpCode), httpCode, "HTTP code must be between 0 and 999.");
-            }
-
-            var errorExtraHasNullKey = errorExtra?.Keys.Any(k => k == null);
-            if (errorExtraHasNullKey == true)
-            {
-                throw new ArgumentException("Error extra contains a null key.", nameof(errorExtra));
-            }
-        }
-
-        private static void ExtractRawErrorDetails(CommandError rawError, out string errorTag, out int httpCode, out Dictionary<string, object> errorExtra)
-        {
-            if (rawError == null)
-            {
-                errorTag = null;
-                httpCode = 0;
-                errorExtra = null;
-                return;
-            }
-
-            errorTag = rawError.ErrorTag;
-            httpCode = rawError.HttpCode;
-            errorExtra = rawError.ErrorExtra;
-        }
 
         /// <summary>
         ///     Gets the error code.
