@@ -6,15 +6,15 @@ namespace Todoist.Net.Models
     /// <summary>
     /// Represents a reorder entry.
     /// </summary>
-    public class ReorderEntry
+    public class ReorderArgument
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ReorderEntry" /> class.
+        /// Initializes a new instance of the <see cref="ReorderArgument" /> class.
         /// </summary>
         /// <param name="id">The identifier of moved entity.</param>
         /// <param name="childOrder">The new order.</param>
         /// <exception cref="T:System.ArgumentException">Entity ID is required for reorder operation</exception>
-        public ReorderEntry(ComplexId id, int childOrder)
+        public ReorderArgument(ComplexId id, int childOrder)
         {
             if (id.IsEmpty)
             {

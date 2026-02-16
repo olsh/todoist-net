@@ -5,7 +5,7 @@ namespace Todoist.Net.Models
 {
     internal class ReorderTasksArgument : ICommandArgument
     {
-        public ReorderTasksArgument(IEnumerable<ReorderEntry> reorderArguments)
+        public ReorderTasksArgument(IEnumerable<ReorderArgument> reorderArguments)
         {
             ReorderArguments = reorderArguments;
         }
@@ -14,6 +14,6 @@ namespace Todoist.Net.Models
         /// The JSON property name remains "items" for backwards compatibility with Sync API.
         /// </remarks>
         [JsonPropertyName("items")]
-        public IEnumerable<ReorderEntry> ReorderArguments { get; }
+        public IEnumerable<ReorderArgument> ReorderArguments { get; }
     }
 }

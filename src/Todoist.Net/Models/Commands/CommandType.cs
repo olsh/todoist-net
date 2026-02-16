@@ -67,8 +67,7 @@ namespace Todoist.Net.Models
 
         public static CommandType ReorderSection { get; } = new CommandType("section_reorder");
 
-        public static CommandType SetLastReadNotification { get; } =
-            new CommandType("live_notifications_set_last_read");
+        public static CommandType SetLastReadNotification { get; } = new CommandType("live_notifications_set_last_read");
 
         public static CommandType ShareProject { get; } = new CommandType("share_project");
 

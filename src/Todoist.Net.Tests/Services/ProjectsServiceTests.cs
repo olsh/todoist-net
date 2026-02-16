@@ -59,7 +59,7 @@ namespace Todoist.Net.Tests.Services
 
                 await client.Projects.UpdateAsync(project);
 
-                await client.Projects.ReorderAsync(new ReorderEntry(project.Id, 1));
+                await client.Projects.ReorderAsync(new ReorderArgument(project.Id, 1));
 
                 var parentProjectName = Guid.NewGuid().ToString();
                 var parentProject = new Project(parentProjectName);

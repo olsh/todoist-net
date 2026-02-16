@@ -5,12 +5,12 @@ namespace Todoist.Net.Models
 {
     internal class ProjectReorderArgument : ICommandArgument
     {
-        public ProjectReorderArgument(IEnumerable<ReorderEntry> reorderEntries)
+        public ProjectReorderArgument(IEnumerable<ReorderArgument> reorderEntries)
         {
             ReorderEntries = reorderEntries;
         }
 
         [JsonPropertyName("projects")]
-        public IEnumerable<ReorderEntry> ReorderEntries { get; }
+        public IEnumerable<ReorderArgument> ReorderEntries { get; }
     }
 }

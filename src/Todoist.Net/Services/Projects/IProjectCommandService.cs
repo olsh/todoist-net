@@ -93,7 +93,7 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="T:System.ArgumentException">Value cannot be an empty collection.</exception>
-        Task ReorderAsync(params ReorderEntry[] reorderEntries);
+        Task ReorderAsync(params ReorderArgument[] reorderEntries);
 
         /// <summary>
         /// Update the orders and indents of multiple projects at once asynchronous.
@@ -107,6 +107,6 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="T:System.ArgumentException">Value cannot be an empty collection.</exception>
-        Task ReorderAsync(CancellationToken cancellationToken, params ReorderEntry[] reorderEntries);
+        Task ReorderAsync(CancellationToken cancellationToken, params ReorderArgument[] reorderEntries);
     }
 }

@@ -140,7 +140,7 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="T:System.ArgumentException">Value cannot be an empty collection.</exception>
-        Task ReorderAsync(params ReorderEntry[] reorderEntries);
+        Task ReorderAsync(params ReorderArgument[] reorderEntries);
 
         /// <summary>
         /// Update the orders and indents of multiple tasks at once asynchronous.
@@ -154,7 +154,7 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="T:System.ArgumentException">Value cannot be an empty collection.</exception>
-        Task ReorderAsync(CancellationToken cancellationToken, params ReorderEntry[] reorderEntries);
+        Task ReorderAsync(CancellationToken cancellationToken, params ReorderArgument[] reorderEntries);
 
         /// <summary>
         /// Completes tasks and optionally move them to history. See also <see cref="TasksCommandService.CloseAsync" /> for a simplified version of the command.

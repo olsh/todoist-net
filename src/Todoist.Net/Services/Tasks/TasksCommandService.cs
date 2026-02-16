@@ -133,10 +133,10 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task ReorderAsync(params ReorderEntry[] reorderEntries) => ReorderAsync(CancellationToken.None, reorderEntries);
+        public Task ReorderAsync(params ReorderArgument[] reorderEntries) => ReorderAsync(CancellationToken.None, reorderEntries);
 
         /// <inheritdoc/>
-        public Task ReorderAsync(CancellationToken cancellationToken, params ReorderEntry[] reorderEntries)
+        public Task ReorderAsync(CancellationToken cancellationToken, params ReorderArgument[] reorderEntries)
         {
             if (reorderEntries == null)
             {
