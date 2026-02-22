@@ -22,9 +22,9 @@ namespace Todoist.Net.Models
         }
 
         /// <summary>
-        /// Gets or sets the indent.
+        /// Gets or sets the parent project identifier.
         /// </summary>
-        /// <value>The indent.</value>
+        /// <value>The parent project identifier.</value>
         [JsonPropertyName("parent_id")]
         public string ParentId { get; set; }
 
