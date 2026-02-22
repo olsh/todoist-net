@@ -1,12 +1,13 @@
-using System;
 using System.Text.Json.Serialization;
+
+using Todoist.Net.Exceptions;
 
 namespace Todoist.Net.Models
 {
     /// <summary>
     /// Represents a move argument.
     /// </summary>
-    public class MoveArgument : BaseEntity
+    public class MoveArgument : ICommandArgument
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MoveArgument" /> class.
@@ -15,29 +16,26 @@ namespace Todoist.Net.Models
         /// <param name="parentId">The parent entity identifier.</param>
         /// <exception cref="T:System.ArgumentException">Entity ID is required for the operation</exception>
         public MoveArgument(ComplexId id, ComplexId parentId)
-            : base(id)
         {
-            if (id.IsEmpty)
-            {
-                throw new ArgumentException("Entity ID is required for the move operation", nameof(id));
-            }
+            ThrowHelper.ThrowIfNullOrEmpty(id.ToString(), nameof(id));
+            ThrowHelper.ThrowIfNullOrEmpty(parentId.ToString(), nameof(parentId));
 
-            if (parentId.IsEmpty)
-            {
-                throw new ArgumentException("Parent ID is required for the move operation", nameof(parentId));
-            }
-
+            Id = id;
             ParentId = parentId;
         }
 
-        [JsonConstructor]
-        internal MoveArgument()
-        {
-        }
+        /// <summary>
+        /// Gets the identifier.
+        /// </summary>
+        /// <value>
+        /// The identifier.
+        /// </value>
+        [JsonPropertyName("id")]
+        public ComplexId Id { get; }
 
         /// <summary>Gets the parent entity identifier.</summary>
         /// <value>The parent entity identifier.</value>
         [JsonPropertyName("parent_id")]
-        public ComplexId ParentId { get; internal set; }
+        public ComplexId ParentId { get; }
     }
 }
