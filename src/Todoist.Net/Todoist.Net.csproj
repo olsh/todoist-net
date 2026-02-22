@@ -48,12 +48,4 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\Templates\" />
-    <Folder Include="Models\ViewOptions\" />
-    <Folder Include="Models\Workspaces\" />
-    <Folder Include="Services\ViewOptions\" />
-    <Folder Include="Services\Workspaces\" />
-  </ItemGroup>
-
 </Project>
