@@ -18,20 +18,6 @@ namespace Todoist.Net.Models
         }
 
         /// <summary>
-        /// Gets or sets the assigned by uid.
-        /// </summary>
-        /// <value>The assigned by uid.</value>
-        [JsonPropertyName("assigned_by_uid")]
-        public string AssignedByUid { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether this task is collapsed.
-        /// </summary>
-        /// <value><c>null</c> if [collapsed] contains no value, <c>true</c> if [collapsed]; otherwise, <c>false</c>.</value>
-        [JsonPropertyName("collapsed")]
-        public bool? Collapsed { get; set; }
-
-        /// <summary>
         /// Gets or sets the content.
         /// </summary>
         /// <value>The content.</value>
@@ -39,18 +25,25 @@ namespace Todoist.Net.Models
         public string Content { get; set; }
 
         /// <summary>
-        /// Gets or sets the day order.
-        /// </summary>
-        /// <value>The day order.</value>
-        [JsonPropertyName("day_order")]
-        public int? DayOrder { get; set; }
-
-        /// <summary>
         /// Gets or sets the description.
         /// </summary>
         /// <value>The description.</value>
         [JsonPropertyName("description")]
         public string Description { get; set; }
+
+        /// <summary>
+        /// Gets the labels.
+        /// </summary>
+        /// <value>The labels.</value>
+        [JsonPropertyName("labels")]
+        public ICollection<string> Labels { get; set; }
+
+        /// <summary>
+        /// Gets or sets the priority.
+        /// </summary>
+        /// <value>The priority.</value>
+        [JsonPropertyName("priority")]
+        public Priority? Priority { get; set; }
 
         /// <summary>
         /// Gets or sets the due date.
@@ -74,18 +67,11 @@ namespace Todoist.Net.Models
         public Duration Duration { get; set; }
 
         /// <summary>
-        /// Gets the labels.
+        /// Gets or sets the deadline for the task.
         /// </summary>
-        /// <value>The labels.</value>
-        [JsonPropertyName("labels")]
-        public ICollection<string> Labels { get; set; }
-
-        /// <summary>
-        /// Gets or sets the priority.
-        /// </summary>
-        /// <value>The priority.</value>
-        [JsonPropertyName("priority")]
-        public Priority? Priority { get; set; }
+        /// <value>The deadline.</value>
+        [JsonPropertyName("deadline")]
+        public Deadline Deadline { get; set; }
 
         /// <summary>
         /// Gets or sets the responsible uid.
@@ -95,10 +81,24 @@ namespace Todoist.Net.Models
         public string ResponsibleUid { get; set; }
 
         /// <summary>
-        /// Gets or sets the deadline for the task.
+        /// Gets or sets the assigned by uid.
         /// </summary>
-        /// <value>The deadline.</value>
-        [JsonPropertyName("deadline")]
-        public Deadline Deadline { get; set; }
+        /// <value>The assigned by uid.</value>
+        [JsonPropertyName("assigned_by_uid")]
+        public string AssignedByUid { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this task is collapsed.
+        /// </summary>
+        /// <value><c>null</c> if [is_collapsed] contains no value, <c>true</c> if [is_collapsed]; otherwise, <c>false</c>.</value>
+        [JsonPropertyName("is_collapsed")]
+        public bool? IsCollapsed { get; set; }
+
+        /// <summary>
+        /// Gets or sets the day order.
+        /// </summary>
+        /// <value>The day order.</value>
+        [JsonPropertyName("day_order")]
+        public int? DayOrder { get; set; }
     }
 }

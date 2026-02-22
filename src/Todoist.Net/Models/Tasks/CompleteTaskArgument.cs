@@ -13,23 +13,18 @@ namespace Todoist.Net.Models
         /// Initializes a new instance of the <see cref="CompleteTaskArgument" /> class.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        /// <param name="completedAt">
+        /// <param name="dateCompleted">
         /// The date completed. If not set, the server will set the value to the current timestamp.
         /// </param>
-        public CompleteTaskArgument(ComplexId id, DateTime? completedAt = null)
+        /// <param name="fromUndo">
+        /// If <c>true</c>, skips incrementing completion stats. Used when restoring task state after undoing a completion.
+        /// </param>
+        public CompleteTaskArgument(ComplexId id, DateTime? dateCompleted = null, bool? fromUndo = null)
         {
             Id = id;
-            CompletedAt = completedAt;
+            DateCompleted = dateCompleted;
+            FromUndo = fromUndo;
         }
-
-        /// <summary>
-        /// Gets the date completed.
-        /// </summary>
-        /// <value>
-        /// The date completed.
-        /// </value>
-        [JsonPropertyName("completed_at")]
-        public DateTime? CompletedAt { get; }
 
         /// <summary>
         /// Gets the identifier.
@@ -39,5 +34,23 @@ namespace Todoist.Net.Models
         /// </value>
         [JsonPropertyName("id")]
         public ComplexId Id { get; }
+
+        /// <summary>
+        /// Gets the date completed.
+        /// </summary>
+        /// <value>
+        /// The date completed.
+        /// </value>
+        [JsonPropertyName("date_completed")]
+        public DateTime? DateCompleted { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the completion stats should be skipped.
+        /// </summary>
+        /// <value>
+        /// If <c>true</c>, skips incrementing completion stats. Used when restoring task state after undoing a completion.
+        /// </value>
+        [JsonPropertyName("from_undo")]
+        public bool? FromUndo { get; }
     }
 }

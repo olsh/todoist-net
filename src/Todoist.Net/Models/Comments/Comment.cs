@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
@@ -19,7 +18,7 @@ namespace Todoist.Net.Models
         {
             Content = content;
 
-            UserIdsToNotify = new Collection<string>();
+            UserIdsToNotify = new List<string>();
         }
 
         /// <summary>
@@ -37,13 +36,6 @@ namespace Todoist.Net.Models
         public FileAttachment FileAttachment { get; set; }
 
         /// <summary>
-        /// Gets the is deleted.
-        /// </summary>
-        /// <value>The is deleted.</value>
-        [JsonPropertyName("is_deleted")]
-        public bool? IsDeleted { get; internal set; }
-
-        /// <summary>
         /// Gets or sets the task identifier.
         /// </summary>
         /// <value>The task identifier.</value>
@@ -51,21 +43,7 @@ namespace Todoist.Net.Models
         /// The JSON property name remains "item_id" for backwards compatibility with Sync API.
         /// </remarks>
         [JsonPropertyName("item_id")]
-        public ComplexId? TaskId { get; set; }
-
-        /// <summary>
-        /// Gets the posted.
-        /// </summary>
-        /// <value>The posted.</value>
-        [JsonPropertyName("posted_at")]
-        public DateTime? PostedAt { get; internal set; }
-
-        /// <summary>
-        /// Gets the posted user identifier.
-        /// </summary>
-        /// <value>The posted user identifier.</value>
-        [JsonPropertyName("posted_uid")]
-        public string PostedUserId { get; internal set; }
+        public ComplexId? TaskId { get; internal set; }
 
         /// <summary>
         /// Gets the project identifier.
@@ -79,7 +57,35 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The user ids to notify.</value>
         [JsonPropertyName("uids_to_notify")]
-        public ICollection<string> UserIdsToNotify { get; internal set; }
+        public ICollection<string> UserIdsToNotify { get; set; }
+
+        /// <summary>
+        /// Gets the posted user identifier.
+        /// </summary>
+        /// <value>The posted user identifier.</value>
+        [JsonPropertyName("posted_uid")]
+        public string PostedUserId { get; internal set; }
+
+        /// <summary>
+        /// Gets the posted.
+        /// </summary>
+        /// <value>The posted.</value>
+        [JsonPropertyName("posted_at")]
+        public DateTime? PostedAt { get; internal set; }
+
+        /// <summary>
+        /// Gets the is deleted.
+        /// </summary>
+        /// <value>The is deleted.</value>
+        [JsonPropertyName("is_deleted")]
+        public bool? IsDeleted { get; internal set; }
+
+        /// <summary>
+        /// Gets the reactions.
+        /// </summary>
+        /// <value>The reactions.</value>
+        [JsonPropertyName("reactions")]
+        public Dictionary<string, string[]> Reactions { get; internal set; }
 
         /// <summary>
         /// Updates the related temporary ids.

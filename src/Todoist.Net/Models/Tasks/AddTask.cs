@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
@@ -30,25 +29,8 @@ namespace Todoist.Net.Models
         {
             Content = content;
             ProjectId = projectId;
-            Labels = new Collection<string>();
+            Labels = new List<string>();
         }
-
-
-        /// <summary>
-        /// Gets or sets order of project. Defines the position of the project among all the projects with the same parent_id.
-        /// </summary>
-        /// <value>The project order.</value>
-        [JsonPropertyName("child_order")]
-        public int? ChildOrder { get; set; }
-
-        /// <summary>
-        /// Gets or sets the id of the parent task. Set to <see langword="null" /> for root tasks.
-        /// </summary>
-        /// <value>
-        /// The parent identifier.
-        /// </value>
-        [JsonPropertyName("parent_id")]
-        public string ParentId { get; set; }
 
         /// <summary>
         /// Gets or sets the project identifier.
@@ -62,7 +44,21 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The project order.</value>
         [JsonPropertyName("section_id")]
-        public string Section { get; set; }
+        public ComplexId? SectionId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the id of the parent task. Set to <see langword="null" /> for root tasks.
+        /// </summary>
+        /// <value>The parent identifier.</value>
+        [JsonPropertyName("parent_id")]
+        public ComplexId? ParentId { get; set; }
+
+        /// <summary>
+        /// Gets or sets order of project. Defines the position of the project among all the projects with the same parent_id.
+        /// </summary>
+        /// <value>The project order.</value>
+        [JsonPropertyName("child_order")]
+        public int? ChildOrder { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether to add the default reminder to the new task if it has a due date.
@@ -92,6 +88,16 @@ namespace Todoist.Net.Models
             if (ProjectId.HasValue && map.TryGetValue(ProjectId.Value.TempId, out var persistentProjectId))
             {
                 ProjectId = new ComplexId(persistentProjectId);
+            }
+
+            if (SectionId.HasValue && map.TryGetValue(SectionId.Value.TempId, out var persistentSectionId))
+            {
+                SectionId = new ComplexId(persistentSectionId);
+            }
+            
+            if (ParentId.HasValue && map.TryGetValue(ParentId.Value.TempId, out var persistentParentId))
+            {
+                ParentId = new ComplexId(persistentParentId);
             }
         }
     }

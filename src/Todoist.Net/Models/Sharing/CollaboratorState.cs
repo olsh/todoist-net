@@ -31,7 +31,21 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The status.</value>
         [JsonPropertyName("state")]
-        public CollaboratorStatus State { get; internal set; }
+        public string State { get; internal set; }
+
+        /// <summary>
+        /// Gets the collaborator role.
+        /// </summary>
+        /// <value>The role.</value>
+        [JsonPropertyName("role")]
+        public string Role { get; internal set; }
+
+        /// <summary>
+        /// Gets the collaborator workspace role.
+        /// </summary>
+        /// <value>The workspace role.</value>
+        [JsonPropertyName("workspace_role")]
+        public string WorkspaceRole { get; internal set; }
 
         /// <summary>
         /// Gets a value indicating whether this collaborator is deleted.

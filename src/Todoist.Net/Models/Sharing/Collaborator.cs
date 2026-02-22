@@ -13,9 +13,9 @@ namespace Todoist.Net.Models
         }
 
         /// <summary>
-        /// Gets the collaborator id.
+        /// Gets the user id.
         /// </summary>
-        /// <value>The collaborator id.</value>
+        /// <value>The user id.</value>
         [JsonPropertyName("id")]
         public string Id { get; internal set; }
 
@@ -34,17 +34,17 @@ namespace Todoist.Net.Models
         public string FullName { get; internal set; }
 
         /// <summary>
-        /// Gets the time zone.
-        /// </summary>
-        /// <value>The time zone.</value>
-        [JsonPropertyName("timezone")]
-        public string TimeZone { get; internal set; }
-
-        /// <summary>
         /// Gets the image id.
         /// </summary>
         /// <value>The image id.</value>
         [JsonPropertyName("image_id")]
         public string ImageId { get; internal set; }
+
+        /// <summary>
+        /// Gets the time zone.
+        /// </summary>
+        /// <value>The time zone.</value>
+        [JsonPropertyName("timezone")]
+        public string TimeZone { get; internal set; }
     }
 }

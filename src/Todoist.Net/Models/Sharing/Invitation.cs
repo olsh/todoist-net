@@ -2,16 +2,19 @@ using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
 {
-    internal class Invitation : BaseInvitation
+    internal class Invitation : ICommandArgument
     {
         [JsonConstructor]
-        internal Invitation(long id, string secret)
-            : base(id)
+        internal Invitation(string id, string secret = null)
         {
-            Secret = secret;
+            InvitationId = id;
+            InvitationSecret = secret;
         }
 
+        [JsonPropertyName("invitation_id")]
+        public string InvitationId { get; set; }
+
         [JsonPropertyName("invitation_secret")]
-        public string Secret { get; set; }
+        public string InvitationSecret { get; set; }
     }
 }

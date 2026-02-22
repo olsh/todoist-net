@@ -6,7 +6,7 @@ namespace Todoist.Net.Models
     /// <summary>
     /// Class UserInfo.
     /// </summary>
-    public class UserInfo : User
+    public class UserInfo : BaseUser
     {
         [JsonConstructor]
         internal UserInfo()
@@ -14,141 +14,174 @@ namespace Todoist.Net.Models
         }
 
         /// <summary>
+        /// Gets a value indicating whether the user is activated.
+        /// </summary>
+        [JsonPropertyName("activated_user")]
+        public bool ActivatedUser { get; internal set; }
+
+        /// <summary>
         /// Gets the avatar big.
         /// </summary>
-        /// <value>The avatar big.</value>
         [JsonPropertyName("avatar_big")]
         public string AvatarBig { get; internal set; }
 
         /// <summary>
         /// Gets the avatar medium.
         /// </summary>
-        /// <value>The avatar medium.</value>
         [JsonPropertyName("avatar_medium")]
         public string AvatarMedium { get; internal set; }
 
         /// <summary>
         /// Gets the avatar S640.
         /// </summary>
-        /// <value>The avatar S640.</value>
         [JsonPropertyName("avatar_s640")]
         public string AvatarS640 { get; internal set; }
 
         /// <summary>
         /// Gets the avatar small.
         /// </summary>
-        /// <value>The avatar small.</value>
         [JsonPropertyName("avatar_small")]
         public string AvatarSmall { get; internal set; }
 
         /// <summary>
         /// Gets the business account identifier.
         /// </summary>
-        /// <value>The business account identifier.</value>
         [JsonPropertyName("business_account_id")]
         public string BusinessAccountId { get; internal set; }
 
         /// <summary>
-        /// Gets the completed count.
+        /// Gets the daily goal.
         /// </summary>
-        /// <value>The completed count.</value>
-        [JsonPropertyName("completed_count")]
-        public int CompletedCount { get; internal set; }
+        [JsonPropertyName("daily_goal")]
+        public int DailyGoal { get; internal set; }
 
         /// <summary>
-        /// Gets the completed today.
+        /// Gets the days off array.
         /// </summary>
-        /// <value>The completed today.</value>
-        [JsonPropertyName("completed_today")]
-        public int CompletedToday { get; internal set; }
+        [JsonPropertyName("days_off")]
+        public DayOfWeek[] DaysOff { get; internal set; }
 
         /// <summary>
-        /// Whether the user has a password set on the account.
-        /// It will be false if they have only authenticated without a password (e.g. using Google, Facebook, etc.)
+        /// Gets the deleted at timestamp.
         /// </summary>
-        /// <value>
-        ///   <c>true</c> if the user has password; otherwise, <c>false</c>.
-        /// </value>
+        [JsonPropertyName("deleted_at")]
+        public DateTime? DeletedAt { get; internal set; }
+
+        /// <summary>
+        /// Gets a value indicating whether the user has a password set on the account.
+        /// </summary>
+        /// <remarks>
+        /// It will be <c>false</c> if they have only authenticated without a password (e.g. using Google, Facebook, etc.)
+        /// </remarks>
         [JsonPropertyName("has_password")]
         public bool HasPassword { get; set; }
 
         /// <summary>
+        /// Gets a value indicating whether the user has started a trial.
+        /// </summary>
+        [JsonPropertyName("has_started_a_trial")]
+        public bool HasStartedATrial { get; set; }
+
+        /// <summary>
         /// Gets the identifier.
         /// </summary>
-        /// <value>The identifier.</value>
         [JsonPropertyName("id")]
         public string Id { get; internal set; }
 
         /// <summary>
         /// Gets the image identifier.
         /// </summary>
-        /// <value>The image identifier.</value>
         [JsonPropertyName("image_id")]
         public string ImageId { get; internal set; }
 
         /// <summary>
         /// Gets the inbox project.
         /// </summary>
-        /// <value>The inbox project.</value>
         [JsonPropertyName("inbox_project_id")]
         public string InboxProjectId { get; internal set; }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is premium.
+        /// Gets a value indicating whether this user is premium.
         /// </summary>
-        /// <value><c>true</c> if this instance is premium; otherwise, <c>false</c>.</value>
         [JsonPropertyName("is_premium")]
         public bool IsPremium { get; internal set; }
 
         /// <summary>
         /// Gets the join date.
         /// </summary>
-        /// <value>The join date.</value>
         [JsonPropertyName("joined_at")]
         public DateTime? JoinedAt { get; internal set; }
 
         /// <summary>
         /// Gets the karma.
         /// </summary>
-        /// <value>The karma.</value>
         [JsonPropertyName("karma")]
         public double Karma { get; internal set; }
 
         /// <summary>
         /// Gets the karma trend.
         /// </summary>
-        /// <value>The karma trend.</value>
         [JsonPropertyName("karma_trend")]
         public string KarmaTrend { get; internal set; }
 
         /// <summary>
+        /// Gets a value indicating whether multi-factor authentication is enabled.
+        /// </summary>
+        [JsonPropertyName("mfa_enabled")]
+        public bool MfaEnabled { get; internal set; }
+
+        /// <summary>
+        /// Gets the premium status.
+        /// </summary>
+        [JsonPropertyName("premium_status")]
+        public string PremiumStatus { get; internal set; }
+
+        /// <summary>
         /// Gets the premium until.
         /// </summary>
-        /// <value>The premium until.</value>
         [JsonPropertyName("premium_until")]
         public DateTime? PremiumUntil { get; internal set; }
 
         /// <summary>
-        /// Gets the team inbox identifier.
+        /// Gets the share limit.
         /// </summary>
-        /// <value>
-        /// The team inbox identifier.
-        /// </value>
-        [JsonPropertyName("team_inbox_id")]
-        public string TeamInboxId { get; internal set; }
+        [JsonPropertyName("share_limit")]
+        public int? ShareLimit { get; internal set; }
+
+        /// <summary>
+        /// Gets the currently selected Todoist theme.
+        /// </summary>
+        [JsonPropertyName("theme_id")]
+        public string ThemeId { get; internal set; }
 
         /// <summary>
         /// Gets the token.
         /// </summary>
-        /// <value>The token.</value>
         [JsonPropertyName("token")]
         public string Token { get; internal set; }
 
         /// <summary>
         /// Gets the tz information.
         /// </summary>
-        /// <value>The tz information.</value>
         [JsonPropertyName("tz_info")]
         public TimeZoneInfo TzInfo { get; internal set; }
+
+        /// <summary>
+        /// Gets the weekly goal.
+        /// </summary>
+        [JsonPropertyName("weekly_goal")]
+        public int WeeklyGoal { get; internal set; }
+
+        /// <summary>
+        /// Gets the verification status.
+        /// </summary>
+        [JsonPropertyName("verification_status")]
+        public string VerificationStatus { get; internal set; }
+
+        /// <summary>
+        /// Gets the websocket URL.
+        /// </summary>
+        [JsonPropertyName("websocket_url")]
+        public string WebsocketUrl { get; internal set; }
     }
 }
