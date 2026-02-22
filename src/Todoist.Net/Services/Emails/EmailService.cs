@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,65 +9,36 @@ namespace Todoist.Net.Services
     /// <summary>
     /// Contains operations for Todoist email management.
     /// </summary>
-    /// <seealso cref="Todoist.Net.Services.IEmailService" />
-    public class EmailService : IEmailService
+    /// <seealso cref="Todoist.Net.Services.IEmailsService" />
+    internal class EmailService : ServiceBase, IEmailsService
     {
-        private readonly IAdvancedTodoistClient _todoistClient;
-
         internal EmailService(IAdvancedTodoistClient todoistClient)
+            : base(todoistClient)
         {
-            _todoistClient = todoistClient;
         }
 
         /// <inheritdoc/>
-        public Task DisableAsync(ObjectType objectType, ComplexId objectId, CancellationToken cancellationToken = default)
+        public Task<TodoistObjectEmail> GetOrCreateAsync(EmailObjectType objectType, string objectId, CancellationToken cancellationToken = default)
         {
-            var parameters = CreateParameters(objectType, objectId);
-
-            return _todoistClient.DeleteRawAsync("emails", parameters, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task<EmailInfo> GetOrCreateAsync(ObjectType objectType, ComplexId objectId, CancellationToken cancellationToken = default)
-        {
-            var parameters = CreateParameters(objectType, objectId);
-            var requestBody = new
+            var body = new ObjectEmailRequest
             {
-                obj_type = parameters[0].Value,
-                obj_id = parameters[1].Value
+                ObjectType = objectType,
+                ObjectId = objectId
             };
 
-            return _todoistClient.PutJsonAsync<EmailInfo>("emails", requestBody, cancellationToken);
+            return TodoistClient.PutJsonAsync<ObjectEmailRequest, TodoistObjectEmail>("emails", body, cancellationToken);
         }
 
-        private static List<KeyValuePair<string, string>> CreateParameters(ObjectType objectType, ComplexId objectId)
+        /// <inheritdoc/>
+        public Task DisableAsync(EmailObjectType objectType, string objectId, CancellationToken cancellationToken = default)
         {
-            if (objectType == null)
+            var parameters = new Dictionary<string, string>
             {
-                throw new ArgumentNullException(nameof(objectType));
-            }
+                { "obj_type", objectType.ToString() },
+                { "obj_id", objectId }
+            };
 
-            var parameters =
-                new List<KeyValuePair<string, string>>
-                    {
-                        new KeyValuePair<string, string>(
-                            "obj_type",
-                            ConvertObjectType(objectType)),
-                        new KeyValuePair<string, string>(
-                            "obj_id",
-                            objectId.ToString())
-                    };
-            return parameters;
-        }
-
-        private static string ConvertObjectType(ObjectType objectType)
-        {
-            if (objectType?.ToString() == ObjectType.Item.ToString())
-            {
-                return "task";
-            }
-
-            return objectType?.ToString();
+            return TodoistClient.DeleteAsync<ObjectEmailRequest>("emails", parameters, cancellationToken);
         }
     }
 }

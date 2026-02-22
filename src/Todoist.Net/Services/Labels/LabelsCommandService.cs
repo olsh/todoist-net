@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,51 +24,42 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public async Task<ComplexId> AddAsync(Label label, CancellationToken cancellationToken = default)
+        public Task<ComplexId> AddAsync(Label label, CancellationToken cancellationToken = default)
         {
-            if (label == null)
-            {
-                throw new ArgumentNullException(nameof(label));
-            }
-
-            var command = CreateAddCommand(CommandType.AddLabel, label);
-            await ExecuteCommandAsync(command, cancellationToken).ConfigureAwait(false);
-
-            return label.Id;
-        }
-
-        /// <inheritdoc/>
-        public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
-        {
-            var command = CreateEntityCommand(CommandType.DeleteLabel, id);
-            return ExecuteCommandAsync(command, cancellationToken);
+            return ExecuteAddCommandAsync(CommandType.AddLabel, label, cancellationToken);
         }
 
         /// <inheritdoc/>
         public Task UpdateAsync(Label label, CancellationToken cancellationToken = default)
         {
-            if (label == null)
-            {
-                throw new ArgumentNullException(nameof(label));
-            }
-
-            var command = new Command(CommandType.UpdateLabel, label);
-            return ExecuteCommandAsync(command, cancellationToken);
+            return ExecuteCommandAsync(CommandType.UpdateLabel, label, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task UpdateOrderAsync(params OrderEntry[] orderEntries) => UpdateOrderAsync(CancellationToken.None, orderEntries);
+        public Task DeleteAsync(ComplexId id, bool keepAsShared = false, CancellationToken cancellationToken = default)
+        {
+            var argument = new DeleteLabelArgument(id, keepAsShared);
+            return ExecuteCommandAsync(CommandType.DeleteLabel, argument, cancellationToken);
+        }
 
         /// <inheritdoc/>
-        public Task UpdateOrderAsync(CancellationToken cancellationToken, params OrderEntry[] orderEntries)
+        public Task DeleteSharedAsync(string name, CancellationToken cancellationToken = default)
         {
-            if (orderEntries == null)
-            {
-                throw new ArgumentNullException(nameof(orderEntries));
-            }
+            var argument = new DeleteSharedLabelArgument(name);
+            return ExecuteCommandAsync(CommandType.DeleteSharedLabel, argument, cancellationToken);
+        }
 
-            var command = new Command(CommandType.UpdateOrderLabel, new IdToOrderMappingArgument(orderEntries));
-            return ExecuteCommandAsync(command, cancellationToken);
+        /// <inheritdoc/>
+        public Task RenameSharedAsync(string name, string newName, CancellationToken cancellationToken = default)
+        {
+            var argument = new RenameSharedLabelArgument(name, newName);
+            return ExecuteCommandAsync(CommandType.RenameSharedLabel, argument, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task UpdateOrderAsync(IdToOrderMappingArgument orderMapping, CancellationToken cancellationToken = default)
+        {
+            return ExecuteCommandAsync(CommandType.UpdateLabelOrders, orderMapping, cancellationToken);
         }
     }
 }

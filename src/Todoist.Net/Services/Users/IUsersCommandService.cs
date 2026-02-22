@@ -13,25 +13,34 @@ namespace Todoist.Net.Services
     public interface IUsersCommandService
     {
         /// <summary>
-        /// Gets the current user info.
+        /// Updates the current user info.
         /// </summary>
-        /// <param name="user">The user.</param>
+        /// <param name="user">The user update payload.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The current user info.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="user" /> is <see langword="null" /></exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
-        Task UpdateAsync(User user, CancellationToken cancellationToken = default);
+        Task UpdateAsync(UpdateUser user, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Gets the current user info.
+        /// Updates the current user karma goals.
         /// </summary>
-        /// <param name="karmaGoals">The karma goals.</param>
+        /// <param name="karmaGoals">The karma goals update payload.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The current user info.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="karmaGoals" /> is <see langword="null" /></exception>
-        Task UpdateKarmaGoalsAsync(KarmaGoals karmaGoals, CancellationToken cancellationToken = default);
+        Task UpdateKarmaGoalsAsync(UpdateKarmaGoals karmaGoals, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Updates user settings.
+        /// </summary>
+        /// <param name="settings">The user settings update payload.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>The asynchronous operation.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="settings" /> is <see langword="null" />.</exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <exception cref="AggregateException">Command execution exception.</exception>
+        Task UpdateSettingsAsync(UpdateUserSettings settings, CancellationToken cancellationToken = default);
     }
 }

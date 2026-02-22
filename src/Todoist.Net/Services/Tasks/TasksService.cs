@@ -1,8 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
@@ -24,59 +24,55 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<DetailedTask>> GetAsync(CancellationToken cancellationToken = default)
+        public Task<SyncResponse<TaskInfo>> SyncAsync(string syncToken = "*", CancellationToken cancellationToken = default)
         {
-            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Tasks).ConfigureAwait(false);
-
-            return response.Tasks;
+            return SyncResourceAsync(ResourceType.Tasks, r => r.Tasks, syncToken, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<DetailedTask> GetAsync(ComplexId id, CancellationToken cancellationToken = default)
+        public Task<EntitySyncResponse<Dictionary<string, int>>> SyncDayOrdersAsync(string syncToken = "*", CancellationToken cancellationToken = default)
         {
-            return TodoistClient.GetAsync<DetailedTask>(
-                $"tasks/{id}",
-                new List<KeyValuePair<string, string>>(),
-                cancellationToken);
+            return SyncEntityResourceAsync(ResourceType.DayOrders, r => r.DayOrders, syncToken, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<PaginatedItemsResponse<CompletedTask>> GetCompletedByCompletionDateAsync(TaskFilter filter = null, CancellationToken cancellationToken = default)
+        public Task<PaginatedResponse<TaskInfo>> GetAsync(TasksPaginationQuery query = null, CancellationToken cancellationToken = default)
         {
-            var parameters = filter == null ? new List<KeyValuePair<string, string>>() : filter.ToParameters();
-
-            return TodoistClient.GetAsync<PaginatedItemsResponse<CompletedTask>>(
-                "tasks/completed/by_completion_date",
-                parameters,
-                cancellationToken);
+            return TodoistClient.GetAsync<PaginatedResponse<TaskInfo>>("tasks", query?.ToParameters(), cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<PaginatedItemsResponse<CompletedTask>> GetCompletedByDueDateAsync(TaskFilter filter = null, CancellationToken cancellationToken = default)
+        public Task<PaginatedResponse<TaskInfo>> GetByFilterAsync(TasksFilterQuery query = null, CancellationToken cancellationToken = default)
         {
-            var parameters = filter == null ? new List<KeyValuePair<string, string>>() : filter.ToParameters();
-
-            return TodoistClient.GetAsync<PaginatedItemsResponse<CompletedTask>>(
-                "tasks/completed/by_due_date",
-                parameters,
-                cancellationToken);
+            return TodoistClient.GetAsync<PaginatedResponse<TaskInfo>>("tasks/filter", query?.ToParameters(), cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<DetailedTask> QuickAddAsync(QuickAddTask quickAddTask, CancellationToken cancellationToken = default)
+        public Task<PaginatedCompletedTasks> GetCompletedByCompletionDateAsync(CompletedTasksPaginationQuery query = null, CancellationToken cancellationToken = default)
         {
-            if (quickAddTask == null)
-            {
-                throw new ArgumentNullException(nameof(quickAddTask));
-            }
+            return TodoistClient.GetAsync<PaginatedCompletedTasks>("tasks/completed/by_completion_date", query?.ToParameters(), cancellationToken);
+        }
 
-            var request = new
-            {
-                text = quickAddTask.Text,
-                note = quickAddTask.Comment,
-                reminder = quickAddTask.Reminder
-            };
-            return TodoistClient.PostJsonAsync<DetailedTask>("tasks/quick", request, cancellationToken);
+        /// <inheritdoc/>
+        public Task<PaginatedCompletedTasks> GetCompletedByDueDateAsync(CompletedTasksPaginationQuery query = null, CancellationToken cancellationToken = default)
+        {
+            return TodoistClient.GetAsync<PaginatedCompletedTasks>("tasks/completed/by_due_date", query?.ToParameters(), cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<TaskInfo> GetAsync(string id, CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNullOrEmpty(id, nameof(id));
+
+            return TodoistClient.GetAsync<TaskInfo>($"tasks/{id}", cancellationToken: cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task QuickAddAsync(QuickAddTask quickAddTask, CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNull(quickAddTask, nameof(quickAddTask));
+
+            return TodoistClient.PostJsonAsync("tasks/quick", quickAddTask, cancellationToken);
         }
     }
 }

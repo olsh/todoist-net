@@ -1,7 +1,7 @@
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
@@ -19,38 +19,104 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task<PaginatedResponse<Project>> GetArchivedAsync(CancellationToken cancellationToken = default)
+        public Task<SyncResponse<ProjectInfo>> SyncAsync(string syncToken = "*", CancellationToken cancellationToken = default)
         {
-            return TodoistClient.GetAsync<PaginatedResponse<Project>>(
-                "projects/archived",
-                new List<KeyValuePair<string, string>>(),
-                cancellationToken);
+            return SyncResourceAsync(ResourceType.Projects, r => r.Projects, syncToken, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<Project>> GetAsync(CancellationToken cancellationToken = default)
+        public Task<SyncResponse<ProjectViewOptionsDefaults>> SyncViewOptionsDefaultsAsync(string syncToken = "*", CancellationToken cancellationToken = default)
         {
-            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Projects).ConfigureAwait(false);
-
-            return response.Projects;
+            return SyncResourceAsync(ResourceType.ProjectViewOptionsDefaults, r => r.ProjectViewOptionsDefaults, syncToken, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<Project> GetAsync(ComplexId id, CancellationToken cancellationToken = default)
+        public Task<PaginatedResponse<ProjectInfo>> SearchAsync(PaginatedSearchQuery query = null, CancellationToken cancellationToken = default)
         {
-            return TodoistClient.GetAsync<Project>(
-                $"projects/{id}",
-                new List<KeyValuePair<string, string>>(),
-                cancellationToken);
+            return TodoistClient.GetAsync<PaginatedResponse<ProjectInfo>>("projects/search", query?.ToParameters(), cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<ProjectData> GetDataAsync(ComplexId id, CancellationToken cancellationToken = default)
+        public Task<PaginatedResponse<ProjectInfo>> GetAsync(PaginationQuery query = null, CancellationToken cancellationToken = default)
         {
-            return TodoistClient.GetAsync<ProjectData>(
-                $"projects/{id}/full",
-                new List<KeyValuePair<string, string>>(),
-                cancellationToken);
+            return TodoistClient.GetAsync<PaginatedResponse<ProjectInfo>>("projects", query?.ToParameters(), cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<PaginatedResponse<ProjectInfo>> GetArchivedAsync(PaginationQuery query = null, CancellationToken cancellationToken = default)
+        {
+            return TodoistClient.GetAsync<PaginatedResponse<ProjectInfo>>("projects/archived", query?.ToParameters(), cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<PaginatedResponse<ProjectCollaborator>> GetCollaboratorsAsync(string id, PaginationQuery query = null, CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNullOrEmpty(id, nameof(id));
+
+            return TodoistClient.GetAsync<PaginatedResponse<ProjectCollaborator>>($"projects/{id}/collaborators", query?.ToParameters(), cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<ProjectPermissions> GetPermissionsAsync(CancellationToken cancellationToken = default)
+        {
+            return TodoistClient.GetAsync<ProjectPermissions>("projects/permissions", cancellationToken: cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<ProjectInfo> GetAsync(string id, CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNullOrEmpty(id, nameof(id));
+
+            return TodoistClient.GetAsync<ProjectInfo>($"projects/{id}", cancellationToken: cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<ProjectData> GetDataAsync(string id, CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNullOrEmpty(id, nameof(id));
+
+            return TodoistClient.GetAsync<ProjectData>($"projects/{id}/full", cancellationToken: cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<ProjectInfo> AddAndReturnAsync(AddProject project, CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNull(project, nameof(project));
+
+            return TodoistClient.PostJsonAsync<AddProject, ProjectInfo>("projects", project, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<ProjectInfo> UpdateAndReturnAsync(string id, UpdateProject project, CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNullOrEmpty(id, nameof(id));
+            ThrowHelper.ThrowIfNull(project, nameof(project));
+
+            return TodoistClient.PostJsonAsync<UpdateProject, ProjectInfo>($"projects/{id}", project, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<ProjectInfo> ArchiveAndReturnAsync(string id, CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNullOrEmpty(id, nameof(id));
+
+            return TodoistClient.PostAsync<ProjectInfo>($"projects/{id}/archive", cancellationToken: cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<ProjectInfo> UnarchiveAndReturnAsync(string id, CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNullOrEmpty(id, nameof(id));
+
+            return TodoistClient.PostAsync<ProjectInfo>($"projects/{id}/unarchive", cancellationToken: cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<ProjectData> JoinAsync(string id, CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNullOrEmpty(id, nameof(id));
+
+            return TodoistClient.PostAsync<ProjectData>($"projects/{id}/join", cancellationToken: cancellationToken);
         }
     }
 }

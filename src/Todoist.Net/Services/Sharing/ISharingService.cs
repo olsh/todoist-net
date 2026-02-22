@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,19 +11,13 @@ namespace Todoist.Net.Services
     public interface ISharingService : ISharingCommandService
     {
         /// <summary>
-        /// Gets all collaborators.
+        /// Gets a read-only collection of collaborators that were synchronized with the specified sync token.
         /// </summary>
+        /// <param name="syncToken">The sync token. Use "*" to get all collaborators and the new sync token.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The collaborators.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<IEnumerable<Collaborator>> GetCollaboratorsAsync(CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Gets all collaborator states.
-        /// </summary>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The collaborator states.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<IEnumerable<CollaboratorState>> GetCollaboratorStatesAsync(CancellationToken cancellationToken = default);
+        /// <returns>
+        /// A task that represents the asynchronous operation. The task result contains a read-only collection of collaborators that were synchronized.
+        /// </returns>
+        Task<CollaboratorsSyncResponse> SyncAsync(string syncToken = "*", CancellationToken cancellationToken = default);
     }
 }

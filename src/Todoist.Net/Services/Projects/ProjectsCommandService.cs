@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,84 +24,77 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public async Task<ComplexId> AddAsync(Project project, CancellationToken cancellationToken = default)
+        public Task<ComplexId> AddAsync(AddProject project, CancellationToken cancellationToken = default)
         {
-            if (project == null)
-            {
-                throw new ArgumentNullException(nameof(project));
-            }
-
-            var command = CreateAddCommand(CommandType.AddProject, project);
-            await ExecuteCommandAsync(command, cancellationToken).ConfigureAwait(false);
-
-            return project.Id;
+            return ExecuteAddCommandAsync(CommandType.AddProject, project, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task ArchiveAsync(ComplexId id, CancellationToken cancellationToken = default)
+        public Task UpdateAsync(UpdateProject project, CancellationToken cancellationToken = default)
         {
-            var command = CreateEntityCommand(CommandType.ArchiveProject, id);
-
-            return ExecuteCommandAsync(command, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
-        {
-            var command = CreateEntityCommand(CommandType.DeleteProject, id);
-
-            return ExecuteCommandAsync(command, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task UnarchiveAsync(ComplexId id, CancellationToken cancellationToken = default)
-        {
-            var command = CreateEntityCommand(CommandType.UnarchiveProject, id);
-
-            return ExecuteCommandAsync(command, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task UpdateAsync(Project project, CancellationToken cancellationToken = default)
-        {
-            if (project == null)
-            {
-                throw new ArgumentNullException(nameof(project));
-            }
-
-            var command = new Command(CommandType.UpdateProject, project);
-
-            return ExecuteCommandAsync(command, cancellationToken);
+            return ExecuteCommandAsync(CommandType.UpdateProject, project, cancellationToken);
         }
 
         /// <inheritdoc/>
         public Task MoveAsync(MoveArgument moveArgument, CancellationToken cancellationToken = default)
         {
-            if (moveArgument == null)
-            {
-                throw new ArgumentNullException(nameof(moveArgument));
-            }
-
-            return ExecuteCommandAsync(new Command(CommandType.MoveProject, moveArgument), cancellationToken);
+            return ExecuteCommandAsync(CommandType.MoveProject, moveArgument, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task ReorderAsync(params ReorderArgument[] reorderEntries) => ReorderAsync(CancellationToken.None, reorderEntries);
+        public Task MoveToWorkspaceAsync(MoveProjectToWorkspaceArgument moveArgument, CancellationToken cancellationToken = default)
+        {
+            return ExecuteCommandAsync(CommandType.MoveProjectToWorkspace, moveArgument, cancellationToken);
+        }
 
         /// <inheritdoc/>
-        public Task ReorderAsync(CancellationToken cancellationToken, params ReorderArgument[] reorderEntries)
+        public Task MoveToPersonalAsync(ComplexId projectId, CancellationToken cancellationToken = default)
         {
-            if (reorderEntries == null)
-            {
-                throw new ArgumentNullException(nameof(reorderEntries));
-            }
+            var moveArgument = new ProjectIdArgument(projectId);
+            return ExecuteCommandAsync(CommandType.MoveProjectToPersonal, moveArgument, cancellationToken);
+        }
 
-            if (reorderEntries.Length == 0)
-            {
-                throw new ArgumentException("Value cannot be an empty collection.", nameof(reorderEntries));
-            }
+        /// <inheritdoc/>
+        public Task LeaveAsync(ComplexId projectId, CancellationToken cancellationToken = default)
+        {
+            var leaveArgument = new ProjectIdArgument(projectId);
+            return ExecuteCommandAsync(CommandType.LeaveProject, leaveArgument, cancellationToken);
+        }
 
-            return ExecuteCommandAsync(new Command(CommandType.ReorderProjects, new ReorderProjectsArgument(reorderEntries)), cancellationToken);
+        /// <inheritdoc/>
+        public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
+        {
+            return ExecuteEntityCommandAsync(CommandType.DeleteProject, id, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task ArchiveAsync(ComplexId id, CancellationToken cancellationToken = default)
+        {
+            return ExecuteEntityCommandAsync(CommandType.ArchiveProject, id, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task UnarchiveAsync(ComplexId id, CancellationToken cancellationToken = default)
+        {
+            return ExecuteEntityCommandAsync(CommandType.UnarchiveProject, id, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task ReorderAsync(ReorderProjectsArgument reorderArgument, CancellationToken cancellationToken = default)
+        {
+            return ExecuteCommandAsync(CommandType.ReorderProjects, reorderArgument, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task ChangeRoleAsync(ChangeProjectRoleArgument argument, CancellationToken cancellationToken = default)
+        {
+            return ExecuteCommandAsync(CommandType.ChangeProjectRole, argument, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task SetViewOptionsDefaultsAsync(ProjectViewOptionsDefaults viewDefaults, CancellationToken cancellationToken = default)
+        {
+            return ExecuteCommandAsync(CommandType.SetProjectViewOptionsDefaults, viewDefaults, cancellationToken);
         }
     }
 }

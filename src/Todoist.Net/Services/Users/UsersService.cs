@@ -1,8 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
@@ -10,8 +9,8 @@ namespace Todoist.Net.Services
     /// <summary>
     /// Contains operations for users management.
     /// </summary>
-    /// <seealso cref="Todoist.Net.Services.LabelsCommandService" />
-    /// <seealso cref="Todoist.Net.Services.ILabelsService" />
+    /// <seealso cref="Todoist.Net.Services.UsersCommandService" />
+    /// <seealso cref="Todoist.Net.Services.IUsersService" />
     internal class UsersService : UsersCommandService, IUsersService
     {
         internal UsersService(IAdvancedTodoistClient todoistClient)
@@ -20,30 +19,47 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task DeleteAsync(string userPassword, string reason = null, CancellationToken cancellationToken = default)
+        public Task<EntitySyncResponse<UserInfo>> SyncInfoAsync(string syncToken = "*", CancellationToken cancellationToken = default)
         {
-            if (userPassword == null)
-            {
-                throw new ArgumentNullException(nameof(userPassword));
-            }
-
-            var parameters = new LinkedList<KeyValuePair<string, string>>();
-            parameters.AddLast(new KeyValuePair<string, string>("current_password", userPassword));
-
-            if (!string.IsNullOrEmpty(reason))
-            {
-                parameters.AddLast(new KeyValuePair<string, string>("reason_for_delete", reason));
-            }
-
-            return TodoistClient.PostRawAsync("user/delete", parameters, cancellationToken);
+            return SyncEntityResourceAsync(ResourceType.User, r => r.UserInfo, syncToken, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task<UserInfo> GetCurrentAsync(CancellationToken cancellationToken = default)
+        public Task<EntitySyncResponse<UserSettings>> SyncSettingsAsync(string syncToken = "*", CancellationToken cancellationToken = default)
         {
-            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.User).ConfigureAwait(false);
+            return SyncEntityResourceAsync(ResourceType.UserSettings, r => r.UserSettings, syncToken, cancellationToken);
+        }
 
-            return response.UserInfo;
+        /// <inheritdoc/>
+        public Task<EntitySyncResponse<UserPlanLimits>> SyncPlanLimitsAsync(string syncToken = "*", CancellationToken cancellationToken = default)
+        {
+            return SyncEntityResourceAsync(ResourceType.UserPlanLimits, r => r.UserPlanLimits, syncToken, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<EntitySyncResponse<UserStats>> SyncStatsAsync(string syncToken = "*", CancellationToken cancellationToken = default)
+        {
+            return SyncEntityResourceAsync(ResourceType.UserStats, r => r.UserStats, syncToken, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<UserInfo> GetInfoAsync(CancellationToken cancellationToken = default)
+        {
+            return TodoistClient.GetAsync<UserInfo>("user", cancellationToken: cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<DetailedUserStats> GetStatsAsync(CancellationToken cancellationToken = default)
+        {
+            return TodoistClient.GetAsync<DetailedUserStats>("tasks/completed/stats", cancellationToken: cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task UpdateNotificationSettingAsync(NotificationSettingUpdate setting, CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNull(setting, nameof(setting));
+
+            return TodoistClient.PostJsonAsync<NotificationSettingUpdate>("notification_setting", setting, cancellationToken);
         }
     }
 }

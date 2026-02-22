@@ -17,19 +17,9 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<Collaborator>> GetCollaboratorsAsync(CancellationToken cancellationToken = default)
+        public Task<CollaboratorsSyncResponse> SyncAsync(string syncToken = "*", CancellationToken cancellationToken = default)
         {
-            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Collaborators).ConfigureAwait(false);
-
-            return response.Collaborators;
-        }
-
-        /// <inheritdoc/>
-        public async Task<IEnumerable<CollaboratorState>> GetCollaboratorStatesAsync(CancellationToken cancellationToken = default)
-        {
-            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Collaborators).ConfigureAwait(false);
-
-            return response.CollaboratorStates;
+            return TodoistClient.SyncResourcesAsync<CollaboratorsSyncResponse>(new[] { ResourceType.Collaborators }, syncToken, cancellationToken);
         }
     }
 }

@@ -2,50 +2,98 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
 {
-    internal class TemplateService : ITemplateService
+    internal class TemplateService : ServiceBase, ITemplatesService
     {
-        private readonly IAdvancedTodoistClient _todoistClient;
-
         public TemplateService(IAdvancedTodoistClient todoistClient)
+            : base(todoistClient)
         {
-            _todoistClient = todoistClient;
         }
 
         /// <inheritdoc/>
-        public Task<string> ExportAsFileAsync(ComplexId projectId, CancellationToken cancellationToken = default)
+        public Task<string> ExportAsFileAsync(string projectId, bool userRelativeDates = true, CancellationToken cancellationToken = default)
         {
-            var parameters = new List<KeyValuePair<string, string>>
-                                 {
-                                     new KeyValuePair<string, string>("project_id", projectId.ToString())
-                                 };
-            return _todoistClient.GetRawAsync("templates/file", parameters, cancellationToken);
+            ThrowHelper.ThrowIfNullOrEmpty(projectId, nameof(projectId));
+
+            var query = new Dictionary<string, string>
+            {
+                { "project_id", projectId },
+                { "user_relative_dates", userRelativeDates.ToString().ToLower() }
+            };
+
+            return TodoistClient.GetAsync<string>("templates/file", query, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<FileBase> ExportAsShareableUrlAsync(ComplexId projectId, CancellationToken cancellationToken = default)
+        public Task<FileBase> ExportAsUrlAsync(string projectId, bool userRelativeDates = true, CancellationToken cancellationToken = default)
         {
-            var parameters = new List<KeyValuePair<string, string>>
-                                 {
-                                     new KeyValuePair<string, string>("project_id", projectId.ToString())
-                                 };
-            return _todoistClient.GetAsync<FileBase>("templates/url", parameters, cancellationToken);
+            ThrowHelper.ThrowIfNullOrEmpty(projectId, nameof(projectId));
+
+            var query = new Dictionary<string, string>
+            {
+                { "project_id", projectId },
+                { "user_relative_dates", userRelativeDates.ToString().ToLower() }
+            };
+
+            return TodoistClient.GetAsync<FileBase>("templates/url", query, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task ImportIntoProjectAsync(ComplexId projectId, byte[] fileContent, CancellationToken cancellationToken = default)
+        public Task<TemplateImportResult> ImportIntoProjectAsync(string projectId, string templateId, CancellationToken cancellationToken = default)
         {
-            var parameters = new List<KeyValuePair<string, string>>
-                                 {
-                                     new KeyValuePair<string, string>("project_id", projectId.ToString())
-                                 };
-            var file = new UploadFile(fileContent, "template.csv", "text/csv");
-            var files = new[] { file };
+            ThrowHelper.ThrowIfNullOrEmpty(projectId, nameof(projectId));
+            ThrowHelper.ThrowIfNullOrEmpty(templateId, nameof(templateId));
 
-            return _todoistClient.PostFormAsync<dynamic>("templates/import_into_project_from_file", parameters, files, cancellationToken);
+            var body = new TemplateImportRequest
+            {
+                ProjectId = projectId,
+                TemplateId = templateId
+            };
+
+            return TodoistClient.PostJsonAsync<TemplateImportRequest, TemplateImportResult>(
+                "templates/import_into_project", body, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<TemplateImportResult> ImportIntoProjectAsync(string projectId, FileContent fileContent, CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNullOrEmpty(projectId, nameof(projectId));
+            ThrowHelper.ThrowIfNull(fileContent, nameof(fileContent));
+
+            var parameters = new Dictionary<string, string>
+            {
+                { "project_id", projectId }
+            };
+            var file = new UploadFile(fileContent.ContentStream, "template.csv");
+
+            return TodoistClient.PostFilesAsync<TemplateImportResult>(
+                "templates/import_into_project", new[] { file }, parameters, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<TemplateImportResult> CreateProjectFromFileAsync(
+            string name, 
+            FileContent fileContent, 
+            string workspaceId = null, 
+            CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNullOrEmpty(name, nameof(name));
+            ThrowHelper.ThrowIfNull(fileContent, nameof(fileContent));
+
+            var parameters = new Dictionary<string, string>
+            {
+                { "name", name }
+            };
+            parameters.AddIfNotNullOrEmpty("workspace_id", workspaceId);
+
+            var file = new UploadFile(fileContent.ContentStream, "template.csv");
+
+            return TodoistClient.PostFilesAsync<TemplateImportResult>(
+                "templates/import_into_project", new[] { file }, parameters, cancellationToken);
         }
     }
 }

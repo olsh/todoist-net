@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,11 +16,15 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<Reminder>> GetAsync(CancellationToken cancellationToken = default)
+        public Task<SyncResponse<Reminder>> SyncAsync(string syncToken = "*", CancellationToken cancellationToken = default)
         {
-            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Reminders).ConfigureAwait(false);
+            return SyncResourceAsync(new[] { ResourceType.Reminders, ResourceType.RemindersLocation }, r => r.Reminders, syncToken, cancellationToken);
+        }
 
-            return response.Reminders;
+        /// <inheritdoc/>
+        public Task<SyncResponse<string[]>> SyncLocationsAsync(string syncToken = "*", CancellationToken cancellationToken = default)
+        {
+            return SyncResourceAsync(ResourceType.Locations, r => r.Locations, syncToken, cancellationToken);
         }
     }
 }

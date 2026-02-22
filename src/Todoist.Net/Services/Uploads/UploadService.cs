@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
@@ -9,38 +10,37 @@ namespace Todoist.Net.Services
     /// <summary>
     /// Contains operations for file attachments management.
     /// </summary>
-    /// <seealso cref="Todoist.Net.Services.IUploadService" />
-    internal class UploadService : IUploadService
+    /// <seealso cref="Todoist.Net.Services.IUploadsService" />
+    internal class UploadService : ServiceBase, IUploadsService
     {
-        private readonly IAdvancedTodoistClient _todoistClient;
-
         internal UploadService(IAdvancedTodoistClient todoistClient)
+            : base(todoistClient)
         {
-            _todoistClient = todoistClient;
+        }
+
+        /// <inheritdoc/>
+        public Task<FileAttachment> UploadAsync(UploadFile file, string projectId = null, CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNull(file, nameof(file));
+
+            var parameters = new Dictionary<string, string>
+            {
+                { "file_name", file.Filename }
+            };
+            parameters.AddIfNotNullOrEmpty("project_id", projectId);
+
+            return TodoistClient.PostFilesAsync<FileAttachment>("uploads", new[] { file }, parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
         public Task DeleteAsync(string fileUrl, CancellationToken cancellationToken = default)
         {
-            var parameters = new List<KeyValuePair<string, string>>
-                                 {
-                                     new KeyValuePair<string, string>("file_url", fileUrl)
-                                 };
-            return _todoistClient.DeleteRawAsync("uploads", parameters, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task<FileAttachment> UploadAsync(
-            string fileName, byte[] fileContent, CancellationToken cancellationToken = default
-        )
-        {
-            MimeTypeProvider.TryGetMimeType(fileName, out var mimeType);
-
-            var parameters = new Dictionary<string, string>();
-            var file = new UploadFile(fileContent, fileName, mimeType);
-            var files = new[] { file };
-
-            return _todoistClient.PostFormAsync<FileAttachment>("uploads", parameters, files, cancellationToken);
+            var parameters = new Dictionary<string, string>
+            {
+                { "file_url", fileUrl }
+            };
+            
+            return TodoistClient.DeleteAsync("uploads", parameters, cancellationToken);
         }
     }
 }

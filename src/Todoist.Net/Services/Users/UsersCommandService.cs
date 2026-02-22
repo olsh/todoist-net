@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,29 +19,21 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task UpdateAsync(User user, CancellationToken cancellationToken = default)
+        public Task UpdateAsync(UpdateUser user, CancellationToken cancellationToken = default)
         {
-            if (user == null)
-            {
-                throw new ArgumentNullException(nameof(user));
-            }
-
-            var command = new Command(CommandType.UpdateUser, user);
-
-            return ExecuteCommandAsync(command, cancellationToken);
+            return ExecuteCommandAsync(CommandType.UpdateUser, user, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task UpdateKarmaGoalsAsync(KarmaGoals karmaGoals, CancellationToken cancellationToken = default)
+        public Task UpdateKarmaGoalsAsync(UpdateKarmaGoals karmaGoals, CancellationToken cancellationToken = default)
         {
-            if (karmaGoals == null)
-            {
-                throw new ArgumentNullException(nameof(karmaGoals));
-            }
+            return ExecuteCommandAsync(CommandType.UpdateKarmaGoals, karmaGoals, cancellationToken);
+        }
 
-            var command = new Command(CommandType.UpdateKarmaGoals, karmaGoals);
-
-            return ExecuteCommandAsync(command, cancellationToken);
+        /// <inheritdoc/>
+        public Task UpdateSettingsAsync(UpdateUserSettings settings, CancellationToken cancellationToken = default)
+        {
+            return ExecuteCommandAsync(CommandType.UpdateUserSettings, settings, cancellationToken);
         }
     }
 }

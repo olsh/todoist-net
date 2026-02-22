@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,22 +10,21 @@ namespace Todoist.Net.Services
     /// <summary>
     /// Contains operations for Todoist backups management.
     /// </summary>
-    internal class BackupService : IBackupService
+    internal class BackupService : ServiceBase, IBackupsService
     {
-        private readonly IAdvancedTodoistClient _todoistClient;
-
         internal BackupService(IAdvancedTodoistClient todoistClient)
+            : base(todoistClient)
         {
-            _todoistClient = todoistClient;
         }
 
         /// <inheritdoc/>
-        public Task<IEnumerable<Backup>> GetAsync(CancellationToken cancellationToken = default)
+        public Task<IReadOnlyCollection<Backup>> GetAsync(string mfaToken = null, CancellationToken cancellationToken = default)
         {
-            return _todoistClient.GetAsync<IEnumerable<Backup>>(
-                "backups",
-                new List<KeyValuePair<string, string>>(),
-                cancellationToken);
+            var parameters = new Dictionary<string, string>();
+            parameters.AddIfNotNullOrEmpty("mfa_token", mfaToken);
+            
+            return TodoistClient.GetAsync<IReadOnlyCollection<Backup>>("backups", parameters, cancellationToken);
         }
     }
 }
+    

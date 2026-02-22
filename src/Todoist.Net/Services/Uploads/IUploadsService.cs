@@ -1,4 +1,3 @@
-using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,27 +7,30 @@ using Todoist.Net.Models;
 namespace Todoist.Net.Services
 {
     /// <summary>
-    /// Contains operations for Todoist notification management which can be executes in a transaction.
+    /// Contains operations for file attachments management.
     /// </summary>
-    public interface INotificationsCommandService
+    /// <remarks>
+    /// This API v1-aligned surface supports upload and delete operations for attachments; list operations are intentionally not exposed.
+    /// </remarks>
+    public interface IUploadsService
     {
         /// <summary>
-        /// Marks the last read live notification.
+        /// Uploads a file asynchronous.
         /// </summary>
+        /// <param name="file">The file to upload.</param>
+        /// <param name="projectId">The project ID to associate the file with.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <returns>The uploaded file.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task MarkAllReadAsync(CancellationToken cancellationToken = default);
+        Task<FileAttachment> UploadAsync(UploadFile file, string projectId = null, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Marks the last read live notification.
+        /// Deletes a file asynchronous.
         /// </summary>
-        /// <param name="id">The ID of the last read notification.</param>
+        /// <param name="fileUrl">The file URL.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task MarkLastReadAsync(ComplexId id, CancellationToken cancellationToken = default);
+        Task DeleteAsync(string fileUrl, CancellationToken cancellationToken = default);
     }
 }

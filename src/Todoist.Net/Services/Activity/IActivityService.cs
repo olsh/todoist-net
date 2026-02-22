@@ -12,13 +12,13 @@ namespace Todoist.Net.Services
     public interface IActivityService
     {
         /// <summary>
-        /// Gets list of activity logs.
+        /// Gets a paginated list of activity logs.
         /// </summary>
-        /// <param name="filter">The filter.</param>
+        /// <param name="query">The query parameters for filtering and pagination.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The paginated activity log entries.</returns>
+        /// <returns>A paginated response containing activity log entries and cursor data for continuation.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <remarks>The activity log is only available for Todoist Premium.</remarks>
-        Task<PaginatedResponse<LogEntry>> GetAsync(LogFilter filter = null, CancellationToken cancellationToken = default);
+        Task<PaginatedResponse<ActivityLog>> GetAsync(LogsPaginationQuery query = null, CancellationToken cancellationToken = default);
     }
 }

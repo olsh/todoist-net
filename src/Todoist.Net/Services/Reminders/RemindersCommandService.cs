@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,43 +19,27 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public async Task<ComplexId> AddAsync(Reminder reminder, CancellationToken cancellationToken = default)
+        public Task<ComplexId> AddAsync(AddReminder reminder, CancellationToken cancellationToken = default)
         {
-            if (reminder == null)
-            {
-                throw new ArgumentNullException(nameof(reminder));
-            }
-
-            var command = CreateAddCommand(CommandType.AddReminder, reminder);
-            await ExecuteCommandAsync(command, cancellationToken).ConfigureAwait(false);
-
-            return reminder.Id;
-        }
-
-        /// <inheritdoc/>
-        public Task ClearLocationsAsync(CancellationToken cancellationToken = default)
-        {
-            var command = new Command(CommandType.ClearLocations, EmptyCommand.Instance);
-            return ExecuteCommandAsync(command, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
-        {
-            var command = CreateEntityCommand(CommandType.DeleteReminder, id);
-            return ExecuteCommandAsync(command,cancellationToken);
+            return ExecuteAddCommandAsync(CommandType.AddReminder, reminder, cancellationToken);
         }
 
         /// <inheritdoc/>
         public Task UpdateAsync(Reminder reminder, CancellationToken cancellationToken = default)
         {
-            if (reminder == null)
-            {
-                throw new ArgumentNullException(nameof(reminder));
-            }
+            return ExecuteCommandAsync(CommandType.UpdateReminder, reminder, cancellationToken);
+        }
+        
+        /// <inheritdoc/>
+        public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
+        {
+            return ExecuteEntityCommandAsync(CommandType.DeleteReminder, id, cancellationToken);
+        }
 
-            var command = new Command(CommandType.UpdateReminder, reminder);
-            return ExecuteCommandAsync(command, cancellationToken);
+        /// <inheritdoc/>
+        public Task ClearLocationsAsync(CancellationToken cancellationToken = default)
+        {
+            return ExecuteCommandAsync(CommandType.ClearLocations, cancellationToken);
         }
     }
 }

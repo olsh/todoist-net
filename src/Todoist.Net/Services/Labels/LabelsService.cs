@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
@@ -19,11 +22,52 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<Label>> GetAsync(CancellationToken cancellationToken = default)
+        public Task<SyncResponse<Label>> SyncAsync(string syncToken = "*", CancellationToken cancellationToken = default)
         {
-            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Labels).ConfigureAwait(false);
+            return SyncResourceAsync(ResourceType.Labels, r => r.Labels, syncToken, cancellationToken);
+        }
 
-            return response.Labels;
+        /// <inheritdoc/>
+        public Task<PaginatedResponse<Label>> SearchAsync(PaginatedSearchQuery query = null, CancellationToken cancellationToken = default)
+        {
+            return TodoistClient.GetAsync<PaginatedResponse<Label>>("labels/search", query?.ToParameters(), cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<PaginatedResponse<Label>> GetAsync(PaginationQuery query = null, CancellationToken cancellationToken = default)
+        {
+            return TodoistClient.GetAsync<PaginatedResponse<Label>>("labels", query?.ToParameters(), cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<PaginatedResponse<string>> GetSharedAsync(SharedLabelsPaginationQuery query = null, CancellationToken cancellationToken = default)
+        {
+            return TodoistClient.GetAsync<PaginatedResponse<string>>("labels/shared", query?.ToParameters(), cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<Label> GetAsync(string id, CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNullOrEmpty(id, nameof(id));
+
+            return TodoistClient.GetAsync<Label>($"labels/{id}", cancellationToken: cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<Label> AddAndReturnAsync(Label label, CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNull(label, nameof(label));
+
+            return TodoistClient.PostJsonAsync<Label, Label>("labels", label, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<Label> UpdateAndReturnAsync(string id, Label label, CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNullOrEmpty(id, nameof(id));
+            ThrowHelper.ThrowIfNull(label, nameof(label));
+
+            return TodoistClient.PostJsonAsync<Label, Label>($"labels/{id}", label, cancellationToken);
         }
     }
 }

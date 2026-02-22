@@ -1,8 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
@@ -24,58 +24,45 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task AcceptInvitationAsync(long id, string invitationSecret, CancellationToken cancellationToken = default)
+        public Task ShareProjectAsync(ComplexId projectId, string email, ProjectCollaboratorRole role, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(invitationSecret))
-            {
-                throw new ArgumentException("Value cannot be null or empty.", nameof(invitationSecret));
-            }
-
-            var command = new Command(CommandType.AcceptInvitation, new Invitation(id, invitationSecret));
-            return ExecuteCommandAsync(command, cancellationToken);
+            var argument = new SharingCollaboratorArgument(projectId, email, role);
+            return ExecuteCommandAsync(CommandType.ShareProject, argument, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task DeleteCollaboratorAsync(ComplexId id, string email, CancellationToken cancellationToken = default)
+        public Task AcceptInvitationAsync(string invitationId, string invitationSecret, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(email))
-            {
-                throw new ArgumentException("Value cannot be null or empty.", nameof(email));
-            }
+            ThrowHelper.ThrowIfNullOrEmpty(invitationId, nameof(invitationId));
+            ThrowHelper.ThrowIfNullOrEmpty(invitationSecret, nameof(invitationSecret));
 
-            var command = new Command(CommandType.DeleteCollaborator, new ShareProjectArgument(id, email));
-            return ExecuteCommandAsync(command, cancellationToken);
+            var invitation = new Invitation(invitationId, invitationSecret);
+            return ExecuteCommandAsync(CommandType.AcceptInvitation, invitation, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task DeleteInvitationAsync(long id, CancellationToken cancellationToken = default)
+        public Task RejectInvitationAsync(string invitationId, string invitationSecret, CancellationToken cancellationToken = default)
         {
-            var command = new Command(CommandType.DeleteInvitation, new BaseInvitation(id));
-            return ExecuteCommandAsync(command, cancellationToken);
+            ThrowHelper.ThrowIfNullOrEmpty(invitationId, nameof(invitationId));
+            ThrowHelper.ThrowIfNullOrEmpty(invitationSecret, nameof(invitationSecret));
+
+            var invitation = new Invitation(invitationId, invitationSecret);
+            return ExecuteCommandAsync(CommandType.RejectInvitation, invitation, cancellationToken);
+        }
+        /// <inheritdoc/>
+        public Task DeleteInvitationAsync(string invitationId, CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNullOrEmpty(invitationId, nameof(invitationId));
+
+            var invitation = new Invitation(invitationId);
+            return ExecuteCommandAsync(CommandType.DeleteInvitation, invitation, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task RejectInvitationAsync(long id, string invitationSecret, CancellationToken cancellationToken = default)
+        public Task DeleteCollaboratorAsync(ComplexId projectId, string email, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(invitationSecret))
-            {
-                throw new ArgumentException("Value cannot be null or empty.", nameof(invitationSecret));
-            }
-
-            var command = new Command(CommandType.RejectInvitation, new Invitation(id, invitationSecret));
-            return ExecuteCommandAsync(command, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task ShareProjectAsync(ComplexId id, string email, CancellationToken cancellationToken = default)
-        {
-            if (string.IsNullOrEmpty(email))
-            {
-                throw new ArgumentException("Value cannot be null or empty.", nameof(email));
-            }
-
-            var command = new Command(CommandType.ShareProject, new ShareProjectArgument(id, email));
-            return ExecuteCommandAsync(command, cancellationToken);
+            var argument = new SharingCollaboratorArgument(projectId, email);
+            return ExecuteCommandAsync(CommandType.DeleteCollaborator, argument, cancellationToken);
         }
     }
 }

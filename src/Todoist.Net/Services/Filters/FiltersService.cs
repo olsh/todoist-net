@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,12 +16,9 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<Filter>> GetAsync(CancellationToken cancellationToken = default)
+        public Task<SyncResponse<Filter>> SyncAsync(string syncToken = "*", CancellationToken cancellationToken = default)
         {
-            var response = await TodoistClient.GetResourcesAsync(cancellationToken, ResourceType.Filters).ConfigureAwait(false);
-
-            return response.Filters;
+            return SyncResourceAsync(ResourceType.Filters, r => r.Filters, syncToken, cancellationToken);
         }
-
     }
 }

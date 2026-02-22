@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,84 +24,45 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public async Task<ComplexId> AddAsync(Section section, CancellationToken cancellationToken = default)
+        public Task<ComplexId> AddAsync(AddSection section, CancellationToken cancellationToken = default)
         {
-            if (section == null)
-            {
-                throw new ArgumentNullException(nameof(section));
-            }
-
-            var command = CreateAddCommand(CommandType.AddSection, section);
-            await ExecuteCommandAsync(command, cancellationToken)
-                .ConfigureAwait(false);
-
-            return section.Id;
+            return ExecuteAddCommandAsync(CommandType.AddSection, section, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task ArchiveAsync(ComplexId id, CancellationToken cancellationToken = default)
+        public Task UpdateAsync(UpdateSection section, CancellationToken cancellationToken = default)
         {
-            var command = CreateEntityCommand(CommandType.ArchiveSection, id);
+            return ExecuteCommandAsync(CommandType.UpdateSection, section, cancellationToken);
+        }
 
-            return ExecuteCommandAsync(command, cancellationToken);
+        /// <inheritdoc/>
+        public Task MoveAsync(MoveSectionArgument moveArgument, CancellationToken cancellationToken = default)
+        {
+            return ExecuteCommandAsync(CommandType.MoveSection, moveArgument, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task ReorderAsync(ReorderSectionsArgument reorderArgument, CancellationToken cancellationToken = default)
+        {
+            return ExecuteCommandAsync(CommandType.ReorderSections, reorderArgument, cancellationToken);
         }
 
         /// <inheritdoc/>
         public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
-            var command = CreateEntityCommand(CommandType.DeleteSection, id);
-
-            return ExecuteCommandAsync(command, cancellationToken);
+            return ExecuteEntityCommandAsync(CommandType.DeleteSection, id, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task MoveAsync(SectionMoveArgument moveArgument, CancellationToken cancellationToken = default)
+        public Task ArchiveAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
-            if (moveArgument == null)
-            {
-                throw new ArgumentNullException(nameof(moveArgument));
-            }
-
-            var command = new Command(CommandType.MoveSection, moveArgument);
-
-            return ExecuteCommandAsync(command, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task ReorderAsync(params SectionOrderEntry[] orderEntries) => ReorderAsync(CancellationToken.None, orderEntries);
-
-        /// <inheritdoc/>
-        public Task ReorderAsync(CancellationToken cancellationToken, params SectionOrderEntry[] orderEntries)
-        {
-            if (orderEntries == null)
-            {
-                throw new ArgumentNullException(nameof(orderEntries));
-            }
-
-            var command = new Command(CommandType.ReorderSection, new ReorderSectionArgument(orderEntries));
-
-            return ExecuteCommandAsync(command, cancellationToken);
+            return ExecuteEntityCommandAsync(CommandType.ArchiveSection, id, cancellationToken);
         }
 
         /// <inheritdoc/>
         public Task UnarchiveAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
-            var command = CreateEntityCommand(CommandType.UnarchiveSection, id);
-
-            return ExecuteCommandAsync(command, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task UpdateAsync(Section section, CancellationToken cancellationToken = default)
-        {
-            if (section == null)
-            {
-                throw new ArgumentNullException(nameof(section));
-            }
-
-            var command = new Command(CommandType.UpdateSection, section);
-
-            return ExecuteCommandAsync(command, cancellationToken);
+            return ExecuteEntityCommandAsync(CommandType.UnarchiveSection, id, cancellationToken);
         }
     }
 }

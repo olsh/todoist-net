@@ -23,16 +23,18 @@ namespace Todoist.Net.Services
         /// <exception cref="ArgumentNullException"><paramref name="reminder" /> is <see langword="null" /></exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<ComplexId> AddAsync(Reminder reminder, CancellationToken cancellationToken = default);
+        Task<ComplexId> AddAsync(AddReminder reminder, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Clears the locations of all location-based reminders.
+        /// Updates a reminder asynchronous.
         /// </summary>
+        /// <param name="reminder">The reminder.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="reminder"/> is <see langword="null"/></exception>
         /// <exception cref="AggregateException">Command execution exception.</exception>
-        Task ClearLocationsAsync(CancellationToken cancellationToken = default);
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        Task UpdateAsync(Reminder reminder, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Deletes an existing reminder asynchronous.
@@ -45,14 +47,12 @@ namespace Todoist.Net.Services
         Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Updates a reminder asynchronous.
+        /// Clears the locations of all location-based reminders.
         /// </summary>
-        /// <param name="reminder">The reminder.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="reminder"/> is <see langword="null"/></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task UpdateAsync(Reminder reminder, CancellationToken cancellationToken = default);
+        /// <exception cref="AggregateException">Command execution exception.</exception>
+        Task ClearLocationsAsync(CancellationToken cancellationToken = default);
     }
 }

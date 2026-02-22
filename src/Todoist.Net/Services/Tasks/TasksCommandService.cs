@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,130 +24,57 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public async Task<ComplexId> AddAsync(AddTask task, CancellationToken cancellationToken = default)
+        public Task<ComplexId> AddAsync(AddTask task, CancellationToken cancellationToken = default)
         {
-            if (task == null)
-            {
-                throw new ArgumentNullException(nameof(task));
-            }
-
-            var command = CreateAddCommand(CommandType.AddTask, task);
-            await ExecuteCommandAsync(command, cancellationToken).ConfigureAwait(false);
-
-            return task.Id;
-        }
-
-        /// <inheritdoc/>
-        public Task CloseAsync(ComplexId id, CancellationToken cancellationToken = default)
-        {
-            var command = CreateEntityCommand(CommandType.CloseTask, id);
-            return ExecuteCommandAsync(command, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task CompleteAsync(CompleteTaskArgument completeTaskArgument, CancellationToken cancellationToken = default)
-        {
-            if (completeTaskArgument == null)
-            {
-                throw new ArgumentNullException(nameof(completeTaskArgument));
-            }
-
-            var command = new Command(CommandType.CompleteTask, completeTaskArgument);
-
-            return ExecuteCommandAsync(command, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task CompleteRecurringAsync(ComplexId id, CancellationToken cancellationToken = default)
-        {
-            var command = CreateEntityCommand(CommandType.CompleteRecurringTask, id);
-            return ExecuteCommandAsync(command, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task CompleteRecurringAsync(CompleteRecurringTaskArgument completeRecurringTaskArgument, CancellationToken cancellationToken = default)
-        {
-            if (completeRecurringTaskArgument == null)
-            {
-                throw new ArgumentNullException(nameof(completeRecurringTaskArgument));
-            }
-
-            var command = new Command(CommandType.CompleteRecurringTask, completeRecurringTaskArgument);
-
-            return ExecuteCommandAsync(command, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
-        {
-            var command = CreateEntityCommand(CommandType.DeleteTask, id);
-
-            return ExecuteCommandAsync(command, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task UncompleteAsync(ComplexId id, CancellationToken cancellationToken = default)
-        {
-            var command = CreateEntityCommand(CommandType.UncompleteTask, id);
-
-            return ExecuteCommandAsync(command, cancellationToken);
+            return ExecuteAddCommandAsync(CommandType.AddTask, task, cancellationToken);
         }
 
         /// <inheritdoc/>
         public Task UpdateAsync(UpdateTask task, CancellationToken cancellationToken = default)
         {
-            if (task == null)
-            {
-                throw new ArgumentNullException(nameof(task));
-            }
-
-            var command = new Command(CommandType.UpdateTask, task);
-            return ExecuteCommandAsync(command, cancellationToken);
+            return ExecuteCommandAsync(CommandType.UpdateTask, task, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task UpdateDayOrdersAsync(params OrderEntry[] idsToOrder) => UpdateDayOrdersAsync(CancellationToken.None, idsToOrder);
-
-        /// <inheritdoc/>
-        public Task UpdateDayOrdersAsync(CancellationToken cancellationToken, params OrderEntry[] idsToOrder)
+        public Task MoveAsync(MoveTaskArgument moveArgument, CancellationToken cancellationToken = default)
         {
-            if (idsToOrder == null)
-            {
-                throw new ArgumentNullException(nameof(idsToOrder));
-            }
-
-            var command = new Command(CommandType.UpdateDayOrderTask, new IdToOrderArgument(idsToOrder));
-            return ExecuteCommandAsync(command, cancellationToken);
+            return ExecuteCommandAsync(CommandType.MoveTask, moveArgument, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task MoveAsync(TaskMoveArgument moveArgument, CancellationToken cancellationToken = default)
+        public Task ReorderAsync(ReorderTasksArgument reorderArgument, CancellationToken cancellationToken = default)
         {
-            if (moveArgument == null)
-            {
-                throw new ArgumentNullException(nameof(moveArgument));
-            }
-
-            return ExecuteCommandAsync(new Command(CommandType.MoveTask, moveArgument), cancellationToken);
+            return ExecuteCommandAsync(CommandType.ReorderTasks, reorderArgument, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task ReorderAsync(params ReorderArgument[] reorderEntries) => ReorderAsync(CancellationToken.None, reorderEntries);
+        public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
+        {
+            return ExecuteEntityCommandAsync(CommandType.DeleteTask, id, cancellationToken);
+        }
 
         /// <inheritdoc/>
-        public Task ReorderAsync(CancellationToken cancellationToken, params ReorderArgument[] reorderEntries)
+        public Task CloseAsync(ComplexId id, CancellationToken cancellationToken = default)
         {
-            if (reorderEntries == null)
-            {
-                throw new ArgumentNullException(nameof(reorderEntries));
-            }
+            return ExecuteEntityCommandAsync(CommandType.CloseTask, id, cancellationToken);
+        }
 
-            if (reorderEntries.Length == 0)
-            {
-                throw new ArgumentException("Value cannot be an empty collection.", nameof(reorderEntries));
-            }
+        /// <inheritdoc/>
+        public Task CompleteRecurringAsync(CompleteRecurringTaskArgument completeArgument, CancellationToken cancellationToken = default)
+        {
+            return ExecuteCommandAsync(CommandType.CompleteRecurringTask, completeArgument, cancellationToken);
+        }
 
-            return ExecuteCommandAsync(new Command(CommandType.ReorderTasks, new ReorderTasksArgument(reorderEntries)), cancellationToken);
+        /// <inheritdoc/>
+        public Task CompleteAsync(CompleteTaskArgument completeArgument, CancellationToken cancellationToken = default)
+        {
+            return ExecuteCommandAsync(CommandType.CompleteTask, completeArgument, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task UncompleteAsync(ComplexId id, CancellationToken cancellationToken = default)
+        {
+            return ExecuteEntityCommandAsync(CommandType.UncompleteTask, id, cancellationToken);
         }
     }
 }

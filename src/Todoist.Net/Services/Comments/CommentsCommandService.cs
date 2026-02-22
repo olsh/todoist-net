@@ -1,8 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
@@ -25,54 +25,33 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public async Task<ComplexId> AddToTaskAsync(Comment comment, ComplexId taskId, CancellationToken cancellationToken = default)
+        public Task<ComplexId> AddToTaskAsync(Comment comment, ComplexId taskId, CancellationToken cancellationToken = default)
         {
-            if (comment == null)
-            {
-                throw new ArgumentNullException(nameof(comment));
-            }
+            ThrowHelper.ThrowIfDefaultOrEmpty(taskId, nameof(taskId));
 
             comment.TaskId = taskId;
-
-            var command = CreateAddCommand(CommandType.AddComment, comment);
-            await ExecuteCommandAsync(command, cancellationToken).ConfigureAwait(false);
-
-            return comment.Id;
+            return ExecuteAddCommandAsync(CommandType.AddComment, comment, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task<ComplexId> AddToProjectAsync(Comment comment, ComplexId projectId, CancellationToken cancellationToken = default)
+        public Task<ComplexId> AddToProjectAsync(Comment comment, ComplexId projectId, CancellationToken cancellationToken = default)
         {
-            if (comment == null)
-            {
-                throw new ArgumentNullException(nameof(comment));
-            }
+            ThrowHelper.ThrowIfDefaultOrEmpty(projectId, nameof(projectId));
 
             comment.ProjectId = projectId;
-
-            var command = CreateAddCommand(CommandType.AddComment, comment);
-            await ExecuteCommandAsync(command, cancellationToken).ConfigureAwait(false);
-
-            return comment.Id;
-        }
-
-        /// <inheritdoc/>
-        public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
-        {
-            var command = CreateEntityCommand(CommandType.DeleteComment, id);
-            return ExecuteCommandAsync(command, cancellationToken);
+            return ExecuteAddCommandAsync(CommandType.AddComment, comment, cancellationToken);
         }
 
         /// <inheritdoc/>
         public Task UpdateAsync(Comment comment, CancellationToken cancellationToken = default)
         {
-            if (comment == null)
-            {
-                throw new ArgumentNullException(nameof(comment));
-            }
+            return ExecuteCommandAsync(CommandType.UpdateComment, comment, cancellationToken);
+        }
 
-            var command = new Command(CommandType.UpdateComment, comment);
-            return ExecuteCommandAsync(command, cancellationToken);
+        /// <inheritdoc/>
+        public Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default)
+        {
+            return ExecuteEntityCommandAsync(CommandType.DeleteComment, id, cancellationToken);
         }
     }
 }
