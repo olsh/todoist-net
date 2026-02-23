@@ -75,7 +75,6 @@ namespace Todoist.Net.Services
         /// Returns <see cref="Task{TResult}" />. The task object representing the asynchronous operation 
         /// that at completion returns the transaction response.
         /// </returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task<SyncTransactionResponse> CommitAsync(CancellationToken cancellationToken = default);
     }

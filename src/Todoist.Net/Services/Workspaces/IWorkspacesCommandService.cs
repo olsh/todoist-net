@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
@@ -20,7 +21,7 @@ namespace Todoist.Net.Services
         /// <returns>The temporary ID of the workspace.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="workspace"/> is <see langword="null"/>.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         Task<ComplexId> AddAsync(AddWorkspace workspace, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -31,7 +32,7 @@ namespace Todoist.Net.Services
         /// <returns>The asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="workspace"/> is <see langword="null"/>.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         Task UpdateAsync(UpdateWorkspace workspace, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -41,7 +42,7 @@ namespace Todoist.Net.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The asynchronous operation.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         Task LeaveAsync(ComplexId id, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -51,7 +52,7 @@ namespace Todoist.Net.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The asynchronous operation.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default);
 
 
@@ -62,7 +63,7 @@ namespace Todoist.Net.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The asynchronous operation.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         Task ChangeUserRoleAsync(ChangeWorkspaceUserRoleArgument userRoleArgs, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -72,7 +73,7 @@ namespace Todoist.Net.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The asynchronous operation.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         Task UpdateSidebarPreferenceAsync(UpdateSidebarPreferenceArgument sidebarArgs, CancellationToken cancellationToken = default);
         
         /// <summary>
@@ -82,7 +83,7 @@ namespace Todoist.Net.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The asynchronous operation.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         Task DeleteUserAsync(DeleteWorkspaceUserArgument userArgs, CancellationToken cancellationToken = default);
         
         /// <summary>
@@ -92,7 +93,7 @@ namespace Todoist.Net.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The asynchronous operation.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         Task InviteUsersAsync(InviteWorkspaceUsersArgument userArgs, CancellationToken cancellationToken = default);
     }
 }

@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
@@ -22,7 +23,7 @@ namespace Todoist.Net.Services
         /// The temporary ID of the comment.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="comment" /> is <see langword="null" /></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task<ComplexId> AddToTaskAsync(Comment comment, ComplexId taskId, CancellationToken cancellationToken = default);
 
@@ -36,7 +37,7 @@ namespace Todoist.Net.Services
         /// The comment ID.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="comment" /> is <see langword="null" /></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task<ComplexId> AddToProjectAsync(Comment comment, ComplexId projectId, CancellationToken cancellationToken = default);
 
@@ -47,7 +48,7 @@ namespace Todoist.Net.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="comment" /> is <see langword="null" /></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task UpdateAsync(Comment comment, CancellationToken cancellationToken = default);
 
@@ -57,7 +58,7 @@ namespace Todoist.Net.Services
         /// <param name="id">The id of the comment.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default);
     }

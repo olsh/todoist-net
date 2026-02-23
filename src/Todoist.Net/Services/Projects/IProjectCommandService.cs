@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
@@ -18,7 +19,7 @@ namespace Todoist.Net.Services
         /// <param name="project">The project.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The temporary ID of the project.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="project"/> is <see langword="null"/></exception>
         Task<ComplexId> AddAsync(AddProject project, CancellationToken cancellationToken = default);
@@ -29,7 +30,7 @@ namespace Todoist.Net.Services
         /// <param name="project">The project.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="project"/> is <see langword="null"/></exception>
         Task UpdateAsync(UpdateProject project, CancellationToken cancellationToken = default);
@@ -44,7 +45,7 @@ namespace Todoist.Net.Services
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="moveArgument" /> is <see langword="null" /></exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         Task MoveAsync(MoveArgument moveArgument, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -57,7 +58,7 @@ namespace Todoist.Net.Services
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="moveArgument" /> is <see langword="null" /></exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         Task MoveToWorkspaceAsync(MoveProjectToWorkspaceArgument moveArgument, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -69,7 +70,7 @@ namespace Todoist.Net.Services
         /// Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         Task MoveToPersonalAsync(ComplexId projectId, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -79,7 +80,7 @@ namespace Todoist.Net.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The asynchronous operation.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         Task LeaveAsync(ComplexId projectId, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -88,7 +89,7 @@ namespace Todoist.Net.Services
         /// <param name="id">The project ID.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns> Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation. </returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="id"/> is <see langword="null"/></exception>
         Task DeleteAsync(ComplexId id, CancellationToken cancellationToken = default);
@@ -99,7 +100,7 @@ namespace Todoist.Net.Services
         /// <param name="id">The ids.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="id"/> is <see langword="null"/></exception>
         /// <remarks>Only available for Todoist Premium users.</remarks>
@@ -111,7 +112,7 @@ namespace Todoist.Net.Services
         /// <param name="id">The ids.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns> Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation. </returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="id"/> is <see langword="null"/></exception>
         /// <remarks>Only available for Todoist Premium users.</remarks>
@@ -127,7 +128,7 @@ namespace Todoist.Net.Services
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="reorderArgument" /> is <see langword="null" /></exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="T:System.ArgumentException">Value cannot be an empty collection.</exception>
         Task ReorderAsync(ReorderProjectsArgument reorderArgument, CancellationToken cancellationToken = default);
 
@@ -139,7 +140,7 @@ namespace Todoist.Net.Services
         /// <returns>The asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="argument" /> is <see langword="null" />.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         Task ChangeRoleAsync(ChangeProjectRoleArgument argument, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -150,7 +151,7 @@ namespace Todoist.Net.Services
         /// <returns>The asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="viewDefaults" /> is <see langword="null" />.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         Task SetViewOptionsDefaultsAsync(ProjectViewOptionsDefaults viewDefaults, CancellationToken cancellationToken = default);
     }
 }

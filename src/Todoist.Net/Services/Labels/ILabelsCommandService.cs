@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
@@ -21,7 +22,7 @@ namespace Todoist.Net.Services
         /// The temporary ID of the label.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="label" /> is <see langword="null" /></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task<ComplexId> AddAsync(Label label, CancellationToken cancellationToken = default);
 
@@ -32,7 +33,7 @@ namespace Todoist.Net.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="label"/> is <see langword="null"/></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task UpdateAsync(Label label, CancellationToken cancellationToken = default);
 
@@ -43,7 +44,7 @@ namespace Todoist.Net.Services
         /// <param name="keepAsShared">A value indicating whether to keep the label continue to appear on tasks as a shared label.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task DeleteAsync(ComplexId id, bool keepAsShared = false, CancellationToken cancellationToken = default);
 
@@ -54,7 +55,7 @@ namespace Todoist.Net.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="ArgumentException">Value cannot be null or empty.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task DeleteSharedAsync(string name, CancellationToken cancellationToken = default);
 
@@ -66,7 +67,7 @@ namespace Todoist.Net.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="ArgumentException">Value cannot be null or empty.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task RenameSharedAsync(string name, string newName, CancellationToken cancellationToken = default);
 
@@ -78,7 +79,7 @@ namespace Todoist.Net.Services
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="orderMapping"/> is <see langword="null"/></exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         Task UpdateOrderAsync(IdToOrderMappingArgument orderMapping, CancellationToken cancellationToken = default);
     }
 }

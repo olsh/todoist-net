@@ -181,7 +181,6 @@ namespace Todoist.Net
         /// </returns>
         /// <exception cref="ArgumentNullException">Value cannot be null - commands.</exception>
         /// <exception cref="ArgumentException">Value cannot be an empty collection.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task<SyncTransactionResponse> SyncCommandsAsync(
             Command[] commands, 

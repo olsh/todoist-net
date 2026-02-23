@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Todoist.Net.Models;
+using Todoist.Net.Exceptions;
 
 namespace Todoist.Net.Services
 {
@@ -19,7 +19,7 @@ namespace Todoist.Net.Services
         /// <param name="id">The ID of the last known notification.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task SetLastKnownAsync(string id, CancellationToken cancellationToken = default);
 
@@ -28,7 +28,7 @@ namespace Todoist.Net.Services
         /// </summary>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task MarkAllReadAsync(CancellationToken cancellationToken = default);
 
@@ -40,7 +40,7 @@ namespace Todoist.Net.Services
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
         /// <exception cref="ArgumentException">Value cannot be an empty collection.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task MarkReadAsync(ICollection<string> ids, CancellationToken cancellationToken = default);
 
@@ -52,7 +52,7 @@ namespace Todoist.Net.Services
         /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.The task object representing the asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="ids"/> is <see langword="null"/></exception>
         /// <exception cref="ArgumentException">Value cannot be an empty collection.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task MarkUnreadAsync(ICollection<string> ids, CancellationToken cancellationToken = default);
     }

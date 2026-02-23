@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
@@ -20,7 +21,7 @@ namespace Todoist.Net.Services
         /// <returns>The asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="viewOptions" /> is <see langword="null" />.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         Task SetAsync(ViewOptions viewOptions, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -31,7 +32,7 @@ namespace Todoist.Net.Services
         /// <returns>The asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="viewOptions" /> is <see langword="null" />.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         Task DeleteAsync(ViewOptions viewOptions, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -42,7 +43,7 @@ namespace Todoist.Net.Services
         /// <returns>The asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="viewDefaults" /> is <see langword="null" />.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         Task SetProjectDefaultsAsync(ProjectViewOptionsDefaults viewDefaults, CancellationToken cancellationToken = default);
     }
 }

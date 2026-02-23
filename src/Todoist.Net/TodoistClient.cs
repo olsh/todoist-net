@@ -20,9 +20,8 @@ namespace Todoist.Net
     /// <summary>
     /// A Todoist client.
     /// </summary>
-    /// <seealso cref="System.IDisposable" />
     /// <seealso cref="Todoist.Net.IAdvancedTodoistClient" />
-    public sealed class TodoistClient : IDisposable, IAdvancedTodoistClient
+    public sealed class TodoistClient : IAdvancedTodoistClient
     {
         #region Constructors and Fields
 

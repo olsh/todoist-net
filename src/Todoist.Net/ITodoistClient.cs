@@ -11,7 +11,7 @@ namespace Todoist.Net
     /// <summary>
     /// A Todoist client.
     /// </summary>
-    public interface ITodoistClient
+    public interface ITodoistClient : IDisposable
     {
         /// <summary>Gets the ID mappings helper service.</summary>
         IIdsService Ids { get; }

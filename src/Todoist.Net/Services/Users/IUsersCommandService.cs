@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
@@ -19,7 +20,7 @@ namespace Todoist.Net.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="user" /> is <see langword="null" /></exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         Task UpdateAsync(UpdateUser user, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -28,7 +29,7 @@ namespace Todoist.Net.Services
         /// <param name="karmaGoals">The karma goals update payload.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="karmaGoals" /> is <see langword="null" /></exception>
         Task UpdateKarmaGoalsAsync(UpdateKarmaGoals karmaGoals, CancellationToken cancellationToken = default);
 
@@ -40,7 +41,7 @@ namespace Todoist.Net.Services
         /// <returns>The asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="settings" /> is <see langword="null" />.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <exception cref="AggregateException">Command execution exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
         Task UpdateSettingsAsync(UpdateUserSettings settings, CancellationToken cancellationToken = default);
     }
 }
