@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,8 +12,6 @@ namespace Todoist.Net.Services
     /// <seealso cref="Todoist.Net.Services.ITransaction" />
     internal class Transaction : ITransaction
     {
-        private string _syncToken;
-        private readonly HashSet<ResourceType> _includedResources;
         private readonly List<Command> _commands;
         private readonly IAdvancedTodoistClient _todoistClient;
         
@@ -27,7 +24,6 @@ namespace Todoist.Net.Services
             _todoistClient = todoistClient;
 
             _commands = new List<Command>();
-            _includedResources = new HashSet<ResourceType>();
 
             Workspaces = new WorkspacesCommandService(_commands);
             WorkspaceFilters = new WorkspaceFiltersCommandService(_commands);
@@ -58,27 +54,13 @@ namespace Todoist.Net.Services
         public ISharingCommandService Sharing { get; }
         public INotificationsCommandService Notifications { get; }
 
-
-        /// <inheritdoc/>
-        public void IncludeResources(ResourceType[] resourceTypes, string syncToken = null)
-        {
-            if (resourceTypes?.Length > 0)
-            {
-                foreach (var resourceType in resourceTypes)
-                {
-                    _includedResources.Add(resourceType);
-                }
-            }
-            _syncToken = syncToken;
-        }
-
         /// <inheritdoc/>
         public async Task<SyncTransactionResponse> CommitAsync(CancellationToken cancellationToken = default)
         {
             try
             {
                 return await _todoistClient
-                    .SyncCommandsAsync(_commands.ToArray(), _includedResources.ToArray(), _syncToken, throwOnError: false, cancellationToken)
+                    .SyncCommandsAsync(_commands.ToArray(), throwOnError: false, cancellationToken: cancellationToken)
                     .ConfigureAwait(false);
             }
             finally
@@ -86,5 +68,21 @@ namespace Todoist.Net.Services
                 _commands.Clear();
             }
         }
+
+        /// <inheritdoc/>
+        public async Task<SyncTransactionResponse> CommitAndSyncAsync(ResourceType[] resourceTypes, string syncToken = "*", CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await _todoistClient
+                    .SyncCommandsAsync(_commands.ToArray(), resourceTypes, syncToken, throwOnError: false, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+            finally
+            {
+                _commands.Clear();
+            }
+        }
+
     }
 }

@@ -53,14 +53,6 @@ namespace Todoist.Net.Services
         /// <summary>Gets the notifications commands service.</summary>
         INotificationsCommandService Notifications { get; }
 
-
-        /// <summary>
-        /// Includes the specified resource types in the transaction response.
-        /// </summary>
-        /// <param name="resourceTypes">The resource types to include.</param>
-        /// <param name="syncToken">The synchronization token.</param>
-        void IncludeResources(ResourceType[] resourceTypes, string syncToken = "*");
-
         /// <summary>
         /// Commits the transaction asynchronously.
         /// </summary>
@@ -77,5 +69,24 @@ namespace Todoist.Net.Services
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task<SyncTransactionResponse> CommitAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Commits the transaction asynchronously and synchronizes the specified resource types.
+        /// </summary>
+        /// <param name="resourceTypes">The resource types to synchronize.</param>
+        /// <param name="syncToken">The synchronization token.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <remarks>
+        /// <para>
+        /// Any <c>ComplexId</c> values in the commands will be resolved to actual IDs after successful execution using the
+        /// <see cref="SyncTransactionResponse.TempIdMappings"/> dictionary in the response, and any command errors will be included in the <see cref="SyncTransactionResponse"/> result for each command.
+        /// </para>
+        /// </remarks>
+        /// <returns>
+        /// Returns <see cref="Task{TResult}" />. The task object representing the asynchronous operation 
+        /// that at completion returns the transaction response.
+        /// </returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        Task<SyncTransactionResponse> CommitAndSyncAsync(ResourceType[] resourceTypes, string syncToken = "*", CancellationToken cancellationToken = default);
     }
 }
