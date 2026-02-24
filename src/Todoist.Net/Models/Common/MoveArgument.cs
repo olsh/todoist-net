@@ -13,12 +13,11 @@ namespace Todoist.Net.Models
         /// Initializes a new instance of the <see cref="MoveArgument" /> class.
         /// </summary>
         /// <param name="id">The identifier of moved entity.</param>
-        /// <param name="parentId">The parent entity identifier.</param>
+        /// <param name="parentId">The parent entity identifier, or <c>null</c> to move to the root.</param>
         /// <exception cref="T:System.ArgumentException">Entity ID is required for the operation</exception>
-        public MoveArgument(ComplexId id, ComplexId parentId)
+        public MoveArgument(ComplexId id, ComplexId? parentId)
         {
             ThrowHelper.ThrowIfNullOrEmpty(id.ToString(), nameof(id));
-            ThrowHelper.ThrowIfNullOrEmpty(parentId.ToString(), nameof(parentId));
 
             Id = id;
             ParentId = parentId;
@@ -33,9 +32,14 @@ namespace Todoist.Net.Models
         [JsonPropertyName("id")]
         public ComplexId Id { get; }
 
-        /// <summary>Gets the parent entity identifier.</summary>
-        /// <value>The parent entity identifier.</value>
+        /// <summary>
+        /// Gets the parent entity identifier.
+        /// </summary>
+        /// <value>
+        /// The parent entity identifier.
+        /// </value>
         [JsonPropertyName("parent_id")]
-        public ComplexId ParentId { get; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+        public ComplexId? ParentId { get; }
     }
 }

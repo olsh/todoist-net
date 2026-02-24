@@ -12,8 +12,8 @@ namespace Todoist.Net.Models
         /// Initializes a new instance of the <see cref="MoveSectionArgument"/> class.
         /// </summary>
         /// <param name="id">Section identifier.</param>
-        /// <param name="projectId">Id of the destination project.</param>
-        public MoveSectionArgument(ComplexId id, ComplexId? projectId = null)
+        /// <param name="projectId">Id of the destination project, or <c>null</c> to move to the root.</param>
+        public MoveSectionArgument(ComplexId id, ComplexId? projectId)
         {
             Id = id;
             ProjectId = projectId;
@@ -23,6 +23,7 @@ namespace Todoist.Net.Models
         /// Gets the project identifier.
         /// </summary>
         [JsonPropertyName("project_id")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
         public ComplexId? ProjectId { get; internal set; }
     }
 }

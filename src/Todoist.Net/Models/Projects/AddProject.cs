@@ -26,19 +26,19 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The parent project identifier.</value>
         [JsonPropertyName("parent_id")]
-        public string ParentId { get; set; }
+        public ComplexId? ParentId { get; set; }
 
         /// <summary>
         /// Gets the folder id.
         /// </summary>
         [JsonPropertyName("folder_id")]
-        public string FolderId { get; set; }
+        public ComplexId? FolderId { get; set; }
 
         /// <summary>
         /// Gets the workspace id.
         /// </summary>
         [JsonPropertyName("workspace_id")]
-        public string WorkspaceId { get; set; }
+        public ComplexId? WorkspaceId { get; set; }
 
         /// <summary>
         /// Gets or sets order of project. Defines the position of the project among all the projects with the same parent_id.
