@@ -69,5 +69,35 @@ namespace Todoist.Net.Services
         {
             return ExecuteCommandAsync(CommandType.InviteWorkspaceUsers, userArgs, cancellationToken);
         }
+
+
+        /// <inheritdoc/>
+        public Task<ComplexId> AddFolderAsync(ComplexId workspaceId, WorkspaceFolder folder, CancellationToken cancellationToken = default)
+        {
+            folder.WorkspaceId = workspaceId;
+
+            return ExecuteAddCommandAsync(CommandType.AddWorkspaceFolder, folder, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task UpdateFolderAsync(ComplexId id, ComplexId workspaceId, WorkspaceFolder folder, CancellationToken cancellationToken = default)
+        {
+            folder.Id = id;
+            folder.WorkspaceId = workspaceId;
+
+            return ExecuteCommandAsync(CommandType.UpdateWorkspaceFolder, folder, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task DeleteFolderAsync(ComplexId id, ComplexId workspaceId, CancellationToken cancellationToken = default)
+        {
+            var folder = new WorkspaceFolder
+            {
+                Id = id,
+                WorkspaceId = workspaceId
+            };
+
+            return ExecuteCommandAsync(CommandType.DeleteWorkspaceFolder, folder, cancellationToken);
+        }
     }
 }

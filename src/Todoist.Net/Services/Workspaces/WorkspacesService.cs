@@ -7,9 +7,9 @@ using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
 {
-    internal class WorkspaceService : WorkspacesCommandService, IWorkspacesService
+    internal class WorkspacesService : WorkspacesCommandService, IWorkspacesService
     {
-        internal WorkspaceService(IAdvancedTodoistClient todoistClient)
+        internal WorkspacesService(IAdvancedTodoistClient todoistClient)
             : base(todoistClient)
         {
         }
@@ -24,6 +24,12 @@ namespace Todoist.Net.Services
         public Task<SyncResponse<WorkspaceUser>> SyncUsersAsync(string syncToken = "*", CancellationToken cancellationToken = default)
         {
             return SyncResourceAsync(ResourceType.WorkspaceUsers, r => r.WorkspaceUsers, syncToken, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<SyncResponse<WorkspaceFolder>> SyncFoldersAsync(string syncToken = "*", CancellationToken cancellationToken = default)
+        {
+            return SyncResourceAsync(ResourceType.WorkspaceFolders, r => r.WorkspaceFolders, syncToken, cancellationToken);
         }
 
         /// <inheritdoc/>

@@ -86,7 +86,7 @@ namespace Todoist.Net
             _restClient = restClient ?? throw new ArgumentNullException(nameof(restClient));
 
             Ids = new IdsService(this);
-            Workspaces = new WorkspaceService(this);
+            Workspaces = new WorkspacesService(this);
             WorkspaceFilters = new WorkspaceFiltersService(this);
             Projects = new ProjectsService(this);
             Comments = new CommentsService(this);

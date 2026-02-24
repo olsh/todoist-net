@@ -34,6 +34,16 @@ namespace Todoist.Net.Services
         Task<SyncResponse<WorkspaceUser>> SyncUsersAsync(string syncToken = "*", CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Gets a read-only collection of workspace folders that were synchronized with the specified sync token.
+        /// </summary>
+        /// <param name="syncToken">The sync token. Use "*" to get all workspace folders and the new sync token.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation. The task result contains a read-only collection of workspace folders that were synchronized.
+        /// </returns>
+        Task<SyncResponse<WorkspaceFolder>> SyncFoldersAsync(string syncToken = "*", CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Gets pending invitation emails for a workspace.
         /// </summary>
         /// <param name="workspaceId">The workspace identifier.</param>

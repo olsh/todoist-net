@@ -95,5 +95,42 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="TodoistException">Command execution exception.</exception>
         Task InviteUsersAsync(InviteWorkspaceUsersArgument userArgs, CancellationToken cancellationToken = default);
+
+
+        /// <summary>
+        /// Adds a new workspace folder.
+        /// </summary>
+        /// <param name="workspaceId">The workspace identifier.</param>
+        /// <param name="folder">The workspace folder payload.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>The temporary ID of the workspace folder.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="folder"/> is <see langword="null"/>.</exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
+        Task<ComplexId> AddFolderAsync(ComplexId workspaceId, WorkspaceFolder folder, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Updates an existing workspace folder.
+        /// </summary>
+        /// <param name="id">The workspace folder identifier.</param>
+        /// <param name="workspaceId">The workspace identifier.</param>
+        /// <param name="folder">The workspace folder payload.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>The asynchronous operation.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="folder"/> is <see langword="null"/>.</exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
+        Task UpdateFolderAsync(ComplexId id, ComplexId workspaceId, WorkspaceFolder folder, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Deletes a workspace folder.
+        /// </summary>
+        /// <param name="id">The workspace folder identifier.</param>
+        /// <param name="workspaceId">The workspace identifier.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>The asynchronous operation.</returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        /// <exception cref="TodoistException">Command execution exception.</exception>
+        Task DeleteFolderAsync(ComplexId id, ComplexId workspaceId, CancellationToken cancellationToken = default);
     }
 }

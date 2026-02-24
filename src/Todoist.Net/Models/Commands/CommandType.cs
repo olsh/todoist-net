@@ -12,6 +12,10 @@ namespace Todoist.Net.Models
         public static CommandType LeaveWorkspace { get; } = new CommandType("workspace_leave");
         public static CommandType DeleteWorkspace { get; } = new CommandType("workspace_delete");
 
+        public static CommandType AddWorkspaceFolder { get; } = new CommandType("folder_add");
+        public static CommandType UpdateWorkspaceFolder { get; } = new CommandType("folder_update");
+        public static CommandType DeleteWorkspaceFolder { get; } = new CommandType("folder_delete");
+
         public static CommandType UpdateWorkspaceUser { get; } = new CommandType("workspace_update_user");
         public static CommandType UpdateWorkspaceUserSidebarPreference { get; } = new CommandType("workspace_update_user_sidebar_preference");
         public static CommandType DeleteWorkspaceUser { get; } = new CommandType("workspace_delete_user");
