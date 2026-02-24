@@ -3,9 +3,9 @@ using System.Text.Json.Serialization;
 namespace Todoist.Net.Models
 {
     /// <summary>
-    /// Class TimeZoneInfo.
+    /// Represents the timezone information of a user.
     /// </summary>
-    public class TimeZoneInfo
+    public class UserTimezoneInfo
     {
         /// <summary>
         /// Gets the GMT string.

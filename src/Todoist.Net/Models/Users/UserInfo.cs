@@ -164,7 +164,7 @@ namespace Todoist.Net.Models
         /// Gets the tz information.
         /// </summary>
         [JsonPropertyName("tz_info")]
-        public TimeZoneInfo TzInfo { get; internal set; }
+        public UserTimezoneInfo TzInfo { get; internal set; }
 
         /// <summary>
         /// Gets the weekly goal.
