@@ -215,6 +215,34 @@ namespace Todoist.Net
             return ProcessSyncAsync<T>(parameters, cancellationToken);
         }
 
+        /// <inheritdoc/>
+        public async Task<SyncTransactionResponse> ExecuteTransactionAsync(
+            Func<ITransaction, Task> transactionActions,
+            CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNull(transactionActions, nameof(transactionActions));
+
+            var transaction = new Transaction(this);
+            await transactionActions(transaction).ConfigureAwait(false);
+
+            return await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        public async Task<SyncTransactionResponse> ExecuteTransactionAndSyncAsync(
+            Func<ITransaction, Task> transactionActions,
+            ResourceType[] resourceTypes,
+            string syncToken = "*",
+            CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNull(transactionActions, nameof(transactionActions));
+
+            var transaction = new Transaction(this);
+            await transactionActions(transaction).ConfigureAwait(false);
+
+            return await transaction.CommitAndSyncAsync(resourceTypes, syncToken, cancellationToken).ConfigureAwait(false);
+        }
+
         #endregion
 
         #region IAdvancedTodoistClient implementation

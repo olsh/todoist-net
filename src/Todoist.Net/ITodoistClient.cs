@@ -113,5 +113,36 @@ namespace Todoist.Net
         /// </returns>
         Task<T> SyncResourcesAsync<T>(ResourceType[] resourceTypes = null, string syncToken = "*", CancellationToken cancellationToken = default)
              where T : BaseSyncResponse;
+
+        /// <summary>
+        /// Directly executes the transaction actions without the need to explicitly create a transaction and commit it.
+        /// </summary>
+        /// <remarks>
+        /// This is a convenience method that creates a transaction, executes the provided actions and commits the transaction.
+        /// </remarks>
+        /// <param name="transactionActions">The transaction actions to execute. Each action receives the transaction and cancellation token as parameters.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>The transaction response.</returns>
+        Task<SyncTransactionResponse> ExecuteTransactionAsync(
+            Func<ITransaction, Task> transactionActions,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Directly executes the transaction actions without the need to explicitly create a transaction and commit it, and returns the synchronized resources.
+        /// Syncs all resources if zero or <c>null</c> resource types were passed.
+        /// </summary>
+        /// <remarks>
+        /// This is a convenience method that creates a transaction, executes the provided actions and commits the transaction.
+        /// </remarks>
+        /// <param name="transactionActions">The transaction actions to execute. Each action receives the transaction and cancellation token as parameters.</param>
+        /// <param name="resourceTypes">The resource types to synchronize.</param>
+        /// <param name="syncToken">The sync token returned from Todoist for increment sync.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>The transaction response with synchronized resources.</returns>
+        Task<SyncTransactionResponse> ExecuteTransactionAndSyncAsync(
+            Func<ITransaction, Task> transactionActions,
+            ResourceType[] resourceTypes,
+            string syncToken = "*",
+            CancellationToken cancellationToken = default);
     }
 }
