@@ -10,9 +10,9 @@ namespace Todoist.Net.Services
     /// <summary>
     /// Contains operations for Todoist backups management.
     /// </summary>
-    internal class BackupService : ServiceBase, IBackupsService
+    internal class BackupsService : ServiceBase, IBackupsService
     {
-        internal BackupService(IAdvancedTodoistClient todoistClient)
+        internal BackupsService(IAdvancedTodoistClient todoistClient)
             : base(todoistClient)
         {
         }
@@ -27,4 +27,3 @@ namespace Todoist.Net.Services
         }
     }
 }
-    

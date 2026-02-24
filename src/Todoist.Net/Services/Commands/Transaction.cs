@@ -46,7 +46,7 @@ namespace Todoist.Net.Services
 
         public IWorkspacesCommandService Workspaces { get; }
         public IWorkspaceFiltersCommandService WorkspaceFilters { get; }
-        public IProjectCommandService Projects { get; }
+        public IProjectsCommandService Projects { get; }
         public ICommentsCommandService Comments { get; }
         public ISectionsCommandService Sections { get; }
         public ITasksCommandService Tasks { get; }

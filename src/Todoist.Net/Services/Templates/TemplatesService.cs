@@ -7,9 +7,9 @@ using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
 {
-    internal class TemplateService : ServiceBase, ITemplatesService
+    internal class TemplatesService : ServiceBase, ITemplatesService
     {
-        public TemplateService(IAdvancedTodoistClient todoistClient)
+        public TemplatesService(IAdvancedTodoistClient todoistClient)
             : base(todoistClient)
         {
         }

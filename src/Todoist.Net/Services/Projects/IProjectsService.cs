@@ -9,8 +9,8 @@ namespace Todoist.Net.Services
     /// <summary>
     /// Contains methods for projects management.
     /// </summary>
-    /// <seealso cref="Todoist.Net.Services.IProjectCommandService" />
-    public interface IProjectsService : IProjectCommandService
+    /// <seealso cref="Todoist.Net.Services.IProjectsCommandService" />
+    public interface IProjectsService : IProjectsCommandService
     {
         /// <summary>
         /// Gets a read-only collection of projects that were synchronized with the specified sync token.

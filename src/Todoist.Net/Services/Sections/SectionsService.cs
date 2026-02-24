@@ -11,9 +11,9 @@ namespace Todoist.Net.Services
     /// </summary>
     /// <seealso cref="Todoist.Net.Services.ISectionsService" />
     /// <seealso cref="Todoist.Net.Services.SectionsCommandService" />
-    internal class SectionService : SectionsCommandService, ISectionsService
+    internal class SectionsService : SectionsCommandService, ISectionsService
     {
-        internal SectionService(IAdvancedTodoistClient todoistClient)
+        internal SectionsService(IAdvancedTodoistClient todoistClient)
             : base(todoistClient)
         {
         }

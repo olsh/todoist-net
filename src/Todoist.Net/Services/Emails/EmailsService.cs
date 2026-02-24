@@ -10,9 +10,9 @@ namespace Todoist.Net.Services
     /// Contains operations for Todoist email management.
     /// </summary>
     /// <seealso cref="Todoist.Net.Services.IEmailsService" />
-    internal class EmailService : ServiceBase, IEmailsService
+    internal class EmailsService : ServiceBase, IEmailsService
     {
-        internal EmailService(IAdvancedTodoistClient todoistClient)
+        internal EmailsService(IAdvancedTodoistClient todoistClient)
             : base(todoistClient)
         {
         }

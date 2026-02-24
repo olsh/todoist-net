@@ -19,7 +19,7 @@ namespace Todoist.Net.Services
         IWorkspaceFiltersCommandService WorkspaceFilters { get; }
 
         /// <summary>Gets the projects commands service.</summary>
-        IProjectCommandService Projects { get; }
+        IProjectsCommandService Projects { get; }
 
         /// <summary>Gets the comments commands service.</summary>
         ICommentsCommandService Comments { get; }

@@ -14,3 +14,4 @@ indent_size = 2
 dotnet_separate_import_directive_groups = true
 dotnet_sort_system_directives_first = true
 csharp_style_prefer_primary_constructors = false
+dotnet_diagnostic.IDE0130.severity = silent

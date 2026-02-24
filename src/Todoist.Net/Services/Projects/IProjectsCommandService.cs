@@ -11,7 +11,7 @@ namespace Todoist.Net.Services
     /// <summary>
     /// Contains methods for projects management which can be executed in a transaction.
     /// </summary>
-    public interface IProjectCommandService
+    public interface IProjectsCommandService
     {
         /// <summary>
         /// Adds a new project.

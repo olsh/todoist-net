@@ -11,9 +11,9 @@ namespace Todoist.Net.Services
     /// Contains operations for file attachments management.
     /// </summary>
     /// <seealso cref="Todoist.Net.Services.IUploadsService" />
-    internal class UploadService : ServiceBase, IUploadsService
+    internal class UploadsService : ServiceBase, IUploadsService
     {
-        internal UploadService(IAdvancedTodoistClient todoistClient)
+        internal UploadsService(IAdvancedTodoistClient todoistClient)
             : base(todoistClient)
         {
         }

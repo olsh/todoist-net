@@ -10,8 +10,8 @@ namespace Todoist.Net.Services
     /// Contains methods for projects management which can be executed in a transaction.
     /// </summary>
     /// <seealso cref="CommandServiceBase" />
-    /// <seealso cref="Todoist.Net.Services.IProjectCommandService" />
-    internal class ProjectsCommandService : CommandServiceBase, IProjectCommandService
+    /// <seealso cref="Todoist.Net.Services.IProjectsCommandService" />
+    internal class ProjectsCommandService : CommandServiceBase, IProjectsCommandService
     {
         internal ProjectsCommandService(IAdvancedTodoistClient todoistClient)
             : base(todoistClient)
