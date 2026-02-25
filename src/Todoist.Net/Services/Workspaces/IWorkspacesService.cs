@@ -11,7 +11,7 @@ namespace Todoist.Net.Services
     /// <summary>
     /// Contains operations for Todoist workspace APIs.
     /// </summary>
-    public interface IWorkspacesService
+    public interface IWorkspacesService : IWorkspacesCommandService
     {
         /// <summary>
         /// Gets a read-only collection of workspaces that were synchronized with the specified sync token.
