@@ -12,9 +12,9 @@ namespace Todoist.Net.Models
         private CalendarViewLayout(string value) : base(value) { }
 
         /// <summary>Gets week view style.</summary>
-        public static CalendarViewLayout Week { get; } = new CalendarViewLayout("week");
-        
+        public static CalendarViewLayout Week { get; } = new CalendarViewLayout("WEEK");
+
         /// <summary>Gets month view style.</summary>
-        public static CalendarViewLayout Month { get; } = new CalendarViewLayout("month");
+        public static CalendarViewLayout Month { get; } = new CalendarViewLayout("MONTH");
     }
 }

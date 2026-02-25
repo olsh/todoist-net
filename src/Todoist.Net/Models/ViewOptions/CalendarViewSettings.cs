@@ -10,7 +10,7 @@ namespace Todoist.Net.Models
         /// <summary>
         /// Gets or sets the calendar view layout.
         /// </summary>
-        [JsonPropertyName("layout ")]
+        [JsonPropertyName("layout")]
         public CalendarViewLayout Layout { get; set; }
     }
 }

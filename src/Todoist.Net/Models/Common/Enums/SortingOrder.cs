@@ -12,9 +12,9 @@ namespace Todoist.Net.Models
         private SortingOrder(string value) : base(value) { }
 
         /// <summary>Gets ascending sorting order.</summary>
-        public static SortingOrder Asc { get; } = new SortingOrder("asc");
+        public static SortingOrder Asc { get; } = new SortingOrder("ASC");
 
         /// <summary>Gets descending sorting order.</summary>
-        public static SortingOrder Desc { get; } = new SortingOrder("desc");
+        public static SortingOrder Desc { get; } = new SortingOrder("DESC");
     }
 }

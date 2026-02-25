@@ -12,12 +12,12 @@ namespace Todoist.Net.Models
         private ViewOptionsStyle(string value) : base(value) { }
 
         /// <summary>Gets list view style.</summary>
-        public static ViewOptionsStyle List { get; } = new ViewOptionsStyle("list");
-        
+        public static ViewOptionsStyle List { get; } = new ViewOptionsStyle("LIST");
+
         /// <summary>Gets board view style.</summary>
-        public static ViewOptionsStyle Board { get; } = new ViewOptionsStyle("board");
-        
+        public static ViewOptionsStyle Board { get; } = new ViewOptionsStyle("BOARD");
+
         /// <summary>Gets calendar view style.</summary>
-        public static ViewOptionsStyle Calendar { get; } = new ViewOptionsStyle("calendar");
+        public static ViewOptionsStyle Calendar { get; } = new ViewOptionsStyle("CALENDAR");
     }
 }

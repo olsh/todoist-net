@@ -11,22 +11,28 @@ namespace Todoist.Net.Models
         /// <param name="value">The underlying API value.</param>
         private ViewOptionsGrouping(string value) : base(value) { }
 
-        /// <summary>Gets list view grouping.</summary>
-        public static ViewOptionsGrouping List { get; } = new ViewOptionsGrouping("due_date");
+        /// <summary>Gets due_date view grouping.</summary>
+        public static ViewOptionsGrouping DueDate { get; } = new ViewOptionsGrouping("DUE_DATE");
 
-        /// <summary>Gets created_at view grouping.</summary>
-        public static ViewOptionsGrouping CreatedAt { get; } = new ViewOptionsGrouping("created_at");
+        /// <summary>Gets deadline view grouping.</summary>
+        public static ViewOptionsGrouping Deadline { get; } = new ViewOptionsGrouping("DEADLINE");
+
+        /// <summary>Gets added_date view grouping.</summary>
+        public static ViewOptionsGrouping AddedDate { get; } = new ViewOptionsGrouping("ADDED_DATE");
 
         /// <summary>Gets label view grouping.</summary>
-        public static ViewOptionsGrouping Label { get; } = new ViewOptionsGrouping("label");
+        public static ViewOptionsGrouping Label { get; } = new ViewOptionsGrouping("LABEL");
 
         /// <summary>Gets assignee view grouping.</summary>
-        public static ViewOptionsGrouping Assignee { get; } = new ViewOptionsGrouping("assignee");
+        public static ViewOptionsGrouping Assignee { get; } = new ViewOptionsGrouping("ASSIGNEE");
 
         /// <summary>Gets priority view grouping.</summary>
-        public static ViewOptionsGrouping Priority { get; } = new ViewOptionsGrouping("priority");
+        public static ViewOptionsGrouping Priority { get; } = new ViewOptionsGrouping("PRIORITY");
 
         /// <summary>Gets project view grouping.</summary>
-        public static ViewOptionsGrouping Project { get; } = new ViewOptionsGrouping("project");
+        public static ViewOptionsGrouping Project { get; } = new ViewOptionsGrouping("PROJECT");
+
+        /// <summary>Gets workspace view grouping.</summary>
+        public static ViewOptionsGrouping Workspace { get; } = new ViewOptionsGrouping("WORKSPACE");
     }
 }

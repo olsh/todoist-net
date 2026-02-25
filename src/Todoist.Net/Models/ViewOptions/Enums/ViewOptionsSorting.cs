@@ -11,22 +11,34 @@ namespace Todoist.Net.Models
         /// <param name="value">The underlying API value.</param>
         private ViewOptionsSorting(string value) : base(value) { }
 
-        /// <summary>Gets list view sorting.</summary>
-        public static ViewOptionsSorting List { get; } = new ViewOptionsSorting("due_date");
+        /// <summary>Gets due_date view sorting.</summary>
+        public static ViewOptionsSorting DueDate { get; } = new ViewOptionsSorting("DUE_DATE");
 
-        /// <summary>Gets created_at view sorting.</summary>
-        public static ViewOptionsSorting CreatedAt { get; } = new ViewOptionsSorting("created_at");
+        /// <summary>Gets deadline view sorting.</summary>
+        public static ViewOptionsSorting Deadline { get; } = new ViewOptionsSorting("DEADLINE");
+
+        /// <summary>Gets added_date view sorting.</summary>
+        public static ViewOptionsSorting AddedDate { get; } = new ViewOptionsSorting("ADDED_DATE");
 
         /// <summary>Gets task_order view sorting.</summary>
-        public static ViewOptionsSorting TaskOrder { get; } = new ViewOptionsSorting("task_order");
+        public static ViewOptionsSorting Label { get; } = new ViewOptionsSorting("LABEL");
+
+        /// <summary>Gets manual view sorting.</summary>
+        public static ViewOptionsSorting Manual { get; } = new ViewOptionsSorting("MANUAL");
 
         /// <summary>Gets assignee view sorting.</summary>
-        public static ViewOptionsSorting Assignee { get; } = new ViewOptionsSorting("assignee");
+        public static ViewOptionsSorting Assignee { get; } = new ViewOptionsSorting("ASSIGNEE");
 
         /// <summary>Gets alphabetically view sorting.</summary>
-        public static ViewOptionsSorting Alphabetically { get; } = new ViewOptionsSorting("alphabetically");
+        public static ViewOptionsSorting Alphabetically { get; } = new ViewOptionsSorting("ALPHABETICALLY");
 
         /// <summary>Gets priority view sorting.</summary>
-        public static ViewOptionsSorting Priority { get; } = new ViewOptionsSorting("priority");
+        public static ViewOptionsSorting Priority { get; } = new ViewOptionsSorting("PRIORITY");
+
+        /// <summary>Gets project view sorting.</summary>
+        public static ViewOptionsSorting Project { get; } = new ViewOptionsSorting("PROJECT");
+
+        /// <summary>Gets workspace view sorting.</summary>
+        public static ViewOptionsSorting Workspace { get; } = new ViewOptionsSorting("WORKSPACE");
     }
 }

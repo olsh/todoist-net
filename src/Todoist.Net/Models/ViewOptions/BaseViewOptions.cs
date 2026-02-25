@@ -46,7 +46,7 @@ namespace Todoist.Net.Models
         /// <summary>
         /// Gets or sets calendar settings.
         /// </summary>
-        [JsonPropertyName("calendar_settings ")]
+        [JsonPropertyName("calendar_settings")]
         public CalendarViewSettings CalendarSettings { get; set; }
     }
 }
