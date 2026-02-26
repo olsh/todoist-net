@@ -1,5 +1,6 @@
 using System;
-using System.Collections.Generic;
+
+using Todoist.Net.Models;
 
 #if NETFRAMEWORK
 using System.Runtime.Serialization;
@@ -17,6 +18,16 @@ namespace Todoist.Net.Exceptions
     public sealed class TodoistException : Exception
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="TodoistException" /> class using a <see cref="TodoistError" /> object.
+        /// </summary>
+        /// <param name="error">The <see cref="TodoistError" /> object containing error details.</param>
+        /// <param name="inner">The inner exception.</param>
+        public TodoistException(TodoistError error, Exception inner = null)
+            : this(error?.Error, error?.ErrorCode, error?.ErrorTag, error?.HttpCode, error?.ErrorExtra, inner)
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="TodoistException" /> class.
         /// </summary>
         /// <param name="code">The code.</param>
@@ -29,8 +40,8 @@ namespace Todoist.Net.Exceptions
             string message = null,
             int? code = null,
             string errorTag = null, 
-            int? httpCode = null, 
-            IDictionary<string, object> errorExtra = null, 
+            int? httpCode = null,
+            TodoistErrorExtra errorExtra = null, 
             Exception inner = null)
             : base(message, inner)
         {
@@ -52,7 +63,7 @@ namespace Todoist.Net.Exceptions
             Code = (int?)info.GetValue(nameof(Code), typeof(int?));
             ErrorTag = info.GetString(nameof(ErrorTag));
             HttpCode = (int?)info.GetValue(nameof(HttpCode), typeof(int?));
-            ErrorExtra = (IDictionary<string, object>)info.GetValue(nameof(ErrorExtra), typeof(IDictionary<string, object>));
+            ErrorExtra = (TodoistErrorExtra)info.GetValue(nameof(ErrorExtra), typeof(TodoistErrorExtra));
         }
 #endif
 
@@ -77,8 +88,8 @@ namespace Todoist.Net.Exceptions
         /// <summary>
         /// Gets the extra error information.
         /// </summary>
-        /// <value>A dictionary containing additional error details.</value>
-        public IDictionary<string, object> ErrorExtra { get; }
+        /// <value>Additional error details (e.g., "event_id", "retry_after").</value>
+        public TodoistErrorExtra ErrorExtra { get; }
 
 #if NETFRAMEWORK
         /// <inheritdoc />

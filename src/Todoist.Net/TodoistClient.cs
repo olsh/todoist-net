@@ -383,10 +383,10 @@ namespace Todoist.Net
             Func<CancellationToken, Task<HttpResponseMessage>> restCall, 
             CancellationToken cancellationToken)
         {
-            var response = await restCall(cancellationToken)
-                .ConfigureAwait(false);
+            var response = await restCall(cancellationToken).ConfigureAwait(false);
 
-            response.EnsureSuccessStatusCode();
+            await EnsureSuccessResponseAsync(response, cancellationToken)
+                .ConfigureAwait(false);
         }
 
         private async Task<T> ProcessRequestAsync<T>(
@@ -394,6 +394,9 @@ namespace Todoist.Net
             CancellationToken cancellationToken)
         {
             var response = await restCall(cancellationToken)
+                .ConfigureAwait(false);
+
+            await EnsureSuccessResponseAsync(response, cancellationToken)
                 .ConfigureAwait(false);
 
             return await DeserializeResponseAsync<T>(response, cancellationToken)
@@ -411,7 +414,8 @@ namespace Todoist.Net
             var response = await restCall(resource, jsonContent, cancellationToken)
                 .ConfigureAwait(false);
 
-            response.EnsureSuccessStatusCode();
+            await EnsureSuccessResponseAsync(response, cancellationToken)
+                .ConfigureAwait(false);
         }
 
         private async Task<TRes> ProcessJsonRequestAsync<TReq, TRes>(
@@ -425,8 +429,34 @@ namespace Todoist.Net
             var response = await restCall(resource, jsonContent, cancellationToken)
                 .ConfigureAwait(false);
 
+            await EnsureSuccessResponseAsync(response, cancellationToken)
+                .ConfigureAwait(false);
+
             return await DeserializeResponseAsync<TRes>(response, cancellationToken)
                 .ConfigureAwait(false);
+        }
+
+
+        private async Task EnsureSuccessResponseAsync(HttpResponseMessage response, CancellationToken cancellationToken)
+        {
+            if (response.IsSuccessStatusCode)
+            {
+                return;
+            }
+
+            TodoistError errorContent = null;
+            try
+            {
+                errorContent = await DeserializeResponseAsync<TodoistError>(response, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+            catch { }
+
+            if (errorContent != null)
+            {
+                throw new TodoistException(errorContent);
+            }
+            response.EnsureSuccessStatusCode();
         }
 
         private async Task<T> DeserializeResponseAsync<T>(HttpResponseMessage response, CancellationToken cancellationToken)
@@ -445,13 +475,7 @@ namespace Todoist.Net
         {
             var exceptions = syncResponse.SyncStatus
                 .Where(kvp => !kvp.Value.IsSuccess)
-                .Select(kvp => kvp.Value.CommandBody)
-                .Select(result => new TodoistException(
-                    result.Error,
-                    result.ErrorCode,
-                    result.ErrorTag,
-                    result.HttpCode,
-                    result.ErrorExtra))
+                .Select(kvp => new TodoistException(kvp.Value.CommandBody))
                 .ToList(); 
             
             if (exceptions.Count > 1)

@@ -14,17 +14,17 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <param name="projectId">The project identifier.</param>
         /// <param name="workspaceId">The workspace identifier.</param>
-        /// <param name="isInviteOnly">A value indicating whether the workspace is invite-only.</param>
         /// <param name="folderId">The folder identifier.</param>
-        public MoveProjectToWorkspaceArgument(ComplexId projectId, ComplexId workspaceId, bool? isInviteOnly = null, string folderId = null)
+        /// <param name="isInviteOnly">A value indicating whether the workspace is invite-only.</param>
+        public MoveProjectToWorkspaceArgument(ComplexId projectId, ComplexId workspaceId, ComplexId? folderId = null, bool? isInviteOnly = null)
         {
             ThrowHelper.ThrowIfDefaultOrEmpty(projectId, nameof(projectId));
             ThrowHelper.ThrowIfDefaultOrEmpty(workspaceId, nameof(workspaceId));
 
             ProjectId = projectId;
             WorkspaceId = workspaceId;
-            IsInviteOnly = isInviteOnly;
             FolderId = folderId;
+            IsInviteOnly = isInviteOnly;
         }
 
         /// <summary>
@@ -40,15 +40,15 @@ namespace Todoist.Net.Models
         public ComplexId WorkspaceId { get; }
 
         /// <summary>
+        /// Gets the folder identifier.
+        /// </summary>
+        [JsonPropertyName("folder_id")]
+        public ComplexId? FolderId { get; }
+
+        /// <summary>
         /// Gets a value indicating whether the workspace is invite-only.
         /// </summary>
         [JsonPropertyName("is_invite_only")]
         public bool? IsInviteOnly { get; }
-
-        /// <summary>
-        /// Gets the folder identifier.
-        /// </summary>
-        [JsonPropertyName("folder_id")]
-        public string FolderId { get; }
     }
 }
