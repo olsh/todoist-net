@@ -90,6 +90,12 @@ namespace Todoist.Net.Models
         public string Argument { get; internal set; }
 
         /// <summary>
+        /// Gets the expected value of the argument that caused the error.
+        /// </summary>
+        [JsonPropertyName("expected")]
+        public string Expected { get; internal set; }
+
+        /// <summary>
         /// Gets a detailed error description.
         /// </summary>
         [JsonPropertyName("explanation")]

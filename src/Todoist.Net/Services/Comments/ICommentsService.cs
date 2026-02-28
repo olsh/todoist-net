@@ -43,35 +43,5 @@ namespace Todoist.Net.Services
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task<Comment> GetAsync(string id, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Creates a new comment and returns it.
-        /// </summary>
-        /// <param name="comment">The comment payload.</param>
-        /// <param name="projectId">The project ID to which the comment will be added.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The created comment.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<Comment> AddToProjectAndReturnAsync(Comment comment, string projectId, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Creates a new comment and returns it.
-        /// </summary>
-        /// <param name="comment">The comment payload.</param>
-        /// <param name="taskId">The task ID to which the comment will be added.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The created comment.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<Comment> AddToTaskAndReturnAsync(Comment comment, string taskId, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Updates an existing comment and returns it.
-        /// </summary>
-        /// <param name="id">The ID of the comment to update.</param>
-        /// <param name="comment">The comment payload.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The updated comment.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<Comment> UpdateAndReturnAsync(string id, Comment comment, CancellationToken cancellationToken = default);
     }
 }

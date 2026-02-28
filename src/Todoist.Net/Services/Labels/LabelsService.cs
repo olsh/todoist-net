@@ -52,22 +52,5 @@ namespace Todoist.Net.Services
 
             return TodoistClient.GetAsync<Label>($"labels/{id}", cancellationToken: cancellationToken);
         }
-
-        /// <inheritdoc/>
-        public Task<Label> AddAndReturnAsync(Label label, CancellationToken cancellationToken = default)
-        {
-            ThrowHelper.ThrowIfNull(label, nameof(label));
-
-            return TodoistClient.PostJsonAsync<Label, Label>("labels", label, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task<Label> UpdateAndReturnAsync(string id, Label label, CancellationToken cancellationToken = default)
-        {
-            ThrowHelper.ThrowIfNullOrEmpty(id, nameof(id));
-            ThrowHelper.ThrowIfNull(label, nameof(label));
-
-            return TodoistClient.PostJsonAsync<Label, Label>($"labels/{id}", label, cancellationToken);
-        }
     }
 }

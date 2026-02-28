@@ -67,24 +67,5 @@ namespace Todoist.Net.Services
         /// </returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task<Label> GetAsync(string id, CancellationToken cancellationToken = default);
-    
-        /// <summary>
-        /// Creates a new label and returns it.
-        /// </summary>
-        /// <param name="label">The label payload.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The created label.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<Label> AddAndReturnAsync(Label label, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Updates an existing label and returns it.
-        /// </summary>
-        /// <param name="id">The ID of the label to update.</param>
-        /// <param name="label">The label payload.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The updated label.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<Label> UpdateAndReturnAsync(string id, Label label, CancellationToken cancellationToken = default);
     }
 }

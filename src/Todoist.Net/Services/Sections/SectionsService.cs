@@ -43,22 +43,5 @@ namespace Todoist.Net.Services
 
             return TodoistClient.GetAsync<Section>($"sections/{id}", cancellationToken: cancellationToken);
         }
-
-        /// <inheritdoc/>
-        public Task<Section> AddAndReturnAsync(AddSection section, CancellationToken cancellationToken = default)
-        {
-            ThrowHelper.ThrowIfNull(section, nameof(section));
-
-            return TodoistClient.PostJsonAsync<AddSection, Section>("sections", section, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task<Section> UpdateAndReturnAsync(string id, UpdateSection section, CancellationToken cancellationToken = default)
-        {
-            ThrowHelper.ThrowIfNullOrEmpty(id, nameof(id));
-            ThrowHelper.ThrowIfNull(section, nameof(section));
-
-            return TodoistClient.PostJsonAsync<UpdateSection, Section>($"sections/{id}", section, cancellationToken);
-        }
     }
 }

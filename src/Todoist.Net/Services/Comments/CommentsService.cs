@@ -37,34 +37,5 @@ namespace Todoist.Net.Services
 
             return TodoistClient.GetAsync<Comment>($"comments/{id}", cancellationToken: cancellationToken);
         }
-
-        /// <inheritdoc/>
-        public Task<Comment> AddToProjectAndReturnAsync(Comment comment, string projectId, CancellationToken cancellationToken = default)
-        {
-            ThrowHelper.ThrowIfNull(comment, nameof(comment));
-            ThrowHelper.ThrowIfNullOrEmpty(projectId, nameof(projectId));
-
-            comment.ProjectId = projectId;
-            return TodoistClient.PostJsonAsync<Comment, Comment>("comments", comment, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task<Comment> AddToTaskAndReturnAsync(Comment comment, string taskId, CancellationToken cancellationToken = default)
-        {
-            ThrowHelper.ThrowIfNull(comment, nameof(comment));
-            ThrowHelper.ThrowIfNullOrEmpty(taskId, nameof(taskId));
-
-            comment.TaskId = taskId;
-            return TodoistClient.PostJsonAsync<Comment, Comment>("comments", comment, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task<Comment> UpdateAndReturnAsync(string id, Comment comment, CancellationToken cancellationToken = default)
-        {
-            ThrowHelper.ThrowIfNullOrEmpty(id, nameof(id));
-            ThrowHelper.ThrowIfNull(comment, nameof(comment));
-
-            return TodoistClient.PostJsonAsync<Comment, Comment>($"comments/{id}", comment, cancellationToken);
-        }
     }
 }

@@ -79,39 +79,6 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task<ProjectInfo> AddAndReturnAsync(AddProject project, CancellationToken cancellationToken = default)
-        {
-            ThrowHelper.ThrowIfNull(project, nameof(project));
-
-            return TodoistClient.PostJsonAsync<AddProject, ProjectInfo>("projects", project, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task<ProjectInfo> UpdateAndReturnAsync(string id, UpdateProject project, CancellationToken cancellationToken = default)
-        {
-            ThrowHelper.ThrowIfNullOrEmpty(id, nameof(id));
-            ThrowHelper.ThrowIfNull(project, nameof(project));
-
-            return TodoistClient.PostJsonAsync<UpdateProject, ProjectInfo>($"projects/{id}", project, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task<ProjectInfo> ArchiveAndReturnAsync(string id, CancellationToken cancellationToken = default)
-        {
-            ThrowHelper.ThrowIfNullOrEmpty(id, nameof(id));
-
-            return TodoistClient.PostAsync<ProjectInfo>($"projects/{id}/archive", cancellationToken: cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public Task<ProjectInfo> UnarchiveAndReturnAsync(string id, CancellationToken cancellationToken = default)
-        {
-            ThrowHelper.ThrowIfNullOrEmpty(id, nameof(id));
-
-            return TodoistClient.PostAsync<ProjectInfo>($"projects/{id}/unarchive", cancellationToken: cancellationToken);
-        }
-
-        /// <inheritdoc/>
         public Task<ProjectData> JoinAsync(string id, CancellationToken cancellationToken = default)
         {
             ThrowHelper.ThrowIfNullOrEmpty(id, nameof(id));

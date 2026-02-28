@@ -104,43 +104,6 @@ namespace Todoist.Net.Services
         Task<ProjectData> GetDataAsync(string id, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Creates a new project and returns it.
-        /// </summary>
-        /// <param name="project">The project payload.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The created project.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<ProjectInfo> AddAndReturnAsync(AddProject project, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Updates an existing project and returns it.
-        /// </summary>
-        /// <param name="id">The ID of the project to update.</param>
-        /// <param name="project">The project payload.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The updated project.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<ProjectInfo> UpdateAndReturnAsync(string id, UpdateProject project, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Archives an existing project and returns it.
-        /// </summary>
-        /// <param name="id">The ID of the project to archive.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The archived project.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<ProjectInfo> ArchiveAndReturnAsync(string id, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Unarchives an existing project and returns it.
-        /// </summary>
-        /// <param name="id">The ID of the project to unarchive.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The unarchived project.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<ProjectInfo> UnarchiveAndReturnAsync(string id, CancellationToken cancellationToken = default);
-
-        /// <summary>
         /// Joins a workspace project by ID.
         /// </summary>
         /// <param name="id">The ID of the workspace project.</param>
