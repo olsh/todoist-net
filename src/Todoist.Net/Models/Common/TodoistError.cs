@@ -90,6 +90,12 @@ namespace Todoist.Net.Models
         public string Argument { get; internal set; }
 
         /// <summary>
+        /// Gets the name of the command that caused the error.
+        /// </summary>
+        [JsonPropertyName("command")]
+        public string Command { get; internal set; }
+
+        /// <summary>
         /// Gets the expected value of the argument that caused the error.
         /// </summary>
         [JsonPropertyName("expected")]

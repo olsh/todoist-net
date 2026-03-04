@@ -461,8 +461,6 @@ namespace Todoist.Net
 
         private async Task<T> DeserializeResponseAsync<T>(HttpResponseMessage response, CancellationToken cancellationToken)
         {
-            response.EnsureSuccessStatusCode();
-
             using (var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
             {
                 return await JsonSerializer.DeserializeAsync<T>(responseStream, SerializerOptions, cancellationToken)

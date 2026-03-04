@@ -17,7 +17,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <value>The user id.</value>
         [JsonPropertyName("id")]
-        public string Id { get; internal set; }
+        public long Id { get; internal set; }
 
         /// <summary>
         /// Gets the email.

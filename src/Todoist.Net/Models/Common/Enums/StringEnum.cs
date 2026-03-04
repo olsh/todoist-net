@@ -60,7 +60,7 @@ namespace Todoist.Net.Models
             foreach (var property in properties)
             {
                 var stringEnum = property.GetValue(null) as T;
-                if (stringEnum != null && stringEnum.Value == value)
+                if (stringEnum != null && stringEnum.Value.Equals(value, StringComparison.OrdinalIgnoreCase))
                 {
                     result = stringEnum;
                     return true;
@@ -87,7 +87,7 @@ namespace Todoist.Net.Models
                 return true;
             }
 
-            return string.Equals(Value, other.Value);
+            return string.Equals(Value, other.Value, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -121,7 +121,9 @@ namespace Todoist.Net.Models
         /// <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.</returns>
         public override int GetHashCode()
         {
-            return Value.GetHashCode();
+            return Value != null
+                ? StringComparer.OrdinalIgnoreCase.GetHashCode(Value)
+                : 0;
         }
 
         /// <summary>
