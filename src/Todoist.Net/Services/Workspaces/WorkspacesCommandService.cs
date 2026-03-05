@@ -53,9 +53,9 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task UpdateSidebarPreferenceAsync(UpdateSidebarPreferenceArgument sidebarArgs, CancellationToken cancellationToken = default)
+        public Task UpdateProjectSortPreferenceAsync(UpdateProjectSortPreferenceArgument projectSortArgs, CancellationToken cancellationToken = default)
         {
-            return ExecuteCommandAsync(CommandType.UpdateWorkspaceUserSidebarPreference, sidebarArgs, cancellationToken);
+            return ExecuteCommandAsync(CommandType.UpdateWorkspaceUserProjectSortPreference, projectSortArgs, cancellationToken);
         }
 
         /// <inheritdoc/>

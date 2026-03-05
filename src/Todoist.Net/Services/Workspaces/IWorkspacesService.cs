@@ -93,16 +93,23 @@ namespace Todoist.Net.Services
         Task<WorkspaceInvitation> DeleteInvitationAsync(long workspaceId, string userEmail, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Joins a workspace by invitation code or by workspace ID when domain auto-join is available.
+        /// Joins a workspace by invitation code.
         /// </summary>
         /// <param name="inviteCode">The invitation code.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>The workspace join result.</returns>
+        /// <exception cref="ArgumentException"><paramref name="inviteCode"/> is null or empty.</exception>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        Task<WorkspaceJoinResult> JoinByCodeAsync(string inviteCode, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Joins a workspace by workspace ID when domain auto-join is available.
+        /// </summary>
         /// <param name="workspaceId">The workspace identifier for auto-join by domain.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The workspace join result.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="inviteCode"/> is <see langword="null"/>.</exception>
-        /// <exception cref="ArgumentException">Neither invite code nor workspace ID is set.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<WorkspaceJoinResult> JoinAsync(string inviteCode, long workspaceId, CancellationToken cancellationToken = default);
+        Task<WorkspaceJoinResult> JoinByDomainAsync(long workspaceId, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets workspace users with optional workspace/pagination filtering.
@@ -146,11 +153,11 @@ namespace Todoist.Net.Services
         /// Uploads and sets a workspace logo.
         /// </summary>
         /// <param name="workspaceId">The workspace identifier.</param>
-        /// <param name="fileContent">The file content.</param>
+        /// <param name="logo">The logo file.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="fileContent"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="logo"/> is <see langword="null"/>.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task UpdateLogoAsync(long workspaceId, FileContent fileContent, CancellationToken cancellationToken = default);
+        Task UpdateLogoAsync(long workspaceId, UploadFile logo, CancellationToken cancellationToken = default);
         
         /// <summary>
         /// Deletes a workspace logo.

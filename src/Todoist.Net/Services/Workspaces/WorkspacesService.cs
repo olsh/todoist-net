@@ -82,13 +82,23 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task<WorkspaceJoinResult> JoinAsync(string inviteCode, long workspaceId, CancellationToken cancellationToken = default)
-        {            
+        public Task<WorkspaceJoinResult> JoinByCodeAsync(string inviteCode, CancellationToken cancellationToken = default)
+        {
             ThrowHelper.ThrowIfNullOrEmpty(inviteCode, nameof(inviteCode));
 
             var request = new WorkspaceJoinRequest
             {
-                InviteCode = inviteCode,
+                InviteCode = inviteCode
+            };
+
+            return TodoistClient.PostJsonAsync<WorkspaceJoinRequest, WorkspaceJoinResult>("workspaces/join", request, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<WorkspaceJoinResult> JoinByDomainAsync(long workspaceId, CancellationToken cancellationToken = default)
+        {            
+            var request = new WorkspaceJoinRequest
+            {
                 WorkspaceId = workspaceId
             };
 
@@ -128,21 +138,27 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task UpdateLogoAsync(long workspaceId, FileContent fileContent, CancellationToken cancellationToken = default)
+        public Task UpdateLogoAsync(long workspaceId, UploadFile logo, CancellationToken cancellationToken = default)
         {
-            ThrowHelper.ThrowIfNull(fileContent, nameof(fileContent));
+            ThrowHelper.ThrowIfNull(logo, nameof(logo));
             
-            var request = new WorkspaceLogoUpdateRequest(workspaceId, fileContent);
-            
-            return TodoistClient.PostJsonAsync("workspaces/logo", request, cancellationToken);
+            var parameters = new Dictionary<string, string>
+            {
+                { "workspace_id", workspaceId.ToString() }
+            };
+
+            return TodoistClient.PostFilesAsync("workspaces/logo", new[] { logo }, parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
         public Task DeleteLogoAsync(long workspaceId, CancellationToken cancellationToken = default)
         {
-            var request = new WorkspaceLogoUpdateRequest(workspaceId, FileContent.Empty, delete: true);
-            
-            return TodoistClient.PostJsonAsync("workspaces/logo", request, cancellationToken);
+            var parameters = new Dictionary<string, string>
+            {
+                { "workspace_id", workspaceId.ToString() },
+                { "delete", "true" }
+            };
+            return TodoistClient.PostAsync("workspaces/logo", parameters, cancellationToken);
         }
     }
 }

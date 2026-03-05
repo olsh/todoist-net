@@ -13,14 +13,12 @@ namespace Todoist.Net.Models
         /// Initializes a new instance of the <see cref="WorkspaceFolder"/> class.
         /// </summary>
         /// <param name="name">The name.</param>
-        /// <param name="childOrder">The child order.</param>
         /// <param name="defaultOrder">The default order.</param>
-        public WorkspaceFolder(string name, int? childOrder = null, int? defaultOrder = null)
+        public WorkspaceFolder(string name, int? defaultOrder = null)
         {
             ThrowHelper.ThrowIfNullOrEmpty(name, nameof(name));
 
             Name = name;
-            ChildOrder = childOrder ?? 0;
             DefaultOrder = defaultOrder ?? -1;
         }
 
@@ -37,18 +35,18 @@ namespace Todoist.Net.Models
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets the child order.
-        /// </summary>
-        /// <value>The child order.</value>
-        [JsonPropertyName("child_order")]
-        public int ChildOrder { get; set; }
-
-        /// <summary>
         /// Gets the default order.
         /// </summary>
         /// <value>The default order.</value>
         [JsonPropertyName("default_order")]
         public int DefaultOrder { get; set; }
+
+        /// <summary>
+        /// Gets the child order.
+        /// </summary>
+        /// <value>The child order.</value>
+        [JsonPropertyName("child_order")]
+        public int ChildOrder { get; internal set; }
 
         /// <summary>
         /// Gets the workspace ID.

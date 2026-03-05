@@ -11,12 +11,12 @@ namespace Todoist.Net.Models
         /// Initializes a new instance of the <see cref="InviteWorkspaceUsersArgument" /> class.
         /// </summary>
         /// <param name="id">The workspace identifier.</param>
-        /// <param name="userEmails">The user emails.</param>
+        /// <param name="emailList">The user emails.</param>
         /// <param name="role">The workspace role.</param>
-        public InviteWorkspaceUsersArgument(ComplexId id, string[] userEmails, WorkspaceRole role)
+        public InviteWorkspaceUsersArgument(ComplexId id, string[] emailList, WorkspaceRole role)
         {
             Id = id;
-            UserEmails = userEmails;
+            EmailList = emailList;
             Role = role;
         }
 
@@ -29,8 +29,8 @@ namespace Todoist.Net.Models
         /// <summary>
         /// Gets the user emails.
         /// </summary>
-        [JsonPropertyName("user_emails")]
-        public string[] UserEmails { get; }
+        [JsonPropertyName("email_list")]
+        public string[] EmailList { get; }
 
         /// <summary>
         /// Gets the workspace role.

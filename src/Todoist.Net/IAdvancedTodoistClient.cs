@@ -57,6 +57,17 @@ namespace Todoist.Net
         /// <summary>
         /// Sends a <c>POST</c> request with multipart form data, and handles response asynchronously.
         /// </summary>
+        /// <param name="resource">The resource.</param>
+        /// <param name="files">The files to upload.</param>
+        /// <param name="formParams">The form parameters.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" /> representing the asynchronous operation.</returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        Task PostFilesAsync(string resource, UploadFile[] files, Dictionary<string, string> formParams = null, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Sends a <c>POST</c> request with multipart form data, and handles response asynchronously.
+        /// </summary>
         /// <typeparam name="T">The result type.</typeparam>
         /// <param name="resource">The resource.</param>
         /// <param name="files">The files to upload.</param>

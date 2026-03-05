@@ -315,6 +315,12 @@ namespace Todoist.Net
         }
 
         /// <inheritdoc/>
+        Task IAdvancedTodoistClient.PostFilesAsync(string resource, UploadFile[] files, Dictionary<string, string> formParams, CancellationToken cancellationToken)
+        {
+            return ProcessRequestAsync(ct => _restClient.PostFilesAsync(resource, files, formParams, ct), cancellationToken);
+        }
+
+        /// <inheritdoc/>
         Task<T> IAdvancedTodoistClient.PostFilesAsync<T>(string resource, UploadFile[] files, Dictionary<string, string> formParams, CancellationToken cancellationToken)
         {
             return ProcessRequestAsync<T>(ct => _restClient.PostFilesAsync(resource, files, formParams, ct), cancellationToken);

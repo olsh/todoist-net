@@ -67,14 +67,14 @@ namespace Todoist.Net.Services
         Task ChangeUserRoleAsync(ChangeWorkspaceUserRoleArgument userRoleArgs, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Updates the sidebar sorting preference for a workspace.
+        /// Updates the project sort preference for a workspace.
         /// </summary>
-        /// <param name="sidebarArgs">The argument containing the workspace identifier and new sidebar sorting preference.</param>
+        /// <param name="projectSortArgs">The argument containing the workspace identifier and new project sort preference.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The asynchronous operation.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="TodoistException">Command execution exception.</exception>
-        Task UpdateSidebarPreferenceAsync(UpdateSidebarPreferenceArgument sidebarArgs, CancellationToken cancellationToken = default);
+        Task UpdateProjectSortPreferenceAsync(UpdateProjectSortPreferenceArgument projectSortArgs, CancellationToken cancellationToken = default);
         
         /// <summary>
         /// Deletes a user from a workspace.

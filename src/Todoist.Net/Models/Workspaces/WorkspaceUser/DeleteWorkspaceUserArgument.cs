@@ -10,19 +10,19 @@ namespace Todoist.Net.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="DeleteWorkspaceUserArgument" /> class.
         /// </summary>
-        /// <param name="id">The workspace identifier.</param>
+        /// <param name="workspaceId">The workspace identifier.</param>
         /// <param name="userEmail">The user email.</param>
-        public DeleteWorkspaceUserArgument(ComplexId id, string userEmail)
+        public DeleteWorkspaceUserArgument(ComplexId workspaceId, string userEmail)
         {
-            Id = id;
+            WorkspaceId = workspaceId;
             UserEmail = userEmail;
         }
 
         /// <summary>
         /// Gets the workspace identifier.
         /// </summary>
-        [JsonPropertyName("id")]
-        public ComplexId Id { get; }
+        [JsonPropertyName("workspace_id")]
+        public ComplexId WorkspaceId { get; }
 
         /// <summary>
         /// Gets the user email.
