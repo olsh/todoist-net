@@ -52,8 +52,8 @@ namespace Todoist.Net
         /// <remarks>Reminders are only available for Todoist Premium users.</remarks>
         IRemindersService Reminders { get; }
 
-        /// <summary>Gets the users service.</summary>
-        IUsersService Users { get; }
+        /// <summary>Gets the user service.</summary>
+        IUserService User { get; }
 
         /// <summary>Gets the activity service.</summary>
         IActivityService Activity { get; }

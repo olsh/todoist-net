@@ -8,9 +8,9 @@ using Todoist.Net.Models;
 namespace Todoist.Net.Services
 {
     /// <summary>
-    /// Contains operations for users management.
+    /// Contains operations for user management.
     /// </summary>
-    public interface IUsersService : IUsersCommandService
+    public interface IUserService : IUserCommandService
     {
         /// <summary>
         /// Gets the current user info that were synchronized with the specified sync token.

@@ -7,13 +7,13 @@ using Todoist.Net.Models;
 namespace Todoist.Net.Services
 {
     /// <summary>
-    /// Contains operations for users management.
+    /// Contains operations for user management.
     /// </summary>
-    /// <seealso cref="Todoist.Net.Services.UsersCommandService" />
-    /// <seealso cref="Todoist.Net.Services.IUsersService" />
-    internal class UsersService : UsersCommandService, IUsersService
+    /// <seealso cref="Todoist.Net.Services.UserCommandService" />
+    /// <seealso cref="Todoist.Net.Services.IUserService" />
+    internal class UserService : UserCommandService, IUserService
     {
-        internal UsersService(IAdvancedTodoistClient todoistClient)
+        internal UserService(IAdvancedTodoistClient todoistClient)
             : base(todoistClient)
         {
         }
@@ -59,7 +59,7 @@ namespace Todoist.Net.Services
         {
             ThrowHelper.ThrowIfNull(setting, nameof(setting));
 
-            return TodoistClient.PostJsonAsync<NotificationSettingUpdate>("notification_setting", setting, cancellationToken);
+            return TodoistClient.PutJsonAsync<NotificationSettingUpdate>("notification_setting", setting, cancellationToken);
         }
     }
 }

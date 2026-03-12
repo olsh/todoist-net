@@ -41,8 +41,8 @@ namespace Todoist.Net.Services
         /// <remarks>Reminders are only available for Todoist Premium users.</remarks>
         IRemindersCommandService Reminders { get; }
 
-        /// <summary>Gets the users commands service.</summary>
-        IUsersCommandService Users { get; }
+        /// <summary>Gets the user commands service.</summary>
+        IUserCommandService User { get; }
 
         /// <summary>Gets the view options commands service.</summary>
         IViewOptionsCommandService ViewOptions { get; }

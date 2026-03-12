@@ -6,14 +6,14 @@ using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
 {
-    internal class UsersCommandService : CommandServiceBase, IUsersCommandService
+    internal class UserCommandService : CommandServiceBase, IUserCommandService
     {
-        internal UsersCommandService(IAdvancedTodoistClient todoistClient)
+        internal UserCommandService(IAdvancedTodoistClient todoistClient)
             : base(todoistClient)
         {
         }
 
-        internal UsersCommandService(ICollection<Command> queue)
+        internal UserCommandService(ICollection<Command> queue)
             : base(queue)
         {
         }

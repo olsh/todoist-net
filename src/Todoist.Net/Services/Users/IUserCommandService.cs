@@ -9,9 +9,9 @@ using Todoist.Net.Models;
 namespace Todoist.Net.Services
 {
     /// <summary>
-    /// Contains operations for users management which can be executed in a transaction.
+    /// Contains operations for user management which can be executed in a transaction.
     /// </summary>
-    public interface IUsersCommandService
+    public interface IUserCommandService
     {
         /// <summary>
         /// Updates the current user info.

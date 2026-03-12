@@ -97,7 +97,7 @@ namespace Todoist.Net
             Uploads = new UploadsService(this);
             Filters = new FiltersService(this);
             Reminders = new RemindersService(this);
-            Users = new UsersService(this);
+            User = new UserService(this);
             Activity = new ActivityService(this);
             Backups = new BackupsService(this);
             Emails = new EmailsService(this);
@@ -158,7 +158,7 @@ namespace Todoist.Net
         public IRemindersService Reminders { get; }
 
         /// <inheritdoc/>
-        public IUsersService Users { get; }
+        public IUserService User { get; }
 
         /// <inheritdoc/>
         public IActivityService Activity { get; }
