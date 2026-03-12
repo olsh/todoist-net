@@ -296,6 +296,12 @@ namespace Todoist.Net
         }
 
         /// <inheritdoc/>
+        Task<string> IAdvancedTodoistClient.GetStringAsync(string resource, Dictionary<string, string> queryParams, CancellationToken cancellationToken)
+        {
+            return ProcessTextRequestAsync(ct => _restClient.GetAsync(resource, queryParams, ct), cancellationToken);
+        }
+
+        /// <inheritdoc/>
         Task<T> IAdvancedTodoistClient.GetAsync<T>(string resource, Dictionary<string, string> queryParams, CancellationToken cancellationToken)
         {
             return ProcessRequestAsync<T>(ct => _restClient.GetAsync(resource, queryParams, ct), cancellationToken);
@@ -406,6 +412,20 @@ namespace Todoist.Net
                 .ConfigureAwait(false);
 
             return await DeserializeResponseAsync<T>(response, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        private async Task<string> ProcessTextRequestAsync(
+            Func<CancellationToken, Task<HttpResponseMessage>> restCall,
+            CancellationToken cancellationToken)
+        {
+            var response = await restCall(cancellationToken)
+                .ConfigureAwait(false);
+
+            await EnsureSuccessResponseAsync(response, cancellationToken)
+                .ConfigureAwait(false);
+
+            return await response.Content.ReadAsStringAsync()
                 .ConfigureAwait(false);
         }
 

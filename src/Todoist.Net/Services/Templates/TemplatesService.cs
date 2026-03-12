@@ -15,28 +15,28 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task<string> ExportAsFileAsync(string projectId, bool userRelativeDates = true, CancellationToken cancellationToken = default)
+        public Task<string> ExportAsFileAsync(string projectId, bool useRelativeDates = true, CancellationToken cancellationToken = default)
         {
             ThrowHelper.ThrowIfNullOrEmpty(projectId, nameof(projectId));
 
             var query = new Dictionary<string, string>
             {
                 { "project_id", projectId },
-                { "user_relative_dates", userRelativeDates.ToString().ToLower() }
+                { "use_relative_dates", useRelativeDates.ToString().ToLower() }
             };
 
-            return TodoistClient.GetAsync<string>("templates/file", query, cancellationToken);
+            return TodoistClient.GetStringAsync("templates/file", query, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<FileBase> ExportAsUrlAsync(string projectId, bool userRelativeDates = true, CancellationToken cancellationToken = default)
+        public Task<FileBase> ExportAsUrlAsync(string projectId, bool useRelativeDates = true, CancellationToken cancellationToken = default)
         {
             ThrowHelper.ThrowIfNullOrEmpty(projectId, nameof(projectId));
 
             var query = new Dictionary<string, string>
             {
                 { "project_id", projectId },
-                { "user_relative_dates", userRelativeDates.ToString().ToLower() }
+                { "use_relative_dates", useRelativeDates.ToString().ToLower() }
             };
 
             return TodoistClient.GetAsync<FileBase>("templates/url", query, cancellationToken);
@@ -71,7 +71,7 @@ namespace Todoist.Net.Services
             var file = new UploadFile(fileContent.ContentStream, "template.csv");
 
             return TodoistClient.PostFilesAsync<TemplateImportResult>(
-                "templates/import_into_project", new[] { file }, parameters, cancellationToken);
+                "templates/import_into_project_from_file", new[] { file }, parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -93,7 +93,7 @@ namespace Todoist.Net.Services
             var file = new UploadFile(fileContent.ContentStream, "template.csv");
 
             return TodoistClient.PostFilesAsync<TemplateImportResult>(
-                "templates/import_into_project", new[] { file }, parameters, cancellationToken);
+                "templates/create_project_from_file", new[] { file }, parameters, cancellationToken);
         }
     }
 }

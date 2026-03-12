@@ -24,6 +24,16 @@ namespace Todoist.Net
         /// <summary>
         /// Sends a <c>GET</c> request, and handles response asynchronously.
         /// </summary>
+        /// <param name="resource">The resource.</param>
+        /// <param name="queryParams">The query parameters.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Returns <see cref="T:System.Threading.Tasks.Task" /> containing the raw response content.</returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        Task<string> GetStringAsync(string resource, Dictionary<string, string> queryParams = null, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Sends a <c>GET</c> request, and handles response asynchronously.
+        /// </summary>
         /// <typeparam name="T">Type of the result.</typeparam>
         /// <param name="resource">The resource.</param>
         /// <param name="queryParams">The query parameters.</param>
