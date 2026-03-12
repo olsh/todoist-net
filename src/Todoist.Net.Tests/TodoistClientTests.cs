@@ -1,42 +1,37 @@
-using System.Threading.Tasks;
+namespace Todoist.Net.Tests;
 
-using Todoist.Net.Tests.Extensions;
-
-using Xunit;
-using Xunit.Abstractions;
-
-namespace Todoist.Net.Tests
+[Collection(TodoistApiTestCollection.Name)]
+[Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
+public class TodoistClientTests
 {
-    [Collection(Constants.TodoistApiTestCollectionName)]
-    [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
-    public class TodoistClientTests
+    private readonly TodoistApiFixture _apiFixture;
+    private readonly CancellationToken _cancellationToken;
+
+    public TodoistClientTests(TodoistApiFixture apiFixture)
     {
-        private readonly ITestOutputHelper _outputHelper;
+        _apiFixture = apiFixture;
+        _cancellationToken = TestContext.Current.CancellationToken;
+    }
 
-        public TodoistClientTests(ITestOutputHelper outputHelper)
-        {
-            _outputHelper = outputHelper;
-        }
+    [Fact]
+    public async Task SyncAllResources_Success()
+    {
+        var resources = await _apiFixture.Client.SyncResourcesAsync(cancellationToken: _cancellationToken);
 
-        [Fact]
-        public async Task GetAllResources_Success()
-        {
-            var client = TodoistClientFactory.Create(_outputHelper);
+        Assert.NotNull(resources);
+        Assert.NotNull(resources.UserInfo?.Id);
+        Assert.NotNull(resources.SyncToken);
+        Assert.True(resources.FullSync);
+    }
 
-            var resources = await client.GetResourcesAsync();
+    [Fact]
+    public async Task SyncAllResourcesWithSyncToken_Success()
+    {
+        var resources = await _apiFixture.Client.SyncResourcesAsync(cancellationToken: _cancellationToken);
+        resources = await _apiFixture.Client.SyncResourcesAsync(syncToken: resources.SyncToken, cancellationToken: _cancellationToken);
 
-            Assert.NotNull(resources);
-        }
-
-        [Fact]
-        public async Task GetAllResourcesWithSyncToken_Success()
-        {
-            var client = TodoistClientFactory.Create(_outputHelper);
-
-            var resources = await client.GetResourcesAsync();
-            resources = await client.GetResourcesAsync(resources.SyncToken);
-
-            Assert.NotNull(resources);
-        }
+        Assert.NotNull(resources);
+        Assert.NotNull(resources.SyncToken);
+        Assert.False(resources.FullSync);
     }
 }
