@@ -17,21 +17,21 @@ namespace Todoist.Net.Services
         /// Gets a template for the project as a file asynchronous.
         /// </summary>
         /// <param name="projectId">The project identifier.</param>
-        /// <param name="userRelativeDates">Whether to use user-relative dates in the template.</param>
+        /// <param name="useRelativeDates">Whether to use relative dates in the template.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The CSV template is returned.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<string> ExportAsFileAsync(string projectId, bool userRelativeDates = true, CancellationToken cancellationToken = default);
+        Task<string> ExportAsFileAsync(string projectId, bool useRelativeDates = true, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets a template for the project as a shareable URL asynchronous.
         /// </summary>
         /// <param name="projectId">The project identifier.</param>
-        /// <param name="userRelativeDates">Whether to use user-relative dates in the template.</param>
+        /// <param name="useRelativeDates">Whether to use relative dates in the template.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The file object of the template.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<FileBase> ExportAsUrlAsync(string projectId, bool userRelativeDates = true, CancellationToken cancellationToken = default);
+        Task<FileBase> ExportAsUrlAsync(string projectId, bool useRelativeDates = true, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Imports a template into a project from a template identifier asynchronous.

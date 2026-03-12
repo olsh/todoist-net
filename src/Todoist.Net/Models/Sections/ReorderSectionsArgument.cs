@@ -14,7 +14,7 @@ namespace Todoist.Net.Models
         /// </summary>
         /// <param name="sectionOrders">The reorder arguments for the sections.</param>
         /// <exception cref="T:System.ArgumentException">Entity ID is required for the operation</exception>
-        public ReorderSectionsArgument(params ReorderArgument[] sectionOrders)
+        public ReorderSectionsArgument(params SectionReorderArgument[] sectionOrders)
         {
             SectionOrders = sectionOrders.ToList();
         }
@@ -26,13 +26,15 @@ namespace Todoist.Net.Models
         /// <param name="ordersById">The mapping of section IDs to their new order.</param>
         public ReorderSectionsArgument(IDictionary<ComplexId, int> ordersById)
         {
-            SectionOrders = ReorderArgument.FromDictionary(ordersById);
+            SectionOrders = ordersById
+                .Select(kvp => new SectionReorderArgument(kvp.Key, kvp.Value))
+                .ToList();
         }
 
         /// <summary>
         /// Gets the reorder arguments for the sections.
         /// </summary>
         [JsonPropertyName("sections")]
-        public ICollection<ReorderArgument> SectionOrders { get; }
+        public ICollection<SectionReorderArgument> SectionOrders { get; }
     }
 }

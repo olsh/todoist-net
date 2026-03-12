@@ -117,8 +117,8 @@ namespace Todoist.Net.Models
             var parameters = new Dictionary<string, string>(base.ToParameters())
             {
                 { "object_event_types", objectEventTypesValue },
-                { "event_type", EventType.ToString() },
-                { "object_type", ObjectType.ToString() },
+                { "event_type", EventType?.ToString() },
+                { "object_type", ObjectType?.ToString() },
                 { "object_id", ObjectId },
                 { "parent_project_id", ParentProjectId },
                 { "parent_item_id", ParentItemId },

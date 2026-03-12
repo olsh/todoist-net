@@ -36,7 +36,7 @@ namespace Todoist.Net.Models
         /// <value>
         /// <c>true</c> if the section’s tasks are collapsed; otherwise, <c>false</c>.
         /// </value>
-        [JsonPropertyName("collapsed")]
+        [JsonPropertyName("is_collapsed")]
         public bool? IsCollapsed { get; set; }
     }
 }

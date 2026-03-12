@@ -10,12 +10,6 @@ namespace Todoist.Net.Models
     public class ActivityLog
     {
         /// <summary>
-        /// Gets the activity identifier.
-        /// </summary>
-        [JsonPropertyName("id")]
-        public string Id { get; internal set; }
-
-        /// <summary>
         /// Gets the object identifier.
         /// </summary>
         [JsonPropertyName("object_id")]
@@ -62,12 +56,6 @@ namespace Todoist.Net.Models
         /// </summary>
         [JsonPropertyName("initiator_id")]
         public string InitiatorId { get; internal set; }
-
-        /// <summary>
-        /// Gets the extra data identifier.
-        /// </summary>
-        [JsonPropertyName("extra_data_id")]
-        public string ExtraDataId { get; internal set; }
 
         /// <summary>
         /// Gets the extra data.

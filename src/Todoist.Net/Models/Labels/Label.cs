@@ -27,6 +27,11 @@ namespace Todoist.Net.Models
             IsFavorite = isFavorite;
         }
 
+        [JsonConstructor]
+        internal Label()
+        {
+        }
+
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
@@ -47,6 +52,14 @@ namespace Todoist.Net.Models
         /// <value>The item order.</value>
         [JsonPropertyName("item_order")]
         public int? ItemOrder { get; set; }
+
+        [JsonInclude]
+        [JsonPropertyName("order")]
+        internal int? RestOrder
+        {
+            get => null;
+            set => ItemOrder = value;
+        }
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance is favorite.

@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
+using Todoist.Net.Serialization.Converters;
+
 namespace Todoist.Net.Models
 {
     /// <summary>
@@ -23,12 +25,14 @@ namespace Todoist.Net.Models
         /// <summary>
         /// Gets vacation mode flag.
         /// </summary>
+        [JsonConverter(typeof(BoolConverter))]
         [JsonPropertyName("vacation_mode")]
         public bool VacationMode { get; internal set; }
 
         /// <summary>
         /// Gets karma disabled flag.
         /// </summary>
+        [JsonConverter(typeof(BoolConverter))]
         [JsonPropertyName("karma_disabled")]
         public bool KarmaDisabled { get; internal set; }
 
