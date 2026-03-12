@@ -1,15 +1,30 @@
 using Todoist.Net.Tests.Settings;
 
-using Xunit.Abstractions;
+namespace Todoist.Net.Tests;
 
-namespace Todoist.Net.Tests
+public static class TodoistClientFactory
 {
-    public static class TodoistClientFactory
+    public static ITodoistClient CreatePrimary(ITestOutputHelper? outputHelper = null)
     {
-        public static ITodoistClient Create(ITestOutputHelper outputHelper)
-        {
-            var token = SettingsProvider.GetToken();
-            return new TodoistClient(new RateLimitAwareRestClient(token, outputHelper));
-        }
+        var token = SettingsProvider.GetPrimaryToken();
+        return new TodoistClient(new RateLimitAwareRestClient(token, outputHelper));
+    }
+
+    public static ITodoistClient? CreateSecondary(ITestOutputHelper? outputHelper = null)
+    {
+        var token = SettingsProvider.GetSecondaryToken();
+
+        return token is null
+            ? null
+            : new TodoistClient(new RateLimitAwareRestClient(token, outputHelper));
+    }
+
+    public static ITodoistClient? CreateTertiary(ITestOutputHelper? outputHelper = null)
+    {
+        var token = SettingsProvider.GetTertiaryToken();
+
+        return token is null
+            ? null
+            : new TodoistClient(new RateLimitAwareRestClient(token, outputHelper));
     }
 }

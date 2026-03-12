@@ -1,15 +1,9 @@
-using System.Collections.Generic;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 
-using Todoist.Net.Extensions;
-using Todoist.Net.Models;
 using Todoist.Net.Serialization.Resolvers;
-using Todoist.Net.Tests.Extensions;
-
-using Xunit;
 
 namespace Todoist.Net.Tests
 {
@@ -21,7 +15,7 @@ namespace Todoist.Net.Tests
             HashSet<PropertyInfo> IUnsettableProperties.UnsetProperties { get; } = [];
 
             [JsonPropertyName("first_property")]
-            public string Property1 { get; set; }
+            public string? Property1 { get; set; }
 
             [JsonPropertyName("second_property")]
             public int? Property2 { get; set; }

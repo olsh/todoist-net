@@ -483,11 +483,11 @@ fabric.properties
 # Claude
 .claude/
 
-# Serena MCP
-.serena/
-
-# Temporary files
-.temp/
+# Local files
+.local/
 
 # VS Code local workspace settings
 .vscode/
+
+# Local Test Running Settings
+.runsettings
