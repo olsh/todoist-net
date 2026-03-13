@@ -391,7 +391,8 @@ namespace Todoist.Net
             return ProcessRequestAsync<T>(ct => _restClient.PostAsync(SyncEndpoint, parameters, ct), cancellationToken);
         }
 
-        private async Task ProcessRequestAsync(
+
+        private static async Task ProcessRequestAsync(
             Func<CancellationToken, Task<HttpResponseMessage>> restCall, 
             CancellationToken cancellationToken)
         {
@@ -401,7 +402,7 @@ namespace Todoist.Net
                 .ConfigureAwait(false);
         }
 
-        private async Task<T> ProcessRequestAsync<T>(
+        private static async Task<T> ProcessRequestAsync<T>(
             Func<CancellationToken, Task<HttpResponseMessage>> restCall,
             CancellationToken cancellationToken)
         {
@@ -415,7 +416,7 @@ namespace Todoist.Net
                 .ConfigureAwait(false);
         }
 
-        private async Task<string> ProcessTextRequestAsync(
+        private static async Task<string> ProcessTextRequestAsync(
             Func<CancellationToken, Task<HttpResponseMessage>> restCall,
             CancellationToken cancellationToken)
         {
@@ -429,7 +430,7 @@ namespace Todoist.Net
                 .ConfigureAwait(false);
         }
 
-        private async Task ProcessJsonRequestAsync<TReq>(
+        private static async Task ProcessJsonRequestAsync<TReq>(
             string resource, 
             TReq content, 
             Func<string, string, CancellationToken, Task<HttpResponseMessage>> restCall,
@@ -444,7 +445,7 @@ namespace Todoist.Net
                 .ConfigureAwait(false);
         }
 
-        private async Task<TRes> ProcessJsonRequestAsync<TReq, TRes>(
+        private static async Task<TRes> ProcessJsonRequestAsync<TReq, TRes>(
             string resource, 
             TReq content, 
             Func<string, string, CancellationToken, Task<HttpResponseMessage>> restCall,
