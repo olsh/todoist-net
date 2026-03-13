@@ -35,22 +35,14 @@ namespace Todoist.Net.Services
         /// <inheritdoc/>
         public Task<IReadOnlyCollection<string>> GetInvitationsAsync(long workspaceId, CancellationToken cancellationToken = default)
         {
-            var queryParams = new Dictionary<string, string>
-            {
-                { "workspace_id", workspaceId.ToString() }
-            };
-
+            var queryParams = BuildQueryParameters(workspaceId);
             return TodoistClient.GetAsync<IReadOnlyCollection<string>>("workspaces/invitations", queryParams, cancellationToken);
         }
 
         /// <inheritdoc/>
         public Task<IReadOnlyCollection<WorkspaceInvitation>> GetInvitationDetailsAsync(long workspaceId, CancellationToken cancellationToken = default)
         {
-            var queryParams = new Dictionary<string, string>
-            {
-                { "workspace_id", workspaceId.ToString() }
-            };
-
+            var queryParams = BuildQueryParameters(workspaceId);
             return TodoistClient.GetAsync<IReadOnlyCollection<WorkspaceInvitation>>("workspaces/invitations/all", queryParams, cancellationToken);
         }
 
@@ -129,11 +121,7 @@ namespace Todoist.Net.Services
         /// <inheritdoc/>
         public Task<WorkspacePlanDetails> GetPlanDetailsAsync(long workspaceId, CancellationToken cancellationToken = default)
         {
-            var queryParams = new Dictionary<string, string>
-            {
-                { "workspace_id", workspaceId.ToString() }
-            };
-
+            var queryParams = BuildQueryParameters(workspaceId);
             return TodoistClient.GetAsync<WorkspacePlanDetails>("workspaces/plan_details", queryParams, cancellationToken);
         }
 
@@ -142,23 +130,26 @@ namespace Todoist.Net.Services
         {
             ThrowHelper.ThrowIfNull(logo, nameof(logo));
             
-            var parameters = new Dictionary<string, string>
-            {
-                { "workspace_id", workspaceId.ToString() }
-            };
-
+            var parameters = BuildQueryParameters(workspaceId);
             return TodoistClient.PostFilesAsync("workspaces/logo", new[] { logo }, parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
         public Task DeleteLogoAsync(long workspaceId, CancellationToken cancellationToken = default)
         {
-            var parameters = new Dictionary<string, string>
-            {
-                { "workspace_id", workspaceId.ToString() },
-                { "delete", "true" }
-            };
+            var parameters = BuildQueryParameters(workspaceId);
+            parameters.Add("delete", "true");
+
             return TodoistClient.PostAsync("workspaces/logo", parameters, cancellationToken);
+        }
+
+
+        private static Dictionary<string, string> BuildQueryParameters(long workspaceId)
+        {
+            return new Dictionary<string, string>
+            {
+                { "workspace_id", workspaceId.ToString() }
+            };
         }
     }
 }

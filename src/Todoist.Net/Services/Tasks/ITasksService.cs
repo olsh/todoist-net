@@ -35,17 +35,6 @@ namespace Todoist.Net.Services
         Task<EntitySyncResponse<Dictionary<string, int>>> SyncDayOrdersAsync(string syncToken = "*", CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Gets tasks with cursor/limit pagination.
-        /// </summary>
-        /// <param name="query">The pagination query.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>
-        /// The tasks.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<PaginatedResponse<TaskInfo>> GetAsync(TasksPaginationQuery query = null, CancellationToken cancellationToken = default);
-
-        /// <summary>
         /// Gets tasks based on a filter query with cursor/limit pagination.
         /// </summary>
         /// <param name="query">The filter query.</param>
@@ -77,6 +66,17 @@ namespace Todoist.Net.Services
          /// </returns>
          /// <exception cref="HttpRequestException">API exception.</exception>
         Task<PaginatedCompletedTasks> GetCompletedByDueDateAsync(CompletedTasksPaginationQuery query = null, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets tasks with cursor/limit pagination.
+        /// </summary>
+        /// <param name="query">The pagination query.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>
+        /// The tasks.
+        /// </returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        Task<PaginatedResponse<TaskInfo>> GetAsync(TasksPaginationQuery query = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets a task by ID.

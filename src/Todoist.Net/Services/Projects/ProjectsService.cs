@@ -37,12 +37,6 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task<PaginatedResponse<ProjectInfo>> GetAsync(PaginationQuery query = null, CancellationToken cancellationToken = default)
-        {
-            return TodoistClient.GetAsync<PaginatedResponse<ProjectInfo>>("projects", query?.ToParameters(), cancellationToken);
-        }
-
-        /// <inheritdoc/>
         public Task<PaginatedResponse<ProjectInfo>> GetArchivedAsync(PaginationQuery query = null, CancellationToken cancellationToken = default)
         {
             return TodoistClient.GetAsync<PaginatedResponse<ProjectInfo>>("projects/archived", query?.ToParameters(), cancellationToken);
@@ -60,6 +54,12 @@ namespace Todoist.Net.Services
         public Task<ProjectPermissions> GetPermissionsAsync(CancellationToken cancellationToken = default)
         {
             return TodoistClient.GetAsync<ProjectPermissions>("projects/permissions", cancellationToken: cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<PaginatedResponse<ProjectInfo>> GetAsync(PaginationQuery query = null, CancellationToken cancellationToken = default)
+        {
+            return TodoistClient.GetAsync<PaginatedResponse<ProjectInfo>>("projects", query?.ToParameters(), cancellationToken);
         }
 
         /// <inheritdoc/>

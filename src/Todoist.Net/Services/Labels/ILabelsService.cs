@@ -34,17 +34,6 @@ namespace Todoist.Net.Services
         Task<PaginatedResponse<Label>> SearchAsync(PaginatedSearchQuery query = null, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Gets labels with cursor/limit pagination.
-        /// </summary>
-        /// <param name="query">The pagination query.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>
-        /// The labels.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<PaginatedResponse<Label>> GetAsync(PaginationQuery query = null, CancellationToken cancellationToken = default);
-
-        /// <summary>
         /// Gets a set of unique strings containing labels from active tasks with cursor/limit pagination.
         /// </summary>
         /// <param name="query">The pagination query.</param>
@@ -56,6 +45,17 @@ namespace Todoist.Net.Services
         /// <returns>The shared labels.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task<PaginatedResponse<string>> GetSharedAsync(SharedLabelsPaginationQuery query = null, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets labels with cursor/limit pagination.
+        /// </summary>
+        /// <param name="query">The pagination query.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>
+        /// The labels.
+        /// </returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        Task<PaginatedResponse<Label>> GetAsync(PaginationQuery query = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets label by ID.

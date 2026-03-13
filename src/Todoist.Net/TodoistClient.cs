@@ -296,15 +296,15 @@ namespace Todoist.Net
         }
 
         /// <inheritdoc/>
-        Task<string> IAdvancedTodoistClient.GetStringAsync(string resource, Dictionary<string, string> queryParams, CancellationToken cancellationToken)
-        {
-            return ProcessTextRequestAsync(ct => _restClient.GetAsync(resource, queryParams, ct), cancellationToken);
-        }
-
-        /// <inheritdoc/>
         Task<T> IAdvancedTodoistClient.GetAsync<T>(string resource, Dictionary<string, string> queryParams, CancellationToken cancellationToken)
         {
             return ProcessRequestAsync<T>(ct => _restClient.GetAsync(resource, queryParams, ct), cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        Task<string> IAdvancedTodoistClient.GetStringAsync(string resource, Dictionary<string, string> queryParams, CancellationToken cancellationToken)
+        {
+            return ProcessTextRequestAsync(ct => _restClient.GetAsync(resource, queryParams, ct), cancellationToken);
         }
 
 
@@ -463,20 +463,24 @@ namespace Todoist.Net
         }
 
 
-        private async Task EnsureSuccessResponseAsync(HttpResponseMessage response, CancellationToken cancellationToken)
+        private static async Task EnsureSuccessResponseAsync(HttpResponseMessage response, CancellationToken cancellationToken)
         {
             if (response.IsSuccessStatusCode)
             {
                 return;
             }
 
-            TodoistError errorContent = null;
+            TodoistError errorContent;
             try
             {
                 errorContent = await DeserializeResponseAsync<TodoistError>(response, cancellationToken)
                     .ConfigureAwait(false);
             }
-            catch { }
+            catch
+            {
+                // If deserialization fails, we can still throw a generic exception with status code and reason.
+                errorContent = null;
+            }
 
             if (errorContent != null)
             {
@@ -485,7 +489,7 @@ namespace Todoist.Net
             response.EnsureSuccessStatusCode();
         }
 
-        private async Task<T> DeserializeResponseAsync<T>(HttpResponseMessage response, CancellationToken cancellationToken)
+        private static async Task<T> DeserializeResponseAsync<T>(HttpResponseMessage response, CancellationToken cancellationToken)
         {
             using (var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
             {
@@ -495,7 +499,7 @@ namespace Todoist.Net
         }
 
 
-        private void ThrowIfErrors(SyncTransactionResponse syncResponse)
+        private static void ThrowIfErrors(SyncTransactionResponse syncResponse)
         {
             var exceptions = syncResponse.SyncStatus
                 .Where(kvp => !kvp.Value.IsSuccess)
@@ -512,7 +516,7 @@ namespace Todoist.Net
             }
         }
 
-        private void UpdateTempIds(Command[] commands, Dictionary<Guid, string> tempIdMappings)
+        private static void UpdateTempIds(Command[] commands, Dictionary<Guid, string> tempIdMappings)
         {
             foreach (var command in commands)
             {

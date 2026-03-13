@@ -37,10 +37,36 @@ namespace Todoist.Net.Models
         /// </summary>
         public Stream ContentStream { get; }
 
+
+        private bool _disposed = false;
+
         /// <inheritdoc/>
         public void Dispose()
         {
-            ContentStream?.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Disposes the object and releases any resources.
+        /// Override this method in derived classes to dispose additional resources.
+        /// </summary>
+        /// <param name="disposing">Indicates whether the method is called from the <see cref="Dispose()"/> method (true) or from the finalizer (false).</param>
+        /// <remarks>
+        /// When overriding this method, make sure to call the base class's <see cref="Dispose(bool)"/> method to ensure that base class resources are also released.
+        /// </remarks>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                ContentStream?.Dispose();
+            }
+            _disposed = true;
         }
     }
 }

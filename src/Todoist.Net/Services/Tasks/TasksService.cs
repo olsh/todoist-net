@@ -36,12 +36,6 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task<PaginatedResponse<TaskInfo>> GetAsync(TasksPaginationQuery query = null, CancellationToken cancellationToken = default)
-        {
-            return TodoistClient.GetAsync<PaginatedResponse<TaskInfo>>("tasks", query?.ToParameters(), cancellationToken);
-        }
-
-        /// <inheritdoc/>
         public Task<PaginatedResponse<TaskInfo>> GetByFilterAsync(TasksFilterQuery query = null, CancellationToken cancellationToken = default)
         {
             return TodoistClient.GetAsync<PaginatedResponse<TaskInfo>>("tasks/filter", query?.ToParameters(), cancellationToken);
@@ -57,6 +51,12 @@ namespace Todoist.Net.Services
         public Task<PaginatedCompletedTasks> GetCompletedByDueDateAsync(CompletedTasksPaginationQuery query = null, CancellationToken cancellationToken = default)
         {
             return TodoistClient.GetAsync<PaginatedCompletedTasks>("tasks/completed/by_due_date", query?.ToParameters(), cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<PaginatedResponse<TaskInfo>> GetAsync(TasksPaginationQuery query = null, CancellationToken cancellationToken = default)
+        {
+            return TodoistClient.GetAsync<PaginatedResponse<TaskInfo>>("tasks", query?.ToParameters(), cancellationToken);
         }
 
         /// <inheritdoc/>

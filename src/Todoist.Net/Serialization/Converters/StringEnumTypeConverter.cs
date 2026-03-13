@@ -38,12 +38,7 @@ namespace Todoist.Net.Serialization.Converters
 
             public override T ReadAsPropertyName(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {
-                if (StringEnum.TryParse(reader.GetString(), out T stringEnum))
-                {
-                    return stringEnum;
-                }
-
-                return null;
+                return Read(ref reader, typeToConvert, options);
             }
 
             public override void WriteAsPropertyName(Utf8JsonWriter writer, T value, JsonSerializerOptions options)

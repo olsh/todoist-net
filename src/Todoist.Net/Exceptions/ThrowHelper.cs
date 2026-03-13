@@ -7,7 +7,7 @@ namespace Todoist.Net.Exceptions
 {
     internal static class ThrowHelper
     {
-        public static void ThrowIfNull<T>(T value, string paramName)
+        public static void ThrowIfNull<T>(T value, string paramName) where T : class
         {
             if (value == null)
             {
@@ -23,19 +23,19 @@ namespace Todoist.Net.Exceptions
             }
         }
 
-        public static void ThrowIfNullOrEmpty(string value, string paramName)
-        {
-            if (string.IsNullOrEmpty(value))
-            {
-                throw new ArgumentException("Value cannot be null or empty.", paramName);
-            }
-        }
-
         public static void ThrowIfNullOrWhiteSpace(string value, string paramName)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
                 throw new ArgumentException("Value cannot be null or whitespace.", paramName);
+            }
+        }
+
+        public static void ThrowIfNullOrEmpty(string value, string paramName)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                throw new ArgumentException("Value cannot be null or empty.", paramName);
             }
         }
 

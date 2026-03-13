@@ -43,7 +43,7 @@ namespace Todoist.Net.Models
         /// Gets a value indicating whether this instance is empty.
         /// </summary>
         /// <value><c>true</c> if this instance is empty; otherwise, <c>false</c>.</value>
-        public bool IsEmpty => PersistentId == default && TempId == default;
+        public bool IsEmpty => PersistentId == default && TempId == Guid.Empty;
 
         internal object DynamicId
         {
@@ -148,7 +148,7 @@ namespace Todoist.Net.Models
                 return PersistentId;
             }
 
-            if (TempId != default)
+            if (TempId != Guid.Empty)
             {
                 return TempId.ToString();
             }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Todoist.Net.Models
 {
@@ -32,12 +33,9 @@ namespace Todoist.Net.Models
         public static Dictionary<string, string> ToNonEmptyValuesDictionary(this Dictionary<string, string> dictionary)
         {
             var filtered = new Dictionary<string, string>();
-            foreach (var kvp in dictionary)
+            foreach (var kvp in dictionary.Where(kvp => !string.IsNullOrEmpty(kvp.Value)))
             {
-                if (!string.IsNullOrEmpty(kvp.Value))
-                {
-                    filtered.Add(kvp.Key, kvp.Value);
-                }
+                filtered.Add(kvp.Key, kvp.Value);
             }
             return filtered;
         }

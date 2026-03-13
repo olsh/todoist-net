@@ -34,15 +34,15 @@ namespace Todoist.Net.Services
         }
 
         /// <inheritdoc/>
-        public Task<PaginatedResponse<Label>> GetAsync(PaginationQuery query = null, CancellationToken cancellationToken = default)
-        {
-            return TodoistClient.GetAsync<PaginatedResponse<Label>>("labels", query?.ToParameters(), cancellationToken);
-        }
-
-        /// <inheritdoc/>
         public Task<PaginatedResponse<string>> GetSharedAsync(SharedLabelsPaginationQuery query = null, CancellationToken cancellationToken = default)
         {
             return TodoistClient.GetAsync<PaginatedResponse<string>>("labels/shared", query?.ToParameters(), cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<PaginatedResponse<Label>> GetAsync(PaginationQuery query = null, CancellationToken cancellationToken = default)
+        {
+            return TodoistClient.GetAsync<PaginatedResponse<Label>>("labels", query?.ToParameters(), cancellationToken);
         }
 
         /// <inheritdoc/>

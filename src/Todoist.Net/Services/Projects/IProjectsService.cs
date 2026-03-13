@@ -44,17 +44,6 @@ namespace Todoist.Net.Services
         Task<PaginatedResponse<ProjectInfo>> SearchAsync(PaginatedSearchQuery query = null, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Gets projects with cursor/limit pagination.
-        /// </summary>
-        /// <param name="query">The pagination query.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>
-        /// The projects.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        Task<PaginatedResponse<ProjectInfo>> GetAsync(PaginationQuery query = null, CancellationToken cancellationToken = default);
-
-        /// <summary>
         /// Gets archived projects with cursor/limit pagination.
         /// </summary>
         /// <param name="query">The pagination query.</param>
@@ -80,6 +69,17 @@ namespace Todoist.Net.Services
         /// <returns>The project permissions.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         Task<ProjectPermissions> GetPermissionsAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets projects with cursor/limit pagination.
+        /// </summary>
+        /// <param name="query">The pagination query.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>
+        /// The projects.
+        /// </returns>
+        /// <exception cref="HttpRequestException">API exception.</exception>
+        Task<PaginatedResponse<ProjectInfo>> GetAsync(PaginationQuery query = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets project by ID.
