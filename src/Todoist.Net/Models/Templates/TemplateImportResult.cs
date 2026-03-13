@@ -40,11 +40,11 @@ namespace Todoist.Net.Models
 
         /// <summary>Gets the comments.</summary>
         [JsonPropertyName("comments")]
-        public IReadOnlyCollection<Collaborator> Comments { get; internal set; }
+        public IReadOnlyCollection<Comment> Comments { get; internal set; }
 
-        /// <summary>Gets the comments.</summary>
+        /// <summary>Gets the project comments.</summary>
         /// <remarks>The JSON property name remains "project_notes" for backwards compatibility with Sync API.</remarks>
         [JsonPropertyName("project_notes")]
-        public IReadOnlyCollection<Collaborator> ProjectComments { get; internal set; }
+        public IReadOnlyCollection<Comment> ProjectComments { get; internal set; }
     }
 }

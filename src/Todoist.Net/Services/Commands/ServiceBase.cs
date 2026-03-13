@@ -35,6 +35,10 @@ namespace Todoist.Net.Services
             string syncToken = "*", 
             CancellationToken cancellationToken = default)
         {
+            if (TodoistClient == null)
+            {
+                throw new InvalidOperationException("This service is not initialized with a Todoist client instance.");
+            }
             var response = await TodoistClient.SyncResourcesAsync(resourceTypes, syncToken, cancellationToken)
                 .ConfigureAwait(false);
     
@@ -47,6 +51,10 @@ namespace Todoist.Net.Services
             string syncToken = "*", 
             CancellationToken cancellationToken = default) 
         {
+            if (TodoistClient == null)
+            {
+                throw new InvalidOperationException("This service is not initialized with a Todoist client instance.");
+            }
             var response = await TodoistClient.SyncResourcesAsync(new[] { resourceType }, syncToken, cancellationToken)
                 .ConfigureAwait(false);
     
