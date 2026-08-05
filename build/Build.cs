@@ -80,9 +80,9 @@ class Build : NukeBuild
                 s = s
                     .SetServer("https://sonarcloud.io")
                     .SetToken(SonarQubeToken)
-                    .SetProjectKey("todoist-net")
-                    .SetName("Todoist.Net")
-                    .SetOrganization("olsh")
+                    .SetProjectKey("todoist-net-apiv1")
+                    .SetName("Todoist.Net.ApiV1")
+                    .SetOrganization("ahmedzaki99")
                     .SetVersion("1.0.0.0")
                     .SetAdditionalParameters(new Dictionary<string, string> { ["sonar.scanner.skipJreProvisioning"] = "true" });
 

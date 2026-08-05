@@ -1,5 +1,5 @@
 [CmdletBinding()]
-Param(
+param(
     [Parameter(Position=0,Mandatory=$false,ValueFromRemainingArguments=$true)]
     [string[]]$BuildArguments
 )
@@ -7,7 +7,6 @@ Param(
 Write-Output "PowerShell $($PSVersionTable.PSEdition) version $($PSVersionTable.PSVersion)"
 
 Set-StrictMode -Version 2.0; $ErrorActionPreference = "Stop"; $ConfirmPreference = "None"; trap { Write-Error $_ -ErrorAction Continue; exit 1 }
-$PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent
 
 ###########################################################################
 # CONFIGURATION
@@ -55,7 +54,7 @@ else {
 
     # Install by channel or version
     $DotNetDirectory = "$TempDirectory\dotnet-win"
-    if (!(Test-Path variable:DotNetVersion)) {
+    if (-not (Test-Path variable:DotNetVersion)) {
         ExecSafe { & powershell $DotNetInstallFile -InstallDir $DotNetDirectory -Channel $DotNetChannel -NoPath }
     } else {
         ExecSafe { & powershell $DotNetInstallFile -InstallDir $DotNetDirectory -Version $DotNetVersion -NoPath }

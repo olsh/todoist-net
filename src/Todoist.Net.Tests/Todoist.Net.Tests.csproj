@@ -7,9 +7,7 @@
     <IsTestProject>true</IsTestProject>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <RunSettingsFilePath Condition="Exists('$(MSBuildProjectDirectory)\..\..\.runsettings')">
-      $(MSBuildProjectDirectory)\..\..\.runsettings
-    </RunSettingsFilePath>
+    <RunSettingsFilePath Condition="Exists('$(MSBuildProjectDirectory)\..\..\.runsettings')">$(MSBuildProjectDirectory)\..\..\.runsettings</RunSettingsFilePath>
   </PropertyGroup>
 
   <ItemGroup>

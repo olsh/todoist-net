@@ -1,14 +1,14 @@
-# Todoist.Net
-[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=todoist-net&metric=alert_status)](https://sonarcloud.io/dashboard?id=todoist-net)
-[![NuGet](https://img.shields.io/nuget/v/Todoist.Net.svg)](https://www.nuget.org/packages/Todoist.Net/)
+# Todoist.Net.APIv1
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=todoist-net-apiv1&metric=alert_status)](https://sonarcloud.io/dashboard?id=todoist-net-apiv1)
+[![NuGet](https://img.shields.io/nuget/v/Todoist.Net.APIv1.svg)](https://www.nuget.org/packages/Todoist.Net.APIv1/)
 
-A [Todoist API](https://developer.todoist.com) client for .NET.
+A [Todoist API](https://developer.todoist.com) client for .NET that targets the [Unified API v1](https://developer.todoist.com/api/v1/). The library is a fork of [Todoist.Net](https://github.com/olsh/todoist-net) that has been updated to support the new API v1 endpoints and features.
 
 ## Installation
 
-The library is available as a [Nuget package](https://www.nuget.org/packages/Todoist.Net/).
+The library is available as a [Nuget package](https://www.nuget.org/packages/Todoist.Net.APIv1/).
 ```
-Install-Package Todoist.Net
+Install-Package Todoist.Net.APIv1
 ```
 
 ## Get started
