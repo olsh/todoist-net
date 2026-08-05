@@ -24,23 +24,26 @@ export DOTNET_MULTILEVEL_LOOKUP=0
 # EXECUTION
 ###########################################################################
 
-function FirstJsonValue {
-    perl -nle 'print $1 if m{"'"$1"'": "([^"]+)",?}' <<< "${@:2}"
+function first_json_value {
+    local key="$1"
+    local json="$2"
+
+    perl -nle 'print $1 if m{"'"$key"'": "([^"]+)",?}' <<< "$json"
 }
 
 # If dotnet CLI is installed globally and it matches requested version, use for execution
-if [ -x "$(command -v dotnet)" ] && dotnet --version &>/dev/null; then
+if [[ -x "$(command -v dotnet)" ]] && dotnet --version &>/dev/null; then
     export DOTNET_EXE="$(command -v dotnet)"
 else
     # Download install script
     DOTNET_INSTALL_FILE="$TEMP_DIRECTORY/dotnet-install.sh"
     mkdir -p "$TEMP_DIRECTORY"
-    curl -Lsfo "$DOTNET_INSTALL_FILE" "$DOTNET_INSTALL_URL"
+    curl --proto "=https" -Lsfo "$DOTNET_INSTALL_FILE" "$DOTNET_INSTALL_URL"
     chmod +x "$DOTNET_INSTALL_FILE"
 
     # If global.json exists, load expected version
     if [[ -f "$DOTNET_GLOBAL_FILE" ]]; then
-        DOTNET_VERSION=$(FirstJsonValue "version" "$(cat "$DOTNET_GLOBAL_FILE")")
+        DOTNET_VERSION=$(first_json_value "version" "$(cat "$DOTNET_GLOBAL_FILE")")
         if [[ "$DOTNET_VERSION" == ""  ]]; then
             unset DOTNET_VERSION
         fi
