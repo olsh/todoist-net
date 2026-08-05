@@ -10,11 +10,11 @@
 
     <PackageId>Todoist.Net.APIv1</PackageId>
     <PackageTags>todoist</PackageTags>
-    <PackageReleaseNotes>https://github.com/ahmedzaki99/todoist-net/releases</PackageReleaseNotes>
-    <PackageProjectUrl>https://github.com/ahmedzaki99/todoist-net</PackageProjectUrl>
+    <PackageReleaseNotes>https://github.com/ahmedzaki99/todoist-net-apiv1/releases</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/ahmedzaki99/todoist-net-apiv1</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/ahmedzaki99/todoist-net</RepositoryUrl>
+    <RepositoryUrl>https://github.com/ahmedzaki99/todoist-net-apiv1</RepositoryUrl>
     <PackageIcon>todoist-net-nuget.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
 
