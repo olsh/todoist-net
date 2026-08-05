@@ -7,14 +7,13 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Exceptions;
+using Todoist.Net.Extensions;
 using Todoist.Net.Models;
 
 namespace Todoist.Net
 {
     internal sealed class TodoistRestClient : ITodoistRestClient
     {
-        private const string ApiBaseUrl = "https://api.todoist.com/api/v1/";
-
         private readonly HttpClient _httpClient;
         private readonly bool _disposeHttpClient;
 
@@ -39,7 +38,7 @@ namespace Todoist.Net
             // ReSharper disable once ExceptionNotDocumented
             _httpClient = new HttpClient(httpClientHandler)
             {
-                BaseAddress = new Uri(ApiBaseUrl)
+                BaseAddress = new Uri(ApiConstants.ApiBaseUrl)
             };
 
             if (!string.IsNullOrEmpty(token))
@@ -54,7 +53,7 @@ namespace Todoist.Net
         {
             _httpClient = httpClient;
 
-            _httpClient.BaseAddress = new Uri(ApiBaseUrl);
+            _httpClient.BaseAddress = new Uri(ApiConstants.ApiBaseUrl);
             if (!string.IsNullOrEmpty(token))
             {
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);

@@ -2,6 +2,8 @@
 
 using System.Net.Http;
 
+using Todoist.Net.Extensions;
+
 namespace Todoist.Net
 {
     internal sealed class TodoistClientFactory : ITodoistClientFactory
@@ -16,7 +18,7 @@ namespace Todoist.Net
         /// <inheritdoc/>
         public TodoistClient CreateClient(string token)
         {
-            var httpClient = _httpClientFactory.CreateClient();
+            var httpClient = _httpClientFactory.CreateClient(ApiConstants.HttpClientName);
             var todoistRestClient = new TodoistRestClient(token, httpClient);
 
             return new TodoistClient(todoistRestClient);

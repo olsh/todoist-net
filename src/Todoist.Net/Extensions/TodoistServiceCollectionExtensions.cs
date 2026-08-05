@@ -13,13 +13,13 @@ namespace Todoist.Net.Extensions
         /// Adds todoist client services to the specified <see cref="IServiceCollection" />.
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection" /> to add services to.</param>
-        /// <returns>The <see cref="IServiceCollection" /> so that additional calls can be chained.</returns>
-        public static IServiceCollection AddTodoistClient(this IServiceCollection services)
+        /// <returns>An <see cref="IHttpClientBuilder" /> that can be used to configure the todoist http client.</returns>
+        public static IHttpClientBuilder AddTodoistClient(this IServiceCollection services)
         {
-            services.AddHttpClient();
+            var builder = services.AddHttpClient(ApiConstants.HttpClientName);
             services.AddSingleton<ITodoistClientFactory, TodoistClientFactory>();
 
-            return services;
+            return builder;
         }
     }
 }
