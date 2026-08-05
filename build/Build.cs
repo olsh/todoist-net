@@ -82,7 +82,7 @@ class Build : NukeBuild
                     .SetToken(SonarQubeToken)
                     .SetProjectKey("todoist-net")
                     .SetName("Todoist.Net")
-                    .SetOrganization("olsh")
+                    .SetOrganization("ahmedzaki99")
                     .SetVersion("1.0.0.0")
                     .SetAdditionalParameters(new Dictionary<string, string> { ["sonar.scanner.skipJreProvisioning"] = "true" });
 
