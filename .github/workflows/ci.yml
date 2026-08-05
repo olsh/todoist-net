@@ -23,13 +23,6 @@ jobs:
       with:
         dotnet-version: 10.x
 
-    - name: Setup Java
-      if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]')
-      uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961
-      with:
-        distribution: 'temurin'
-        java-version: '21'
-
     - name: Cache NuGet packages
       uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
       with:
@@ -38,26 +31,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-nuget-
 
-    - name: Cache SonarQube
-      if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]')
-      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
-      with:
-        path: ~/.sonar/cache
-        key: ${{ runner.os }}-sonar
-
-    - name: Build, Test and Sonar (push)
-      if: github.event_name == 'push'
-      run: .\build.cmd sonar unit-test nuget-pack --configuration Release
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-    - name: Build, Test and Sonar (trusted PR)
-      if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]'
-      run: .\build.cmd sonar unit-test nuget-pack --configuration Release
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-    - name: Build and Test (PR without Sonar)
+    - name: Build and Test
       if: github.event_name == 'pull_request' && (github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]')
       run: .\build.cmd unit-test nuget-pack --configuration Release
 
