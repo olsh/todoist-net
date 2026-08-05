@@ -19,9 +19,9 @@ namespace Todoist.Net.Serialization.Converters
                 }
                 return CommandResult.Success;
             }
-            var error = JsonSerializer.Deserialize<CommandError>(ref reader, options);
+            var body = JsonSerializer.Deserialize<CommandResultBody>(ref reader, options);
 
-            return CommandResult.Fail(error);
+            return CommandResult.FromBody(body);
         }
 
         public override void Write(Utf8JsonWriter writer, CommandResult value, JsonSerializerOptions options)

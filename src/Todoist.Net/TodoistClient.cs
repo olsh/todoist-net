@@ -20,10 +20,16 @@ namespace Todoist.Net
     /// <summary>
     /// A Todoist client.
     /// </summary>
-    /// <seealso cref="System.IDisposable" />
     /// <seealso cref="Todoist.Net.IAdvancedTodoistClient" />
-    public sealed class TodoistClient : IDisposable, IAdvancedTodoistClient
+    public sealed class TodoistClient : IAdvancedTodoistClient
     {
+        #region Constructors and Fields
+
+        private const string SyncEndpoint = "sync";
+        private const string SyncTokenParameterName = "sync_token";
+        private const string ResourceTypesParameterName = "resource_types";
+        private const string CommandsParameterName = "commands";
+
         private static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
@@ -67,10 +73,7 @@ namespace Todoist.Net
         public TodoistClient(string token, IWebProxy proxy)
             : this(new TodoistRestClient(token, proxy))
         {
-            if (string.IsNullOrEmpty(token))
-            {
-                throw new ArgumentException("Value cannot be null or empty.", nameof(token));
-            }
+            ThrowHelper.ThrowIfNullOrEmpty(token, nameof(token));
         }
 
         /// <summary>
@@ -82,479 +85,445 @@ namespace Todoist.Net
         {
             _restClient = restClient ?? throw new ArgumentNullException(nameof(restClient));
 
+            Ids = new IdsService(this);
+            Workspaces = new WorkspacesService(this);
+            WorkspaceFilters = new WorkspaceFiltersService(this);
             Projects = new ProjectsService(this);
-            Templates = new TemplateService(this);
+            Comments = new CommentsService(this);
+            Templates = new TemplatesService(this);
+            Sections = new SectionsService(this);
             Tasks = new TasksService(this);
             Labels = new LabelsService(this);
-            Comments = new CommentsService(this);
-            Uploads = new UploadService(this);
+            Uploads = new UploadsService(this);
             Filters = new FiltersService(this);
-            Activity = new ActivityService(this);
-            Notifications = new NotificationsService(this);
-            Backups = new BackupService(this);
             Reminders = new RemindersService(this);
-            Users = new UsersService(this);
+            User = new UserService(this);
+            Activity = new ActivityService(this);
+            Backups = new BackupsService(this);
+            Emails = new EmailsService(this);
+            ViewOptions = new ViewOptionsService(this);
             Sharing = new SharingService(this);
-            Emails = new EmailService(this);
-            Sections = new SectionService(this);
+            Notifications = new NotificationsService(this);
+            Calendars = new CalendarsService(this);
         }
 
+        #endregion
 
-        /// <summary>
-        /// Gets the activity service.
-        /// </summary>
-        /// <value>The activity service.</value>
-        public IActivityService Activity { get; }
-
-        /// <summary>
-        /// Gets the backups.
-        /// </summary>
-        /// <value>The backups.</value>
-        public IBackupService Backups { get; }
-
-        /// <summary>
-        /// Gets the email.
-        /// </summary>
-        /// <value>The email.</value>
-        /// <remarks>Filters are only available for Todoist Premium users.</remarks>
-        public IEmailService Emails { get; }
-
-        /// <summary>
-        /// Gets the filters.
-        /// </summary>
-        /// <value>The filters.</value>
-        /// <remarks>Filters are only available for Todoist Premium users.</remarks>
-        public IFiltersService Filters { get; }
-
-        /// <summary>
-        /// Gets the tasks service.
-        /// </summary>
-        /// <value>The tasks service.</value>
-        public ITasksService Tasks { get; }
-
-        /// <summary>
-        /// Gets the labels.
-        /// </summary>
-        /// <value>The labels.</value>
-        public ILabelsService Labels { get; }
-
-        /// <summary>
-        /// Gets the comments service.
-        /// </summary>
-        /// <value>The comments service.</value>
-        public ICommentsService Comments { get; }
-
-        /// <summary>
-        /// Gets the notifications service.
-        /// </summary>
-        /// <value>The notifications service.</value>
-        public INotificationsService Notifications { get; }
-
-        /// <summary>
-        /// Gets the projects service.
-        /// </summary>
-        /// <value>The projects service.</value>
-        public IProjectsService Projects { get; }
-
-        /// <summary>
-        /// Gets the reminders.
-        /// </summary>
-        /// <value>The reminders.</value>
-        /// <remarks>Reminders are only available for Todoist Premium users.</remarks>
-        public IRemindersService Reminders { get; }
-
-        /// <summary>
-        /// Gets the sections service.
-        /// </summary>
-        /// <value>
-        /// The service.
-        /// </value>
-        public ISectionService Sections { get; }
-
-        /// <summary>
-        /// Gets the sharing.
-        /// </summary>
-        /// <value>
-        /// The sharing.
-        /// </value>
-        public ISharingService Sharing { get; }
-
-        /// <summary>
-        /// Gets the templates.
-        /// </summary>
-        /// <value>The templates.</value>
-        /// <remarks>Templates are only available for Todoist Premium users.</remarks>
-        public ITemplateService Templates { get; }
-
-        /// <summary>
-        /// Gets the uploads service.
-        /// </summary>
-        /// <value>The uploads service.</value>
-        public IUploadService Uploads { get; }
-
-        /// <summary>
-        /// Gets the users.
-        /// </summary>
-        /// <value>The users.</value>
-        public IUsersService Users { get; }
-
-        /// <summary>
-        /// Creates the transaction.
-        /// </summary>
-        /// <returns>The transaction.</returns>
-        public ITransaction CreateTransaction()
-        {
-            return new Transaction(this);
-        }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
+        #region IDisposable implementation
+        
+        /// <inheritdoc/>
         public void Dispose()
         {
             _restClient?.Dispose();
         }
 
+        #endregion
+
+        #region ITodoistClient implementation
 
         /// <inheritdoc/>
-        public Task<Resources> GetResourcesAsync(params ResourceType[] resourceTypes) =>
-            GetResourcesAsync("*", resourceTypes);
+        public IIdsService Ids { get; }
 
         /// <inheritdoc/>
-        public Task<Resources> GetResourcesAsync(CancellationToken cancellationToken, params ResourceType[] resourceTypes) =>
-            GetResourcesAsync("*", cancellationToken, resourceTypes);
+        public IWorkspacesService Workspaces { get; }
 
         /// <inheritdoc/>
-        public Task<Resources> GetResourcesAsync(string syncToken, params ResourceType[] resourceTypes) =>
-            GetResourcesAsync(syncToken, CancellationToken.None, resourceTypes);
+        public IWorkspaceFiltersService WorkspaceFilters { get; }
 
         /// <inheritdoc/>
-        public Task<Resources> GetResourcesAsync(string syncToken, CancellationToken cancellationToken, params ResourceType[] resourceTypes)
+        public IProjectsService Projects { get; }
+
+        /// <inheritdoc/>
+        public ICommentsService Comments { get; }
+
+        /// <inheritdoc/>
+        public ITemplatesService Templates { get; }
+
+        /// <inheritdoc/>
+        public ISectionsService Sections { get; }
+
+        /// <inheritdoc/>
+        public ITasksService Tasks { get; }
+
+        /// <inheritdoc/>
+        public ILabelsService Labels { get; }
+
+        /// <inheritdoc/>
+        public IUploadsService Uploads { get; }
+
+        /// <inheritdoc/>
+        public IFiltersService Filters { get; }
+
+        /// <inheritdoc/>
+        public IRemindersService Reminders { get; }
+
+        /// <inheritdoc/>
+        public IUserService User { get; }
+
+        /// <inheritdoc/>
+        public IActivityService Activity { get; }
+
+        /// <inheritdoc/>
+        public IBackupsService Backups { get; }
+
+        /// <inheritdoc/>
+        public IEmailsService Emails { get; }
+
+        /// <inheritdoc/>
+        public IViewOptionsService ViewOptions { get; }
+
+        /// <inheritdoc/>
+        public ISharingService Sharing { get; }
+
+        /// <inheritdoc/>
+        public INotificationsService Notifications { get; }
+
+        /// <inheritdoc/>
+        public ICalendarsService Calendars { get; }
+
+
+        /// <inheritdoc/>
+        public ITransaction CreateTransaction()
         {
-            if (resourceTypes == null)
-            {
-                throw new ArgumentNullException(nameof(resourceTypes));
-            }
+            return new Transaction(this);
+        }
 
-            if (resourceTypes.Length == 0)
+        /// <inheritdoc/>
+        public Task<SyncResourcesResponse> SyncResourcesAsync(ResourceType[] resourceTypes = null, string syncToken = "*", CancellationToken cancellationToken = default)
+        {
+            return SyncResourcesAsync<SyncResourcesResponse>(resourceTypes, syncToken, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<T> SyncResourcesAsync<T>(ResourceType[] resourceTypes = null, string syncToken = "*", CancellationToken cancellationToken = default)
+            where T : BaseSyncResponse
+        {
+            if (resourceTypes == null || resourceTypes.Length == 0)
             {
                 resourceTypes = new[] { ResourceType.All };
             }
 
-            var parameters = new LinkedList<KeyValuePair<string, string>>();
-            parameters.AddLast(new KeyValuePair<string, string>("sync_token", syncToken));
-            parameters.AddLast(
-                new KeyValuePair<string, string>(
-                    "resource_types",
-                    JsonSerializer.Serialize(resourceTypes, SerializerOptions)));
+            var serializedResourceTypes = JsonSerializer.Serialize(resourceTypes, SerializerOptions);
+            syncToken = syncToken ?? "*";
 
-            return ProcessSyncAsync<Resources>(parameters, cancellationToken);
+            var parameters = new Dictionary<string, string>
+            {
+                { SyncTokenParameterName, syncToken },
+                { ResourceTypesParameterName, serializedResourceTypes }
+            };
+
+            return ProcessSyncAsync<T>(parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
-        Task<string> IAdvancedTodoistClient.ExecuteCommandsAsync(params Command[] commands) =>
-            ((IAdvancedTodoistClient)this).ExecuteCommandsAsync(CancellationToken.None, commands);
+        public async Task<SyncTransactionResponse> ExecuteTransactionAsync(
+            Func<ITransaction, Task> transactionActions,
+            CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNull(transactionActions, nameof(transactionActions));
+
+            var transaction = new Transaction(this);
+            await transactionActions(transaction).ConfigureAwait(false);
+
+            return await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        }
 
         /// <inheritdoc/>
-        async Task<string> IAdvancedTodoistClient.ExecuteCommandsAsync(CancellationToken cancellationToken, params Command[] commands)
+        public async Task<SyncTransactionResponse> ExecuteTransactionAndSyncAsync(
+            Func<ITransaction, Task> transactionActions,
+            ResourceType[] resourceTypes,
+            string syncToken = "*",
+            CancellationToken cancellationToken = default)
         {
-            if (commands == null)
+            ThrowHelper.ThrowIfNull(transactionActions, nameof(transactionActions));
+
+            var transaction = new Transaction(this);
+            await transactionActions(transaction).ConfigureAwait(false);
+
+            return await transaction.CommitAndSyncAsync(resourceTypes, syncToken, cancellationToken).ConfigureAwait(false);
+        }
+
+        #endregion
+
+        #region IAdvancedTodoistClient implementation
+
+        /// <inheritdoc/>
+        async Task<SyncTransactionResponse> IAdvancedTodoistClient.SyncCommandsAsync(
+            Command[] commands, 
+            ResourceType[] includedResources,
+            string syncToken, 
+            bool throwOnError,
+            CancellationToken cancellationToken)
+        {
+            ThrowHelper.ThrowIfNullOrEmpty(commands, nameof(commands));
+            
+            var serializedCommands = JsonSerializer.Serialize(commands, SerializerOptions);
+            
+            var parameters = new Dictionary<string, string>
             {
-                throw new ArgumentNullException(nameof(commands));
+                { CommandsParameterName, serializedCommands }
+            };
+
+            if (includedResources != null && includedResources.Length > 0)
+            {
+                parameters[ResourceTypesParameterName] = JsonSerializer.Serialize(includedResources, SerializerOptions);
+            }
+            if (!string.IsNullOrEmpty(syncToken))
+            {
+                parameters[SyncTokenParameterName] = syncToken;
             }
 
-            if (commands.Length == 0)
+            var syncResponse = await ProcessSyncAsync<SyncTransactionResponse>(parameters, cancellationToken)
+                .ConfigureAwait(false);
+
+            if (throwOnError)
             {
-                throw new ArgumentException("Value cannot be an empty collection.", nameof(commands));
+                ThrowIfErrors(syncResponse);
             }
-
-            var parameters = new LinkedList<KeyValuePair<string, string>>();
-            parameters.AddLast(
-                new KeyValuePair<string, string>(
-                    "commands",
-                    JsonSerializer.Serialize(commands, SerializerOptions)));
-
-            var syncResponse = await ProcessSyncAsync<SyncResponse>(parameters, cancellationToken)
-                                   .ConfigureAwait(false);
-
-            ThrowIfErrors(syncResponse);
-
-            if (syncResponse.TempIdMappings.Any())
+            if (syncResponse.TempIdMappings.Count > 0)
             {
                 UpdateTempIds(commands, syncResponse.TempIdMappings);
             }
 
-            return syncResponse.SyncToken;
+            return syncResponse;
         }
 
 
         /// <inheritdoc/>
-        Task<T> IAdvancedTodoistClient.PostFormAsync<T>(
-            string resource,
-            ICollection<KeyValuePair<string, string>> parameters,
-            IEnumerable<UploadFile> files,
-            CancellationToken cancellationToken)
+        Task IAdvancedTodoistClient.GetAsync(string resource, Dictionary<string, string> queryParams, CancellationToken cancellationToken)
         {
-            return ProcessFormAsync<T>(resource, parameters, files, cancellationToken);
+            return ProcessRequestAsync(ct => _restClient.GetAsync(resource, queryParams, ct), cancellationToken);
         }
 
         /// <inheritdoc/>
-        async Task<T> IAdvancedTodoistClient.GetAsync<T>(
-            string resource,
-            ICollection<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken)
+        Task<T> IAdvancedTodoistClient.GetAsync<T>(string resource, Dictionary<string, string> queryParams, CancellationToken cancellationToken)
         {
-            var response = await _restClient.GetAsync(resource, parameters, cancellationToken)
-                                .ConfigureAwait(false);
-
-            var responseContent = await ReadResponseAsync(response, cancellationToken)
-                                      .ConfigureAwait(false);
-
-            return DeserializeResponse<T>(responseContent);
+            return ProcessRequestAsync<T>(ct => _restClient.GetAsync(resource, queryParams, ct), cancellationToken);
         }
 
         /// <inheritdoc/>
-        Task<T> IAdvancedTodoistClient.PostAsync<T>(
-            string resource,
-            ICollection<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken)
+        Task<string> IAdvancedTodoistClient.GetStringAsync(string resource, Dictionary<string, string> queryParams, CancellationToken cancellationToken)
         {
-            return ProcessPostAsync<T>(resource, parameters, cancellationToken);
+            return ProcessTextRequestAsync(ct => _restClient.GetAsync(resource, queryParams, ct), cancellationToken);
+        }
+
+
+        /// <inheritdoc/>
+        Task IAdvancedTodoistClient.PostAsync(string resource, Dictionary<string, string> formParams, CancellationToken cancellationToken)
+        {
+            return ProcessRequestAsync(ct => _restClient.PostAsync(resource, formParams, ct), cancellationToken);
         }
 
         /// <inheritdoc/>
-        Task<string> IAdvancedTodoistClient.PostRawAsync(
-            string resource,
-            ICollection<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken)
+        Task<T> IAdvancedTodoistClient.PostAsync<T>(string resource, Dictionary<string, string> formParams, CancellationToken cancellationToken)
         {
-            return ProcessRawPostAsync(resource, parameters, cancellationToken);
+            return ProcessRequestAsync<T>(ct => _restClient.PostAsync(resource, formParams, ct), cancellationToken);
         }
 
         /// <inheritdoc/>
-        async Task<string> IAdvancedTodoistClient.GetRawAsync(
-            string resource,
-            ICollection<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken)
+        Task IAdvancedTodoistClient.PostFilesAsync(string resource, UploadFile[] files, Dictionary<string, string> formParams, CancellationToken cancellationToken)
         {
-            var response = await _restClient.GetAsync(resource, parameters, cancellationToken)
-                                .ConfigureAwait(false);
-
-            return await ReadResponseAsync(response, cancellationToken)
-                       .ConfigureAwait(false);
+            return ProcessRequestAsync(ct => _restClient.PostFilesAsync(resource, files, formParams, ct), cancellationToken);
         }
 
         /// <inheritdoc/>
-        Task<T> IAdvancedTodoistClient.PostJsonAsync<T>(
-            string resource,
-            object content,
-            CancellationToken cancellationToken)
+        Task<T> IAdvancedTodoistClient.PostFilesAsync<T>(string resource, UploadFile[] files, Dictionary<string, string> formParams, CancellationToken cancellationToken)
         {
-            return ProcessJsonAsync<T>(resource, content, _restClient.PostJsonAsync, cancellationToken);
+            return ProcessRequestAsync<T>(ct => _restClient.PostFilesAsync(resource, files, formParams, ct), cancellationToken);
         }
 
         /// <inheritdoc/>
-        Task<T> IAdvancedTodoistClient.PutJsonAsync<T>(
-            string resource,
-            object content,
-            CancellationToken cancellationToken)
+        Task IAdvancedTodoistClient.PostJsonAsync<TReq>(string resource, TReq content, CancellationToken cancellationToken)
         {
-            return ProcessJsonAsync<T>(resource, content, _restClient.PutAsync, cancellationToken);
+            return ProcessJsonRequestAsync(resource, content, _restClient.PostJsonAsync, cancellationToken);
         }
 
         /// <inheritdoc/>
-        async Task<string> IAdvancedTodoistClient.DeleteRawAsync(
-            string resource,
-            ICollection<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken)
+        Task<TRes> IAdvancedTodoistClient.PostJsonAsync<TReq, TRes>(string resource, TReq content, CancellationToken cancellationToken)
         {
-            var requestUri = CreateRequestUri(resource, parameters);
-            var response = await _restClient.DeleteAsync(requestUri, cancellationToken)
-                                .ConfigureAwait(false);
-
-            return await ReadResponseAsync(response, cancellationToken)
-                       .ConfigureAwait(false);
+            return ProcessJsonRequestAsync<TReq, TRes>(resource, content, _restClient.PostJsonAsync, cancellationToken);
         }
 
 
-        /// <summary>
-        /// Processes the form asynchronous.
-        /// </summary>
-        /// <typeparam name="T">The type of the response.</typeparam>
-        /// <param name="resource">The resource.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <param name="files">The files to upload.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <returns>The response.</returns>
-        private async Task<T> ProcessFormAsync<T>(
-            string resource,
-            ICollection<KeyValuePair<string, string>> parameters,
-            IEnumerable<UploadFile> files,
-            CancellationToken cancellationToken)
+        /// <inheritdoc/>
+        Task IAdvancedTodoistClient.PutAsync(string resource, CancellationToken cancellationToken)
         {
-            var response = await _restClient.PostFormAsync(resource, parameters, files, cancellationToken)
-                                    .ConfigureAwait(false);
+            return ProcessRequestAsync(ct => _restClient.PutAsync(resource, ct), cancellationToken);
+        }
 
-            var responseContent = await ReadResponseAsync(response, cancellationToken)
-                                      .ConfigureAwait(false);
+        /// <inheritdoc/>
+        Task<T> IAdvancedTodoistClient.PutAsync<T>(string resource, CancellationToken cancellationToken)
+        {
+            return ProcessRequestAsync<T>(ct => _restClient.PutAsync(resource, ct), cancellationToken);
+        }
 
-            return DeserializeResponse<T>(responseContent);
+        /// <inheritdoc/>
+        Task IAdvancedTodoistClient.PutJsonAsync<TReq>(string resource, TReq content, CancellationToken cancellationToken)
+        {
+            return ProcessJsonRequestAsync(resource, content, _restClient.PutJsonAsync, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        Task<TRes> IAdvancedTodoistClient.PutJsonAsync<TReq, TRes>(string resource, TReq content, CancellationToken cancellationToken)
+        {
+            return ProcessJsonRequestAsync<TReq, TRes>(resource, content, _restClient.PutJsonAsync, cancellationToken);
         }
 
 
-        /// <summary>
-        /// Processes the request asynchronous.
-        /// </summary>
-        /// <typeparam name="T">The type of the result.</typeparam>
-        /// <param name="resource">The resource.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>
-        /// The result of the operation.
-        /// </returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        private async Task<T> ProcessPostAsync<T>(
-            string resource,
-            ICollection<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken)
+        /// <inheritdoc/>
+        Task IAdvancedTodoistClient.DeleteAsync(string resource, Dictionary<string, string> queryParams, CancellationToken cancellationToken)
         {
-            var responseContent = await ProcessRawPostAsync(resource, parameters, cancellationToken)
-                                      .ConfigureAwait(false);
-
-            return DeserializeResponse<T>(responseContent);
+            return ProcessRequestAsync(ct => _restClient.DeleteAsync(resource, queryParams, ct), cancellationToken);
         }
 
-        /// <summary>
-        /// Processes the request asynchronous without deserialization.
-        /// </summary>
-        /// <param name="resource">The resource.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The response content.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        private async Task<string> ProcessRawPostAsync(
-            string resource,
-            ICollection<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken)
+        /// <inheritdoc/>
+        Task<T> IAdvancedTodoistClient.DeleteAsync<T>(string resource, Dictionary<string, string> queryParams, CancellationToken cancellationToken)
         {
-            var response = await _restClient.PostAsync(resource, parameters, cancellationToken)
-                                .ConfigureAwait(false);
-
-            var responseContent = await ReadResponseAsync(response, cancellationToken)
-                                      .ConfigureAwait(false);
-            return responseContent;
+            return ProcessRequestAsync<T>(ct => _restClient.DeleteAsync(resource, queryParams, ct), cancellationToken);
         }
 
-        private async Task<T> ProcessJsonAsync<T>(
-            string resource,
-            object content,
+        #endregion
+
+        #region Private helper methods
+
+        private Task<T> ProcessSyncAsync<T>(Dictionary<string, string> parameters, CancellationToken cancellationToken)
+        {
+            return ProcessRequestAsync<T>(ct => _restClient.PostAsync(SyncEndpoint, parameters, ct), cancellationToken);
+        }
+
+
+        private static async Task ProcessRequestAsync(
+            Func<CancellationToken, Task<HttpResponseMessage>> restCall, 
+            CancellationToken cancellationToken)
+        {
+            var response = await restCall(cancellationToken).ConfigureAwait(false);
+
+            await EnsureSuccessResponseAsync(response, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        private static async Task<T> ProcessRequestAsync<T>(
+            Func<CancellationToken, Task<HttpResponseMessage>> restCall,
+            CancellationToken cancellationToken)
+        {
+            var response = await restCall(cancellationToken)
+                .ConfigureAwait(false);
+
+            await EnsureSuccessResponseAsync(response, cancellationToken)
+                .ConfigureAwait(false);
+
+            return await DeserializeResponseAsync<T>(response, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        private static async Task<string> ProcessTextRequestAsync(
+            Func<CancellationToken, Task<HttpResponseMessage>> restCall,
+            CancellationToken cancellationToken)
+        {
+            var response = await restCall(cancellationToken)
+                .ConfigureAwait(false);
+
+            await EnsureSuccessResponseAsync(response, cancellationToken)
+                .ConfigureAwait(false);
+
+            return await response.Content.ReadAsStringAsync()
+                .ConfigureAwait(false);
+        }
+
+        private static async Task ProcessJsonRequestAsync<TReq>(
+            string resource, 
+            TReq content, 
             Func<string, string, CancellationToken, Task<HttpResponseMessage>> restCall,
             CancellationToken cancellationToken)
         {
             var jsonContent = JsonSerializer.Serialize(content, SerializerOptions);
+
             var response = await restCall(resource, jsonContent, cancellationToken)
-                                .ConfigureAwait(false);
-            var responseContent = await ReadResponseAsync(response, cancellationToken)
-                                      .ConfigureAwait(false);
-            return DeserializeResponse<T>(responseContent);
+                .ConfigureAwait(false);
+
+            await EnsureSuccessResponseAsync(response, cancellationToken)
+                .ConfigureAwait(false);
         }
 
-        private static string CreateRequestUri(string resource, ICollection<KeyValuePair<string, string>> parameters)
+        private static async Task<TRes> ProcessJsonRequestAsync<TReq, TRes>(
+            string resource, 
+            TReq content, 
+            Func<string, string, CancellationToken, Task<HttpResponseMessage>> restCall,
+            CancellationToken cancellationToken)
         {
-            if (parameters == null || parameters.Count == 0)
+            var jsonContent = JsonSerializer.Serialize(content, SerializerOptions);
+
+            var response = await restCall(resource, jsonContent, cancellationToken)
+                .ConfigureAwait(false);
+
+            await EnsureSuccessResponseAsync(response, cancellationToken)
+                .ConfigureAwait(false);
+
+            return await DeserializeResponseAsync<TRes>(response, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+
+        private static async Task EnsureSuccessResponseAsync(HttpResponseMessage response, CancellationToken cancellationToken)
+        {
+            if (response.IsSuccessStatusCode)
             {
-                return resource;
+                return;
             }
 
-            var query = string.Join(
-                "&",
-                parameters.Select(
-                    p => $"{Uri.EscapeDataString(p.Key)}={Uri.EscapeDataString(p.Value ?? string.Empty)}"));
-            return $"{resource}?{query}";
-        }
-
-        /// <summary>
-        /// Processes the synchronize request asynchronous.
-        /// </summary>
-        /// <typeparam name="T">Type of the response.</typeparam>
-        /// <param name="parameters">The parameters.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The response.</returns>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        private Task<T> ProcessSyncAsync<T>(ICollection<KeyValuePair<string, string>> parameters, CancellationToken cancellationToken)
-        {
-            return ProcessPostAsync<T>("sync", parameters, cancellationToken);
-        }
-
-        /// <summary>
-        /// Reads the response asynchronous.
-        /// </summary>
-        /// <param name="response">The response.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="HttpRequestException">API exception.</exception>
-        /// <returns>The response content.</returns>
-        private async Task<string> ReadResponseAsync(HttpResponseMessage response, CancellationToken cancellationToken)
-        {
-            var responseContent = await response.Content.ReadAsStringAsync()
-                                      .ConfigureAwait(false);
-            cancellationToken.ThrowIfCancellationRequested();
-
-            if (!response.IsSuccessStatusCode)
+            TodoistError errorContent;
+            try
             {
-                throw new HttpRequestException($"Code: {response.StatusCode}. Content: {responseContent}.");
+                errorContent = await DeserializeResponseAsync<TodoistError>(response, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+            catch
+            {
+                // If deserialization fails, we can still throw a generic exception with status code and reason.
+                errorContent = null;
             }
 
-            return responseContent;
-        }
-
-        private T DeserializeResponse<T>(string responseContent)
-        {
-            return JsonSerializer.Deserialize<T>(responseContent, SerializerOptions);
-        }
-
-        /// <summary>
-        /// Throws if there are errors in the response.
-        /// </summary>
-        /// <param name="syncResponse">The synchronize response.</param>
-        /// <exception cref="System.AggregateException">Command execution exception.</exception>
-        private void ThrowIfErrors(SyncResponse syncResponse)
-        {
-            LinkedList<TodoistException> exceptions = null;
-            foreach (var syncStatus in syncResponse.SyncStatus)
+            if (errorContent != null)
             {
-                var result = syncStatus.Value;
-
-                // an "ok" string which signals success of the command
-                if (result.IsSuccess)
-                {
-                    continue;
-                }
-
-                if (exceptions == null)
-                {
-                    exceptions = new LinkedList<TodoistException>();
-                }
-
-                exceptions.AddLast(
-                    new TodoistException(
-                        result.CommandError.ErrorCode,
-                        result.CommandError.Error,
-                        result.CommandError));
+                throw new TodoistException(errorContent);
             }
+            response.EnsureSuccessStatusCode();
+        }
 
-            if (exceptions?.Any() == true)
+        private static async Task<T> DeserializeResponseAsync<T>(HttpResponseMessage response, CancellationToken cancellationToken)
+        {
+            using (var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+            {
+                return await JsonSerializer.DeserializeAsync<T>(responseStream, SerializerOptions, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+        }
+
+
+        private static void ThrowIfErrors(SyncTransactionResponse syncResponse)
+        {
+            var exceptions = syncResponse.SyncStatus
+                .Where(kvp => !kvp.Value.IsSuccess)
+                .Select(kvp => new TodoistException(kvp.Value.CommandBody))
+                .ToList(); 
+            
+            if (exceptions.Count > 1)
             {
                 throw new AggregateException(exceptions);
             }
+            if (exceptions.Count == 1)
+            {
+                throw exceptions[0];
+            }
         }
 
-        private void UpdateTempIds(Command[] commands, IDictionary<Guid, string> tempIdMappings)
+        private static void UpdateTempIds(Command[] commands, Dictionary<Guid, string> tempIdMappings)
         {
             foreach (var command in commands)
             {
-                if (command.Argument is BaseEntity identifiedArgument && command.TempId.HasValue
-                        && tempIdMappings.TryGetValue(command.TempId.Value, out var persistentId))
+                if (command.Argument is BaseEntity identifiedArgument 
+                    && command.TempId.HasValue
+                    && tempIdMappings.TryGetValue(command.TempId.Value, out var persistentId))
                 {
                     identifiedArgument.Id = persistentId;
                 }
@@ -563,5 +532,7 @@ namespace Todoist.Net
                 withRelations?.UpdateRelatedTempIds(tempIdMappings);
             }
         }
+
+        #endregion
     }
 }

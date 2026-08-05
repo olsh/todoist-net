@@ -1,9 +1,3 @@
-using System;
-
-using Todoist.Net.Tests.Extensions;
-
-using Xunit;
-
 namespace Todoist.Net.Tests.Helpers;
 
 [Trait(Constants.TraitName, Constants.UnitTraitValue)]

@@ -1,11 +1,3 @@
-using System;
-
-using Todoist.Net.Models;
-using Todoist.Net.Tests.Extensions;
-using Todoist.Net.Tests.Helpers;
-
-using Xunit;
-
 namespace Todoist.Net.Tests.Models
 {
     [Trait(Constants.TraitName, Constants.UnitTraitValue)]
