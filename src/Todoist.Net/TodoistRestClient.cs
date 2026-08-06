@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 using Flurl;
 using Flurl.Http;
-using Flurl.Http.Configuration;
 using Flurl.Http.Content;
 
 using Todoist.Net.Exceptions;
@@ -16,16 +15,21 @@ using Todoist.Net.Models;
 
 namespace Todoist.Net
 {
-    internal sealed class TodoistRestClient : ITodoistRestClient
+    internal class TodoistRestClient : ITodoistRestClient
     {
-        private readonly IFlurlClient _flurlClient;
+        private readonly Lazy<IFlurlClient> _shortLivedClient;
+        protected Func<IFlurlClient> FlurlClientGetter { get; }
 
         public TodoistRestClient(string token) : this(token, (IWebProxy)null)
         { }
 
         public TodoistRestClient(string token, IWebProxy proxy)
         {
-            _flurlClient = new FlurlClientBuilder(ApiConstants.ApiBaseUrl)
+            var name = ApiConstants.FlurlClientName + proxy?.GetHashCode();
+
+            // We use long-lived HttpClient instances in cases where IHttpClientFactory is not available (e.g., in .NET Framework).
+            // This is to avoid socket exhaustion issues.
+            FlurlClientGetter = () => FlurlHttp.Clients.GetOrAdd(name, ApiConstants.ApiBaseUrl, builder => builder
                 .ConfigureInnerHandler(handler =>
                 {
                     handler.Proxy = proxy;
@@ -33,19 +37,28 @@ namespace Todoist.Net
                 })
                 .WithOAuthBearerToken(token)
                 .AllowAnyHttpStatus()
-                .OnError(HandleFlurlError)
-                .Build();
+                .OnError(HandleFlurlError));
         }
 
         public TodoistRestClient(string token, HttpClient httpClient)
         {
-            _flurlClient = new FlurlClient(httpClient, ApiConstants.ApiBaseUrl)
+            // We use a short-lived FlurlClient instance here because the HttpClient is provided externally and may have its own lifetime management.
+            // This avoids potential issues with reusing a FlurlClient that wraps an externally managed HttpClient.
+            _shortLivedClient = new Lazy<IFlurlClient>(() => new FlurlClient(httpClient, ApiConstants.ApiBaseUrl)
                 .WithOAuthBearerToken(token)
                 .AllowAnyHttpStatus()
-                .OnError(HandleFlurlError);
+                .OnError(HandleFlurlError));
+
+            FlurlClientGetter = () => _shortLivedClient.Value;
         }
 
-        void IDisposable.Dispose() { }
+
+        protected virtual void Dispose(bool disposing) { }
+        void IDisposable.Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
 
         /// <inheritdoc/>
@@ -53,7 +66,7 @@ namespace Todoist.Net
         {
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
 
-            var response = await _flurlClient
+            var response = await FlurlClientGetter()
                 .Request(ApiConstants.ResourcesEndpoint, resource)
                 .SetQueryParams(queryParams)
                 .GetAsync(cancellationToken: cancellationToken)
@@ -67,7 +80,7 @@ namespace Todoist.Net
         {
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
 
-            var response = await _flurlClient
+            var response = await FlurlClientGetter()
                 .Request(ApiConstants.ResourcesEndpoint, resource)
                 .PostUrlEncodedAsync(formParams ?? new Dictionary<string, string>(), cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
@@ -81,7 +94,7 @@ namespace Todoist.Net
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
             ThrowHelper.ThrowIfNull(files, nameof(files));
 
-            var response = await _flurlClient
+            var response = await FlurlClientGetter()
                 .Request(ApiConstants.ResourcesEndpoint, resource)
                 .PostMultipartAsync(mp => mp
                     .AddStringParts(formParams)
@@ -97,7 +110,7 @@ namespace Todoist.Net
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
             ThrowHelper.ThrowIfNullOrEmpty(jsonContent, nameof(jsonContent));
 
-            var response = await _flurlClient
+            var response = await FlurlClientGetter()
                 .Request(ApiConstants.ResourcesEndpoint, resource)
                 .PostAsync(new CapturedJsonContent(jsonContent), cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
@@ -110,7 +123,7 @@ namespace Todoist.Net
         {
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
 
-            var response = await _flurlClient
+            var response = await FlurlClientGetter()
                 .Request(ApiConstants.ResourcesEndpoint, resource)
                 .PutAsync(cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
@@ -124,7 +137,7 @@ namespace Todoist.Net
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
             ThrowHelper.ThrowIfNullOrEmpty(jsonContent, nameof(jsonContent));
 
-            var response = await _flurlClient
+            var response = await FlurlClientGetter()
                 .Request(ApiConstants.ResourcesEndpoint, resource)
                 .PutAsync(new CapturedJsonContent(jsonContent), cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
@@ -137,7 +150,7 @@ namespace Todoist.Net
         {
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
 
-            var response = await _flurlClient
+            var response = await FlurlClientGetter()
                 .Request(ApiConstants.ResourcesEndpoint, resource)
                 .SetQueryParams(queryParams)
                 .DeleteAsync(cancellationToken: cancellationToken)
@@ -147,7 +160,7 @@ namespace Todoist.Net
         }
 
 
-        private static void HandleFlurlError(FlurlCall call)
+        protected virtual void HandleFlurlError(FlurlCall call)
         {
             if (call.Exception is HttpRequestException)
             {
