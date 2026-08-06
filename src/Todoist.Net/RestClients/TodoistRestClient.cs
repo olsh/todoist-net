@@ -54,7 +54,7 @@ namespace Todoist.Net
 
 
         protected virtual void Dispose(bool disposing) { }
-        void IDisposable.Dispose()
+        public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
@@ -62,7 +62,7 @@ namespace Todoist.Net
 
 
         /// <inheritdoc/>
-        public async Task<HttpResponseMessage> GetAsync(string resource, Dictionary<string, string> queryParams = null, CancellationToken cancellationToken = default)
+        public virtual async Task<HttpResponseMessage> GetAsync(string resource, Dictionary<string, string> queryParams = null, CancellationToken cancellationToken = default)
         {
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
 
@@ -76,7 +76,7 @@ namespace Todoist.Net
         }
 
         /// <inheritdoc/>
-        public async Task<HttpResponseMessage> PostAsync(string resource, Dictionary<string, string> formParams = null, CancellationToken cancellationToken = default)
+        public virtual async Task<HttpResponseMessage> PostAsync(string resource, Dictionary<string, string> formParams = null, CancellationToken cancellationToken = default)
         {
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
 
@@ -89,7 +89,7 @@ namespace Todoist.Net
         }
 
         /// <inheritdoc/>
-        public async Task<HttpResponseMessage> PostFilesAsync(string resource, UploadFile[] files, Dictionary<string, string> formParams = null, CancellationToken cancellationToken = default)
+        public virtual async Task<HttpResponseMessage> PostFilesAsync(string resource, UploadFile[] files, Dictionary<string, string> formParams = null, CancellationToken cancellationToken = default)
         {
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
             ThrowHelper.ThrowIfNull(files, nameof(files));
@@ -105,7 +105,7 @@ namespace Todoist.Net
         }
 
         /// <inheritdoc/>
-        public async Task<HttpResponseMessage> PostJsonAsync(string resource, string jsonContent, CancellationToken cancellationToken = default)
+        public virtual async Task<HttpResponseMessage> PostJsonAsync(string resource, string jsonContent, CancellationToken cancellationToken = default)
         {
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
             ThrowHelper.ThrowIfNullOrEmpty(jsonContent, nameof(jsonContent));
@@ -119,7 +119,7 @@ namespace Todoist.Net
         }
 
         /// <inheritdoc/>
-        public async Task<HttpResponseMessage> PutAsync(string resource, CancellationToken cancellationToken = default)
+        public virtual async Task<HttpResponseMessage> PutAsync(string resource, CancellationToken cancellationToken = default)
         {
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
 
@@ -132,7 +132,7 @@ namespace Todoist.Net
         }
 
         /// <inheritdoc/>
-        public async Task<HttpResponseMessage> PutJsonAsync(string resource, string jsonContent, CancellationToken cancellationToken = default)
+        public virtual async Task<HttpResponseMessage> PutJsonAsync(string resource, string jsonContent, CancellationToken cancellationToken = default)
         {
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
             ThrowHelper.ThrowIfNullOrEmpty(jsonContent, nameof(jsonContent));
@@ -146,7 +146,7 @@ namespace Todoist.Net
         }
 
         /// <inheritdoc/>
-        public async Task<HttpResponseMessage> DeleteAsync(string resource, Dictionary<string, string> queryParams = null, CancellationToken cancellationToken = default)
+        public virtual async Task<HttpResponseMessage> DeleteAsync(string resource, Dictionary<string, string> queryParams = null, CancellationToken cancellationToken = default)
         {
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
 
