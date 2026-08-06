@@ -2,9 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Flurl;
+using Flurl.Http;
+using Flurl.Http.Configuration;
+using Flurl.Http.Content;
 
 using Todoist.Net.Exceptions;
 using Todoist.Net.Extensions;
@@ -14,59 +18,34 @@ namespace Todoist.Net
 {
     internal sealed class TodoistRestClient : ITodoistRestClient
     {
-        private readonly HttpClient _httpClient;
-        private readonly bool _disposeHttpClient;
-
-        public TodoistRestClient() : this(null, (IWebProxy)null)
-        { }
+        private readonly IFlurlClient _flurlClient;
 
         public TodoistRestClient(string token) : this(token, (IWebProxy)null)
         { }
 
-        public TodoistRestClient(IWebProxy proxy) : this(null, proxy)
-        { }
-
         public TodoistRestClient(string token, IWebProxy proxy)
         {
-            var httpClientHandler = new HttpClientHandler();
-            if (proxy != null)
-            {
-                httpClientHandler.Proxy = proxy;
-                httpClientHandler.UseProxy = true;
-            }
-
-            // ReSharper disable once ExceptionNotDocumented
-            _httpClient = new HttpClient(httpClientHandler)
-            {
-                BaseAddress = new Uri(ApiConstants.ApiBaseUrl)
-            };
-
-            if (!string.IsNullOrEmpty(token))
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            }
-
-            _disposeHttpClient = true;
+            _flurlClient = new FlurlClientBuilder(ApiConstants.ApiBaseUrl)
+                .ConfigureInnerHandler(handler =>
+                {
+                    handler.Proxy = proxy;
+                    handler.UseProxy = proxy != null;
+                })
+                .WithOAuthBearerToken(token)
+                .AllowAnyHttpStatus()
+                .OnError(HandleFlurlError)
+                .Build();
         }
 
         public TodoistRestClient(string token, HttpClient httpClient)
         {
-            _httpClient = httpClient;
-
-            _httpClient.BaseAddress = new Uri(ApiConstants.ApiBaseUrl);
-            if (!string.IsNullOrEmpty(token))
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            }
+            _flurlClient = new FlurlClient(httpClient, ApiConstants.ApiBaseUrl)
+                .WithOAuthBearerToken(token)
+                .AllowAnyHttpStatus()
+                .OnError(HandleFlurlError);
         }
 
-        public void Dispose()
-        {
-            if (_disposeHttpClient)
-            {
-                _httpClient?.Dispose();
-            }
-        }
+        void IDisposable.Dispose() { }
 
 
         /// <inheritdoc/>
@@ -74,21 +53,26 @@ namespace Todoist.Net
         {
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
 
-            var requestUri = await AppendQueryParamsAsync(resource, queryParams).ConfigureAwait(false);
+            var response = await _flurlClient
+                .Request(ApiConstants.ResourcesEndpoint, resource)
+                .SetQueryParams(queryParams)
+                .GetAsync(cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
 
-            return await _httpClient.GetAsync(requestUri, cancellationToken).ConfigureAwait(false);
+            return response.ResponseMessage;
         }
 
         /// <inheritdoc/>
         public async Task<HttpResponseMessage> PostAsync(string resource, Dictionary<string, string> formParams = null, CancellationToken cancellationToken = default)
         {
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
-            
-            formParams = formParams ?? new Dictionary<string, string>();
-            using (var content = new FormUrlEncodedContent(formParams))
-            {
-                return await _httpClient.PostAsync(resource, content, cancellationToken).ConfigureAwait(false);
-            }
+
+            var response = await _flurlClient
+                .Request(ApiConstants.ResourcesEndpoint, resource)
+                .PostUrlEncodedAsync(formParams ?? new Dictionary<string, string>(), cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
+
+            return response.ResponseMessage;
         }
 
         /// <inheritdoc/>
@@ -97,13 +81,14 @@ namespace Todoist.Net
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
             ThrowHelper.ThrowIfNull(files, nameof(files));
 
-            formParams = formParams ?? new Dictionary<string, string>();
-            using (var multipartFormDataContent = new MultipartFormDataContent())
-            {
-                BuildFormDataContent(multipartFormDataContent, formParams, files);
+            var response = await _flurlClient
+                .Request(ApiConstants.ResourcesEndpoint, resource)
+                .PostMultipartAsync(mp => mp
+                    .AddStringParts(formParams)
+                    .AddFileParts("file", files), cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
 
-                return await _httpClient.PostAsync(resource, multipartFormDataContent, cancellationToken).ConfigureAwait(false);
-            }
+            return response.ResponseMessage;
         }
 
         /// <inheritdoc/>
@@ -112,20 +97,25 @@ namespace Todoist.Net
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
             ThrowHelper.ThrowIfNullOrEmpty(jsonContent, nameof(jsonContent));
 
-            using (var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json"))
-            {
-                return await _httpClient.PostAsync(resource, content, cancellationToken).ConfigureAwait(false);
-            }
+            var response = await _flurlClient
+                .Request(ApiConstants.ResourcesEndpoint, resource)
+                .PostAsync(new CapturedJsonContent(jsonContent), cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
+
+            return response.ResponseMessage;
         }
 
         /// <inheritdoc/>
-        public Task<HttpResponseMessage> PutAsync(string resource, CancellationToken cancellationToken = default)
+        public async Task<HttpResponseMessage> PutAsync(string resource, CancellationToken cancellationToken = default)
         {
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
-            
-            var content = new StringContent(string.Empty);
 
-            return _httpClient.PutAsync(resource, content, cancellationToken);
+            var response = await _flurlClient
+                .Request(ApiConstants.ResourcesEndpoint, resource)
+                .PutAsync(cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
+
+            return response.ResponseMessage;
         }
 
         /// <inheritdoc/>
@@ -134,10 +124,12 @@ namespace Todoist.Net
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
             ThrowHelper.ThrowIfNullOrEmpty(jsonContent, nameof(jsonContent));
 
-            using (var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json"))
-            {
-                return await _httpClient.PutAsync(resource, content, cancellationToken).ConfigureAwait(false);
-            }
+            var response = await _flurlClient
+                .Request(ApiConstants.ResourcesEndpoint, resource)
+                .PutAsync(new CapturedJsonContent(jsonContent), cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
+
+            return response.ResponseMessage;
         }
 
         /// <inheritdoc/>
@@ -145,42 +137,22 @@ namespace Todoist.Net
         {
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
 
-            var requestUri = await AppendQueryParamsAsync(resource, queryParams).ConfigureAwait(false);
+            var response = await _flurlClient
+                .Request(ApiConstants.ResourcesEndpoint, resource)
+                .SetQueryParams(queryParams)
+                .DeleteAsync(cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
 
-            return await _httpClient.DeleteAsync(requestUri, cancellationToken).ConfigureAwait(false);
+            return response.ResponseMessage;
         }
 
 
-        private static async Task<string> AppendQueryParamsAsync(string resource, Dictionary<string, string> queryParams)
+        private static void HandleFlurlError(FlurlCall call)
         {
-            if (queryParams == null || queryParams.Count == 0)
+            if (call.Exception is HttpRequestException)
             {
-                return resource;
-            }
-
-            using (var content = new FormUrlEncodedContent(queryParams))
-            {
-                var query = await content.ReadAsStringAsync().ConfigureAwait(false);
-                return $"{resource}?{query}";
-            }
-        }
-
-        private static void BuildFormDataContent(MultipartFormDataContent multipartFormDataContent, Dictionary<string, string> formParams, UploadFile[] files)
-        {
-            foreach (var keyValuePair in formParams)
-            {
-                multipartFormDataContent.Add(new StringContent(keyValuePair.Value), $"\"{keyValuePair.Key}\"");
-            }
-
-            foreach (var file in files)
-            {
-                var content = new StreamContent(file.ContentStream);
-                if (file.MimeType != null && MediaTypeHeaderValue.TryParse(file.MimeType, out var mediaType))
-                {
-                    content.Headers.ContentType = mediaType;
-                }
-
-                multipartFormDataContent.Add(content, "file", file.Filename);
+                // Users of this library expect to receive HttpRequestException when the request fails, not FlurlHttpException.
+                throw call.Exception;
             }
         }
     }
