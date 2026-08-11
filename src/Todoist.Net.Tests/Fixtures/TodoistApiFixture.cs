@@ -104,13 +104,18 @@ public sealed class TodoistApiFixture : IAsyncLifetime
         }
     }
 
-    public async Task<ProjectInfo> GetPlaygroundProjectAsync()
+    public async Task<ProjectInfo> GetPlaygroundProjectAsync(bool freshInstance = false)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
 
         await _creationGate.WaitAsync(TestContext.Current.CancellationToken);
         try
         {
+            if (freshInstance)
+            {
+                await DeletePlaygroundProjectAsync();
+                _playgroundProject = await CreatePlaygroundProjectAsync();
+            }
             return _playgroundProject ??= await CreatePlaygroundProjectAsync();
         }
         finally
@@ -119,19 +124,46 @@ public sealed class TodoistApiFixture : IAsyncLifetime
         }
     }
 
-    public async Task<WorkspaceInfo> GetPlaygroundWorkspaceAsync()
+    public async Task<WorkspaceInfo> GetPlaygroundWorkspaceAsync(bool freshInstance = false)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
 
         await _creationGate.WaitAsync(TestContext.Current.CancellationToken);
         try
         {
+            if (freshInstance)
+            {
+                await DeletePlaygroundWorkspaceAsync();
+                _playgroundWorkspace = await CreatePlaygroundWorkspaceAsync();
+            }
             return _playgroundWorkspace ??= await CreatePlaygroundWorkspaceAsync();
         }
         finally
         {
             _creationGate.Release();
         }
+    }
+
+    public async Task<bool> DeletePlaygroundProjectAsync()
+    {
+        if (string.IsNullOrEmpty(_playgroundProject?.Id.PersistentId))
+        {
+            return false;
+        }
+        await Client.Projects.DeleteAsync(_playgroundProject.Id.PersistentId, TestContext.Current.CancellationToken);
+        _playgroundProject = null;
+        return true;
+    }
+
+    public async Task<bool> DeletePlaygroundWorkspaceAsync()
+    {
+        if (string.IsNullOrEmpty(_playgroundWorkspace?.Id.PersistentId))
+        {
+            return false;
+        }
+        await Client.Workspaces.DeleteAsync(_playgroundWorkspace.Id.PersistentId, TestContext.Current.CancellationToken);
+        _playgroundWorkspace = null;
+        return true;
     }
 
     public TodoistTracker TrackForCleanup<T>(
@@ -190,26 +222,6 @@ public sealed class TodoistApiFixture : IAsyncLifetime
             cancellationToken: TestContext.Current.CancellationToken);
 
         return response.Workspaces.First(w => w.Id == playgroundWorkspace.Id);
-    }
-
-    private async Task DeletePlaygroundProjectAsync()
-    {
-        if (string.IsNullOrEmpty(_playgroundProject?.Id.PersistentId))
-        {
-            return;
-        }
-        await Client.Projects.DeleteAsync(_playgroundProject.Id.PersistentId, TestContext.Current.CancellationToken);
-        _playgroundProject = null;
-    }
-
-    private async Task DeletePlaygroundWorkspaceAsync()
-    {
-        if (string.IsNullOrEmpty(_playgroundWorkspace?.Id.PersistentId))
-        {
-            return;
-        }
-        await Client.Workspaces.DeleteAsync(_playgroundWorkspace.Id.PersistentId, TestContext.Current.CancellationToken);
-        _playgroundWorkspace = null;
     }
 
 
