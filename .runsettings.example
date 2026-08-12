@@ -2,26 +2,49 @@
 
 <!-- 
   This is an example of the .runsettings file used for configuring test runs in this project. 
-  To use it, copy this file to the same directory with the name ".runsettings" and replace the placeholder values with your actual Todoist API tokens.
+  To use it, copy this file to the same directory with the name ".runsettings" and replace the placeholder values either for Doppler or Todoist API tokens.
 
   The tokens are used for running integration tests that interact with the Todoist API. 
-  The primary token (todoist_token) is required and should be a valid token of a Premium account to run all tests. 
+  The primary token (TODOIST_TOKEN) is required and should be a valid token of a Premium account to run all tests. 
   The secondary and tertiary tokens are optional but can be set to valid tokens of different accounts to distribute the load of integration tests and avoid hitting rate limits.
+  You should use Doppler to test with short-lived tokens and have automatic refresh enabled.
 -->
 <RunSettings>
   <RunConfiguration>
     <EnvironmentVariables>
+
+      <!-- Use either Doppler or Todoist tokens. If Doppler token is provided then Todoist token is ignored. -->
+
+
+      <!-- Replace the value of the token with your actual Doppler Service Token. -->
+      <DOPPLER_TOKEN>YOUR_SERVICE_TOKEN</DOPPLER_TOKEN>
+
+      <!-- Replace the values of Doppler Project and Config that contain the required secrets, or keep commented to use default values. -->
+      <!-- <DOPPLER_PROJECT>todoist-net</DOPPLER_PROJECT> -->
+      <!-- <DOPPLER_CONFIG>dev</DOPPLER_CONFIG> -->
+
+      <!-- Doppler secrets keys. Replace only to use different values from defaults. -->
+      <!-- <CLIENT_ID_KEY>CLIENT_ID</CLIENT_ID_KEY> -->
+      <!-- <CLIENT_SECRET_KEY>CLIENT_SECRET</CLIENT_SECRET_KEY> -->
+      <!-- <PRIMARY_ACCESS_TOKEN_KEY>PRIMARY_ACCESS_TOKEN</PRIMARY_ACCESS_TOKEN_KEY> -->
+      <!-- <PRIMARY_REFRESH_TOKEN_KEY>PRIMARY_REFRESH_TOKEN</PRIMARY_REFRESH_TOKEN_KEY> -->
+      <!-- <SECONDARY_ACCESS_TOKEN_KEY>SECONDARY_ACCESS_TOKEN</SECONDARY_ACCESS_TOKEN_KEY> -->
+      <!-- <SECONDARY_REFRESH_TOKEN_KEY>SECONDARY_REFRESH_TOKEN</SECONDARY_REFRESH_TOKEN_KEY> -->
+      <!-- <TERTIARY_ACCESS_TOKEN_KEY>TERTIARY_ACCESS_TOKEN</TERTIARY_ACCESS_TOKEN_KEY> -->
+      <!-- <TERTIARY_REFRESH_TOKEN_KEY>TERTIARY_REFRESH_TOKEN</TERTIARY_REFRESH_TOKEN_KEY> -->
+
+
       <!-- Replace the value of the token with your actual Todoist API token. -->
       <!-- In order to run "Premium" integration tests, this must be a valid token of a Premium account. -->
-      <todoist_token>YOUR_TODOIST_TOKEN</todoist_token>
+      <TODOIST_TOKEN>YOUR_TODOIST_TOKEN</TODOIST_TOKEN>
 
-      <!-- Set this value in order to run "Collaboration" integration tests, it must be set to a valid token of a different account than the one used in `todoist_token`. -->
+      <!-- Set this value in order to run "Collaboration" integration tests, it must be set to a valid token of a different account than the one used in `TODOIST_TOKEN`. -->
       <!-- In addition to "Collaboration" tests, this token is meant to be used in "Free-tier" tests (when present) to take some of the load off the primary token to avoid hitting rate limits. -->
-      <!-- <todoist_token_secondary></todoist_token_secondary> -->
+      <!-- <TODOIST_TOKEN_SECONDARY></TODOIST_TOKEN_SECONDARY> -->
 
       <!-- Optional: Set this token in order to further distribute the load of integration tests across multiple accounts to avoid hitting rate limits on any single account. -->
-      <!-- It should be set to a valid token of a different account than the ones used in `todoist_token` and `todoist_token_secondary`. -->
-      <!-- <todoist_token_tertiary></todoist_token_tertiary> -->
+      <!-- It should be set to a valid token of a different account than the ones used in `TODOIST_TOKEN` and `TODOIST_TOKEN_SECONDARY`. -->
+      <!-- <TODOIST_TOKEN_TERTIARY></TODOIST_TOKEN_TERTIARY> -->
     </EnvironmentVariables>
   </RunConfiguration>
 </RunSettings>
