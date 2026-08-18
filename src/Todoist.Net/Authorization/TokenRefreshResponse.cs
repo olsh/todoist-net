@@ -37,8 +37,16 @@ namespace Todoist.Net
         [JsonPropertyName("expires_in")]
         public int ExpiresIn { get; }
 
-
-        internal TokenRefreshResponse(string accessToken, string refreshToken, string tokenType, string scope, int expiresIn)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TokenRefreshResponse"/> class.
+        /// </summary>
+        /// <param name="accessToken">The new access token.</param>
+        /// <param name="refreshToken">The new refresh token.</param>
+        /// <param name="tokenType">The type of the token (usually "Bearer").</param>
+        /// <param name="scope">The scope of the access token.</param>
+        /// <param name="expiresIn">The number of seconds until the access token expires.</param>
+        [JsonConstructor]
+        public TokenRefreshResponse(string accessToken, string refreshToken, string tokenType, string scope, int expiresIn)
         {
             AccessToken = accessToken;
             RefreshToken = refreshToken;

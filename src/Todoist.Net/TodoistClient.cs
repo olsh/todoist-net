@@ -271,7 +271,7 @@ namespace Todoist.Net
         {
             if (_restClient is IRefreshableTodoistRestClient refreshableClient)
             {
-                return refreshableClient.RefreshTokensAsync(cancellationToken);
+                return ProcessRequestAsync<TokenRefreshResponse>(ct => refreshableClient.RefreshTokensAsync(ct), cancellationToken);
             }
             throw new NotSupportedException(
                 "Token refresh is not supported by the underlying REST client. " +
@@ -283,7 +283,7 @@ namespace Todoist.Net
         {
             if (_restClient is IRefreshableTodoistRestClient refreshableClient)
             {
-                return refreshableClient.RevokeTokensAsync(cancellationToken);
+                return ProcessRequestAsync(ct => refreshableClient.RevokeTokensAsync(ct), cancellationToken);
             }
             throw new NotSupportedException(
                 "Token revoke is not supported by the underlying REST client. " +

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -82,7 +83,7 @@ namespace Todoist.Net
 
 
         /// <inheritdoc/>
-        public async Task<TokenRefreshResponse> RefreshTokensAsync(CancellationToken cancellationToken = default)
+        public async Task<HttpResponseMessage> RefreshTokensAsync(CancellationToken cancellationToken = default)
         {
             var response = await FlurlRequestFactory(new[] { ApiConstants.TokenRefreshEndpoint }, skipAuth: true)
                 .PostUrlEncodedAsync(new
@@ -93,8 +94,11 @@ namespace Todoist.Net
                     grant_type = "refresh_token"
                 }, cancellationToken: cancellationToken);
 
-            response.ResponseMessage.EnsureSuccessStatusCode();
-            var jsonResponse = await response.GetJsonAsync<TokenRefreshResponse>();
+            if (!response.ResponseMessage.IsSuccessStatusCode)
+            {
+                return response.ResponseMessage;
+            }
+            var jsonResponse = await GetJsonAndResetBufferAsync(response.ResponseMessage).ConfigureAwait(false);
 
             _authContext.Tokens = new TodoistTokens(
                 jsonResponse.AccessToken,
@@ -102,11 +106,11 @@ namespace Todoist.Net
                 DateTime.UtcNow.AddSeconds(jsonResponse.ExpiresIn));
 
             await _authContext.OnRefresh?.Invoke(jsonResponse, cancellationToken);
-            return jsonResponse;
+            return response.ResponseMessage;
         }
 
         /// <inheritdoc/>
-        public async Task RevokeTokensAsync(CancellationToken cancellationToken = default)
+        public async Task<HttpResponseMessage> RevokeTokensAsync(CancellationToken cancellationToken = default)
         {
             var response = await FlurlRequestFactory(new[] { ApiConstants.TokenRevokeEndpoint }, skipAuth: true)
                 .WithBasicAuth(_authContext.Credentials.ClientId, _authContext.Credentials.ClientSecret)
@@ -116,7 +120,7 @@ namespace Todoist.Net
                     token_type_hint = "access_token"
                 }, cancellationToken: cancellationToken);
 
-            response.ResponseMessage.EnsureSuccessStatusCode();
+            return response.ResponseMessage;
         }
 
 
@@ -131,11 +135,30 @@ namespace Todoist.Net
             var response = await action().ConfigureAwait(false);
             if (!tokenFoundExpired && response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                await RefreshTokensAsync(cancellationToken).ConfigureAwait(false);
-                response = await action().ConfigureAwait(false);
+                var refreshResponse = await RefreshTokensAsync(cancellationToken).ConfigureAwait(false);
+                if (refreshResponse.IsSuccessStatusCode)
+                {
+                    response = await action().ConfigureAwait(false);
+                }
             }
             return response;
         }
 
+        private static async Task<TokenRefreshResponse> GetJsonAndResetBufferAsync(HttpResponseMessage response)
+        {
+            using (var originalContent = response.Content)
+            {
+                var responseBody = await originalContent.ReadAsByteArrayAsync().ConfigureAwait(false);
+
+                var bufferedContent = new ByteArrayContent(responseBody);
+                foreach (var header in originalContent.Headers)
+                {
+                    bufferedContent.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                }
+
+                response.Content = bufferedContent;
+                return JsonSerializer.Deserialize<TokenRefreshResponse>(responseBody);
+            }
+        }
     }
 }
