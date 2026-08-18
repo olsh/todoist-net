@@ -67,7 +67,7 @@ namespace Todoist.Net.Tests
             return ExecuteRequest(ct => _restClient.DeleteAsync(resource, queryParams, ct), cancellationToken);
         }
 
-        public Task<TokenRefreshResponse> RefreshTokensAsync(CancellationToken cancellationToken = default)
+        public Task<HttpResponseMessage> RefreshTokensAsync(CancellationToken cancellationToken = default)
         {
             if (_restClient is not IRefreshableTodoistRestClient refreshableClient)
             {
@@ -78,7 +78,7 @@ namespace Todoist.Net.Tests
             return refreshableClient.RefreshTokensAsync(cancellationToken);
         }
 
-        public Task RevokeTokensAsync(CancellationToken cancellationToken = default)
+        public Task<HttpResponseMessage> RevokeTokensAsync(CancellationToken cancellationToken = default)
         {
             if (_restClient is not IRefreshableTodoistRestClient refreshableClient)
             {

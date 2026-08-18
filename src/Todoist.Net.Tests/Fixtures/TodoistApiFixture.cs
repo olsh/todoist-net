@@ -116,7 +116,6 @@ public sealed class TodoistApiFixture : IAsyncLifetime
             if (freshInstance)
             {
                 await DeletePlaygroundProjectAsync();
-                _playgroundProject = await CreatePlaygroundProjectAsync();
             }
             return _playgroundProject ??= await CreatePlaygroundProjectAsync();
         }
@@ -136,7 +135,6 @@ public sealed class TodoistApiFixture : IAsyncLifetime
             if (freshInstance)
             {
                 await DeletePlaygroundWorkspaceAsync();
-                _playgroundWorkspace = await CreatePlaygroundWorkspaceAsync();
             }
             return _playgroundWorkspace ??= await CreatePlaygroundWorkspaceAsync();
         }
@@ -152,7 +150,15 @@ public sealed class TodoistApiFixture : IAsyncLifetime
         {
             return false;
         }
-        await Client.Projects.DeleteAsync(_playgroundProject.Id.PersistentId, TestContext.Current.CancellationToken);
+        try
+        {
+            await Client.Projects.DeleteAsync(_playgroundProject.Id.PersistentId, TestContext.Current.CancellationToken);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to delete playground project with ID {_playgroundProject.Id.PersistentId}: {ex}");
+            throw;
+        }
         _playgroundProject = null;
         return true;
     }
@@ -163,7 +169,16 @@ public sealed class TodoistApiFixture : IAsyncLifetime
         {
             return false;
         }
-        await Client.Workspaces.DeleteAsync(_playgroundWorkspace.Id.PersistentId, TestContext.Current.CancellationToken);
+
+        try
+        {
+            await Client.Workspaces.DeleteAsync(_playgroundWorkspace.Id.PersistentId, TestContext.Current.CancellationToken);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to delete playground workspace with ID {_playgroundWorkspace.Id.PersistentId}: {ex}");
+            throw;
+        }
         _playgroundWorkspace = null;
         return true;
     }
@@ -210,6 +225,8 @@ public sealed class TodoistApiFixture : IAsyncLifetime
             t => t.Projects.AddAsync(playgroundProject, TestContext.Current.CancellationToken),
             resourceTypes: [ResourceType.Projects],
             cancellationToken: TestContext.Current.CancellationToken);
+            
+        Assert.All(response.SyncStatus.Values, cr => cr.AssertSuccess());
 
         return response.Projects.First(p => p.Id == playgroundProject.Id);
     }
@@ -222,6 +239,8 @@ public sealed class TodoistApiFixture : IAsyncLifetime
             t => t.Workspaces.AddAsync(playgroundWorkspace, TestContext.Current.CancellationToken),
             resourceTypes: [ResourceType.Workspaces],
             cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.All(response.SyncStatus.Values, cr => cr.AssertSuccess());
 
         return response.Workspaces.First(w => w.Id == playgroundWorkspace.Id);
     }
@@ -254,8 +273,8 @@ public sealed class TodoistApiFixture : IAsyncLifetime
             }
             catch (Exception ex)
             {
-                // Log the exception or handle it as needed. For now, we'll just write to the console.
                 Console.WriteLine($"Failed to clean up {_trackedResourceDescription}: {ex}");
+                throw;
             }
         }
 

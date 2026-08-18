@@ -11,8 +11,8 @@ internal sealed class StubTodoistRestClient : ITodoistRestClient
     public string LastResource { get; private set; } = string.Empty;
 
     public Dictionary<string, string> LastQueryParams { get; private set; } = [];
-
     public Dictionary<string, string> LastFormParams { get; private set; } = [];
+
 
     public void RespondToGetJson(HttpStatusCode statusCode, string json)
     {
@@ -23,6 +23,7 @@ internal sealed class StubTodoistRestClient : ITodoistRestClient
     {
         _postAsyncHandler = (_, _, _) => Task.FromResult(CreateJsonResponse(statusCode, json));
     }
+
 
     public Task<HttpResponseMessage> GetAsync(string resource, Dictionary<string, string>? queryParams = null, CancellationToken cancellationToken = default)
     {
@@ -70,6 +71,7 @@ internal sealed class StubTodoistRestClient : ITodoistRestClient
     public void Dispose()
     {
     }
+
 
     private static HttpResponseMessage CreateJsonResponse(HttpStatusCode statusCode, string json)
     {

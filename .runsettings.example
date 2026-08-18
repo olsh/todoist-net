@@ -11,12 +11,35 @@
 -->
 <RunSettings>
   <RunConfiguration>
+    <!-- 
+      Remove the `trait=unit` filter once you have set up the required tokens to run integration tests.
+      - Use `trait=unit` to run only unit tests.
+      - Use `trait!=integration-refreshable` in case Doppler token is not provided.
+      - Use `trait!=integration-premium` in case the primary Todoist account is not premium.
+      - Use `trait!=integration-collaboration` in case the secondary Todoist token is not provided.
+      - Use `trait!=integration-root` in case Doppler token is provided. Root integration tests required root-level Todoist access token.
+
+      You can use `&amp;` to combine multiple filters, for example:
+      - Use `trait!=integration-refreshable &amp; trait!=integration-collaboration` in case both Doppler and secondary Todoist tokens are not provided.
+    -->
+    <TestCaseFilter>trait=unit</TestCaseFilter>
+
     <EnvironmentVariables>
 
       <!-- Use either Doppler or Todoist tokens. If Doppler token is provided then Todoist token is ignored. -->
 
 
       <!-- Replace the value of the token with your actual Doppler Service Token. -->
+      <!--
+        When you initialize secrets in Doppler, make sure you get OAuth tokens with the following scopes requested to run the full test suite:
+          data:read_write,
+          data:delete,
+          project:delete,
+          backups:read,
+          billing:read,
+          user:write,
+          workspaces:write
+      -->
       <DOPPLER_TOKEN>YOUR_SERVICE_TOKEN</DOPPLER_TOKEN>
 
       <!-- Replace the values of Doppler Project and Config that contain the required secrets, or keep commented to use default values. -->

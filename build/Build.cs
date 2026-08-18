@@ -54,7 +54,7 @@ class Build : NukeBuild
                 .SetProjectFile(Solution.src.Todoist_Net_Tests)
                 .SetConfiguration(Configuration)
                 .SetLoggers("console;verbosity=detailed")
-                .SetFilter("trait!=mfa-required")
+                .SetFilter("trait!=integration-refreshable")
                 .SetNoBuild(true));
         });
 

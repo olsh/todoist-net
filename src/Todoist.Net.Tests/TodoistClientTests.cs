@@ -1,7 +1,6 @@
 namespace Todoist.Net.Tests;
 
 [Collection(TodoistApiTestCollection.Name)]
-[Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
 public class TodoistClientTests
 {
     private readonly TodoistApiFixture _apiFixture;
@@ -14,6 +13,7 @@ public class TodoistClientTests
     }
 
     [Fact]
+    [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
     public async Task SyncAllResources_Success()
     {
         var resources = await _apiFixture.Client.SyncResourcesAsync(cancellationToken: _cancellationToken);
@@ -25,6 +25,7 @@ public class TodoistClientTests
     }
 
     [Fact]
+    [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
     public async Task SyncAllResourcesWithSyncToken_Success()
     {
         var resources = await _apiFixture.Client.SyncResourcesAsync(cancellationToken: _cancellationToken);
@@ -33,5 +34,16 @@ public class TodoistClientTests
         Assert.NotNull(resources);
         Assert.NotNull(resources.SyncToken);
         Assert.False(resources.FullSync);
+    }
+
+    [Fact]
+    [Trait(Constants.TraitName, Constants.IntegrationRefreshableTraitValue)]
+    public async Task RefreshTokens_Success()
+    {
+        var response = await _apiFixture.Client.RefreshTokensAsync(cancellationToken: _cancellationToken);
+
+        Assert.NotNull(response);
+        Assert.NotEmpty(response.AccessToken);
+        Assert.NotEmpty(response.RefreshToken);
     }
 }
