@@ -85,7 +85,8 @@ namespace Todoist.Net
         /// <inheritdoc/>
         public async Task<HttpResponseMessage> RefreshTokensAsync(CancellationToken cancellationToken = default)
         {
-            var response = await FlurlRequestFactory(new[] { ApiConstants.TokenRefreshEndpoint }, skipAuth: true)
+            var response = await FlurlClient
+                .Request(ApiConstants.TokenRefreshEndpoint)
                 .PostUrlEncodedAsync(new
                 {
                     client_id = _authContext.Credentials.ClientId,
@@ -100,6 +101,7 @@ namespace Todoist.Net
             }
             var jsonResponse = await GetJsonAndResetBufferAsync(response.ResponseMessage).ConfigureAwait(false);
 
+            AccessToken = jsonResponse.AccessToken;
             _authContext.Tokens = new TodoistTokens(
                 jsonResponse.AccessToken,
                 jsonResponse.RefreshToken,
@@ -112,7 +114,8 @@ namespace Todoist.Net
         /// <inheritdoc/>
         public async Task<HttpResponseMessage> RevokeTokensAsync(CancellationToken cancellationToken = default)
         {
-            var response = await FlurlRequestFactory(new[] { ApiConstants.TokenRevokeEndpoint }, skipAuth: true)
+            var response = await FlurlClient
+                .Request(ApiConstants.TokenRevokeEndpoint)
                 .WithBasicAuth(_authContext.Credentials.ClientId, _authContext.Credentials.ClientSecret)
                 .PostUrlEncodedAsync(new
                 {

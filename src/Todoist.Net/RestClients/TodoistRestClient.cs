@@ -17,21 +17,22 @@ namespace Todoist.Net
 {
     internal class TodoistRestClient : ITodoistRestClient
     {
-        private readonly Lazy<IFlurlClient> _shortLivedClient;
-        protected FlurlRequestGetter FlurlRequestFactory { get; }
+        protected string AccessToken { get; set; }
+        protected IFlurlClient FlurlClient { get; }
 
         public TodoistRestClient(string token) : this(token, (IWebProxy)null)
         { }
 
         public TodoistRestClient(string token, IWebProxy proxy)
         {
-            var name = ApiConstants.FlurlClientName + proxy?.GetHashCode();
+            AccessToken = token;
 
             // We use long-lived HttpClient instances in cases where IHttpClientFactory is not available (e.g., in .NET Framework).
             // This is to avoid socket exhaustion issues.
-            FlurlRequestFactory = (urlSegments, skipAuth) =>
-            {
-                var client = FlurlHttp.Clients.GetOrAdd(name, ApiConstants.ApiBaseUrl, builder => builder
+            FlurlClient = FlurlHttp.Clients.GetOrAdd(
+                name: ApiConstants.FlurlClientName + proxy?.GetHashCode(),
+                baseUrl: ApiConstants.ApiBaseUrl,
+                configure: builder => builder
                     .ConfigureInnerHandler(handler =>
                     {
                         handler.Proxy = proxy;
@@ -39,24 +40,17 @@ namespace Todoist.Net
                     })
                     .AllowAnyHttpStatus()
                     .OnError(HandleFlurlError));
-
-                return skipAuth
-                    ? client.Request(urlSegments)
-                    : client.Request(urlSegments).WithOAuthBearerToken(token);
-            };
         }
 
         public TodoistRestClient(string token, HttpClient httpClient)
         {
+            AccessToken = token;
+
             // We use a short-lived FlurlClient instance here because the HttpClient is provided externally and may have its own lifetime management.
             // This avoids potential issues with reusing a FlurlClient that wraps an externally managed HttpClient.
-            _shortLivedClient = new Lazy<IFlurlClient>(() => new FlurlClient(httpClient, ApiConstants.ApiBaseUrl)
+            FlurlClient = new FlurlClient(httpClient, ApiConstants.ApiBaseUrl)
                 .AllowAnyHttpStatus()
-                .OnError(HandleFlurlError));
-
-            FlurlRequestFactory = (urlSegments, skipAuth) => skipAuth
-                ? _shortLivedClient.Value.Request(urlSegments)
-                : _shortLivedClient.Value.Request(urlSegments).WithOAuthBearerToken(token);
+                .OnError(HandleFlurlError);
         }
 
 
@@ -73,7 +67,7 @@ namespace Todoist.Net
         {
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
 
-            var response = await FlurlRequestFactory(new[] { ApiConstants.ResourcesEndpoint, resource })
+            var response = await BuildResourceRequest(resource)
                 .SetQueryParams(queryParams)
                 .GetAsync(cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
@@ -86,7 +80,7 @@ namespace Todoist.Net
         {
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
 
-            var response = await FlurlRequestFactory(new[] { ApiConstants.ResourcesEndpoint, resource })
+            var response = await BuildResourceRequest(resource)
                 .PostUrlEncodedAsync(formParams ?? new Dictionary<string, string>(), cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
 
@@ -99,7 +93,7 @@ namespace Todoist.Net
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
             ThrowHelper.ThrowIfNull(files, nameof(files));
 
-            var response = await FlurlRequestFactory(new[] { ApiConstants.ResourcesEndpoint, resource })
+            var response = await BuildResourceRequest(resource)
                 .PostMultipartAsync(mp => mp
                     .AddStringParts(formParams)
                     .AddFileParts("file", files), cancellationToken: cancellationToken)
@@ -114,7 +108,7 @@ namespace Todoist.Net
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
             ThrowHelper.ThrowIfNullOrEmpty(jsonContent, nameof(jsonContent));
 
-            var response = await FlurlRequestFactory(new[] { ApiConstants.ResourcesEndpoint, resource })
+            var response = await BuildResourceRequest(resource)
                 .PostAsync(new CapturedJsonContent(jsonContent), cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
 
@@ -126,7 +120,7 @@ namespace Todoist.Net
         {
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
 
-            var response = await FlurlRequestFactory(new[] { ApiConstants.ResourcesEndpoint, resource })
+            var response = await BuildResourceRequest(resource)
                 .PutAsync(cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
 
@@ -139,7 +133,7 @@ namespace Todoist.Net
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
             ThrowHelper.ThrowIfNullOrEmpty(jsonContent, nameof(jsonContent));
 
-            var response = await FlurlRequestFactory(new[] { ApiConstants.ResourcesEndpoint, resource })
+            var response = await BuildResourceRequest(resource)
                 .PutAsync(new CapturedJsonContent(jsonContent), cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
 
@@ -151,7 +145,7 @@ namespace Todoist.Net
         {
             ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
 
-            var response = await FlurlRequestFactory(new[] { ApiConstants.ResourcesEndpoint, resource })
+            var response = await BuildResourceRequest(resource)
                 .SetQueryParams(queryParams)
                 .DeleteAsync(cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
@@ -170,5 +164,13 @@ namespace Todoist.Net
         }
 
         protected delegate IFlurlRequest FlurlRequestGetter(string[] urlSegments, bool skipAuth = false);
+
+
+        private IFlurlRequest BuildResourceRequest(string resource)
+        {
+            return FlurlClient
+                .Request(new[] { ApiConstants.ResourcesEndpoint, resource })
+                .WithOAuthBearerToken(AccessToken);
+        }
     }
 }
