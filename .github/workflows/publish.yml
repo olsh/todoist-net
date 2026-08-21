@@ -31,10 +31,12 @@ jobs:
     - name: Build and Pack
       run: .\build.cmd nuget-pack --configuration Release
 
-    - name: Upload NuGet package
+    - name: Upload NuGet packages
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
       with:
-          path: artifacts/*.nupkg
+          path: |
+            artifacts/*.nupkg
+            artifacts/*.snupkg
 
     - name: NuGet login (OIDC → temp API key)
       uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841
@@ -48,5 +50,10 @@ jobs:
           if ($packages.Count -ne 1) {
             throw "Expected exactly 1 package, found $($packages.Count)"
           }
+          $symbols = Get-ChildItem -Path artifacts/*.snupkg
+          if ($symbols.Count -ne 1) {
+            throw "Expected exactly 1 symbol package, found $($symbols.Count)"
+          }
+          # dotnet nuget push automatically publishes the sibling .snupkg as the symbol package.
           dotnet nuget push $packages[0].FullName --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
       shell: pwsh

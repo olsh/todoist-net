@@ -57,30 +57,52 @@ namespace Todoist.Net
         /// <summary>
         /// Initializes a new instance of the <see cref="TodoistClient" /> class.
         /// </summary>
-        /// <param name="token">The token.</param>
-        /// <exception cref="ArgumentException">Value cannot be null or empty - token</exception>
-        public TodoistClient(string token)
-            : this(token, null)
+        /// <param name="legacyToken">The access token provided by legacy applications.</param>
+        /// <exception cref="ArgumentException">Value cannot be null or empty - legacyToken</exception>
+        public TodoistClient(string legacyToken)
+            : this(legacyToken, null)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TodoistClient" /> class.
         /// </summary>
-        /// <param name="token">The token.</param>
+        /// <param name="legacyToken">The access token provided by legacy applications.</param>
         /// <param name="proxy">The proxy.</param>
-        /// <exception cref="ArgumentException">Value cannot be null or empty - token</exception>
-        public TodoistClient(string token, IWebProxy proxy)
-            : this(new TodoistRestClient(token, proxy))
+        /// <exception cref="ArgumentException">Value cannot be null or empty - legacyToken</exception>
+        public TodoistClient(string legacyToken, IWebProxy proxy)
+            : this(new TodoistRestClient(legacyToken, proxy))
         {
-            ThrowHelper.ThrowIfNullOrEmpty(token, nameof(token));
+            ThrowHelper.ThrowIfNullOrEmpty(legacyToken, nameof(legacyToken));
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TodoistClient" /> class.
+        /// </summary>
+        /// <param name="authContext">The authentication context.</param>
+        /// <exception cref="ArgumentException">Value cannot be null - authContext</exception>
+        public TodoistClient(TodoistAuthenticationContext authContext)
+            : this(authContext, null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TodoistClient" /> class.
+        /// </summary>
+        /// <param name="authContext">The authentication context.</param>
+        /// <param name="proxy">The proxy.</param>
+        /// <exception cref="ArgumentException">Value cannot be null - authContext</exception>
+        public TodoistClient(TodoistAuthenticationContext authContext, IWebProxy proxy)
+            : this(new RefreshableTodoistRestClient(authContext, proxy))
+        {
+            ThrowHelper.ThrowIfNull(authContext, nameof(authContext));
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TodoistClient" /> class.
         /// </summary>
         /// <param name="restClient">The rest client.</param>
-        /// <exception cref="System.ArgumentException">Value cannot be null or empty - restClient</exception>
+        /// <exception cref="System.ArgumentException">Value cannot be null - restClient</exception>
         public TodoistClient(ITodoistRestClient restClient)
         {
             _restClient = restClient ?? throw new ArgumentNullException(nameof(restClient));
@@ -241,6 +263,31 @@ namespace Todoist.Net
             await transactionActions(transaction).ConfigureAwait(false);
 
             return await transaction.CommitAndSyncAsync(resourceTypes, syncToken, cancellationToken).ConfigureAwait(false);
+        }
+
+
+        /// <inheritdoc/>
+        public Task<TokenRefreshResponse> RefreshTokensAsync(CancellationToken cancellationToken = default)
+        {
+            if (_restClient is IRefreshableTodoistRestClient refreshableClient)
+            {
+                return ProcessRequestAsync<TokenRefreshResponse>(ct => refreshableClient.RefreshTokensAsync(ct), cancellationToken);
+            }
+            throw new NotSupportedException(
+                "Token refresh is not supported by the underlying REST client. " +
+                "Use TodoistClient constructor overload with TodoistAuthenticationContext argument or IRefreshableTodoistRestClient implementation.");
+        }
+
+        /// <inheritdoc/>
+        public Task RevokeTokensAsync(CancellationToken cancellationToken = default)
+        {
+            if (_restClient is IRefreshableTodoistRestClient refreshableClient)
+            {
+                return ProcessRequestAsync(ct => refreshableClient.RevokeTokensAsync(ct), cancellationToken);
+            }
+            throw new NotSupportedException(
+                "Token revoke is not supported by the underlying REST client. " +
+                "Use TodoistClient constructor overload with TodoistAuthenticationContext argument or IRefreshableTodoistRestClient implementation.");
         }
 
         #endregion
