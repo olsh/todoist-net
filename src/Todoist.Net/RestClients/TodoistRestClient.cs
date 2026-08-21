@@ -169,7 +169,7 @@ namespace Todoist.Net
         private IFlurlRequest BuildResourceRequest(string resource)
         {
             return FlurlClient
-                .Request(new[] { ApiConstants.ResourcesEndpoint, resource })
+                .Request(ApiConstants.ResourcesEndpoint, resource)
                 .WithOAuthBearerToken(AccessToken);
         }
     }
