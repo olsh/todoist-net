@@ -107,7 +107,10 @@ namespace Todoist.Net
                 jsonResponse.RefreshToken,
                 DateTime.UtcNow.AddSeconds(jsonResponse.ExpiresIn));
 
-            await _authContext.OnRefresh?.Invoke(jsonResponse, cancellationToken);
+            if (_authContext.OnRefresh != null)
+            {
+                await _authContext.OnRefresh(jsonResponse, cancellationToken).ConfigureAwait(false);
+            }
             return response.ResponseMessage;
         }
 
