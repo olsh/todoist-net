@@ -1,7 +1,14 @@
 name: Publish to NuGet
 
 on:
+  release:
+    types: [created]
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Manually specify the version to publish (e.g. 1.0.0). If not specified, the version will be taken from the release tag.'
+        required: true
+        type: string
 
 permissions:
   id-token: write
@@ -9,8 +16,7 @@ permissions:
 
 jobs:
   publish:
-    runs-on: windows-latest
-    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -19,18 +25,16 @@ jobs:
       uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68
       with:
         dotnet-version: 10.x
+          
+    - name: Build
+      run: dotnet build --configuration Release -p:PackageVersion=${{ github.event.inputs.version || github.event.release.tag_name }}
+    
+    - name: Test
+      run: dotnet test --configuration Release --no-build --filter trait=unit -p:PackageVersion=${{ github.event.inputs.version || github.event.release.tag_name }}
 
-    - name: Cache NuGet packages
-      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
-
-    - name: Build and Pack
-      run: .\build.cmd nuget-pack --configuration Release
-
+    - name: Create the package
+      run: dotnet pack --configuration Release --no-build -o artifacts -p:PackageVersion=${{ github.event.inputs.version || github.event.release.tag_name }}
+      
     - name: Upload NuGet packages
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
       with:
@@ -46,14 +50,15 @@ jobs:
 
     - name: NuGet push
       run: |
-          $packages = Get-ChildItem -Path artifacts/*.nupkg
-          if ($packages.Count -ne 1) {
-            throw "Expected exactly 1 package, found $($packages.Count)"
-          }
-          $symbols = Get-ChildItem -Path artifacts/*.snupkg
-          if ($symbols.Count -ne 1) {
-            throw "Expected exactly 1 symbol package, found $($symbols.Count)"
-          }
+          packages=(artifacts/*.nupkg)
+          if [ ${#packages[@]} -ne 1 ]; then
+            echo "Expected exactly 1 package, found ${#packages[@]}"
+            exit 1
+          fi
+          symbols=(artifacts/*.snupkg)
+          if [ ${#symbols[@]} -ne 1 ]; then
+            echo "Expected exactly 1 symbol package, found ${#symbols[@]}"
+            exit 1
+          fi
           # dotnet nuget push automatically publishes the sibling .snupkg as the symbol package.
-          dotnet nuget push $packages[0].FullName --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
-      shell: pwsh
+          dotnet nuget push "${packages[0]}" --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
