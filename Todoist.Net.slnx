@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".github/workflows/ci.yml" />
+    <File Path=".github/workflows/publish.yml" />
+    <File Path=".gitignore" />
+    <File Path=".runsettings" />
+    <File Path=".runsettings.example" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Todoist.Net.Tests/Todoist.Net.Tests.csproj" />
+    <Project Path="src/Todoist.Net/Todoist.Net.csproj" />
+  </Folder>
+</Solution>
