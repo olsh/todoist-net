@@ -5,27 +5,22 @@ Guidance for AI coding agents working in this repository. For human-facing docum
 ## Project overview
 
 - **Todoist.Net.APIv1** — a strongly-typed .NET client for the [Todoist Unified API v1](https://developer.todoist.com/api/v1/), forked from [olsh/todoist-net](https://github.com/olsh/todoist-net). NuGet package ID: `Todoist.Net.APIv1`.
-- Solution `Todoist.Net.sln` contains two projects plus a NUKE build project:
-  - `src/Todoist.Net` — the library; multi-targets `netstandard2.0` and `net462` (the `net462` target requires Windows or reference assemblies).
+- Solution `Todoist.Net.sln` contains two projects:
+  - `src/Todoist.Net` — the library; multi-targets `netstandard2.0` and `net462` (the `net462` target requires Windows or reference assemblies; CI builds it on Ubuntu via .NET SDK reference assemblies).
   - `src/Todoist.Net.Tests` — xUnit **v3** tests, targets `net10.0` only.
-  - `build/` — NUKE build (`_build.csproj`); bootstrappers: `build.ps1`, `build.sh`, `build.cmd`.
 - **.NET 10 SDK is required** to build and test.
 
 ## Build commands
 
 ```powershell
 dotnet build Todoist.Net.sln                                    # full build
-dotnet pack src/Todoist.Net/Todoist.Net.csproj -c Release       # pack manually
-
-./build.ps1            # NUKE default: Compile + UnitTest + NugetPack
-./build.ps1 Compile    # build only
-./build.ps1 UnitTest   # unit tests only (filter: trait=unit)
-./build.ps1 Test       # all tests except OAuth-refresh ones (trait!=integration-refreshable)
-./build.ps1 NugetPack  # package into artifacts/
+dotnet test src/Todoist.Net.Tests --no-build --filter "trait=unit"  # unit tests
+dotnet pack src/Todoist.Net/Todoist.Net.csproj -c Release -o artifacts  # pack .nupkg + .snupkg
 ```
 
 - Both projects have `TreatWarningsAsErrors=true` — the build must stay warning-free.
 - The library generates XML documentation; missing XML docs on new public APIs will warn/fail.
+- Packing produces both the `.nupkg` and a SourceLink-enabled `.snupkg` symbol package (configured in the csproj via `IncludeSymbols`/`SymbolPackageFormat`).
 
 ## Test commands and configuration
 
@@ -84,7 +79,7 @@ dotnet test src/Todoist.Net.Tests --filter "trait!=integration-refreshable"   # 
 
 - Keep PRs focused; split large changes into reviewable phases. Update `README.md` for user-facing changes and XML docs for API changes.
 - Before committing: `dotnet build Todoist.Net.sln` must be clean (warnings are errors) and `dotnet test src/Todoist.Net.Tests --filter "trait=unit"` must pass. Add/update tests with the correct trait for any behavior change.
-- CI runs the NUKE build with SonarCloud analysis; the quality gate must pass.
+- CI is plain GitHub Actions: `.github/workflows/build.yml` (build + `trait=unit` tests on every push/PR) and `.github/workflows/publish.yml` (packs and pushes to NuGet on release creation or manual dispatch). SonarCloud analysis runs automatically on PRs; the quality gate must pass.
 
 ## Security considerations
 

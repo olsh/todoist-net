@@ -17,6 +17,8 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    env:
+      PACKAGE_VERSION: ${{ github.event.inputs.version || github.event.release.tag_name }}
 
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -27,13 +29,13 @@ jobs:
         dotnet-version: 10.x
           
     - name: Build
-      run: dotnet build --configuration Release -p:PackageVersion=${{ github.event.inputs.version || github.event.release.tag_name }}
+      run: dotnet build --configuration Release -p:PackageVersion=${{ env.PACKAGE_VERSION}}
     
     - name: Test
-      run: dotnet test --configuration Release --no-build --filter trait=unit -p:PackageVersion=${{ github.event.inputs.version || github.event.release.tag_name }}
+      run: dotnet test --configuration Release --no-build --filter trait=unit -p:PackageVersion=${{ env.PACKAGE_VERSION}}
 
     - name: Create the package
-      run: dotnet pack --configuration Release --no-build -o artifacts -p:PackageVersion=${{ github.event.inputs.version || github.event.release.tag_name }}
+      run: dotnet pack --configuration Release --no-build -o artifacts -p:PackageVersion=${{ env.PACKAGE_VERSION}}
       
     - name: Upload NuGet packages
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a

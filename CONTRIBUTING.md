@@ -16,9 +16,8 @@ Todoist.Net/
 │   │   ├── Serialization/     # System.Text.Json converters and resolver modifiers
 │   │   └── Services/          # Domain services, organized by entity folder
 │   └── Todoist.Net.Tests/     # xUnit v3 test project (targets net10.0)
-├── build/                     # NUKE build project
+├── .github/workflows/         # CI (build.yml) and NuGet publishing (publish.yml)
 ├── .runsettings.example       # Template for test-run configuration (copy to .runsettings)
-├── build.ps1 / build.sh / build.cmd  # NUKE build bootstrappers
 └── MigrationNotes.md          # Notes on the Sync API v9 → Unified API v1 migration
 ```
 
@@ -30,24 +29,19 @@ Todoist.Net/
 
 ## Building
 
-Standard .NET CLI works for everything:
+The standard .NET CLI works for everything:
 
 ```powershell
 dotnet build Todoist.Net.sln
-dotnet pack src/Todoist.Net/Todoist.Net.csproj -c Release
+
+# Unit tests (the default safe run — no Todoist tokens needed)
+dotnet test src/Todoist.Net.Tests --no-build --filter "trait=unit"
+
+# Pack the library (produces the .nupkg plus a SourceLink-enabled .snupkg symbol package)
+dotnet pack src/Todoist.Net/Todoist.Net.csproj -c Release -o artifacts
 ```
 
-The repository also ships a [NUKE](https://nuke.build/) build. Use the bootstrapper for your platform (`build.ps1` on Windows, `build.sh` on Linux/macOS):
-
-```powershell
-./build.ps1            # default: Compile, UnitTest, NugetPack
-./build.ps1 Compile    # build the solution
-./build.ps1 UnitTest   # run unit tests only (trait=unit)
-./build.ps1 Test       # run all tests except token-refresh tests (trait!=integration-refreshable)
-./build.ps1 NugetPack  # produce the NuGet package in artifacts/
-```
-
-The `Sonar` target is used by CI (SonarCloud) and requires a `SONAR_TOKEN`.
+The same commands run in CI: `.github/workflows/build.yml` builds and runs `trait=unit` tests on every push and PR, and `.github/workflows/publish.yml` packs and publishes to NuGet when a GitHub release is created (or on manual dispatch with a version). SonarCloud analysis runs automatically on pull requests.
 
 ## Testing
 
@@ -166,4 +160,4 @@ Always build after writing or modifying tests so discovery issues are caught ear
 1. Keep PRs focused; large changes should be split into reviewable phases.
 2. Build the solution and run `trait=unit` tests locally; add or update tests for behavioral changes, with the correct trait.
 3. Document public API changes with XML docs, and update `README.md` when user-facing behavior changes.
-4. The CI pipeline runs the NUKE build with SonarCloud analysis — the quality gate must pass.
+4. CI (`.github/workflows/build.yml`) builds the solution and runs `trait=unit` tests on every PR; SonarCloud analysis runs automatically on PRs — the quality gate must pass.
