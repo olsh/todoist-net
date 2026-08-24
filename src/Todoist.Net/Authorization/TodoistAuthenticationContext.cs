@@ -23,17 +23,24 @@ namespace Todoist.Net
         public TokenRefreshHandler OnRefresh { get; set; }
 
         /// <summary>
+        /// Gets or sets the optional state object to pass to the refresh handler. This can be used to maintain context or additional information needed during the token refresh process.
+        /// </summary>
+        public object RefreshState { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="TodoistAuthenticationContext"/> class with the specified client credentials, user tokens, and an optional token refresh handler.
         /// </summary>
         /// <param name="credentials">The client credentials of the application, including the client ID and client secret.</param>
         /// <param name="tokens">The user tokens, including the access token and refresh token, used for authenticating with the Todoist API.</param>
         /// <param name="onRefresh">The optional callback to invoke when the tokens are refreshed.</param>
-        public TodoistAuthenticationContext(ClientCredentials credentials, TodoistTokens tokens, TokenRefreshHandler onRefresh = null)
+        /// <param name="refreshState">The optional state object to pass to the refresh handler.</param>
+        public TodoistAuthenticationContext(ClientCredentials credentials, TodoistTokens tokens, TokenRefreshHandler onRefresh = null, object refreshState = null)
         {
             Credentials = credentials;
             Tokens = tokens;
 
-            OnRefresh = onRefresh ?? new TokenRefreshHandler((res, ct) => Task.CompletedTask);
+            OnRefresh = onRefresh ?? new TokenRefreshHandler((res, state, ct) => Task.CompletedTask);
+            RefreshState = refreshState;
         }
     }
 }

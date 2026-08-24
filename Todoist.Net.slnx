@@ -1,11 +1,16 @@
 <Solution>
+  <Folder Name="/Actions/">
+    <File Path=".github/workflows/build.yml" />
+    <File Path=".github/workflows/publish.yml" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
-    <File Path=".github/workflows/ci.yml" />
-    <File Path=".github/workflows/publish.yml" />
     <File Path=".gitignore" />
     <File Path=".runsettings" />
     <File Path=".runsettings.example" />
+    <File Path="AGENTS.md" />
+    <File Path="CONTRIBUTING.md" />
+    <File Path="global.json" />
     <File Path="README.md" />
   </Folder>
   <Folder Name="/src/">

@@ -1,3 +1,7 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace Todoist.Net
 {
     /// <summary>
@@ -9,5 +13,10 @@ namespace Todoist.Net
         /// Gets or sets the client credentials of the application, including the client ID and client secret.
         /// </summary>
         public ClientCredentials Credentials { get; set; }
+
+        /// <summary>
+        /// Gets or sets the callback to invoke when the tokens are refreshed.
+        /// </summary>
+        public Func<IServiceProvider, TokenRefreshResponse, object, CancellationToken, Task> OnRefresh { get; set; }
     }
 }
