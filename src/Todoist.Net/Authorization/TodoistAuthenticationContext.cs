@@ -27,14 +27,23 @@ namespace Todoist.Net
         /// </summary>
         public object RefreshState { get; set; }
 
+
+        /// <inheritdoc cref="TodoistAuthenticationContext(ClientCredentials, TodoistTokens, TokenRefreshHandler)"/>
+        public TodoistAuthenticationContext(ClientCredentials credentials, TodoistTokens tokens)
+            : this(credentials, tokens, null) { }
+
+        /// <inheritdoc cref="TodoistAuthenticationContext(ClientCredentials, TodoistTokens, TokenRefreshHandler, object)"/>
+        public TodoistAuthenticationContext(ClientCredentials credentials, TodoistTokens tokens, TokenRefreshHandler onRefresh)
+            : this(credentials, tokens, onRefresh, null) { }
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="TodoistAuthenticationContext"/> class with the specified client credentials, user tokens, and an optional token refresh handler.
+        /// Initializes a new instance of the <see cref="TodoistAuthenticationContext"/> class.
         /// </summary>
         /// <param name="credentials">The client credentials of the application, including the client ID and client secret.</param>
         /// <param name="tokens">The user tokens, including the access token and refresh token, used for authenticating with the Todoist API.</param>
-        /// <param name="onRefresh">The optional callback to invoke when the tokens are refreshed.</param>
-        /// <param name="refreshState">The optional state object to pass to the refresh handler.</param>
-        public TodoistAuthenticationContext(ClientCredentials credentials, TodoistTokens tokens, TokenRefreshHandler onRefresh = null, object refreshState = null)
+        /// <param name="onRefresh">The callback to invoke when the tokens are refreshed.</param>
+        /// <param name="refreshState">A state object to pass to the refresh handler.</param>
+        public TodoistAuthenticationContext(ClientCredentials credentials, TodoistTokens tokens, TokenRefreshHandler onRefresh, object refreshState)
         {
             Credentials = credentials;
             Tokens = tokens;
