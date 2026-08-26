@@ -8,13 +8,18 @@ namespace Todoist.Net
         /// <summary>
         /// Gets the client ID of the application.
         /// </summary>
-        public string ClientId { get; }
+        public string ClientId { get; set; }
 
         /// <summary>
         /// Gets the client secret of the application.
         /// </summary>
-        public string ClientSecret { get; }
+        public string ClientSecret { get; set; }
 
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ClientCredentials"/> class.
+        /// </summary>
+        public ClientCredentials() { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ClientCredentials"/> class with the specified client ID and client secret.

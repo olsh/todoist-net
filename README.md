@@ -51,7 +51,7 @@ For OAuth applications, provide your client credentials and the user's tokens. T
 var credentials = new ClientCredentials("client-id", "client-secret");
 var tokens = new TodoistTokens("access-token", "refresh-token", expirationTimeUtc);
 
-var authContext = new TodoistAuthenticationContext(credentials, tokens, onRefresh: async (response, ct) =>
+var authContext = new TodoistAuthenticationContext(credentials, tokens, onRefresh: async (response, state, ct) =>
 {
     // Persist the rotated tokens (Todoist rotates the refresh token on each refresh).
     await SaveTokensAsync(response.AccessToken, response.RefreshToken);
@@ -74,10 +74,23 @@ await client.RevokeTokensAsync();  // log the user out and invalidate both token
 For ASP.NET Core and other DI-enabled applications (`netstandard2.0` target only):
 
 ```csharp
-services.AddTodoistClient(options =>
+builder.Services.AddTodoistClient((serviceProvider, options) =>
 {
     // Required to create OAuth-refreshable clients from TodoistTokens:
-    options.Credentials = new ClientCredentials("client-id", "client-secret");
+    options.Credentials = new ClientCredentials(builder.Configuration["Todoist:ClientId"], builder.Configuration["Todoist:ClientSecret"]);
+    options.OnRefresh = async (response, state, ct) =>
+    {
+        // You can utilize the state parameter to pass contextual information to the refresh callback, for example the user ID.
+        var userId = state as string;
+        
+        // Todoist options configuration action provides an IServiceProvider that you can use to resolve services in the callback.
+        await using var scope = serviceProvider.CreateAsyncScope();
+
+        // Persist the rotated tokens (Todoist rotates the refresh token on each refresh).
+        await scope.ServiceProvider
+            .GetRequiredService<IUserTokenRepository>()
+            .SaveTodoistTokensAsync(userId, response.AccessToken, response.RefreshToken, response.ExpiresIn, cancellationToken);
+    };
 });
 ```
 
@@ -97,11 +110,9 @@ public class MyService
     {
         TodoistTokens todoistTokens = await _tokenRepository.GetTodoistTokensAsync(userId, cancellationToken);
 
-        using var client = _clientFactory.CreateClient(todoistTokens, onRefresh: async (res, ct) =>
-        {
-            // Persist the rotated tokens (Todoist rotates the refresh token on each refresh).
-            await _tokenRepository.SaveTodoistTokensAsync(userId, res.AccessToken, res.RefreshToken, res.ExpiresIn, ct);
-        });
+        // Here, the userId is passed as the refreshState parameter to the factory method. 
+        // It will be available in the OnRefresh callback when the access token is refreshed.
+        using var client = _clientFactory.CreateClient(todoistTokens, refreshState: userId);
 
         var projectsPage = await client.Projects.GetAsync(cancellationToken: cancellationToken);
         // ...

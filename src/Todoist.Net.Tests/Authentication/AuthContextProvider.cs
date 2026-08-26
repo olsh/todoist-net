@@ -32,10 +32,7 @@ public sealed class AuthContextProvider
         return new TodoistAuthenticationContext(
             credentials: new ClientCredentials(secrets.ClientId, secrets.ClientSecret),
             tokens: new TodoistTokens(secrets.PrimaryAccount.AccessToken, secrets.PrimaryAccount.RefreshToken),
-            onRefresh: async (newTokens, ct) =>
-            {
-                await UpdateSecretsAsync(newTokens.AccessToken, newTokens.RefreshToken, AccountType.Primary, ct);
-            }
+            onRefresh: (res, state, ct) => UpdateSecretsAsync(res.AccessToken, res.RefreshToken, AccountType.Primary, ct)
         );
     }
 
@@ -64,10 +61,7 @@ public sealed class AuthContextProvider
         return new TodoistAuthenticationContext(
             credentials: new ClientCredentials(secrets.ClientId, secrets.ClientSecret),
             tokens: new TodoistTokens(secrets.SecondaryAccount.AccessToken, secrets.SecondaryAccount.RefreshToken),
-            onRefresh: async (newTokens, ct) =>
-            {
-                await UpdateSecretsAsync(newTokens.AccessToken, newTokens.RefreshToken, AccountType.Secondary, ct);
-            }
+            onRefresh: (res, state, ct) => UpdateSecretsAsync(res.AccessToken, res.RefreshToken, AccountType.Secondary, ct)
         );
     }
 
@@ -89,10 +83,7 @@ public sealed class AuthContextProvider
         return new TodoistAuthenticationContext(
             credentials: new ClientCredentials(secrets.ClientId, secrets.ClientSecret),
             tokens: new TodoistTokens(secrets.TertiaryAccount.AccessToken, secrets.TertiaryAccount.RefreshToken),
-            onRefresh: async (newTokens, ct) =>
-            {
-                await UpdateSecretsAsync(newTokens.AccessToken, newTokens.RefreshToken, AccountType.Tertiary, ct);
-            }
+            onRefresh: (res, state, ct) => UpdateSecretsAsync(res.AccessToken, res.RefreshToken, AccountType.Tertiary, ct)
         );
     }
 

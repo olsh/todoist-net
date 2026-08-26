@@ -28,13 +28,29 @@ namespace Todoist.Net
         }
 
         /// <inheritdoc/>
-        public TodoistClient CreateClient(TodoistTokens tokens, TokenRefreshHandler onRefresh = null)
+        public TodoistClient CreateClient(TodoistTokens tokens)
         {
             if (string.IsNullOrEmpty(_options.Value?.Credentials?.ClientId) || string.IsNullOrEmpty(_options.Value?.Credentials?.ClientSecret))
             {
                 throw new InvalidOperationException("TodoistClientOptions must be configured properly in DI to use the CreateClient(TodoistTokens) method.");
             }
-            var authContext = new TodoistAuthenticationContext(_options.Value.Credentials, tokens, onRefresh);
+
+            var authContext = new TodoistAuthenticationContext(_options.Value.Credentials, tokens, _options.Value.OnRefresh);
+            var httpClient = _httpClientFactory.CreateClient(ApiConstants.HttpClientName);
+
+            var todoistRestClient = new RefreshableTodoistRestClient(authContext, httpClient);
+            return new TodoistClient(todoistRestClient);
+        }
+
+        /// <inheritdoc/>
+        public TodoistClient CreateClient(TodoistTokens tokens, object refreshState)
+        {
+            if (string.IsNullOrEmpty(_options.Value?.Credentials?.ClientId) || string.IsNullOrEmpty(_options.Value?.Credentials?.ClientSecret))
+            {
+                throw new InvalidOperationException("TodoistClientOptions must be configured properly in DI to use the CreateClient(TodoistTokens) method.");
+            }
+
+            var authContext = new TodoistAuthenticationContext(_options.Value.Credentials, tokens, _options.Value.OnRefresh, refreshState);
             var httpClient = _httpClientFactory.CreateClient(ApiConstants.HttpClientName);
 
             var todoistRestClient = new RefreshableTodoistRestClient(authContext, httpClient);

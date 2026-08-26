@@ -109,7 +109,7 @@ namespace Todoist.Net
 
             if (_authContext.OnRefresh != null)
             {
-                await _authContext.OnRefresh(jsonResponse, cancellationToken).ConfigureAwait(false);
+                await _authContext.OnRefresh(jsonResponse, _authContext.RefreshState, cancellationToken).ConfigureAwait(false);
             }
             return response.ResponseMessage;
         }
