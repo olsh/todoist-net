@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v6
+      with:
+        dotnet-version: 10.x
+
+    - name: Setup Java
+      if: github.event_name == 'push'
+      uses: actions/setup-java@v6
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v6
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Cache SonarQube
+      if: github.event_name == 'push'
+      uses: actions/cache@v6
+      with:
+        path: ~/.sonar/cache
+        key: ${{ runner.os }}-sonar
+
+    - name: Build, Test and Sonar (push)
+      if: github.event_name == 'push'
+      run: .\build.cmd sonar unit-test nuget-pack --configuration Release
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+    - name: Build and Test (PR)
+      if: github.event_name == 'pull_request'
+      run: .\build.cmd unit-test nuget-pack --configuration Release
+
+    - name: Save PR metadata
+      if: github.event_name == 'pull_request'
+      run: |
+        mkdir pr-metadata
+        echo "$env:PR_NUMBER" > pr-metadata/pr_number
+        echo "$env:PR_BASE" > pr-metadata/pr_base
+        echo "$env:PR_BRANCH" > pr-metadata/pr_branch
+        echo "$env:PR_SHA" > pr-metadata/pr_sha
+      env:
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        PR_BASE: ${{ github.event.pull_request.base.ref }}
+        PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+        PR_SHA: ${{ github.event.pull_request.head.sha }}
+
+    - name: Upload PR metadata
+      if: github.event_name == 'pull_request'
+      uses: actions/upload-artifact@v7
+      with:
+        name: pr-metadata
+        path: pr-metadata/
+
+    - name: Upload NuGet package
+      uses: actions/upload-artifact@v7
+      with:
+        path: artifacts/*.nupkg

@@ -1,14 +1,7 @@
 name: Publish to NuGet
 
 on:
-  release:
-    types: [created]
   workflow_dispatch:
-    inputs:
-      version:
-        description: 'Manually specify the version to publish (e.g. 1.0.0). If not specified, the version will be taken from the release tag.'
-        required: true
-        type: string
 
 permissions:
   id-token: write
@@ -16,51 +9,44 @@ permissions:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
-    env:
-      PACKAGE_VERSION: ${{ github.event.inputs.version || github.event.release.tag_name }}
+    runs-on: windows-latest
+    if: github.ref == 'refs/heads/master'
 
     steps:
-    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+    - uses: actions/checkout@v7
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: 10.x
-          
-    - name: Build
-      run: dotnet build --configuration Release -p:PackageVersion=${{ env.PACKAGE_VERSION}}
-    
-    - name: Test
-      run: dotnet test --configuration Release --no-build --filter trait=unit -p:PackageVersion=${{ env.PACKAGE_VERSION}}
 
-    - name: Create the package
-      run: dotnet pack --configuration Release --no-build -o artifacts -p:PackageVersion=${{ env.PACKAGE_VERSION}}
-      
-    - name: Upload NuGet packages
-      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+    - name: Cache NuGet packages
+      uses: actions/cache@v6
       with:
-          path: |
-            artifacts/*.nupkg
-            artifacts/*.snupkg
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Build and Pack
+      run: .\build.cmd nuget-pack --configuration Release
+
+    - name: Upload NuGet package
+      uses: actions/upload-artifact@v7
+      with:
+          path: artifacts/*.nupkg
 
     - name: NuGet login (OIDC → temp API key)
-      uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841
+      uses: NuGet/login@v1
       id: login
       with:
           user: ${{ secrets.NUGET_USER }}
 
     - name: NuGet push
       run: |
-          packages=(artifacts/*.nupkg)
-          if [ ${#packages[@]} -ne 1 ]; then
-            echo "Expected exactly 1 package, found ${#packages[@]}"
-            exit 1
-          fi
-          symbols=(artifacts/*.snupkg)
-          if [ ${#symbols[@]} -ne 1 ]; then
-            echo "Expected exactly 1 symbol package, found ${#symbols[@]}"
-            exit 1
-          fi
-          # dotnet nuget push automatically publishes the sibling .snupkg as the symbol package.
-          dotnet nuget push "${packages[0]}" --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
+          $packages = Get-ChildItem -Path artifacts/*.nupkg
+          if ($packages.Count -ne 1) {
+            throw "Expected exactly 1 package, found $($packages.Count)"
+          }
+          dotnet nuget push $packages[0].FullName --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
+      shell: pwsh
