@@ -19,7 +19,7 @@ namespace Todoist.Net.Services
         /// <param name="reminder">The reminder.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>
-        /// The reminder ID.
+        /// The ID of the reminder, or a temporary ID when executed in a transaction.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="reminder" /> is <see langword="null" /></exception>
         /// <exception cref="TodoistException">Command execution exception.</exception>

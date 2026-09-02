@@ -18,7 +18,7 @@ namespace Todoist.Net.Services
         /// </summary>
         /// <param name="section">The section.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The ID of the section.</returns>
+        /// <returns>The ID of the section, or a temporary ID when executed in a transaction.</returns>
         /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="section" /> is <see langword="null" /></exception>

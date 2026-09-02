@@ -15,15 +15,12 @@ namespace Todoist.Net.Models
         }
 
         /// <summary>
-        /// Gets the item type.
+        /// Gets the task type.
         /// </summary>
-        /// <remarks>
-        /// Todoist API uses the legacy "item" string for tasks in sync endpoints.
-        /// </remarks>
         /// <value>
-        /// The item type.
+        /// The task type.
         /// </value>
-        public static EmailObjectType Item { get; } = new EmailObjectType("item");
+        public static EmailObjectType Task { get; } = new EmailObjectType("task");
 
         /// <summary>
         /// Gets the project type.

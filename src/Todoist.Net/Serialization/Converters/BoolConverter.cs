@@ -22,6 +22,9 @@ namespace Todoist.Net.Serialization.Converters
                 case JsonTokenType.False:
                     return false;
 
+                case JsonTokenType.Null:
+                    return false;
+
                 default:
                     throw new JsonException($"Token type not supported for boolean properties. Token: {reader.TokenType}");
             }

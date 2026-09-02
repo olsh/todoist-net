@@ -27,6 +27,7 @@ namespace Todoist.Net.Services
         /// <inheritdoc/>
         public Task<ComplexId> AddToTaskAsync(Comment comment, ComplexId taskId, CancellationToken cancellationToken = default)
         {
+            ThrowHelper.ThrowIfNull(comment, nameof(comment));
             ThrowHelper.ThrowIfDefaultOrEmpty(taskId, nameof(taskId));
 
             comment.TaskId = taskId;
@@ -36,6 +37,7 @@ namespace Todoist.Net.Services
         /// <inheritdoc/>
         public Task<ComplexId> AddToProjectAsync(Comment comment, ComplexId projectId, CancellationToken cancellationToken = default)
         {
+            ThrowHelper.ThrowIfNull(comment, nameof(comment));
             ThrowHelper.ThrowIfDefaultOrEmpty(projectId, nameof(projectId));
 
             comment.ProjectId = projectId;

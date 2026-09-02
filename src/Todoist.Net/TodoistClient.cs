@@ -30,7 +30,7 @@ namespace Todoist.Net
         private const string ResourceTypesParameterName = "resource_types";
         private const string CommandsParameterName = "commands";
 
-        private static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
+        internal static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             NumberHandling = JsonNumberHandling.AllowReadingFromString,
@@ -530,11 +530,24 @@ namespace Todoist.Net
                 errorContent = null;
             }
 
-            if (errorContent != null)
+            // Any JSON object deserializes into a `TodoistError` instance, so a body which is not an
+            // actual Todoist error would produce an exception without a single populated property.
+            if (errorContent != null && HasErrorDetails(errorContent))
             {
+                errorContent.HttpCode = errorContent.HttpCode ?? (int)response.StatusCode;
+
                 throw new TodoistException(errorContent);
             }
             response.EnsureSuccessStatusCode();
+        }
+
+        private static bool HasErrorDetails(TodoistError error)
+        {
+            return error.Error != null
+                   || error.ErrorCode.HasValue
+                   || error.ErrorTag != null
+                   || error.HttpCode.HasValue
+                   || error.ErrorExtra != null;
         }
 
         private static async Task<T> DeserializeResponseAsync<T>(HttpResponseMessage response, CancellationToken cancellationToken)

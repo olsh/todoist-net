@@ -7,12 +7,17 @@ internal sealed class StubTodoistRestClient : ITodoistRestClient
 {
     private Func<string, Dictionary<string, string>, CancellationToken, Task<HttpResponseMessage>>? _getAsyncHandler;
     private Func<string, Dictionary<string, string>, CancellationToken, Task<HttpResponseMessage>>? _postAsyncHandler;
+    private Func<string, Dictionary<string, string>, CancellationToken, Task<HttpResponseMessage>>? _deleteAsyncHandler;
+    private Func<string, string, CancellationToken, Task<HttpResponseMessage>>? _postJsonAsyncHandler;
+    private Func<string, string, CancellationToken, Task<HttpResponseMessage>>? _putJsonAsyncHandler;
 
     public string LastResource { get; private set; } = string.Empty;
 
     public Dictionary<string, string> LastQueryParams { get; private set; } = [];
+
     public Dictionary<string, string> LastFormParams { get; private set; } = [];
 
+    public string LastJsonContent { get; private set; } = string.Empty;
 
     public void RespondToGetJson(HttpStatusCode statusCode, string json)
     {
@@ -24,6 +29,20 @@ internal sealed class StubTodoistRestClient : ITodoistRestClient
         _postAsyncHandler = (_, _, _) => Task.FromResult(CreateJsonResponse(statusCode, json));
     }
 
+    public void RespondToJsonPost(HttpStatusCode statusCode, string json)
+    {
+        _postJsonAsyncHandler = (_, _, _) => Task.FromResult(CreateJsonResponse(statusCode, json));
+    }
+
+    public void RespondToJsonPut(HttpStatusCode statusCode, string json)
+    {
+        _putJsonAsyncHandler = (_, _, _) => Task.FromResult(CreateJsonResponse(statusCode, json));
+    }
+
+    public void RespondToDeleteWithEmptyBody(HttpStatusCode statusCode)
+    {
+        _deleteAsyncHandler = (_, _, _) => Task.FromResult(new HttpResponseMessage(statusCode));
+    }
 
     public Task<HttpResponseMessage> GetAsync(string resource, Dictionary<string, string>? queryParams = null, CancellationToken cancellationToken = default)
     {
@@ -50,7 +69,11 @@ internal sealed class StubTodoistRestClient : ITodoistRestClient
 
     public Task<HttpResponseMessage> PostJsonAsync(string resource, string jsonContent, CancellationToken cancellationToken = default)
     {
-        throw new NotSupportedException();
+        LastResource = resource;
+        LastJsonContent = jsonContent;
+
+        return _postJsonAsyncHandler?.Invoke(resource, jsonContent, cancellationToken)
+            ?? throw new NotSupportedException("No JSON POST handler configured.");
     }
 
     public Task<HttpResponseMessage> PutAsync(string resource, CancellationToken cancellationToken = default)
@@ -60,18 +83,25 @@ internal sealed class StubTodoistRestClient : ITodoistRestClient
 
     public Task<HttpResponseMessage> PutJsonAsync(string resource, string jsonContent, CancellationToken cancellationToken = default)
     {
-        throw new NotSupportedException();
+        LastResource = resource;
+        LastJsonContent = jsonContent;
+
+        return _putJsonAsyncHandler?.Invoke(resource, jsonContent, cancellationToken)
+            ?? throw new NotSupportedException("No JSON PUT handler configured.");
     }
 
     public Task<HttpResponseMessage> DeleteAsync(string resource, Dictionary<string, string>? queryParams = null, CancellationToken cancellationToken = default)
     {
-        throw new NotSupportedException();
+        LastResource = resource;
+        LastQueryParams = queryParams is null ? [] : new Dictionary<string, string>(queryParams);
+
+        return _deleteAsyncHandler?.Invoke(resource, LastQueryParams, cancellationToken)
+            ?? throw new NotSupportedException("No DELETE handler configured.");
     }
 
     public void Dispose()
     {
     }
-
 
     private static HttpResponseMessage CreateJsonResponse(HttpStatusCode statusCode, string json)
     {

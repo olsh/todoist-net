@@ -9,14 +9,16 @@ namespace Todoist.Net.Models
     public class ProjectData
     {
         /// <summary>Gets the tasks.</summary>
-        /// <remarks>The JSON property name remains "items" for backwards compatibility with Sync API.</remarks>
-        [JsonPropertyName("items")]
+        /// <remarks>
+        /// Unlike the sync endpoint, which still answers with "items", this REST endpoint uses the
+        /// v1 name "tasks".
+        /// </remarks>
+        [JsonPropertyName("tasks")]
         public IReadOnlyCollection<TaskInfo> Tasks { get; internal set; }
 
-        /// <summary>Gets the comments.</summary>
-        /// <remarks>The JSON property name remains "project_notes" for backwards compatibility with Sync API.</remarks>
-        [JsonPropertyName("project_notes")]
-        public IReadOnlyCollection<Comment> ProjectComments { get; internal set; }
+        /// <summary>Gets the number of comments on the project.</summary>
+        [JsonPropertyName("comments_count")]
+        public int CommentsCount { get; internal set; }
 
         /// <summary>Gets the collaborators.</summary>
         [JsonPropertyName("collaborators")]

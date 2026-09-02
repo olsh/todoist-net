@@ -19,7 +19,7 @@ namespace Todoist.Net.Services
         /// <param name="filter">The filter.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>
-        /// The temporary ID of the filter.
+        /// The ID of the filter, or a temporary ID when executed in a transaction.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="filter" /> is <see langword="null" /></exception>
         /// <exception cref="TodoistException">Command execution exception.</exception>

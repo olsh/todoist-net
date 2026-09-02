@@ -75,7 +75,7 @@ namespace Todoist.Net.Models
                 { "project_id", ProjectId },
                 { "section_id", SectionId },
                 { "parent_id", ParentId },
-                { "filter", FilterQuery },
+                { "filter_query", FilterQuery },
                 { "filter_lang", FilterLang }
             };
 

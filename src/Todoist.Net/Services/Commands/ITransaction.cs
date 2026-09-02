@@ -72,6 +72,7 @@ namespace Todoist.Net.Services
 
         /// <summary>
         /// Commits the transaction asynchronously and synchronizes the specified resource types.
+        /// Syncs all resources if zero or <c>null</c> resource types were passed.
         /// </summary>
         /// <param name="resourceTypes">The resource types to synchronize.</param>
         /// <param name="syncToken">The synchronization token.</param>

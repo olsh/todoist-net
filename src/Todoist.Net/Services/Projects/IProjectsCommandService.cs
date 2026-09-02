@@ -18,7 +18,7 @@ namespace Todoist.Net.Services
         /// </summary>
         /// <param name="project">The project.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The temporary ID of the project.</returns>
+        /// <returns>The ID of the project, or a temporary ID when executed in a transaction.</returns>
         /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="project"/> is <see langword="null"/></exception>

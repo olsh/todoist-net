@@ -38,7 +38,7 @@ namespace Todoist.Net.Services
                 { "obj_id", objectId }
             };
 
-            return TodoistClient.DeleteAsync<ObjectEmailRequest>("emails", parameters, cancellationToken);
+            return TodoistClient.DeleteAsync("emails", parameters, cancellationToken);
         }
     }
 }

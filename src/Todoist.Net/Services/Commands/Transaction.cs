@@ -72,6 +72,11 @@ namespace Todoist.Net.Services
         /// <inheritdoc/>
         public async Task<SyncTransactionResponse> CommitAndSyncAsync(ResourceType[] resourceTypes, string syncToken = "*", CancellationToken cancellationToken = default)
         {
+            if (resourceTypes == null || resourceTypes.Length == 0)
+            {
+                resourceTypes = new[] { ResourceType.All };
+            }
+
             try
             {
                 return await _todoistClient

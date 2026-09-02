@@ -19,7 +19,7 @@ namespace Todoist.Net.Services
         /// <param name="task">The task.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>
-        /// The temporary ID of the task.
+        /// The ID of the task, or a temporary ID when executed in a transaction.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="task" /> is <see langword="null" /></exception>
         /// <exception cref="TodoistException">Command execution exception.</exception>
