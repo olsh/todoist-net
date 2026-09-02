@@ -32,6 +32,10 @@ jobs:
         echo "PR_BRANCH=$(Get-Content 'pr-metadata/pr_branch')" >> $env:GITHUB_ENV
         echo "PR_SHA=$(Get-Content 'pr-metadata/pr_sha')" >> $env:GITHUB_ENV
 
+    # Sonar analysis has to build the contributor's code, so this job checks out
+    # the PR head with SONAR_TOKEN in scope - the pattern Sonar flags as S7631.
+    # The sonar-pr environment above requires maintainer approval before the job
+    # starts, so fork code never runs unreviewed.
     - uses: actions/checkout@v7
       with:
         ref: ${{ env.PR_SHA }}
