@@ -301,6 +301,43 @@ public class TodoistClientProtocolTests
     }
 
     [Fact]
+    public async Task GetProjectData_ReadsTasksFromTheV1PropertyName()
+    {
+        var restClient = new StubTodoistRestClient();
+        restClient.RespondToGetJson(
+            HttpStatusCode.OK,
+            """
+            {
+                "project": { "id": "6Crcmx9Mrpphc3Qc", "name": "Shopping" },
+                "tasks": [ { "id": "6X7rM8997g3RQmvh", "content": "Buy Milk" } ],
+                "sections": [],
+                "subprojects": [],
+                "collaborators": [],
+                "collaborator_states": [],
+                "comments_count": 3,
+                "folder": null
+            }
+            """);
+        using var todoistClient = new TodoistClient(restClient);
+
+
+        // Step 1: Get the full data of a project.
+        var actualProjectData = await todoistClient.Projects.GetDataAsync(
+            "6Crcmx9Mrpphc3Qc",
+            TestContext.Current.CancellationToken);
+
+
+        // Step 2: Assert the tasks are read. This endpoint answers with the v1 name "tasks", not the
+        // "items" the sync endpoint still uses, so binding it to "items" left `Tasks` silently null.
+        Assert.Equal("projects/6Crcmx9Mrpphc3Qc/full", restClient.LastResource);
+
+        var actualTask = Assert.Single(actualProjectData.Tasks);
+        Assert.Equal("Buy Milk", actualTask.Content);
+        Assert.Equal("Shopping", actualProjectData.Project.Name);
+        Assert.Equal(3, actualProjectData.CommentsCount);
+    }
+
+    [Fact]
     public async Task ImportTemplateIntoProject_AddressesTheTemplateIdEndpoint()
     {
         var restClient = new StubTodoistRestClient();
