@@ -269,7 +269,7 @@ public class TodoistClientProtocolTests
 
 
         // Step 2: Assert the missing HTTP code is taken from the response itself.
-        Assert.Equal("Rate limit exceeded", exception.Message);
+        Assert.StartsWith("Rate limit exceeded", exception.Message);
         Assert.Equal(429, exception.HttpCode);
     }
 

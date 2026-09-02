@@ -95,7 +95,7 @@ namespace Todoist.Net
 
             var response = await BuildResourceRequest(resource)
                 .PostMultipartAsync(mp => mp
-                    .AddStringParts(formParams)
+                    .AddStringParts(formParams ?? new Dictionary<string, string>())
                     .AddFileParts("file", files), cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
 
