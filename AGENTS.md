@@ -27,12 +27,12 @@ NUKE is the build system. Targets are invoked in **kebab-case** on the CLI:
 Direct dotnet CLI:
 
 ```bash
-dotnet build Todoist.Net.sln
+dotnet build Todoist.Net.slnx
 dotnet test src/Todoist.Net.Tests/Todoist.Net.Tests.csproj --filter "trait=unit"
 dotnet test src/Todoist.Net.Tests/Todoist.Net.Tests.csproj --filter "FullyQualifiedName~TransactionTests"
 ```
 
-`dotnet test` only builds the `netstandard2.0` leg. Run `dotnet build Todoist.Net.sln` to compile `net462` too — a change can pass tests and still break that target framework.
+`dotnet test` only builds the `netstandard2.0` leg. Run `dotnet build Todoist.Net.slnx` to compile `net462` too — a change can pass tests and still break that target framework.
 
 Integration tests read the token from the **`todoist:token`** environment variable (`Settings/SettingsProvider.cs`) and mutate a real Todoist account.
 

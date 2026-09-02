@@ -1,4 +1,4 @@
 {
   "$schema": "./build.schema.json",
-  "Solution": "Todoist.Net.sln"
+  "Solution": "Todoist.Net.slnx"
 }
