@@ -1,6 +1,6 @@
-namespace Todoist.Net.Tests.Authentication;
+namespace Todoist.Net.Tests.Settings;
 
-public static class NonExpiringTokensProvider
+public static class SettingsProvider
 {
     /// <summary>
     /// Gets the primary token for authenticating with the Todoist API.
@@ -13,7 +13,9 @@ public static class NonExpiringTokensProvider
     /// <exception cref="InvalidOperationException">Thrown if the primary token is not set in the environment variables.</exception>
     public static string GetPrimaryToken()
     {
-        return TokenEnvVariables.Primary;
+        return Environment.GetEnvironmentVariable("todoist_token")
+            ?? Environment.GetEnvironmentVariable("todoist:token")
+            ?? throw new InvalidOperationException("Required `todoist_token` environment variable is not set.");
     }
 
     /// <summary>
@@ -33,9 +35,8 @@ public static class NonExpiringTokensProvider
     /// <returns>A string containing the secondary token if the environment variable is set; otherwise, <c>null</c>.</returns>
     public static string? GetSecondaryToken()
     {
-        return string.IsNullOrWhiteSpace(TokenEnvVariables.Secondary.Value) 
-            ? null 
-            : TokenEnvVariables.Secondary.Value;
+        return Environment.GetEnvironmentVariable("todoist_token_secondary")
+            ?? Environment.GetEnvironmentVariable("todoist:token:secondary");
     }
 
     /// <summary>
@@ -48,8 +49,7 @@ public static class NonExpiringTokensProvider
     /// <returns>A string containing the tertiary token if the environment variable is set; otherwise, <c>null</c>.</returns>
     public static string? GetTertiaryToken()
     {
-        return string.IsNullOrWhiteSpace(TokenEnvVariables.Tertiary.Value) 
-            ? null 
-            : TokenEnvVariables.Tertiary.Value;
+        return Environment.GetEnvironmentVariable("todoist_token_tertiary")
+            ?? Environment.GetEnvironmentVariable("todoist:token:tertiary");
     }
 }

@@ -43,14 +43,12 @@ public sealed class TodoistApiFixture : IAsyncLifetime
 
     public async ValueTask InitializeAsync()
     {
-        var clientFactory = new TodoistClientFactory();
-
-        _primaryClient = await clientFactory.CreatePrimaryAsync();
+        _primaryClient = TodoistClientFactory.CreatePrimary();
 
         // Alternate between secondary and tertiary clients for each instance to maximize test distribution across different accounts.
         _secondaryClient = _instanceNumber % 2 == 0
-            ? await clientFactory.CreateSecondaryAsync()
-            : await clientFactory.CreateTertiaryAsync() ?? await clientFactory.CreateSecondaryAsync();
+            ? TodoistClientFactory.CreateSecondary()
+            : TodoistClientFactory.CreateTertiary() ?? TodoistClientFactory.CreateSecondary();
     }
 
     public async ValueTask DisposeAsync()

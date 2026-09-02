@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Tests
 {
-    public sealed class RateLimitAwareRestClient : IRefreshableTodoistRestClient
+    public sealed class RateLimitAwareRestClient : ITodoistRestClient
     {
         private const int MaxRetryCount = 60;
         private const string RateLimitResetHeaderName = "x-ratelimit-reset";
@@ -12,7 +12,7 @@ namespace Todoist.Net.Tests
         private static readonly TimeSpan _defaultCooldown = TimeSpan.FromSeconds(30);
 
         private readonly ITestOutputHelper? _outputHelper;
-        private readonly ITodoistRestClient _restClient;
+        private readonly TodoistRestClient _restClient;
 
         public RateLimitAwareRestClient(string token, ITestOutputHelper? outputHelper = null)
         {
@@ -20,17 +20,10 @@ namespace Todoist.Net.Tests
             _restClient = new TodoistRestClient(token);
         }
 
-        public RateLimitAwareRestClient(TodoistAuthenticationContext authContext, ITestOutputHelper? outputHelper = null)
-        {
-            _outputHelper = outputHelper;
-            _restClient = new RefreshableTodoistRestClient(authContext);
-        }
-
         public void Dispose()
         {
             _restClient?.Dispose();
         }
-
 
         public Task<HttpResponseMessage> GetAsync(string resource, Dictionary<string, string>? queryParams = null, CancellationToken cancellationToken = default)
         {
@@ -65,28 +58,6 @@ namespace Todoist.Net.Tests
         public Task<HttpResponseMessage> DeleteAsync(string resource, Dictionary<string, string>? queryParams = null, CancellationToken cancellationToken = default)
         {
             return ExecuteRequest(ct => _restClient.DeleteAsync(resource, queryParams, ct), cancellationToken);
-        }
-
-        public Task<HttpResponseMessage> RefreshTokensAsync(CancellationToken cancellationToken = default)
-        {
-            if (_restClient is not IRefreshableTodoistRestClient refreshableClient)
-            {
-                throw new NotSupportedException(
-                    "The underlying ITodoistRestClient does not support token refresh. " +
-                    "Use RateLimitAwareRestClient constructor overload with a TodoistAuthenticationContext to enable token refresh.");
-            }
-            return refreshableClient.RefreshTokensAsync(cancellationToken);
-        }
-
-        public Task<HttpResponseMessage> RevokeTokensAsync(CancellationToken cancellationToken = default)
-        {
-            if (_restClient is not IRefreshableTodoistRestClient refreshableClient)
-            {
-                throw new NotSupportedException(
-                    "The underlying ITodoistRestClient does not support token revocation. " +
-                    "Use RateLimitAwareRestClient constructor overload with a TodoistAuthenticationContext to enable token revocation.");
-            }
-            return refreshableClient.RevokeTokensAsync(cancellationToken);
         }
 
 
