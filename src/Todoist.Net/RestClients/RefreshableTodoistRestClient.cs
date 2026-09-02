@@ -133,13 +133,14 @@ namespace Todoist.Net
         private async Task<HttpResponseMessage> ExecuteWithTokenRefreshAsync(Func<Task<HttpResponseMessage>> action, CancellationToken cancellationToken)
         {
             bool tokenFoundExpired = _authContext.Tokens.ExpirationTimeUtc <= DateTime.UtcNow.AddMinutes(1);
-            if (tokenFoundExpired)
+            bool refreshTokenExist = !string.IsNullOrEmpty(_authContext.Tokens.RefreshToken);
+            if (tokenFoundExpired && refreshTokenExist)
             {
                 await RefreshTokensAsync(cancellationToken).ConfigureAwait(false);
             }
 
             var response = await action().ConfigureAwait(false);
-            if (!tokenFoundExpired && response.StatusCode == HttpStatusCode.Unauthorized)
+            if (!tokenFoundExpired && refreshTokenExist && response.StatusCode == HttpStatusCode.Unauthorized)
             {
                 var refreshResponse = await RefreshTokensAsync(cancellationToken).ConfigureAwait(false);
                 if (refreshResponse.IsSuccessStatusCode)
