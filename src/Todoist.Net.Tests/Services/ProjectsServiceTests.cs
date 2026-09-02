@@ -79,6 +79,33 @@ public class ProjectsServiceTests
     }
 
     [Fact]
+    public async Task CreateProjectWithTask_GetData_ReturnsTheTask()
+    {
+        var newProject = new AddProject($"ProjectDataUnderTest_{Guid.NewGuid():N}");
+        var expectedTaskContent = $"ProjectDataTask_{Guid.NewGuid():N}";
+
+
+        // Step 1: Create a project and seed it with a task.
+        await _apiFixture.Client.Projects.AddAsync(newProject, _cancellationToken);
+        await using var projectTracker = _apiFixture.TrackForCleanup(newProject, c => c.Projects.DeleteAsync);
+
+        var newTask = TestData.Tasks.AddTask(newProject.Id, expectedTaskContent);
+        await _apiFixture.Client.Tasks.AddAsync(newTask, _cancellationToken);
+
+
+        // Step 2: Read the full project data back.
+        var actualProjectData = await _apiFixture.Client.Projects.GetDataAsync(
+            newProject.Id.PersistentId,
+            _cancellationToken);
+
+        Assert.NotNull(actualProjectData.Project);
+        Assert.Equal(newProject.Name, actualProjectData.Project.Name);
+
+        Assert.NotNull(actualProjectData.Tasks);
+        Assert.Contains(actualProjectData.Tasks, t => t.Content == expectedTaskContent);
+    }
+
+    [Fact]
     public async Task CreateProject_UpdateAndSetViewOptions_Archive_GetAndGetArchived_Unarchive_Succeeds()
     {
         // Step 0: Create project for arrangement of the test.
