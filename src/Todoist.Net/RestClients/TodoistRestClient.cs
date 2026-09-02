@@ -163,9 +163,6 @@ namespace Todoist.Net
             }
         }
 
-        protected delegate IFlurlRequest FlurlRequestGetter(string[] urlSegments, bool skipAuth = false);
-
-
         private IFlurlRequest BuildResourceRequest(string resource)
         {
             return FlurlClient
