@@ -1,4 +1,5 @@
 {
   "$schema": "./build.schema.json",
-  "Solution": "Todoist.Net.slnx"
+  "Solution": "Todoist.Net.slnx",
+  "NUKE_TELEMETRY_OPTOUT": "1"
 }
