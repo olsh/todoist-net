@@ -1,32 +1,32 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
 
 namespace Todoist.Net
 {
     internal sealed class TodoistRestClient : ITodoistRestClient
     {
+        private const string ApiBaseUrl = "https://api.todoist.com/api/v1/";
+
         private readonly HttpClient _httpClient;
         private readonly bool _disposeHttpClient;
-        private const string ValueCannotBeNullOrEmpty = "Value cannot be null or empty.";
 
         public TodoistRestClient() : this(null, (IWebProxy)null)
-        {
-        }
+        { }
 
         public TodoistRestClient(string token) : this(token, (IWebProxy)null)
-        {
-        }
+        { }
 
         public TodoistRestClient(IWebProxy proxy) : this(null, proxy)
-        {
-        }
+        { }
 
         public TodoistRestClient(string token, IWebProxy proxy)
         {
@@ -40,7 +40,7 @@ namespace Todoist.Net
             // ReSharper disable once ExceptionNotDocumented
             _httpClient = new HttpClient(httpClientHandler)
             {
-                BaseAddress = new Uri("https://api.todoist.com/api/v1/")
+                BaseAddress = new Uri(ApiBaseUrl)
             };
 
             if (!string.IsNullOrEmpty(token))
@@ -55,7 +55,7 @@ namespace Todoist.Net
         {
             _httpClient = httpClient;
 
-            _httpClient.BaseAddress = new Uri("https://api.todoist.com/api/v1/");
+            _httpClient.BaseAddress = new Uri(ApiBaseUrl);
             if (!string.IsNullOrEmpty(token))
             {
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -72,92 +72,47 @@ namespace Todoist.Net
 
 
         /// <inheritdoc/>
-        public async Task<HttpResponseMessage> GetAsync(
-            string resource,
-            IEnumerable<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken = default)
+        public async Task<HttpResponseMessage> GetAsync(string resource, Dictionary<string, string> queryParams = null, CancellationToken cancellationToken = default)
         {
-            if (parameters == null)
-            {
-                throw new ArgumentNullException(nameof(parameters));
-            }
+            ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
 
-            if (string.IsNullOrEmpty(resource))
-            {
-                throw new ArgumentException(ValueCannotBeNullOrEmpty, nameof(resource));
-            }
+            var requestUri = await AppendQueryParamsAsync(resource, queryParams).ConfigureAwait(false);
 
-            string requestUri;
-            using (var content = new FormUrlEncodedContent(parameters))
-            {
-                var query = await content.ReadAsStringAsync().ConfigureAwait(false);
-                requestUri = $"{resource}?{query}";
-            }
             return await _httpClient.GetAsync(requestUri, cancellationToken).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public async Task<HttpResponseMessage> PostAsync(
-            string resource,
-            IEnumerable<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken = default)
+        public async Task<HttpResponseMessage> PostAsync(string resource, Dictionary<string, string> formParams = null, CancellationToken cancellationToken = default)
         {
-            if (parameters == null)
-            {
-                throw new ArgumentNullException(nameof(parameters));
-            }
-
-            if (string.IsNullOrEmpty(resource))
-            {
-                throw new ArgumentException(ValueCannotBeNullOrEmpty, nameof(resource));
-            }
-
-            using (var content = new FormUrlEncodedContent(parameters))
+            ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
+            
+            formParams = formParams ?? new Dictionary<string, string>();
+            using (var content = new FormUrlEncodedContent(formParams))
             {
                 return await _httpClient.PostAsync(resource, content, cancellationToken).ConfigureAwait(false);
             }
         }
 
         /// <inheritdoc/>
-        public async Task<HttpResponseMessage> PostFormAsync(
-            string resource,
-            IEnumerable<KeyValuePair<string, string>> parameters,
-            IEnumerable<UploadFile> files,
-            CancellationToken cancellationToken = default)
+        public async Task<HttpResponseMessage> PostFilesAsync(string resource, UploadFile[] files, Dictionary<string, string> formParams = null, CancellationToken cancellationToken = default)
         {
+            ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
+            ThrowHelper.ThrowIfNull(files, nameof(files));
+
+            formParams = formParams ?? new Dictionary<string, string>();
             using (var multipartFormDataContent = new MultipartFormDataContent())
             {
-                foreach (var keyValuePair in parameters)
-                {
-                    multipartFormDataContent.Add(new StringContent(keyValuePair.Value), $"\"{keyValuePair.Key}\"");
-                }
+                BuildFormDataContent(multipartFormDataContent, formParams, files);
 
-                foreach (var file in files)
-                {
-                    var content = new ByteArrayContent(file.Content);
-                    if (file.MimeType != null && MediaTypeHeaderValue.TryParse(file.MimeType, out var mediaType))
-                    {
-                        content.Headers.ContentType = mediaType;
-                    }
-
-                    multipartFormDataContent.Add(content, "file", file.Filename);
-                }
-
-                return await _httpClient.PostAsync(resource, multipartFormDataContent, cancellationToken)
-                                        .ConfigureAwait(false);
+                return await _httpClient.PostAsync(resource, multipartFormDataContent, cancellationToken).ConfigureAwait(false);
             }
         }
 
         /// <inheritdoc/>
-        public async Task<HttpResponseMessage> PostJsonAsync(
-            string resource,
-            string jsonContent,
-            CancellationToken cancellationToken = default)
+        public async Task<HttpResponseMessage> PostJsonAsync(string resource, string jsonContent, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(resource))
-            {
-                throw new ArgumentException(ValueCannotBeNullOrEmpty, nameof(resource));
-            }
+            ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
+            ThrowHelper.ThrowIfNullOrEmpty(jsonContent, nameof(jsonContent));
 
             using (var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json"))
             {
@@ -166,15 +121,20 @@ namespace Todoist.Net
         }
 
         /// <inheritdoc/>
-        public async Task<HttpResponseMessage> PutAsync(
-            string resource,
-            string jsonContent,
-            CancellationToken cancellationToken = default)
+        public Task<HttpResponseMessage> PutAsync(string resource, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(resource))
-            {
-                throw new ArgumentException(ValueCannotBeNullOrEmpty, nameof(resource));
-            }
+            ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
+            
+            var content = new StringContent(string.Empty);
+
+            return _httpClient.PutAsync(resource, content, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task<HttpResponseMessage> PutJsonAsync(string resource, string jsonContent, CancellationToken cancellationToken = default)
+        {
+            ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
+            ThrowHelper.ThrowIfNullOrEmpty(jsonContent, nameof(jsonContent));
 
             using (var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json"))
             {
@@ -183,16 +143,75 @@ namespace Todoist.Net
         }
 
         /// <inheritdoc/>
-        public async Task<HttpResponseMessage> DeleteAsync(
-            string resource,
-            CancellationToken cancellationToken = default)
+        public async Task<HttpResponseMessage> DeleteAsync(string resource, Dictionary<string, string> queryParams = null, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(resource))
+            ThrowHelper.ThrowIfNullOrEmpty(resource, nameof(resource));
+
+            var requestUri = await AppendQueryParamsAsync(resource, queryParams).ConfigureAwait(false);
+
+            return await _httpClient.DeleteAsync(requestUri, cancellationToken).ConfigureAwait(false);
+        }
+
+
+        private static async Task<string> AppendQueryParamsAsync(string resource, Dictionary<string, string> queryParams)
+        {
+            if (queryParams == null || queryParams.Count == 0)
             {
-                throw new ArgumentException(ValueCannotBeNullOrEmpty, nameof(resource));
+                return resource;
             }
 
-            return await _httpClient.DeleteAsync(resource, cancellationToken).ConfigureAwait(false);
+            using (var content = new FormUrlEncodedContent(queryParams))
+            {
+                var query = await content.ReadAsStringAsync().ConfigureAwait(false);
+                return $"{resource}?{query}";
+            }
+        }
+
+        private static void BuildFormDataContent(MultipartFormDataContent multipartFormDataContent, Dictionary<string, string> formParams, UploadFile[] files)
+        {
+            foreach (var keyValuePair in formParams)
+            {
+                multipartFormDataContent.Add(new StringContent(keyValuePair.Value), $"\"{keyValuePair.Key}\"");
+            }
+
+            foreach (var file in files)
+            {
+                var contentStream = file.ContentStream;
+                if (contentStream.CanSeek)
+                {
+                    // The same file may be sent more than once, e.g. when a request is retried,
+                    // so the stream is rewound instead of being read from wherever it was left.
+                    contentStream.Seek(0, SeekOrigin.Begin);
+                }
+
+                var content = new NonDisposingStreamContent(contentStream);
+                if (file.MimeType != null && MediaTypeHeaderValue.TryParse(file.MimeType, out var mediaType))
+                {
+                    content.Headers.ContentType = mediaType;
+                }
+
+                multipartFormDataContent.Add(content, "file", file.Filename);
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="StreamContent" /> which leaves the underlying stream open once disposed.
+        /// </summary>
+        /// <remarks>
+        /// The stream belongs to the <see cref="UploadFile" /> owned by the caller, so it has to outlive
+        /// both the content and the request the content is sent with.
+        /// </remarks>
+        private sealed class NonDisposingStreamContent : StreamContent
+        {
+            public NonDisposingStreamContent(Stream content)
+                : base(content)
+            {
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                base.Dispose(false);
+            }
         }
     }
 }

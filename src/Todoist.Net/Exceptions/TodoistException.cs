@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
+
+using Todoist.Net.Models;
 
 #if NETFRAMEWORK
 using System.Runtime.Serialization;
 #endif
-
-using Todoist.Net.Models;
 
 namespace Todoist.Net.Exceptions
 {
@@ -20,107 +18,78 @@ namespace Todoist.Net.Exceptions
     public sealed class TodoistException : Exception
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="TodoistException" /> class.
+        /// Initializes a new instance of the <see cref="TodoistException" /> class using a <see cref="TodoistError" /> object.
         /// </summary>
-        public TodoistException()
-        {
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="TodoistException" /> class.
-        /// </summary>
-        /// <param name="message">The message that describes the error.</param>
-        public TodoistException(string message)
-            : base(message)
-        {
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="TodoistException" /> class.
-        /// </summary>
-        /// <param name="code">The code.</param>
-        /// <param name="message">The message.</param>
-        public TodoistException(int code, string message)
-            : base(message)
-        {
-            Code = code;
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="TodoistException" /> class.
-        /// </summary>
-        /// <param name="code">The code.</param>
-        /// <param name="message">The message.</param>
-        /// <param name="rawError">The raw error.</param>
-        public TodoistException(int code, string message, CommandError rawError)
-            : base(message)
-        {
-            Code = code;
-            RawError = rawError;
-
-            ErrorTag = rawError?.ErrorTag;
-            HttpCode = rawError?.HttpCode ?? 0;
-            ErrorExtra = rawError?.ErrorExtra;
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="TodoistException" /> class.
-        /// </summary>
-        /// <param name="code">The code.</param>
-        /// <param name="message">The message.</param>
+        /// <param name="error">The <see cref="TodoistError" /> object containing error details.</param>
         /// <param name="inner">The inner exception.</param>
-        public TodoistException(int code, string message, Exception inner)
+        public TodoistException(TodoistError error, Exception inner = null)
+            : this(error?.Error, error?.ErrorCode, error?.ErrorTag, error?.HttpCode, error?.ErrorExtra, inner)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TodoistException" /> class.
+        /// </summary>
+        /// <param name="code">The code.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="errorTag">The error tag (e.g., "NOT_FOUND", "INVALID_ARGUMENT_VALUE").</param>
+        /// <param name="httpCode">The HTTP status code.</param>
+        /// <param name="errorExtra">A dictionary containing additional error details (e.g., "event_id", "retry_after").</param>
+        /// <param name="inner">The inner exception.</param>
+        public TodoistException(
+            string message = null,
+            int? code = null,
+            string errorTag = null, 
+            int? httpCode = null,
+            TodoistErrorExtra errorExtra = null, 
+            Exception inner = null)
             : base(message, inner)
         {
             Code = code;
+            ErrorTag = errorTag;
+            HttpCode = httpCode;
+            ErrorExtra = errorExtra;
         }
 
 #if NETFRAMEWORK
         /// <summary>
-        ///     Initializes a new instance of the <see cref="TodoistException" /> class during deserialization.
+        /// Initializes a new instance of the <see cref="TodoistException" /> class during deserialization.
         /// </summary>
         /// <param name="info">The serialization info.</param>
         /// <param name="context">The streaming context.</param>
         private TodoistException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-            Code = info.GetInt32(nameof(Code));
-            RawError = (CommandError)info.GetValue(nameof(RawError), typeof(CommandError));
+            Code = (int?)info.GetValue(nameof(Code), typeof(int?));
             ErrorTag = info.GetString(nameof(ErrorTag));
-            HttpCode = info.GetInt32(nameof(HttpCode));
-            ErrorExtra = (Dictionary<string, object>)info.GetValue(nameof(ErrorExtra), typeof(Dictionary<string, object>));
+            HttpCode = (int?)info.GetValue(nameof(HttpCode), typeof(int?));
+            ErrorExtra = (TodoistErrorExtra)info.GetValue(nameof(ErrorExtra), typeof(TodoistErrorExtra));
         }
 #endif
 
         /// <summary>
-        ///     Gets the error code.
+        /// Gets the error code.
         /// </summary>
         /// <value>The error code.</value>
-        public int Code { get; }
+        public int? Code { get; }
 
         /// <summary>
-        ///     Gets the raw error.
-        /// </summary>
-        /// <value>The raw error.</value>
-        public CommandError RawError { get; }
-
-        /// <summary>
-        ///     Gets the error tag.
+        /// Gets the error tag.
         /// </summary>
         /// <value>The error tag (e.g., "NOT_FOUND", "INVALID_ARGUMENT_VALUE").</value>
         public string ErrorTag { get; }
 
         /// <summary>
-        ///     Gets the HTTP status code.
+        /// Gets the HTTP status code.
         /// </summary>
         /// <value>The HTTP status code.</value>
-        public int HttpCode { get; }
+        public int? HttpCode { get; }
 
         /// <summary>
-        ///     Gets the extra error information.
+        /// Gets the extra error information.
         /// </summary>
-        /// <value>A dictionary containing additional error details.</value>
-        public Dictionary<string, object> ErrorExtra { get; }
+        /// <value>Additional error details (e.g., "event_id", "retry_after").</value>
+        public TodoistErrorExtra ErrorExtra { get; }
 
 #if NETFRAMEWORK
         /// <inheritdoc />
@@ -131,11 +100,12 @@ namespace Todoist.Net.Exceptions
                 throw new ArgumentNullException(nameof(info));
             }
 
-            info.AddValue(nameof(Code), Code);
-            info.AddValue(nameof(RawError), RawError);
-            info.AddValue(nameof(ErrorTag), ErrorTag);
-            info.AddValue(nameof(HttpCode), HttpCode);
-            info.AddValue(nameof(ErrorExtra), ErrorExtra);
+            // The declared type has to be passed explicitly, otherwise every value is stored as
+            // `System.Object` and reading it back fails to convert it into its actual type.
+            info.AddValue(nameof(Code), Code, typeof(int?));
+            info.AddValue(nameof(ErrorTag), ErrorTag, typeof(string));
+            info.AddValue(nameof(HttpCode), HttpCode, typeof(int?));
+            info.AddValue(nameof(ErrorExtra), ErrorExtra, typeof(TodoistErrorExtra));
 
             base.GetObjectData(info, context);
         }

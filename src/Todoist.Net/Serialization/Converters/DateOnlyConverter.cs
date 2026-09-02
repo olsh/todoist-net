@@ -11,7 +11,13 @@ namespace Todoist.Net.Serialization.Converters
 
         public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return DateTime.Parse(reader.GetString(), CultureInfo.InvariantCulture, DateTimeStyles.None);
+            var value = reader.GetString();
+            if (string.IsNullOrEmpty(value))
+            {
+                return default(DateTime);
+            }
+
+            return DateTime.Parse(value, CultureInfo.InvariantCulture, DateTimeStyles.None);
         }
 
         public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)

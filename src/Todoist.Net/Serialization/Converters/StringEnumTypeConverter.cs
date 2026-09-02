@@ -35,6 +35,24 @@ namespace Todoist.Net.Serialization.Converters
             {
                 writer.WriteStringValue(value.Value);
             }
+
+            public override T ReadAsPropertyName(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                var value = reader.GetString();
+                if (StringEnum.TryParse(value, out T stringEnum))
+                {
+                    return stringEnum;
+                }
+
+                // Unlike a property value, a dictionary key cannot be null,
+                // so an unknown value has to be reported instead of being silently dropped.
+                throw new JsonException($"Unknown {typeToConvert.Name} value used as a property name: '{value}'.");
+            }
+
+            public override void WriteAsPropertyName(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
+            {
+                writer.WritePropertyName(value.Value);
+            }
         }
     }
 }

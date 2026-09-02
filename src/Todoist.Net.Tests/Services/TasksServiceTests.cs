@@ -1,298 +1,312 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+namespace Todoist.Net.Tests.Services;
 
-using Todoist.Net.Exceptions;
-using Todoist.Net.Extensions;
-using Todoist.Net.Models;
-using Todoist.Net.Tests.Extensions;
-
-using Xunit;
-using Xunit.Abstractions;
-
-namespace Todoist.Net.Tests.Services
+[Collection(TodoistApiTestCollection.Name)]
+[Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
+public class TasksServiceTests
 {
-    [Collection(Constants.TodoistApiTestCollectionName)]
-    public class TasksServiceTests
+    private readonly TodoistApiFixture _apiFixture;
+    private readonly CancellationToken _cancellationToken;
+
+    public TasksServiceTests(TodoistApiFixture apiFixture)
     {
-        private readonly ITestOutputHelper _outputHelper;
+        _apiFixture = apiFixture;
+        _cancellationToken = TestContext.Current.CancellationToken;
+    }
 
-        public TasksServiceTests(ITestOutputHelper outputHelper)
-        {
-            _outputHelper = outputHelper;
-        }
+    [Fact]
+    public async Task CreateTask_GetByQuery_UpdateToRecurring_CompleteRecurring_Delete_Succeeds()
+    {
+        var project = await _apiFixture.GetPlaygroundProjectAsync();
 
-        [Fact]
-        [Trait(Constants.TraitName, Constants.IntegrationPremiumTraitValue)]
-        public async Task CreateTaskCompleteGetCloseAsync_Success()
-        {
-            var client = TodoistClientFactory.Create(_outputHelper);
+        var newTask = TestData.Tasks.AddTask(project.Id, $"RecurringTask_{Guid.NewGuid():N}");
+        var expectedNewTask = TestData.Tasks.ExpectedAddTask(project.Id, newTask.Content);
 
-            var transaction = client.CreateTransaction();
 
-            var task = new AddTask("temp task");
-            await transaction.Tasks.AddAsync(task);
-            await transaction.Comments.AddToTaskAsync(new Comment("test comment"), task.Id);
-            await transaction.Tasks.CloseAsync(task.Id);
+        // Step 1: Create task.
+        var syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
+            t => t.Tasks.AddAsync(newTask, _cancellationToken),
+            [ResourceType.Tasks],
+            cancellationToken: _cancellationToken);
+        await using var taskTracker = _apiFixture.TrackForCleanup(newTask, c => c.Tasks.DeleteAsync);
 
-            await transaction.CommitAsync();
-            try
+        Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
+        var actualNewTask = Assert.Single(syncResponse.Tasks, t => t.Id == newTask.Id);
+        Assert.Equivalent(expectedNewTask, actualNewTask);
+
+
+        // Step 2: Get task by query.
+        var tasksResponse = await _apiFixture.Client.Tasks.GetAsync(
+            new TasksPaginationQuery
             {
-                var completedTasks =
-                    await client.Tasks.GetCompletedByCompletionDateAsync(
-                        new TaskFilter()
-                        {
-                            AnnotateTasks = true,
-                            AnnotateComments = true,
-                            Limit = 5,
-                            Since = DateTime.Today.AddDays(-1),
-                            Until = DateTime.UtcNow
-                        });
+                ProjectId = project.Id.PersistentId,
+                Ids = [newTask.Id.PersistentId]
+            },
+            _cancellationToken);
 
-                Assert.True(completedTasks.Items.Count > 0);
-            }
-            finally
+        actualNewTask = Assert.Single(tasksResponse.Results, t => t.Id == newTask.Id);
+        Assert.Equal(newTask.Content, actualNewTask.Content);
+
+
+        // Step 3: Update task to recurring.
+        var updateTask = TestData.Tasks.UpdateTask(newTask.Id, $"RecurringTaskUpdated_{Guid.NewGuid():N}");
+        var expectedUpdatedTask = TestData.Tasks.ExpectedUpdateTask(newTask.Id, updateTask.Content);
+
+        updateTask.DueDate = DueDate.FromText("every day", Language.English);
+
+        syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
+            t => t.Tasks.UpdateAsync(updateTask, _cancellationToken),
+            [ResourceType.Tasks],
+            syncResponse.SyncToken,
+            _cancellationToken);
+
+        Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
+        var actualUpdatedTask = Assert.Single(syncResponse.Tasks, t => t.Id == newTask.Id);
+        Assert.Equivalent(expectedUpdatedTask, actualUpdatedTask);
+        Assert.NotNull(actualUpdatedTask.DueDate);
+        Assert.True(actualUpdatedTask.DueDate.IsRecurring);
+        Assert.NotNull(actualUpdatedTask.DueDate.Date);
+
+        var previousRecurringDate = actualUpdatedTask.DueDate.Date.Value;
+
+
+        // Step 4: Complete recurring task.
+        syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
+            t => t.Tasks.CompleteRecurringAsync(new(newTask.Id), _cancellationToken),
+            [ResourceType.Tasks],
+            syncResponse.SyncToken,
+            _cancellationToken);
+
+        Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
+        var actualRecurringTask = Assert.Single(syncResponse.Tasks, t => t.Id == newTask.Id);
+        Assert.NotNull(actualRecurringTask.DueDate);
+        Assert.True(actualRecurringTask.DueDate.IsRecurring);
+        Assert.NotNull(actualRecurringTask.DueDate.Date);
+        Assert.True(actualRecurringTask.DueDate.Date.Value > previousRecurringDate);
+        Assert.False(actualRecurringTask.IsChecked ?? true);
+        Assert.False(actualRecurringTask.IsDeleted ?? true);
+
+
+        // Step 5: Delete task.
+        syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
+            t => t.Tasks.DeleteAsync(newTask.Id, _cancellationToken),
+            [ResourceType.Tasks],
+            syncResponse.SyncToken,
+            _cancellationToken);
+
+        Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
+        Assert.Contains(syncResponse.Tasks, t => t.Id == newTask.Id && t.IsDeleted == true);
+
+        taskTracker.StopTracking();
+    }
+
+    [Fact]
+    public async Task CreateSiblingTasks_MoveToParent_Reorder_DeleteHierarchy_Succeeds()
+    {
+        var project = await _apiFixture.GetPlaygroundProjectAsync();
+
+        var parentTask = TestData.Tasks.AddTask(project.Id, $"ParentTask_{Guid.NewGuid():N}");
+        var firstSiblingTask = TestData.Tasks.AddTask(project.Id, $"FirstSiblingTask_{Guid.NewGuid():N}");
+        var secondSiblingTask = TestData.Tasks.AddTask(project.Id, $"SecondSiblingTask_{Guid.NewGuid():N}");
+
+
+        // Step 1: Create parent and sibling tasks.
+        var syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
+            async t =>
             {
-                await client.Tasks.DeleteAsync(task.Id);
-            }
-        }
+                await t.Tasks.AddAsync(parentTask, _cancellationToken);
+                await t.Tasks.AddAsync(firstSiblingTask, _cancellationToken);
+                await t.Tasks.AddAsync(secondSiblingTask, _cancellationToken);
+            },
+            [ResourceType.Tasks],
+            cancellationToken: _cancellationToken);
+        await using var parentTaskTracker = _apiFixture.TrackForCleanup(parentTask, c => c.Tasks.DeleteAsync);
+        await using var firstSiblingTaskTracker = _apiFixture.TrackForCleanup(firstSiblingTask, c => c.Tasks.DeleteAsync);
+        await using var secondSiblingTaskTracker = _apiFixture.TrackForCleanup(secondSiblingTask, c => c.Tasks.DeleteAsync);
 
-        [Fact]
-        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
-        public async Task CreateTaskCompleteUncompleteAsync_Success()
-        {
-            var client = TodoistClientFactory.Create(_outputHelper);
+        Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
+        Assert.Contains(syncResponse.Tasks, t => t.Id == parentTask.Id && t.ProjectId == project.Id.PersistentId);
+        Assert.Contains(syncResponse.Tasks, t => t.Id == firstSiblingTask.Id && t.ProjectId == project.Id.PersistentId);
+        Assert.Contains(syncResponse.Tasks, t => t.Id == secondSiblingTask.Id && t.ProjectId == project.Id.PersistentId);
 
-            var transaction = client.CreateTransaction();
 
-            var task = new AddTask("demo task");
-            var taskId = await transaction.Tasks.AddAsync(task);
-            await transaction.Tasks.CompleteAsync(new CompleteTaskArgument(taskId));
-
-            await transaction.CommitAsync();
-            try
+        // Step 2: Move sibling tasks under the parent task.
+        syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
+            async t =>
             {
-                var taskInfo = await client.Tasks.GetAsync(task.Id);
+                await t.Tasks.MoveAsync(MoveTaskArgument.CreateMoveToParent(firstSiblingTask.Id, parentTask.Id), _cancellationToken);
+                await t.Tasks.MoveAsync(MoveTaskArgument.CreateMoveToParent(secondSiblingTask.Id, parentTask.Id), _cancellationToken);
+            },
+            [ResourceType.Tasks],
+            syncResponse.SyncToken,
+            _cancellationToken);
 
-                Assert.True(taskInfo.IsChecked);
+        Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
+        Assert.Contains(syncResponse.Tasks, t => t.Id == firstSiblingTask.Id && t.ParentId == parentTask.Id.PersistentId);
+        Assert.Contains(syncResponse.Tasks, t => t.Id == secondSiblingTask.Id && t.ParentId == parentTask.Id.PersistentId);
 
-                await client.Tasks.UncompleteAsync(taskId);
 
-                var anotherTask = (await client.Tasks.GetAsync()).First(t => t.Id != task.Id);
-                await client.Tasks.MoveAsync(TaskMoveArgument.CreateMoveToParent(task.Id, anotherTask.Id));
-
-                taskInfo = await client.Tasks.GetAsync(task.Id);
-                Assert.Equal(anotherTask.Id.PersistentId, taskInfo.ParentId);
-
-                await client.Tasks.CompleteAsync(new CompleteTaskArgument(taskId));
-                taskInfo = await client.Tasks.GetAsync(task.Id);
-                Assert.True(taskInfo.IsChecked);
-
-                await client.Tasks.UncompleteAsync(taskId);
-                taskInfo = await client.Tasks.GetAsync(task.Id);
-                Assert.False(taskInfo.IsChecked);
-            }
-            finally
+        // Step 3: Reorder sibling tasks under the parent task.
+        syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
+            t => t.Tasks.ReorderAsync(new(new Dictionary<ComplexId, int>
             {
-                await client.Tasks.DeleteAsync(task.Id);
-            }
-        }
+                { firstSiblingTask.Id, 20 },
+                { secondSiblingTask.Id, 10 }
+            }), _cancellationToken),
+            [ResourceType.Tasks],
+            syncResponse.SyncToken,
+            _cancellationToken);
 
-        [Fact]
-        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
-        public async Task CreateTaskClearDueDateAndDelete_Success()
-        {
-            var client = TodoistClientFactory.Create(_outputHelper);
+        Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
+        Assert.Contains(syncResponse.Tasks, t => t.Id == firstSiblingTask.Id && t.ChildOrder == 20);
+        Assert.Contains(syncResponse.Tasks, t => t.Id == secondSiblingTask.Id && t.ChildOrder == 10);
 
-            var task = new AddTask("demo task") { DueDate = DueDate.FromText("22 Dec 2021", Language.English) };
-            await client.Tasks.AddAsync(task);
-            try
+
+        // Step 4: Delete the task hierarchy.
+        syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
+            t => t.Tasks.DeleteAsync(parentTask.Id, _cancellationToken),
+            [ResourceType.Tasks],
+            syncResponse.SyncToken,
+            _cancellationToken);
+
+        Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
+        Assert.Contains(syncResponse.Tasks, t => t.Id == parentTask.Id && t.IsDeleted == true);
+        Assert.Contains(syncResponse.Tasks, t => t.Id == firstSiblingTask.Id && t.IsDeleted == true);
+        Assert.Contains(syncResponse.Tasks, t => t.Id == secondSiblingTask.Id && t.IsDeleted == true);
+
+        parentTaskTracker.StopTracking();
+        firstSiblingTaskTracker.StopTracking();
+        secondSiblingTaskTracker.StopTracking();
+    }
+
+    [Fact]
+    public async Task QuickAdd_Filter_Close_Uncomplete_GetById_Succeeds()
+    {
+        var quickAddTaskContent = $"QuickAddTask_{Guid.NewGuid():N}";
+        var quickAddTask = new QuickAddTask($"{quickAddTaskContent} tomorrow");
+
+
+        // Step 1: Quick add task.
+        await _apiFixture.Client.Tasks.QuickAddAsync(quickAddTask, _cancellationToken);
+
+
+        // Step 2: Find the quick-added task via filter.
+        var filterResponse = await _apiFixture.Client.Tasks.GetByFilterAsync(
+            new($"search: {quickAddTaskContent}", Language.English),
+            _cancellationToken);
+
+        var actualQuickAddedTask = Assert.Single(filterResponse.Results, t => t.Content == quickAddTaskContent);
+        await using var quickAddedTaskTracker = _apiFixture.TrackForCleanup(actualQuickAddedTask, c => c.Tasks.DeleteAsync);
+
+
+        // Step 3: Close task and assert synced state.
+        var syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
+            t => t.Tasks.CloseAsync(actualQuickAddedTask.Id, _cancellationToken),
+            [ResourceType.Tasks],
+            cancellationToken: _cancellationToken);
+
+        Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
+        Assert.DoesNotContain(syncResponse.Tasks, t => t.Id == actualQuickAddedTask.Id);
+
+
+        // Step 4: Uncomplete task and assert synced state.
+        syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
+            t => t.Tasks.UncompleteAsync(actualQuickAddedTask.Id, _cancellationToken),
+            [ResourceType.Tasks],
+            syncResponse.SyncToken,
+            _cancellationToken);
+
+        Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
+        var actualUncompletedTask = Assert.Single(syncResponse.Tasks, t => t.Id == actualQuickAddedTask.Id);
+        Assert.False(actualUncompletedTask.IsChecked ?? true);
+        Assert.False(actualUncompletedTask.IsDeleted ?? true);
+
+
+        // Step 5: Get task by id.
+        actualQuickAddedTask = await _apiFixture.Client.Tasks.GetAsync(actualQuickAddedTask.Id.PersistentId, _cancellationToken);
+
+        Assert.Equal(quickAddTaskContent, actualQuickAddedTask.Content);
+        Assert.False(actualQuickAddedTask.IsChecked ?? true);
+    }
+
+    [Fact]
+    public async Task CreateCompletedTasks_GetCompletedByCompletionDate_GetCompletedByDueDate_Succeeds()
+    {
+        var project = await _apiFixture.GetPlaygroundProjectAsync();
+        var currentUtcDate = DateTime.UtcNow;
+
+        var firstTask = TestData.Tasks.AddTask(project.Id, $"CompletedTaskOne_{Guid.NewGuid():N}");
+        var secondTask = TestData.Tasks.AddTask(project.Id, $"CompletedTaskTwo_{Guid.NewGuid():N}");
+        var thirdTask = TestData.Tasks.AddTask(project.Id, $"CompletedTaskThree_{Guid.NewGuid():N}");
+
+        firstTask.DueDate = DueDate.CreateFullDay(currentUtcDate.Date.AddDays(2));
+        secondTask.DueDate = DueDate.CreateFullDay(currentUtcDate.Date.AddDays(4));
+        thirdTask.DueDate = DueDate.CreateFullDay(currentUtcDate.Date.AddDays(10));
+
+        var firstCompletedAt = currentUtcDate.AddHours(-3);
+        var secondCompletedAt = currentUtcDate.AddHours(-2);
+        var thirdCompletedAt = currentUtcDate.AddDays(-3);
+
+
+        // Step 1: Create three tasks with different due dates.
+        var syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
+            async t =>
             {
-                var taskInfo = await client.Tasks.GetAsync(task.Id);
+                await t.Tasks.AddAsync(firstTask, _cancellationToken);
+                await t.Tasks.AddAsync(secondTask, _cancellationToken);
+                await t.Tasks.AddAsync(thirdTask, _cancellationToken);
+            },
+            [ResourceType.Tasks],
+            cancellationToken: _cancellationToken);
+        await using var firstTaskTracker = _apiFixture.TrackForCleanup(firstTask, c => c.Tasks.DeleteAsync);
+        await using var secondTaskTracker = _apiFixture.TrackForCleanup(secondTask, c => c.Tasks.DeleteAsync);
+        await using var thirdTaskTracker = _apiFixture.TrackForCleanup(thirdTask, c => c.Tasks.DeleteAsync);
 
-                Assert.True(taskInfo.Content == task.Content);
-                Assert.Equal("2021-12-22", taskInfo.DueDate.StringDate);
+        Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
+        Assert.Contains(syncResponse.Tasks, t => t.Id == firstTask.Id && t.ProjectId == project.Id.PersistentId);
+        Assert.Contains(syncResponse.Tasks, t => t.Id == secondTask.Id && t.ProjectId == project.Id.PersistentId);
+        Assert.Contains(syncResponse.Tasks, t => t.Id == thirdTask.Id && t.ProjectId == project.Id.PersistentId);
 
-                taskInfo.Unset(t => t.DueDate);
-                await client.Tasks.UpdateAsync(taskInfo);
 
-                taskInfo = await client.Tasks.GetAsync(task.Id);
-                Assert.Null(taskInfo.DueDate);
-            }
-            finally
+        // Step 2: Complete tasks with different completion dates.
+        var transactionResponse = await _apiFixture.Client.ExecuteTransactionAsync(
+            async t =>
             {
-                await client.Tasks.DeleteAsync(task.Id);
-            }
-        }
+                await t.Tasks.CompleteAsync(new(firstTask.Id, firstCompletedAt), _cancellationToken);
+                await t.Tasks.CompleteAsync(new(secondTask.Id, secondCompletedAt), _cancellationToken);
+                await t.Tasks.CompleteAsync(new(thirdTask.Id, thirdCompletedAt), _cancellationToken);
+            },
+            _cancellationToken);
+
+        Assert.All(transactionResponse.SyncStatus.Values, cr => cr.AssertSuccess());
 
 
-        [Fact]
-        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
-        public async Task CreateTask_InvalidDueDate_ThrowsException()
-        {
-            var client = TodoistClientFactory.Create(_outputHelper);
-            var task = new AddTask("bad task")
+        // Step 3: Get completed tasks by completion date.
+        var completedTasksResponse = await _apiFixture.Client.Tasks.GetCompletedByCompletionDateAsync(
+            new CompletedTasksPaginationQuery(currentUtcDate.AddHours(-4), currentUtcDate.AddHours(-1))
             {
-                DueDate = DueDate.FromText("Invalid date string")
-            };
+                ProjectId = project.Id.PersistentId
+            },
+            _cancellationToken);
 
-            var aggregateException = await Assert.ThrowsAsync<AggregateException>(
-                async () =>
-                {
-                    await client.Tasks.AddAsync(task);
-                });
+        Assert.Contains(completedTasksResponse.Items, t => t.Id == firstTask.Id);
+        Assert.Contains(completedTasksResponse.Items, t => t.Id == secondTask.Id);
+        Assert.DoesNotContain(completedTasksResponse.Items, t => t.Id == thirdTask.Id);
 
-            Assert.IsType<TodoistException>(aggregateException.InnerExceptions.First());
-        }
 
-        [Fact]
-        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
-        public async Task MoveTasksToProject_Success()
-        {
-            var client = TodoistClientFactory.Create(_outputHelper);
-
-            var addTask = new AddTask("demo task");
-            var taskId = await client.Tasks.AddAsync(addTask);
-            try
+        // Step 4: Get completed tasks by due date.
+        completedTasksResponse = await _apiFixture.Client.Tasks.GetCompletedByDueDateAsync(
+            new CompletedTasksPaginationQuery(DateTime.UtcNow.Date.AddDays(1), DateTime.UtcNow.Date.AddDays(5))
             {
-                var updateTask = new UpdateTask(taskId) { DueDate = DueDate.FromText("every fri") };
-                await client.Tasks.UpdateAsync(updateTask);
+                ProjectId = project.Id.PersistentId
+            },
+            _cancellationToken);
 
-                var project = new Project(Guid.NewGuid().ToString());
-                await client.Projects.AddAsync(project);
-                try
-                {
-                    var taskInfo = await client.Tasks.GetAsync(taskId);
+        Assert.Contains(completedTasksResponse.Items, t => t.Id == firstTask.Id);
+        Assert.Contains(completedTasksResponse.Items, t => t.Id == secondTask.Id);
+        Assert.DoesNotContain(completedTasksResponse.Items, t => t.Id == thirdTask.Id);
 
-                    Assert.NotEqual(project.Id.PersistentId, taskInfo.ProjectId);
-
-                    await client.Tasks.MoveAsync(TaskMoveArgument.CreateMoveToProject(taskInfo.Id, project.Id));
-                    taskInfo = await client.Tasks.GetAsync(taskInfo.Id);
-
-                    Assert.Equal(project.Id.PersistentId, taskInfo.ProjectId);
-                }
-                finally
-                {
-                    await client.Projects.DeleteAsync(project.Id);
-                }
-            }
-            finally
-            {
-                await client.Tasks.DeleteAsync(taskId);
-            }
-        }
-
-        [Fact]
-        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
-        public async Task QuickAddAsync_Success()
-        {
-            var client = TodoistClientFactory.Create(_outputHelper);
-
-            var task = await client.Tasks.QuickAddAsync(new QuickAddTask("Demo task every fri"));
-            try
-            {
-                Assert.NotNull(task);
-
-                await client.Tasks.CompleteRecurringAsync(new CompleteRecurringTaskArgument(task.Id, DueDate.CreateFloating(DateTime.UtcNow.AddMonths(1))));
-                await client.Tasks.CompleteRecurringAsync(task.Id);
-            }
-            finally
-            {
-                await client.Tasks.DeleteAsync(task.Id);
-            }
-        }
-
-        [Fact]
-        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
-        public async Task UpdateOrders_Success()
-        {
-            var client = TodoistClientFactory.Create(_outputHelper);
-
-            var task = await client.Tasks.QuickAddAsync(new QuickAddTask("Demo task every fri"));
-            try
-            {
-                var firstProject = (await client.Projects.GetAsync()).First();
-                await client.Tasks.MoveAsync(TaskMoveArgument.CreateMoveToProject(task.Id, firstProject.Id));
-                await client.Tasks.UpdateDayOrdersAsync(new OrderEntry(task.Id, 2));
-            }
-            finally
-            {
-                await client.Tasks.DeleteAsync(task.Id);
-            }
-        }
-
-        [Fact]
-        [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
-        public async Task CreateNewTask_DueDateIsLocal_DueDateNotChanged()
-        {
-            var client = TodoistClientFactory.Create(_outputHelper);
-
-            var task = new AddTask("New task") { DueDate = DueDate.CreateFloating(DateTime.Now.AddYears(1).Date) };
-            var taskId = await client.Tasks.AddAsync(task);
-            try
-            {
-                var taskInfo = await client.Tasks.GetAsync(taskId);
-
-                Assert.Equal(task.DueDate.Date, taskInfo.DueDate.Date);
-            }
-            finally
-            {
-                await client.Tasks.DeleteAsync(task.Id);
-            }
-        }
-
-        [Fact]
-        [Trait(Constants.TraitName, Constants.IntegrationPremiumTraitValue)]
-        public async Task CreateNewTask_DeadlineIsLocal_DeadlineNotChanged()
-        {
-            var client = TodoistClientFactory.Create(_outputHelper);
-
-            var task = new AddTask("New task") { Deadline = new Deadline(DateTime.Now.AddYears(1).Date) };
-            var taskId = await client.Tasks.AddAsync(task);
-            try
-            {
-                var taskInfo = await client.Tasks.GetAsync(taskId);
-
-                Assert.Equal(task.Deadline.Date, taskInfo.Deadline.Date);
-            }
-            finally
-            {
-                await client.Tasks.DeleteAsync(task.Id);
-            }
-        }
-
-        [Fact]
-        [Trait(Constants.TraitName, Constants.IntegrationPremiumTraitValue)]
-        public async Task CreateTaskClearDurationAndDelete_Success()
-        {
-            var client = TodoistClientFactory.Create(_outputHelper);
-
-            var task = new AddTask("duration task")
-            {
-                DueDate = DueDate.FromText("22 Dec 2021 at 9:15", Language.English),
-                Duration = new Duration(45, DurationUnit.Minute)
-            };
-            await client.Tasks.AddAsync(task);
-            try
-            {
-                var taskInfo = await client.Tasks.GetAsync(task.Id);
-
-                Assert.True(taskInfo.Content == task.Content);
-                Assert.Equal("2021-12-22T09:15:00", taskInfo.DueDate.StringDate);
-
-                Assert.Equal(task.Duration.Amount, taskInfo.Duration.Amount);
-                Assert.Equal(task.Duration.Unit, taskInfo.Duration.Unit);
-
-                taskInfo.Unset(t => t.Duration);
-                await client.Tasks.UpdateAsync(taskInfo);
-
-                taskInfo = await client.Tasks.GetAsync(task.Id);
-                Assert.Null(taskInfo.Duration);
-            }
-            finally
-            {
-                await client.Tasks.DeleteAsync(task.Id);
-            }
-        }
+        firstTaskTracker.StopTracking();
+        secondTaskTracker.StopTracking();
+        thirdTaskTracker.StopTracking();
     }
 }
