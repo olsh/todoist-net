@@ -8,62 +8,49 @@ on:
 jobs:
   sonar:
     runs-on: windows-latest
+    environment: sonar-pr
+    permissions:
+      contents: read
+      actions: read
     if: >
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.event == 'pull_request'
 
     steps:
     - name: Download PR metadata
-      uses: actions/github-script@v7
+      uses: actions/download-artifact@v8
       with:
-        script: |
-          const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            run_id: context.payload.workflow_run.id,
-          });
-          const matchArtifact = artifacts.data.artifacts.find(a => a.name === 'pr-metadata');
-          if (!matchArtifact) {
-            core.setFailed('PR metadata artifact not found');
-            return;
-          }
-          const download = await github.rest.actions.downloadArtifact({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            artifact_id: matchArtifact.id,
-            archive_format: 'zip',
-          });
-          const fs = require('fs');
-          const path = require('path');
-          const zipPath = path.join(process.env.RUNNER_TEMP, 'pr-metadata.zip');
-          fs.writeFileSync(zipPath, Buffer.from(download.data));
+        name: pr-metadata
+        path: pr-metadata
+        run-id: ${{ github.event.workflow_run.id }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Extract PR metadata
+    - name: Read PR metadata
       run: |
-        Expand-Archive -Path "${{ runner.temp }}/pr-metadata.zip" -DestinationPath "${{ runner.temp }}/pr-metadata"
-        echo "PR_NUMBER=$(Get-Content '${{ runner.temp }}/pr-metadata/pr_number')" >> $env:GITHUB_ENV
-        echo "PR_BASE=$(Get-Content '${{ runner.temp }}/pr-metadata/pr_base')" >> $env:GITHUB_ENV
-        echo "PR_BRANCH=$(Get-Content '${{ runner.temp }}/pr-metadata/pr_branch')" >> $env:GITHUB_ENV
-        echo "PR_SHA=$(Get-Content '${{ runner.temp }}/pr-metadata/pr_sha')" >> $env:GITHUB_ENV
+        echo "PR_NUMBER=$(Get-Content 'pr-metadata/pr_number')" >> $env:GITHUB_ENV
+        echo "PR_BASE=$(Get-Content 'pr-metadata/pr_base')" >> $env:GITHUB_ENV
+        echo "PR_BRANCH=$(Get-Content 'pr-metadata/pr_branch')" >> $env:GITHUB_ENV
+        echo "PR_SHA=$(Get-Content 'pr-metadata/pr_sha')" >> $env:GITHUB_ENV
 
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v7
       with:
         ref: ${{ env.PR_SHA }}
         fetch-depth: 0
+        allow-unsafe-pr-checkout: true
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v5
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: 10.x
 
     - name: Setup Java
-      uses: actions/setup-java@v5
+      uses: actions/setup-java@v6
       with:
         distribution: 'temurin'
         java-version: '21'
 
     - name: Cache NuGet packages
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: ~/.nuget/packages
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
@@ -71,7 +58,7 @@ jobs:
           ${{ runner.os }}-nuget-
 
     - name: Cache SonarQube
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: ~/.sonar/cache
         key: ${{ runner.os }}-sonar
