@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
@@ -20,12 +19,6 @@ namespace Todoist.Net.Models
         /// <summary>Gets the number of comments on the project.</summary>
         [JsonPropertyName("comments_count")]
         public int CommentsCount { get; internal set; }
-
-        /// <summary>Gets the comments.</summary>
-        /// <remarks>Always <see langword="null" />: the endpoint returns <see cref="CommentsCount" /> instead of the comments themselves.</remarks>
-        [Obsolete("The endpoint no longer returns project comments, only their count. Use CommentsCount, or ICommentsService.GetAsync to read the comments.")]
-        [JsonIgnore]
-        public IReadOnlyCollection<Comment> ProjectComments { get; internal set; }
 
         /// <summary>Gets the collaborators.</summary>
         [JsonPropertyName("collaborators")]
