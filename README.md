@@ -51,10 +51,10 @@ For OAuth applications, provide your client credentials and the user's tokens. T
 var credentials = new ClientCredentials("client-id", "client-secret");
 var tokens = new TodoistTokens("access-token", "refresh-token", expirationTimeUtc);
 
-var authContext = new TodoistAuthenticationContext(credentials, tokens, onRefresh: async (response, state, ct) =>
+var authContext = new TodoistAuthenticationContext(credentials, tokens, onRefresh: async (res, state, ct) =>
 {
     // Persist the rotated tokens (Todoist rotates the refresh token on each refresh).
-    await SaveTokensAsync(response.AccessToken, response.RefreshToken);
+    await SaveTokensAsync(res.AccessToken, res.RefreshToken);
 });
 
 ITodoistClient client = new TodoistClient(authContext);
@@ -77,8 +77,10 @@ For ASP.NET Core and other DI-enabled applications (`netstandard2.0` target only
 builder.Services.AddTodoistClient((serviceProvider, options) =>
 {
     // Required to create OAuth-refreshable clients from TodoistTokens:
-    options.Credentials = new ClientCredentials(builder.Configuration["Todoist:ClientId"], builder.Configuration["Todoist:ClientSecret"]);
-    options.OnRefresh = async (response, state, ct) =>
+    options.Credentials.ClientId = builder.Configuration["Todoist:ClientId"];
+    options.Credentials.ClientSecret = builder.Configuration["Todoist:ClientSecret"];
+
+    options.OnRefresh = async (res, state, ct) =>
     {
         // You can utilize the state parameter to pass contextual information to the refresh callback, for example the user ID.
         var userId = state as string;
@@ -89,7 +91,7 @@ builder.Services.AddTodoistClient((serviceProvider, options) =>
         // Persist the rotated tokens (Todoist rotates the refresh token on each refresh).
         await scope.ServiceProvider
             .GetRequiredService<IUserTokenRepository>()
-            .SaveTodoistTokensAsync(userId, response.AccessToken, response.RefreshToken, response.ExpiresIn, cancellationToken);
+            .SaveTodoistTokensAsync(userId, res.AccessToken, res.RefreshToken, res.ExpiresIn, ct);
     };
 });
 ```
