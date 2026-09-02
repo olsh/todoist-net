@@ -10,4 +10,9 @@ internal static class Constants
     public const string IntegrationCollaborationTraitValue = "integration-collaboration";
     public const string IntegrationRefreshableTraitValue = "integration-refreshable";
     public const string IntegrationRootTraitValue = "integration-root";
+
+    /// <summary>
+    /// These kind of test won't work with MFA enabled.
+    /// </summary>
+    public const string MfaRequiredTraitValue = "mfa-required";
 }

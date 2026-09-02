@@ -1,9 +1,13 @@
-# Todoist.Net.APIv1
-[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=todoist-net-apiv1&metric=alert_status)](https://sonarcloud.io/dashboard?id=todoist-net-apiv1)
-[![NuGet](https://img.shields.io/nuget/v/Todoist.Net.APIv1.svg)](https://www.nuget.org/packages/Todoist.Net.APIv1/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+# Todoist.Net
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=todoist-net&metric=alert_status)](https://sonarcloud.io/dashboard?id=todoist-net)
+[![NuGet](https://img.shields.io/nuget/v/Todoist.Net.svg)](https://www.nuget.org/packages/Todoist.Net/)
 
-An unofficial strongly-typed [Todoist API](https://developer.todoist.com) client for .NET that targets the [Unified API v1](https://developer.todoist.com/api/v1/). The library is a fork of [Todoist.Net](https://github.com/olsh/todoist-net) that has been updated to support the new unified API: new REST endpoints, cursor-based pagination, OAuth 2.0 token refresh, workspaces, and many other capabilities that did not exist in the original package.
+A [Todoist API](https://developer.todoist.com) client for .NET.
+
+> 💡 **Upgrading from 10.x?** Version 11.0.0 moves to the unified Todoist API v1 and renames much of
+> the public surface (`Items` -> `Tasks`, `Notes` -> `Comments`, and more). See the
+> [11.0.0 release notes](https://github.com/olsh/todoist-net/releases/tag/11.0.0) for the full
+> migration table.
 
 ## Features
 

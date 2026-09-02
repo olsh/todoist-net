@@ -8,7 +8,6 @@
     <File Path=".runsettings" />
     <File Path=".runsettings.example" />
     <File Path="AGENTS.md" />
-    <File Path="CONTRIBUTING.md" />
     <File Path="global.json" />
     <File Path="README.md" />
   </Folder>

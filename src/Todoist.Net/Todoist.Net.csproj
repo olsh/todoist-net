@@ -1,50 +1,37 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <PackageId>Todoist.Net.APIv1</PackageId>
+    <Description>A Todoist API client for .NET</Description>
+    <VersionPrefix>11.1.0</VersionPrefix>
+    <Authors>Oleg Shevchenko, Ahmed Zaki</Authors>
+    <TargetFrameworks>netstandard2.0;net462</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyName>Todoist.Net</AssemblyName>
+
+    <PackageId>Todoist.Net</PackageId>
     <PackageTags>todoist</PackageTags>
-    <PackageReleaseNotes>https://github.com/ahmedzaki99/todoist-net-apiv1/releases</PackageReleaseNotes>
-    <PackageProjectUrl>https://github.com/ahmedzaki99/todoist-net-apiv1</PackageProjectUrl>
+    <PackageReleaseNotes>https://github.com/olsh/todoist-net/releases</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/olsh/todoist-net</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/ahmedzaki99/todoist-net-apiv1</RepositoryUrl>
+    <RepositoryUrl>https://github.com/olsh/todoist-net</RepositoryUrl>
     <PackageIcon>todoist-net-nuget.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
 
-    <Title>$(PackageId)</Title>
-    <Description>A Todoist API client for .NET</Description>
-    <Version>$(PackageVersion)</Version>
-    <Authors>Oleg Shevchenko, Ahmed Zaki</Authors>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <AssemblyName>Todoist.Net.APIv1</AssemblyName>
-
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-
-    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-  </PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net462</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="4.0.2" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.400" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.400" PrivateAssets="All" />
     <PackageReference Include="System.Text.Json" Version="10.0.11" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <Reference Include="System.Net.Http" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.11" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,6 +43,10 @@
   <ItemGroup>
     <None Include="../../images/todoist-net-nuget.png" Pack="true" PackagePath="\" />
     <None Include="../../README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.11" />
   </ItemGroup>
 
 </Project>
