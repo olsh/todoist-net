@@ -55,7 +55,7 @@ namespace Todoist.Net.Services
             };
 
             return TodoistClient.PostJsonAsync<TemplateImportRequest, TemplateImportResult>(
-                "templates/import_into_project", body, cancellationToken);
+                "templates/import_into_project_from_template_id", body, cancellationToken);
         }
 
         /// <inheritdoc/>

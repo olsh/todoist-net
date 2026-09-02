@@ -17,6 +17,10 @@ namespace Todoist.Net.Models
         public static CommandType DeleteWorkspaceFolder { get; } = new CommandType("folder_delete");
 
         public static CommandType UpdateWorkspaceUser { get; } = new CommandType("workspace_update_user");
+        // The docs document this command as `workspace_update_user_sidebar_preference` taking a
+        // `sidebar_preference` argument, but the deployed API rejects that name with INVALID_COMMAND,
+        // exactly as it rejects a name that does not exist. The response field is still
+        // `project_sort_preference` too, so keep both as they are until the API actually changes.
         public static CommandType UpdateWorkspaceUserProjectSortPreference { get; } = new CommandType("workspace_update_user_project_sort_preference");
         public static CommandType DeleteWorkspaceUser { get; } = new CommandType("workspace_delete_user");
         public static CommandType InviteWorkspaceUsers { get; } = new CommandType("workspace_invite");

@@ -4,6 +4,11 @@
 
 A [Todoist API](https://developer.todoist.com) client for .NET.
 
+> **Upgrading from 10.x?** Version 11.0.0 moves to the unified Todoist API v1 and renames much of
+> the public surface (`Items` -> `Tasks`, `Notes` -> `Comments`, and more). See the
+> [11.0.0 release notes](https://github.com/olsh/todoist-net/releases/tag/11.0.0) for the full
+> migration table.
+
 ## Installation
 
 The library is available as a [Nuget package](https://www.nuget.org/packages/Todoist.Net/).
@@ -30,13 +35,13 @@ var task = await client.Tasks.QuickAddAsync(quickAddTask);
 ### Simple API calls
 ```csharp
 // Get all resources (labels, projects, tasks, comments etc.).
-var resources = await client.GetResourcesAsync();
+var resources = await client.SyncResourcesAsync();
 
 // Get only projects and labels.
-var projectsAndLabels = await client.GetResourcesAsync(ResourceType.Projects, ResourceType.Labels);
+var projectsAndLabels = await client.SyncResourcesAsync(new[] { ResourceType.Projects, ResourceType.Labels });
 
 // Get only projects.
-var projectsOnly = await client.GetResourcesAsync(ResourceType.Projects);
+var projectsOnly = await client.SyncResourcesAsync(new[] { ResourceType.Projects });
 
 // Alternatively you can use this API to get projects.
 var projects = await client.Projects.GetAsync();
@@ -49,13 +54,13 @@ await client.Comments.AddToTaskAsync(new Comment("Task description"), taskId);
 ### Transactions (Batching)
 Batching: reading and writing of multiple resources can be done in a single HTTP request.
 
-Add a new project, task and note in one request.
+Add a new project, task and comment in one request.
 ```csharp
 // Create a new transaction.
 var transaction = client.CreateTransaction();
 
 // These requests are queued and will be executed later.
-var projectId = await transaction.Project.AddAsync(new Project("New project"));
+var projectId = await transaction.Projects.AddAsync(new AddProject("New project"));
 var taskId = await transaction.Tasks.AddAsync(new AddTask("New task", projectId));
 await transaction.Comments.AddToTaskAsync(new Comment("Task description"), taskId);
 
