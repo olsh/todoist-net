@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.Json;
 
 namespace Todoist.Net.Tests;
 
@@ -297,6 +298,74 @@ public class TodoistClientProtocolTests
         Assert.Equal("today", restClient.LastQueryParams["filter_query"]);
         Assert.Equal("en", restClient.LastQueryParams["filter_lang"]);
         Assert.False(restClient.LastQueryParams.ContainsKey("filter"));
+    }
+
+    [Fact]
+    public async Task ImportTemplateIntoProject_AddressesTheTemplateIdEndpoint()
+    {
+        var restClient = new StubTodoistRestClient();
+        restClient.RespondToJsonPost(
+            HttpStatusCode.OK,
+            """
+            {
+                "status": "ok",
+                "projects": [],
+                "sections": [],
+                "tasks": [],
+                "comments": [],
+                "project_notes": []
+            }
+            """);
+        using var todoistClient = new TodoistClient(restClient);
+
+
+        // Step 1: Import a saved template into an existing project.
+        await todoistClient.Templates.ImportIntoProjectAsync(
+            "6X7rM8997g3RQmvh",
+            "123456",
+            TestContext.Current.CancellationToken);
+
+
+        // Step 2: Assert the v1 route is used. The v9 `templates/import_into_project` route was split
+        // into a file variant and this template ID variant, and the retired route answers every
+        // request with the same generic `NOT_FOUND` error, so only the URL itself pins this down.
+        Assert.Equal("templates/import_into_project_from_template_id", restClient.LastResource);
+
+        using var requestBody = JsonDocument.Parse(restClient.LastJsonContent);
+        Assert.Equal("6X7rM8997g3RQmvh", requestBody.RootElement.GetProperty("project_id").GetString());
+        Assert.Equal("123456", requestBody.RootElement.GetProperty("template_id").GetString());
+    }
+
+    [Fact]
+    public async Task GetOrCreateEmail_ForATask_SendsTheTaskObjectType()
+    {
+        var restClient = new StubTodoistRestClient();
+        restClient.RespondToJsonPut(
+            HttpStatusCode.OK,
+            """
+            {
+                "email": "sdk-tests@in.todoist.com"
+            }
+            """);
+        using var todoistClient = new TodoistClient(restClient);
+
+
+        // Step 1: Get or create the email of a task.
+        var actualEmail = await todoistClient.Emails.GetOrCreateAsync(
+            EmailObjectType.Task,
+            "6X7rM8997g3RQmvh",
+            TestContext.Current.CancellationToken);
+
+
+        // Step 2: Assert the object type is sent as `task`. The legacy `item` value is still accepted
+        // when disabling an email, but it is rejected here.
+        Assert.Equal("emails", restClient.LastResource);
+
+        using var requestBody = JsonDocument.Parse(restClient.LastJsonContent);
+        Assert.Equal("task", requestBody.RootElement.GetProperty("obj_type").GetString());
+        Assert.Equal("6X7rM8997g3RQmvh", requestBody.RootElement.GetProperty("obj_id").GetString());
+
+        Assert.Equal("sdk-tests@in.todoist.com", actualEmail.Email);
     }
 
     [Fact]

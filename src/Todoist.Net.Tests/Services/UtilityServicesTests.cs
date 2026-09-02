@@ -43,6 +43,40 @@ public class UtilityServicesTests
 
     [Fact]
     [Trait(Constants.TraitName, Constants.IntegrationPremiumTraitValue)]
+    public async Task CreateTask_GetOrCreateEmail_Disable_Succeeds()
+    {
+        var newProject = TestData.Projects.AddProject($"UtilityEmailTaskProject_{Guid.NewGuid():N}");
+        var newTask = TestData.Tasks.AddTask(newProject.Id, $"UtilityEmailTask_{Guid.NewGuid():N}");
+
+
+        // Step 1: Create project and task.
+        await _apiFixture.PremiumClient.Projects.AddAsync(newProject, _cancellationToken);
+        await using var projectTracker = _apiFixture.TrackForCleanup(newProject, c => c.Projects.DeleteAsync, isPremium: true);
+
+        await _apiFixture.PremiumClient.Tasks.AddAsync(newTask, _cancellationToken);
+        await using var taskTracker = _apiFixture.TrackForCleanup(newTask, c => c.Tasks.DeleteAsync, isPremium: true);
+
+
+        // Step 2: Get or create task email. The API only accepts the "task" object type here,
+        // the legacy "item" value is rejected.
+        var actualEmail = await _apiFixture.PremiumClient.Emails.GetOrCreateAsync(
+            EmailObjectType.Task,
+            newTask.Id.PersistentId,
+            _cancellationToken);
+
+        Assert.NotNull(actualEmail);
+        Assert.False(string.IsNullOrWhiteSpace(actualEmail.Email));
+
+
+        // Step 3: Disable task email.
+        await _apiFixture.PremiumClient.Emails.DisableAsync(
+            EmailObjectType.Task,
+            newTask.Id.PersistentId,
+            _cancellationToken);
+    }
+
+    [Fact]
+    [Trait(Constants.TraitName, Constants.IntegrationPremiumTraitValue)]
     public async Task CreateTask_GetIdMappings_Succeeds()
     {
         var newProject = TestData.Projects.AddProject($"UtilityActivityProject_{Guid.NewGuid():N}");
