@@ -7,6 +7,7 @@ internal sealed class StubTodoistRestClient : ITodoistRestClient
 {
     private Func<string, Dictionary<string, string>, CancellationToken, Task<HttpResponseMessage>>? _getAsyncHandler;
     private Func<string, Dictionary<string, string>, CancellationToken, Task<HttpResponseMessage>>? _postAsyncHandler;
+    private Func<string, Dictionary<string, string>, CancellationToken, Task<HttpResponseMessage>>? _deleteAsyncHandler;
 
     public string LastResource { get; private set; } = string.Empty;
 
@@ -22,6 +23,11 @@ internal sealed class StubTodoistRestClient : ITodoistRestClient
     public void RespondToPostJson(HttpStatusCode statusCode, string json)
     {
         _postAsyncHandler = (_, _, _) => Task.FromResult(CreateJsonResponse(statusCode, json));
+    }
+
+    public void RespondToDeleteWithEmptyBody(HttpStatusCode statusCode)
+    {
+        _deleteAsyncHandler = (_, _, _) => Task.FromResult(new HttpResponseMessage(statusCode));
     }
 
     public Task<HttpResponseMessage> GetAsync(string resource, Dictionary<string, string>? queryParams = null, CancellationToken cancellationToken = default)
@@ -64,7 +70,11 @@ internal sealed class StubTodoistRestClient : ITodoistRestClient
 
     public Task<HttpResponseMessage> DeleteAsync(string resource, Dictionary<string, string>? queryParams = null, CancellationToken cancellationToken = default)
     {
-        throw new NotSupportedException();
+        LastResource = resource;
+        LastQueryParams = queryParams is null ? [] : new Dictionary<string, string>(queryParams);
+
+        return _deleteAsyncHandler?.Invoke(resource, LastQueryParams, cancellationToken)
+            ?? throw new NotSupportedException("No DELETE handler configured.");
     }
 
     public void Dispose()

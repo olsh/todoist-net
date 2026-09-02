@@ -2,6 +2,10 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+#if NETFRAMEWORK
+using System;
+#endif
+
 namespace Todoist.Net.Models
 {
     /// <summary>
@@ -45,6 +49,9 @@ namespace Todoist.Net.Models
     /// <summary>
     /// Represents additional error information.
     /// </summary>
+#if NETFRAMEWORK
+    [Serializable]
+#endif
     public class TodoistErrorExtra
     {
         /// <summary>
@@ -69,7 +76,7 @@ namespace Todoist.Net.Models
         /// Gets the workspace ID related to the error.
         /// </summary>
         [JsonPropertyName("workspace_id")]
-        public int? WorkspaceId { get; internal set; }
+        public long? WorkspaceId { get; internal set; }
 
         /// <summary>
         /// Gets the project ID related to the error.
@@ -110,13 +117,27 @@ namespace Todoist.Net.Models
         /// <summary>
         /// Gets information about the item that caused the error.
         /// </summary>
+        /// <remarks>
+        /// <see cref="JsonElement" /> is not serializable, so this value does not survive
+        /// a <see cref="TodoistErrorExtra" /> binary serialization round trip.
+        /// </remarks>
         [JsonPropertyName("bad_item")]
+#if NETFRAMEWORK
+        [field: NonSerialized]
+#endif
         public Dictionary<string, JsonElement> BadItem { get; internal set; }
 
         /// <summary>
         /// Gets any additional data that is not explicitly defined in the model.
         /// </summary>
+        /// <remarks>
+        /// <see cref="JsonElement" /> is not serializable, so this value does not survive
+        /// a <see cref="TodoistErrorExtra" /> binary serialization round trip.
+        /// </remarks>
         [JsonExtensionData]
+#if NETFRAMEWORK
+        [field: NonSerialized]
+#endif
         public Dictionary<string, JsonElement> ExtensionData { get; internal set; }
     }
 }

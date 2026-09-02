@@ -37,7 +37,10 @@ namespace Todoist.Net.Services
             var command = new Command(commandType, entity, tempId);
             await ExecuteCommandAsync(command, cancellationToken).ConfigureAwait(false);
 
-            return tempId;
+            // Outside a transaction the command has already been sent, and the temporary ID has been
+            // replaced by the persistent ID assigned by the API. Inside a transaction the entity still
+            // holds its temporary ID, which is resolved when the transaction is committed.
+            return entity.Id;
         }
 
         protected internal Task ExecuteEntityCommandAsync(CommandType commandType, ComplexId id, CancellationToken cancellationToken = default)

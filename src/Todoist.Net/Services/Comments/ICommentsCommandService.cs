@@ -20,7 +20,7 @@ namespace Todoist.Net.Services
         /// <param name="taskId">The task identifier.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>
-        /// The temporary ID of the comment.
+        /// The ID of the comment, or a temporary ID when executed in a transaction.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="comment" /> is <see langword="null" /></exception>
         /// <exception cref="TodoistException">Command execution exception.</exception>
@@ -34,7 +34,7 @@ namespace Todoist.Net.Services
         /// <param name="projectId">The project ID.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>
-        /// The comment ID.
+        /// The ID of the comment, or a temporary ID when executed in a transaction.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="comment" /> is <see langword="null" /></exception>
         /// <exception cref="TodoistException">Command execution exception.</exception>

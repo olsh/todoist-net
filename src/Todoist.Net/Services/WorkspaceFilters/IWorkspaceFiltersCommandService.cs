@@ -19,7 +19,7 @@ namespace Todoist.Net.Services
         /// </summary>
         /// <param name="workspaceFilter">The workspace filter payload.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The temporary ID of the workspace filter.</returns>
+        /// <returns>The ID of the workspace filter, or a temporary ID when executed in a transaction.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="workspaceFilter"/> is <see langword="null"/>.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="TodoistException">Command execution exception.</exception>

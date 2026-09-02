@@ -58,6 +58,7 @@ namespace Todoist.Net.Models
         /// <remarks>
         /// Required for `section_order` alias in the REST API (`order`).
         /// </remarks>
+        [JsonInclude]
         [JsonPropertyName("order")]
         internal int? Order => SectionOrder;
 

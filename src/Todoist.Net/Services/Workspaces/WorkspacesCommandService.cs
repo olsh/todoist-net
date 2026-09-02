@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
 
 namespace Todoist.Net.Services
@@ -74,6 +75,8 @@ namespace Todoist.Net.Services
         /// <inheritdoc/>
         public Task<ComplexId> AddFolderAsync(ComplexId workspaceId, WorkspaceFolder folder, CancellationToken cancellationToken = default)
         {
+            ThrowHelper.ThrowIfNull(folder, nameof(folder));
+
             folder.WorkspaceId = workspaceId;
 
             return ExecuteAddCommandAsync(CommandType.AddWorkspaceFolder, folder, cancellationToken);
@@ -82,6 +85,8 @@ namespace Todoist.Net.Services
         /// <inheritdoc/>
         public Task UpdateFolderAsync(ComplexId id, ComplexId workspaceId, WorkspaceFolder folder, CancellationToken cancellationToken = default)
         {
+            ThrowHelper.ThrowIfNull(folder, nameof(folder));
+
             folder.Id = id;
             folder.WorkspaceId = workspaceId;
 

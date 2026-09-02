@@ -100,10 +100,12 @@ namespace Todoist.Net.Exceptions
                 throw new ArgumentNullException(nameof(info));
             }
 
-            info.AddValue(nameof(Code), Code);
-            info.AddValue(nameof(ErrorTag), ErrorTag);
-            info.AddValue(nameof(HttpCode), HttpCode);
-            info.AddValue(nameof(ErrorExtra), ErrorExtra);
+            // The declared type has to be passed explicitly, otherwise every value is stored as
+            // `System.Object` and reading it back fails to convert it into its actual type.
+            info.AddValue(nameof(Code), Code, typeof(int?));
+            info.AddValue(nameof(ErrorTag), ErrorTag, typeof(string));
+            info.AddValue(nameof(HttpCode), HttpCode, typeof(int?));
+            info.AddValue(nameof(ErrorExtra), ErrorExtra, typeof(TodoistErrorExtra));
 
             base.GetObjectData(info, context);
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -175,13 +176,41 @@ namespace Todoist.Net
 
             foreach (var file in files)
             {
-                var content = new StreamContent(file.ContentStream);
+                var contentStream = file.ContentStream;
+                if (contentStream.CanSeek)
+                {
+                    // The same file may be sent more than once, e.g. when a request is retried,
+                    // so the stream is rewound instead of being read from wherever it was left.
+                    contentStream.Seek(0, SeekOrigin.Begin);
+                }
+
+                var content = new NonDisposingStreamContent(contentStream);
                 if (file.MimeType != null && MediaTypeHeaderValue.TryParse(file.MimeType, out var mediaType))
                 {
                     content.Headers.ContentType = mediaType;
                 }
 
                 multipartFormDataContent.Add(content, "file", file.Filename);
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="StreamContent" /> which leaves the underlying stream open once disposed.
+        /// </summary>
+        /// <remarks>
+        /// The stream belongs to the <see cref="UploadFile" /> owned by the caller, so it has to outlive
+        /// both the content and the request the content is sent with.
+        /// </remarks>
+        private sealed class NonDisposingStreamContent : StreamContent
+        {
+            public NonDisposingStreamContent(Stream content)
+                : base(content)
+            {
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                base.Dispose(false);
             }
         }
     }

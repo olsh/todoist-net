@@ -118,6 +118,7 @@ namespace Todoist.Net.Serialization.Converters
         {
             switch (reader.TokenType)
             {
+                case JsonTokenType.PropertyName:
                 case JsonTokenType.String:
                     return reader.GetString();
                 case JsonTokenType.Number:
