@@ -4,10 +4,8 @@
 
 A [Todoist API](https://developer.todoist.com) client for .NET.
 
-> 💡 **Upgrading from 10.x?** Version 11.0.0 moves to the unified Todoist API v1 and renames much of
-> the public surface (`Items` -> `Tasks`, `Notes` -> `Comments`, and more). See the
-> [11.0.0 release notes](https://github.com/olsh/todoist-net/releases/tag/11.0.0) for the full
-> migration table.
+> 💡 **Upgrading from 10.x?** Version 11.0.0 moves to the unified Todoist API v1 and renames much of the public surface (`Items` -> `Tasks`, `Notes` -> `Comments`, and more).
+> See the [11.0.0 release notes](https://github.com/olsh/todoist-net/releases/tag/11.0.0) for the full migration table.
 
 ## Features
 
@@ -607,16 +605,8 @@ catch (OperationCanceledException)
 
 ## Migrating from Todoist.Net (v10 and earlier)
 
-This package is a major, breaking evolution of the original `Todoist.Net` package. The most visible renames are `Item` → `TaskInfo`/`AddTask`/`UpdateTask`, `Note` → `Comment`, `client.Items` → `client.Tasks`, and `client.Notes` → `client.Comments`. See [PR #75](https://github.com/olsh/todoist-net/pull/75) and [Issue #70](https://github.com/olsh/todoist-net/issues/70) on the original [olsh/todoist-net](https://github.com/olsh/todoist-net) repository for the full breaking-changes summary and the migration phases.
-
-## Contributing
-
-Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, testing guidelines, and coding conventions.
+This package is a major, breaking evolution of the original `Todoist.Net` package. The most visible renames are `Item` → `TaskInfo`/`AddTask`/`UpdateTask`, `Note` → `Comment`, `client.Items` → `client.Tasks`, and `client.Notes` → `client.Comments`. See the [11.0.0 release notes](https://github.com/olsh/todoist-net/releases/tag/11.0.0) for the full migration table.
 
 ## License
 
 This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
-
-## More Community-Developed Todoist Libraries
-
-[**Todoist.Net.OAuth**](https://github.com/AhmedZaki99/todoist-net-oauth): an unofficial library that includes middleware extending [**Microsoft.AspNetCore.Authentication.OAuth.OAuthHandler**](https://github.com/dotnet/aspnetcore/blob/main/src/Security/Authentication/OAuth/src/OAuthHandler.cs) that you can use in your **ASP.NET Core** application to support OAuth with [**Todoist**](https://todoist.com/).
