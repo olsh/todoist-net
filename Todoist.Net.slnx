@@ -2,7 +2,6 @@
   <Folder Name="/Solution Items/">
     <File Path=".github/workflows/ci.yml" />
     <File Path=".github/workflows/publish.yml" />
-    <File Path=".github/workflows/sonar.yml" />
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
     <File Path=".runsettings" />
