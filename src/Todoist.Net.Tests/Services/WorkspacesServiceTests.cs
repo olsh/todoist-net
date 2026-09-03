@@ -13,14 +13,17 @@ public class WorkspacesServiceTests
     }
 
     [Fact]
-    [Trait(Constants.TraitName, Constants.IntegrationPremiumTraitValue)]
     public async Task CreateWorkspace_Update_GetPlanDetails_Delete_Succeeds()
     {
-        // Step 1: Create workspace in premium account to avoid reaching max workspace limit.
+        // Make sure we are not reaching max workspace limit.
+        await _apiFixture.DeletePlaygroundWorkspaceAsync();
+
+
+        // Step 1: Create workspace.
         var newWorkspace = TestData.Workspaces.AddWorkspace();
         var expectedNewWorkspace = TestData.Workspaces.ExpectedAddWorkspace();
 
-        var syncResponse = await _apiFixture.PremiumClient.ExecuteTransactionAndSyncAsync(
+        var syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
             t => t.Workspaces.AddAsync(newWorkspace, _cancellationToken),
             [ResourceType.Workspaces],
             cancellationToken: _cancellationToken);
@@ -36,7 +39,7 @@ public class WorkspacesServiceTests
         var updateWorkspace = TestData.Workspaces.UpdateWorkspace(newWorkspace.Id);
         var expectedUpdatedWorkspace = TestData.Workspaces.ExpectedUpdateWorkspace(newWorkspace.Id);
 
-        syncResponse = await _apiFixture.PremiumClient.ExecuteTransactionAndSyncAsync(
+        syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
             async t =>
             {
                 await t.Workspaces.UpdateAsync(updateWorkspace, _cancellationToken);
@@ -56,7 +59,7 @@ public class WorkspacesServiceTests
         // Step 3: Get workspace plan details.
         long workspaceParsedId = long.Parse(newWorkspace.Id.PersistentId);
 
-        var planDetails = await _apiFixture.PremiumClient.Workspaces.GetPlanDetailsAsync(workspaceParsedId, _cancellationToken);
+        var planDetails = await _apiFixture.Client.Workspaces.GetPlanDetailsAsync(workspaceParsedId, _cancellationToken);
 
         Assert.NotNull(planDetails);
         Assert.Equal(workspaceParsedId, planDetails.WorkspaceId);
@@ -64,7 +67,7 @@ public class WorkspacesServiceTests
 
 
         // Step 4: Delete workspace.
-        syncResponse = await _apiFixture.PremiumClient.ExecuteTransactionAndSyncAsync(
+        syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
             t => t.Workspaces.DeleteAsync(newWorkspace.Id, _cancellationToken),
             [ResourceType.Workspaces],
             syncResponse.SyncToken,
