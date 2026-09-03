@@ -9,19 +9,19 @@
   The secondary and tertiary tokens are optional but can be set to valid tokens of different accounts to distribute the load of integration tests and avoid hitting rate limits.
 -->
 <RunSettings>
-    <RunConfiguration>
-        <EnvironmentVariables>
-            <!-- Replace the value of the token with your actual Todoist API token. -->
-            <!-- In order to run "Premium" integration tests, this must be a valid token of a Premium account. -->
-            <todoist_token>YOUR_TODOIST_TOKEN</todoist_token>
+  <RunConfiguration>
+    <EnvironmentVariables>
+      <!-- Replace the value of the token with your actual Todoist API token. -->
+      <!-- In order to run "Premium" integration tests, this must be a valid token of a Premium account. -->
+      <todoist_token>YOUR_TODOIST_TOKEN</todoist_token>
 
-            <!-- Set this value in order to run "Collaboration" integration tests, it must be set to a valid token of a different account than the one used in `todoist_token`. -->
-            <!-- In addition to "Collaboration" tests, this token is meant to be used in "Free-tier" tests (when present) to take some of the load off the primary token to avoid hitting rate limits. -->
-            <!-- <todoist_token_secondary></todoist_token_secondary> -->
+      <!-- Set this value in order to run "Collaboration" integration tests, it must be set to a valid token of a different account than the one used in `todoist_token`. -->
+      <!-- In addition to "Collaboration" tests, this token is meant to be used in "Free-tier" tests (when present) to take some of the load off the primary token to avoid hitting rate limits. -->
+      <!-- <todoist_token_secondary></todoist_token_secondary> -->
 
-            <!-- Optional: Set this token in order to further distribute the load of integration tests across multiple accounts to avoid hitting rate limits on any single account. -->
-            <!-- It should be set to a valid token of a different account than the ones used in `todoist_token` and `todoist_token_secondary`. -->
-            <!-- <todoist_token_tertiary></todoist_token_tertiary> -->
-        </EnvironmentVariables>
-    </RunConfiguration>
+      <!-- Optional: Set this token in order to further distribute the load of integration tests across multiple accounts to avoid hitting rate limits on any single account. -->
+      <!-- It should be set to a valid token of a different account than the ones used in `todoist_token` and `todoist_token_secondary`. -->
+      <!-- <todoist_token_tertiary></todoist_token_tertiary> -->
+    </EnvironmentVariables>
+  </RunConfiguration>
 </RunSettings>
