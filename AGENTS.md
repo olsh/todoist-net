@@ -19,7 +19,6 @@ NUKE is the build system. Targets are invoked in **kebab-case** on the CLI:
 .\build.cmd unit-test                          # trait=unit only (no API token needed)
 .\build.cmd test                               # everything except trait!=mfa-required (hits the live API)
 .\build.cmd nuget-pack --configuration Release # package into artifacts/
-.\build.cmd sonar --configuration Release      # needs SONAR_TOKEN env var; PR args: --pr-number/--pr-base/--pr-branch
 ```
 
 `build.cmd` (Windows) and `build.sh` (Linux/macOS) both delegate to `build/Build.cs`. Configuration defaults to `Debug` locally, `Release` on CI.
@@ -141,4 +140,4 @@ New integration tests must clean up after themselves in a `finally` block; the a
 - `TreatWarningsAsErrors=true` on both projects, and the library sets `GenerateDocumentationFile=true` — a public member without an XML doc comment fails the build.
 - `netstandard2.0`/`net462` means no `DateOnly`, no nullable reference types, no `record`. `IHttpClientFactory` support (`TodoistServiceCollectionExtensions`, `TodoistClientFactory`) is behind `#if NETSTANDARD2_0`.
 - `InternalsVisibleTo("Todoist.Net.Tests")` lets tests reach internal types (`TodoistRestClient`, `CommandType`, resolvers) — prefer keeping new plumbing internal over widening the public API.
-- CI (`.github/workflows/ci.yml`) runs on `windows-latest` with the .NET 10 SDK; SonarCloud analysis for PRs runs in a separate `sonar.yml` workflow triggered by CI completion, using PR metadata passed through an artifact.
+- CI (`.github/workflows/ci.yml`) runs on `windows-latest` with the .NET 10 SDK and only builds, tests and packs. SonarCloud analysis is not part of CI: the project uses SonarQube Cloud Automatic Analysis, which runs server-side via the GitHub App and covers `master` plus pull requests (including those from forks).

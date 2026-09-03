@@ -26,8 +26,6 @@
       "enum": [
         "Compile",
         "NugetPack",
-        "Sonar",
-        "SonarBegin",
         "Test",
         "UnitTest"
       ]
@@ -111,29 +109,9 @@
             "Release"
           ]
         },
-        "PrBase": {
-          "type": "string",
-          "description": "Pull request base branch"
-        },
-        "PrBranch": {
-          "type": "string",
-          "description": "Pull request head branch"
-        },
-        "PrNumber": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Pull request number",
-          "format": "int32"
-        },
         "Solution": {
           "type": "string",
           "description": "Path to a solution file that is automatically loaded"
-        },
-        "SONAR_TOKEN": {
-          "type": "string",
-          "description": "SonarQube token"
         }
       }
     },
