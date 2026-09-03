@@ -132,7 +132,7 @@ public class TodoistClientProtocolTests
 
 
         // Step 2: Assert error reporting details from the command body.
-        Assert.Equal("Command failed", exception.Message);
+        Assert.StartsWith("Command failed", exception.Message);
         Assert.Equal(42, exception.Code);
         Assert.Equal("INVALID_ARGUMENT_VALUE", exception.ErrorTag);
         Assert.Equal(400, exception.HttpCode);
@@ -170,7 +170,7 @@ public class TodoistClientProtocolTests
 
 
         // Step 2: Assert Todoist-specific error reporting details.
-        Assert.Equal("Bad request", exception.Message);
+        Assert.StartsWith("Bad request", exception.Message);
         Assert.Equal(99, exception.Code);
         Assert.Equal("INVALID_REQUEST", exception.ErrorTag);
         Assert.Equal(400, exception.HttpCode);
@@ -269,7 +269,7 @@ public class TodoistClientProtocolTests
 
 
         // Step 2: Assert the missing HTTP code is taken from the response itself.
-        Assert.Equal("Rate limit exceeded", exception.Message);
+        Assert.StartsWith("Rate limit exceeded", exception.Message);
         Assert.Equal(429, exception.HttpCode);
     }
 

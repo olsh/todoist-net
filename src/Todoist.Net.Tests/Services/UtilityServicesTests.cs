@@ -13,7 +13,7 @@ public class UtilityServicesTests
     }
 
     [Fact]
-    [Trait(Constants.TraitName, Constants.IntegrationPremiumTraitValue)]
+    [Trait(Constants.TraitName, Constants.IntegrationRootTraitValue)]
     public async Task CreateProject_GetOrCreateEmail_Disable_Succeeds()
     {
         var newProject = TestData.Projects.AddProject($"UtilityEmailProject_{Guid.NewGuid():N}");
