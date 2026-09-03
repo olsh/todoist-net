@@ -1,13 +1,8 @@
-using System.Collections.Generic;
 using Nuke.Common;
-using Nuke.Common.CI;
-using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
-using Nuke.Common.Tools.SonarScanner;
 
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
-using static Nuke.Common.Tools.SonarScanner.SonarScannerTasks;
 
 class Build : NukeBuild
 {
@@ -16,15 +11,7 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Parameter("SonarQube token", Name = "SONAR_TOKEN")] readonly string SonarQubeToken;
-
-    [Parameter("Pull request number")] readonly int? PrNumber;
-    [Parameter("Pull request base branch")] readonly string PrBase;
-    [Parameter("Pull request head branch")] readonly string PrBranch;
-
     [Solution(GenerateProjects = true)] readonly Solution Solution;
-
-    [CI] readonly GitHubActions GitHubActions;
 
     Target Compile => _ => _
         .Executes(() =>
@@ -36,7 +23,6 @@ class Build : NukeBuild
 
     Target UnitTest => _ => _
         .DependsOn(Compile)
-        .Before(Sonar)
         .Executes(() =>
         {
             DotNetTest(s => s
@@ -68,57 +54,5 @@ class Build : NukeBuild
                 .SetOutputDirectory(RootDirectory / "artifacts")
                 .SetNoBuild(true)
                 .SetNoRestore(true));
-        });
-
-    Target SonarBegin => _ => _
-        .Unlisted()
-        .Before(Compile)
-        .Executes(() =>
-        {
-            SonarScannerBegin(s =>
-            {
-                s = s
-                    .SetServer("https://sonarcloud.io")
-                    .SetToken(SonarQubeToken)
-                    .SetProjectKey("todoist-net")
-                    .SetName("Todoist.Net")
-                    .SetOrganization("olsh")
-                    .SetVersion("1.0.0.0")
-                    .SetAdditionalParameters(new Dictionary<string, string> { ["sonar.scanner.skipJreProvisioning"] = "true" });
-
-                // Priority: CLI params > GitHubActions context
-                if (PrNumber.HasValue)
-                {
-                    s = s
-                        .SetPullRequestKey(PrNumber.Value.ToString())
-                        .SetPullRequestBase(PrBase)
-                        .SetPullRequestBranch(PrBranch);
-                }
-                else if (GitHubActions != null)
-                {
-                    if (GitHubActions.IsPullRequest)
-                    {
-                        s = s
-                            .SetPullRequestKey(GitHubActions.PullRequestNumber.ToString())
-                            .SetPullRequestBase(GitHubActions.BaseRef)
-                            .SetPullRequestBranch(GitHubActions.HeadRef);
-                    }
-                    else
-                    {
-                        s = s
-                            .SetBranchName(GitHubActions.RefName);
-                    }
-                }
-
-                return s;
-            });
-        });
-
-    Target Sonar => _ => _
-        .DependsOn(SonarBegin, Compile)
-        .Executes(() =>
-        {
-            SonarScannerEnd(s => s
-                .SetToken(SonarQubeToken));
         });
 }
