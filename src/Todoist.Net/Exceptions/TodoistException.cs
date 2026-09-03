@@ -1,4 +1,6 @@
 using System;
+using System.Text;
+using System.Text.Json;
 
 using Todoist.Net.Models;
 
@@ -17,6 +19,9 @@ namespace Todoist.Net.Exceptions
 #endif
     public sealed class TodoistException : Exception
     {
+        private static readonly JsonSerializerOptions _defaultSerializationOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web) { WriteIndented = true };
+
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TodoistException" /> class using a <see cref="TodoistError" /> object.
         /// </summary>
@@ -43,12 +48,37 @@ namespace Todoist.Net.Exceptions
             int? httpCode = null,
             TodoistErrorExtra errorExtra = null, 
             Exception inner = null)
-            : base(message, inner)
+            : base(GetFullMessage(message, code, errorTag, httpCode, errorExtra), inner)
         {
             Code = code;
             ErrorTag = errorTag;
             HttpCode = httpCode;
             ErrorExtra = errorExtra;
+        }
+
+        private static string GetFullMessage(string message, int? code, string errorTag, int? httpCode, TodoistErrorExtra errorExtra)
+        {
+            var stringBuilder = new StringBuilder(message ?? "An error occurred while processing the request to the Todoist API.");
+            if (code.HasValue)
+            {
+                stringBuilder.Append($" - Error Code: {code.Value}");
+            }
+            if (!string.IsNullOrEmpty(errorTag))
+            {
+                stringBuilder.Append($" - Error Tag: {errorTag}");
+            }
+            if (httpCode.HasValue)
+            {
+                stringBuilder.Append($" - HTTP Status Code: {httpCode.Value}");
+            }
+
+            if (errorExtra != null)
+            {
+                stringBuilder.AppendLine();
+                stringBuilder.AppendLine("Error Extra:");
+                stringBuilder.Append(JsonSerializer.Serialize(errorExtra, _defaultSerializationOptions));
+            }
+            return stringBuilder.ToString();
         }
 
 #if NETFRAMEWORK
