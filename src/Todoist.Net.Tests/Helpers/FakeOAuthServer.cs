@@ -89,6 +89,7 @@ internal sealed class FakeOAuthServer : HttpMessageHandler
             request.Method,
             request.RequestUri!.ToString(),
             request.Headers.Authorization,
+            request.Headers.ToDictionary(header => header.Key, header => string.Join(",", header.Value)),
             body);
 
         lock (_requestsLock)

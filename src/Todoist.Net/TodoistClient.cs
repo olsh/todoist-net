@@ -362,10 +362,15 @@ namespace Todoist.Net
             TodoistOAuthOptions options,
             TodoistTokens tokens,
             Func<TodoistTokens, Task> onTokensRefreshed,
-            HttpMessageHandler innerHandler)
+            HttpMessageHandler innerHandler,
+            Action<HttpClient> configureHttpClient = null)
         {
-            return new TodoistClient(
-                new TodoistOAuthHandler(options, tokens, onTokensRefreshed) { InnerHandler = innerHandler });
+            var oauthHandler = new TodoistOAuthHandler(options, tokens, onTokensRefreshed)
+                { InnerHandler = innerHandler };
+            var httpClient = new HttpClient(oauthHandler);
+            configureHttpClient?.Invoke(httpClient);
+
+            return new TodoistClient(new TodoistRestClient(null, httpClient, disposeHttpClient: true), oauthHandler);
         }
 
         private TodoistOAuthHandler GetOAuthHandler()

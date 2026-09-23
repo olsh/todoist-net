@@ -4,6 +4,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
+using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Options;
 
 using Todoist.Net.OAuth;
@@ -16,15 +17,19 @@ namespace Todoist.Net
 
         private readonly IHttpMessageHandlerFactory _httpMessageHandlerFactory;
 
+        private readonly IOptionsMonitor<HttpClientFactoryOptions> _httpClientFactoryOptions;
+
         private readonly IOptions<TodoistOAuthOptions> _oauthOptions;
 
         public TodoistClientFactory(
             IHttpClientFactory httpClientFactory,
             IHttpMessageHandlerFactory httpMessageHandlerFactory,
+            IOptionsMonitor<HttpClientFactoryOptions> httpClientFactoryOptions,
             IOptions<TodoistOAuthOptions> oauthOptions)
         {
             _httpClientFactory = httpClientFactory;
             _httpMessageHandlerFactory = httpMessageHandlerFactory;
+            _httpClientFactoryOptions = httpClientFactoryOptions;
             _oauthOptions = oauthOptions;
         }
 
@@ -48,9 +53,23 @@ namespace Todoist.Net
             }
 
             // The OAuth handler holds the tokens of a single user, so it wraps the pooled handlers instead of joining them.
+            // That means creating the HttpClient here, so it gets the configuration IHttpClientFactory applies to the clients it creates.
             var innerHandler = _httpMessageHandlerFactory.CreateHandler();
+            var httpClientActions = _httpClientFactoryOptions.Get(Options.DefaultName)
+                .HttpClientActions;
 
-            return TodoistClient.CreateOAuthClient(options, tokens, onTokensRefreshed, innerHandler);
+            return TodoistClient.CreateOAuthClient(
+                options,
+                tokens,
+                onTokensRefreshed,
+                innerHandler,
+                httpClient =>
+                {
+                    foreach (var configureHttpClient in httpClientActions)
+                    {
+                        configureHttpClient(httpClient);
+                    }
+                });
         }
     }
 }

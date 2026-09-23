@@ -538,6 +538,39 @@ public class TodoistOAuthTests
     }
 
     [Fact]
+    public async Task CreateOAuthClient_FromServiceProvider_AppliesTheConfiguredHttpClientOptions()
+    {
+        var server = new FakeOAuthServer("access-0");
+        var services = new ServiceCollection();
+        services.AddTodoistClient(options => options.ClientId = "client-id");
+        services.ConfigureHttpClientDefaults(builder => builder
+            .ConfigurePrimaryHttpMessageHandler(() => server)
+            .ConfigureHttpClient(httpClient => httpClient.DefaultRequestHeaders.Add("X-Configured", "yes")));
+        await using var serviceProvider = services.BuildServiceProvider();
+
+        using var oauthClient = serviceProvider.GetRequiredService<ITodoistOAuthClientFactory>()
+            .CreateClient(new TodoistTokens("access-0"), null);
+        using var tokenClient = serviceProvider.GetRequiredService<ITodoistClientFactory>()
+            .CreateClient("access-0");
+
+
+        // Step 1: Send a request with a client of each kind.
+        await ((IAdvancedTodoistClient)oauthClient).GetAsync(
+            "projects",
+            cancellationToken: TestContext.Current.CancellationToken);
+        await ((IAdvancedTodoistClient)tokenClient).GetAsync(
+            "projects",
+            cancellationToken: TestContext.Current.CancellationToken);
+
+
+        // Step 2: Assert both carried what the application configured for its HTTP clients.
+        Assert.Equal(2, server.ApiRequests.Count);
+        Assert.All(
+            server.ApiRequests,
+            request => Assert.Equal("yes", request.Headers.GetValueOrDefault("X-Configured")));
+    }
+
+    [Fact]
     public async Task CreateOAuthClients_FromServiceProvider_KeepTheTokensOfEachUserApart()
     {
         var server = new FakeOAuthServer("access-a");

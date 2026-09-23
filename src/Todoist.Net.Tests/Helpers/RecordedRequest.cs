@@ -11,6 +11,7 @@ internal sealed record RecordedRequest(
     HttpMethod Method,
     string Uri,
     AuthenticationHeaderValue? Authorization,
+    IReadOnlyDictionary<string, string> Headers,
     string? Body)
 {
     /// <summary>
