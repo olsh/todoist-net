@@ -4,21 +4,27 @@ public sealed class TodoistApiFixture : IAsyncLifetime
 {
     // Start the first instance with 0 or 1 randomly to distribute single-test runs across different accounts when available.
     private static int _globalInstanceCounter = Random.Shared.Next(0, 2);
+
     private static readonly Lock _instantiationLock = new();
 
     private readonly int _instanceNumber = 0;
+
     private readonly SemaphoreSlim _creationGate;
+
     private readonly SemaphoreSlim _fetchGate;
 
     private bool _disposed = false;
 
     private ProjectInfo? _playgroundProject;
+
     private WorkspaceInfo? _playgroundWorkspace;
 
     private UserInfo? _mainUserInfo;
+
     private UserInfo? _collaboratorUserInfo;
 
     private ITodoistClient? _primaryClient;
+
     private ITodoistClient? _secondaryClient;
 
     public TodoistApiFixture()
@@ -27,6 +33,7 @@ public sealed class TodoistApiFixture : IAsyncLifetime
         {
             _instanceNumber = ++_globalInstanceCounter;
         }
+
         _creationGate = new SemaphoreSlim(1, 1);
         _fetchGate = new SemaphoreSlim(1, 1);
     }
@@ -35,11 +42,12 @@ public sealed class TodoistApiFixture : IAsyncLifetime
 
     public ITodoistClient CollaborationClient => Client != PremiumClient
         ? PremiumClient
-        : throw new InvalidOperationException("Secondary client is not available. Make sure the token is set in the environment variables.");
+        : throw new InvalidOperationException(
+            "Secondary client is not available. Make sure the token is set in the environment variables.");
 
     public ITodoistClient PremiumClient => _primaryClient
-        ?? throw new InvalidOperationException("The fixture has not been initialized yet");
-
+                                           ?? throw new InvalidOperationException(
+                                               "The fixture has not been initialized yet");
 
     public async ValueTask InitializeAsync()
     {
@@ -57,6 +65,7 @@ public sealed class TodoistApiFixture : IAsyncLifetime
         {
             return;
         }
+
         try
         {
             await DeletePlaygroundProjectAsync();
@@ -72,7 +81,6 @@ public sealed class TodoistApiFixture : IAsyncLifetime
             _disposed = true;
         }
     }
-
 
     public async Task<UserInfo> GetMainUserInfoAsync()
     {
@@ -96,7 +104,8 @@ public sealed class TodoistApiFixture : IAsyncLifetime
         await _fetchGate.WaitAsync(TestContext.Current.CancellationToken);
         try
         {
-            return _collaboratorUserInfo ??= await CollaborationClient.User.GetInfoAsync(TestContext.Current.CancellationToken);
+            return _collaboratorUserInfo ??=
+                await CollaborationClient.User.GetInfoAsync(TestContext.Current.CancellationToken);
         }
         finally
         {
@@ -167,7 +176,6 @@ public sealed class TodoistApiFixture : IAsyncLifetime
             ct => cleanupAction(client, ct));
     }
 
-
     private async Task<ProjectInfo> CreatePlaygroundProjectAsync()
     {
         var playgroundProject = new AddProject($"PlaygroundProject_{_instanceNumber}");
@@ -176,6 +184,9 @@ public sealed class TodoistApiFixture : IAsyncLifetime
             t => t.Projects.AddAsync(playgroundProject, TestContext.Current.CancellationToken),
             resourceTypes: [ResourceType.Projects],
             cancellationToken: TestContext.Current.CancellationToken);
+
+        // A transaction doesn't throw when its commands fail, so report the failure before looking for the project.
+        Assert.All(response.SyncStatus.Values, cr => cr.AssertSuccess());
 
         return response.Projects.First(p => p.Id == playgroundProject.Id);
     }
@@ -189,6 +200,9 @@ public sealed class TodoistApiFixture : IAsyncLifetime
             resourceTypes: [ResourceType.Workspaces],
             cancellationToken: TestContext.Current.CancellationToken);
 
+        // A transaction doesn't throw when its commands fail, so report the failure before looking for the workspace.
+        Assert.All(response.SyncStatus.Values, cr => cr.AssertSuccess());
+
         return response.Workspaces.First(w => w.Id == playgroundWorkspace.Id);
     }
 
@@ -198,6 +212,7 @@ public sealed class TodoistApiFixture : IAsyncLifetime
         {
             return;
         }
+
         await Client.Projects.DeleteAsync(_playgroundProject.Id.PersistentId, TestContext.Current.CancellationToken);
         _playgroundProject = null;
     }
@@ -208,14 +223,17 @@ public sealed class TodoistApiFixture : IAsyncLifetime
         {
             return;
         }
-        await Client.Workspaces.DeleteAsync(_playgroundWorkspace.Id.PersistentId, TestContext.Current.CancellationToken);
+
+        await Client.Workspaces.DeleteAsync(
+            _playgroundWorkspace.Id.PersistentId,
+            TestContext.Current.CancellationToken);
         _playgroundWorkspace = null;
     }
-
 
     public sealed class TodoistTracker : IAsyncDisposable
     {
         private readonly string _trackedResourceDescription;
+
         private readonly Func<CancellationToken, Task> _cleanupAction;
 
         private bool _trackingStopped = false;
@@ -232,6 +250,7 @@ public sealed class TodoistApiFixture : IAsyncLifetime
             {
                 return;
             }
+
             _trackingStopped = true;
 
             try
@@ -240,8 +259,9 @@ public sealed class TodoistApiFixture : IAsyncLifetime
             }
             catch (Exception ex)
             {
-                // Log the exception or handle it as needed. For now, we'll just write to the console.
-                Console.WriteLine($"Failed to clean up {_trackedResourceDescription}: {ex}");
+                // xUnit doesn't capture the console, so write to the test's output where the failure shows up.
+                TestContext.Current.TestOutputHelper?.WriteLine(
+                    $"Failed to clean up {_trackedResourceDescription}: {ex}");
             }
         }
 

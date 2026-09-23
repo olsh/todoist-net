@@ -7,9 +7,8 @@
     <IsTestProject>true</IsTestProject>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <RunSettingsFilePath Condition="Exists('$(MSBuildProjectDirectory)\..\..\.runsettings')">
-      $(MSBuildProjectDirectory)\..\..\.runsettings
-    </RunSettingsFilePath>
+    <!-- The path must stay on one line: MSBuild keeps the whitespace around a property value, and VSTest can't find a path with line breaks in it. -->
+    <RunSettingsFilePath Condition="Exists('$(MSBuildProjectDirectory)\..\..\.runsettings')">$(MSBuildProjectDirectory)\..\..\.runsettings</RunSettingsFilePath>
   </PropertyGroup>
 
   <ItemGroup>
