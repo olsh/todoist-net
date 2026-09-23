@@ -48,21 +48,21 @@ public class TodoistClientProtocolTests
         restClient.RespondToPostJson(
             HttpStatusCode.OK,
             $$"""
-            {
-                "sync_status": {
-                    "{{commandId}}": {
-                        "operation": {
-                            "id": "operation-123",
-                            "operation_type": "label_add",
-                            "status": "in_progress"
-                        }
-                    }
-                },
-                "temp_id_mapping": {},
-                "sync_token": "sync-token-1",
-                "full_sync": false
-            }
-            """);
+              {
+                  "sync_status": {
+                      "{{commandId}}": {
+                          "operation": {
+                              "id": "operation-123",
+                              "operation_type": "label_add",
+                              "status": "in_progress"
+                          }
+                      }
+                  },
+                  "temp_id_mapping": {},
+                  "sync_token": "sync-token-1",
+                  "full_sync": false
+              }
+              """);
         using var todoistClient = new TodoistClient(restClient);
 
 
@@ -79,7 +79,8 @@ public class TodoistClientProtocolTests
         Assert.Equal("sync", restClient.LastResource);
         Assert.True(restClient.LastFormParams.ContainsKey("commands"));
 
-        var actualCommandResult = Assert.Single(actualResponse.SyncStatus, kvp => kvp.Key == commandId).Value;
+        var actualCommandResult = Assert.Single(actualResponse.SyncStatus, kvp => kvp.Key == commandId)
+            .Value;
         Assert.True(actualCommandResult.IsSuccess);
         Assert.NotNull(actualCommandResult.CommandBody);
         Assert.NotNull(actualCommandResult.CommandBody.Operation);
@@ -100,35 +101,36 @@ public class TodoistClientProtocolTests
         restClient.RespondToPostJson(
             HttpStatusCode.OK,
             $$"""
-            {
-                "sync_status": {
-                    "{{commandId}}": {
-                        "error_code": 42,
-                        "error": "Command failed",
-                        "error_tag": "INVALID_ARGUMENT_VALUE",
-                        "http_code": 400,
-                        "error_extra": {
-                            "argument": "name",
-                            "command": "label_add",
-                            "expected": "non-empty"
-                        }
-                    }
-                },
-                "temp_id_mapping": {},
-                "sync_token": "sync-token-1",
-                "full_sync": false
-            }
-            """);
+              {
+                  "sync_status": {
+                      "{{commandId}}": {
+                          "error_code": 42,
+                          "error": "Command failed",
+                          "error_tag": "INVALID_ARGUMENT_VALUE",
+                          "http_code": 400,
+                          "error_extra": {
+                              "argument": "name",
+                              "command": "label_add",
+                              "expected": "non-empty"
+                          }
+                      }
+                  },
+                  "temp_id_mapping": {},
+                  "sync_token": "sync-token-1",
+                  "full_sync": false
+              }
+              """);
         using var todoistClient = new TodoistClient(restClient);
 
 
         // Step 1: Execute a failing low-level sync command.
-        var exception = await Assert.ThrowsAsync<TodoistException>(() => ((IAdvancedTodoistClient)todoistClient).SyncCommandsAsync(
-            [command],
-            includedResources: null,
-            syncToken: null,
-            throwOnError: true,
-            cancellationToken: TestContext.Current.CancellationToken));
+        var exception = await Assert.ThrowsAsync<TodoistException>(() =>
+            ((IAdvancedTodoistClient)todoistClient).SyncCommandsAsync(
+                [command],
+                includedResources: null,
+                syncToken: null,
+                throwOnError: true,
+                cancellationToken: TestContext.Current.CancellationToken));
 
 
         // Step 2: Assert error reporting details from the command body.
@@ -189,13 +191,13 @@ public class TodoistClientProtocolTests
         restClient.RespondToPostJson(
             HttpStatusCode.OK,
             $$"""
-            {
-                "sync_status": {},
-                "temp_id_mapping": { "{{tempId}}": "6X7rM8997g3RQmvh" },
-                "sync_token": "sync-token-1",
-                "full_sync": false
-            }
-            """);
+              {
+                  "sync_status": {},
+                  "temp_id_mapping": { "{{tempId}}": "6X7rM8997g3RQmvh" },
+                  "sync_token": "sync-token-1",
+                  "full_sync": false
+              }
+              """);
         using var todoistClient = new TodoistClient(restClient);
 
 
@@ -369,8 +371,14 @@ public class TodoistClientProtocolTests
         Assert.Equal("templates/import_into_project_from_template_id", restClient.LastResource);
 
         using var requestBody = JsonDocument.Parse(restClient.LastJsonContent);
-        Assert.Equal("6X7rM8997g3RQmvh", requestBody.RootElement.GetProperty("project_id").GetString());
-        Assert.Equal("123456", requestBody.RootElement.GetProperty("template_id").GetString());
+        Assert.Equal(
+            "6X7rM8997g3RQmvh",
+            requestBody.RootElement.GetProperty("project_id")
+                .GetString());
+        Assert.Equal(
+            "123456",
+            requestBody.RootElement.GetProperty("template_id")
+                .GetString());
     }
 
     [Fact]
@@ -399,8 +407,14 @@ public class TodoistClientProtocolTests
         Assert.Equal("emails", restClient.LastResource);
 
         using var requestBody = JsonDocument.Parse(restClient.LastJsonContent);
-        Assert.Equal("task", requestBody.RootElement.GetProperty("obj_type").GetString());
-        Assert.Equal("6X7rM8997g3RQmvh", requestBody.RootElement.GetProperty("obj_id").GetString());
+        Assert.Equal(
+            "task",
+            requestBody.RootElement.GetProperty("obj_type")
+                .GetString());
+        Assert.Equal(
+            "6X7rM8997g3RQmvh",
+            requestBody.RootElement.GetProperty("obj_id")
+                .GetString());
 
         Assert.Equal("sdk-tests@in.todoist.com", actualEmail.Email);
     }
@@ -450,5 +464,49 @@ public class TodoistClientProtocolTests
             TestContext.Current.CancellationToken));
 
         Assert.Equal("folder", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task AddWorkspaceFilter_OutsideOfATransaction_SendsTheAddCommand()
+    {
+        var tempId = Guid.NewGuid();
+        var workspaceFilter = new AddWorkspaceFilter("6X6WMMqgq2PWxjCX", "Sdk tests", "today") { Id = tempId };
+
+        var restClient = new StubTodoistRestClient();
+        restClient.RespondToPostJson(
+            HttpStatusCode.OK,
+            $$"""
+              {
+                  "sync_status": {},
+                  "temp_id_mapping": { "{{tempId}}": "6X7rM8997g3RQmvh" },
+                  "sync_token": "sync-token-1",
+                  "full_sync": false
+              }
+              """);
+        using var todoistClient = new TodoistClient(restClient);
+
+
+        // Step 1: Add a workspace filter through the client's service rather than a transaction.
+        var actualId = await todoistClient.WorkspaceFilters.AddAsync(
+            workspaceFilter,
+            TestContext.Current.CancellationToken);
+
+
+        // Step 2: Assert the add command was sent and the persistent ID is returned.
+        Assert.Equal("sync", restClient.LastResource);
+
+        using var commands = JsonDocument.Parse(restClient.LastFormParams["commands"]);
+        var command = Assert.Single(commands.RootElement.EnumerateArray());
+        Assert.Equal(
+            "workspace_filter_add",
+            command.GetProperty("type")
+                .GetString());
+        Assert.Equal(
+            "6X6WMMqgq2PWxjCX",
+            command.GetProperty("args")
+                .GetProperty("workspace_id")
+                .GetString());
+
+        Assert.Equal("6X7rM8997g3RQmvh", actualId.PersistentId);
     }
 }
