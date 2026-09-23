@@ -4,6 +4,7 @@ namespace Todoist.Net.Tests.Services;
 public class WorkspacesServiceTests
 {
     private readonly TodoistApiFixture _apiFixture;
+
     private readonly CancellationToken _cancellationToken;
 
     public WorkspacesServiceTests(TodoistApiFixture apiFixture)
@@ -25,7 +26,10 @@ public class WorkspacesServiceTests
             [ResourceType.Workspaces],
             cancellationToken: _cancellationToken);
         // Track the created entity for cleanup if assertions fail before deletion step, otherwise stop tracking after deletion step.
-        await using var tracker = _apiFixture.TrackForCleanup(newWorkspace, c => c.Workspaces.DeleteAsync, isPremium: true);
+        await using var tracker = _apiFixture.TrackForCleanup(
+            newWorkspace,
+            c => c.Workspaces.DeleteAsync,
+            isPremium: true);
 
         Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
         var actualWorkspace = Assert.Single(syncResponse.Workspaces, w => w.Id == newWorkspace.Id);
@@ -40,7 +44,9 @@ public class WorkspacesServiceTests
             async t =>
             {
                 await t.Workspaces.UpdateAsync(updateWorkspace, _cancellationToken);
-                await t.Workspaces.UpdateProjectSortPreferenceAsync(new(newWorkspace.Id, WorkspaceSortPreference.ZToA), _cancellationToken);
+                await t.Workspaces.UpdateProjectSortPreferenceAsync(
+                    new(newWorkspace.Id, WorkspaceSortPreference.ZToA),
+                    _cancellationToken);
             },
             [ResourceType.Workspaces],
             syncResponse.SyncToken,
@@ -56,7 +62,8 @@ public class WorkspacesServiceTests
         // Step 3: Get workspace plan details.
         long workspaceParsedId = long.Parse(newWorkspace.Id.PersistentId);
 
-        var planDetails = await _apiFixture.PremiumClient.Workspaces.GetPlanDetailsAsync(workspaceParsedId, _cancellationToken);
+        var planDetails =
+            await _apiFixture.PremiumClient.Workspaces.GetPlanDetailsAsync(workspaceParsedId, _cancellationToken);
 
         Assert.NotNull(planDetails);
         Assert.Equal(workspaceParsedId, planDetails.WorkspaceId);
@@ -89,10 +96,9 @@ public class WorkspacesServiceTests
             [ResourceType.WorkspaceFolders],
             cancellationToken: _cancellationToken);
         // Track the created entity for cleanup if assertions fail before deletion step, otherwise stop tracking after deletion step.
-        await using var tracker = _apiFixture.TrackForCleanup(folder, c =>
-        {
-            return (id, ct) => c.Workspaces.DeleteFolderAsync(workspace.Id, id, ct);
-        });
+        await using var tracker = _apiFixture.TrackForCleanup(
+            folder,
+            c => { return (id, ct) => c.Workspaces.DeleteFolderAsync(id, workspace.Id, ct); });
 
         Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
         var actualFolder = Assert.Single(syncResponse.WorkspaceFolders, f => f.Id == folder.Id);
@@ -140,7 +146,8 @@ public class WorkspacesServiceTests
         long workspaceParsedId = long.Parse(workspace.Id.PersistentId);
 
         await _apiFixture.Client.Workspaces.UpdateLogoAsync(workspaceParsedId, logoFile, _cancellationToken);
-        var workspaceSyncResponse = await _apiFixture.Client.Workspaces.SyncAsync(cancellationToken: _cancellationToken);
+        var workspaceSyncResponse =
+            await _apiFixture.Client.Workspaces.SyncAsync(cancellationToken: _cancellationToken);
 
         Assert.NotNull(workspaceSyncResponse);
         var actualWorkspace = Assert.Single(workspaceSyncResponse.Data, w => w.Id == workspace.Id);
@@ -149,7 +156,9 @@ public class WorkspacesServiceTests
 
         // Step 2: Delete workspace logo.
         await _apiFixture.Client.Workspaces.DeleteLogoAsync(workspaceParsedId, _cancellationToken);
-        workspaceSyncResponse = await _apiFixture.Client.Workspaces.SyncAsync(workspaceSyncResponse.SyncToken, _cancellationToken);
+        workspaceSyncResponse = await _apiFixture.Client.Workspaces.SyncAsync(
+            workspaceSyncResponse.SyncToken,
+            _cancellationToken);
 
         Assert.NotNull(workspaceSyncResponse);
         actualWorkspace = Assert.Single(workspaceSyncResponse.Data, w => w.Id == workspace.Id);
@@ -164,7 +173,8 @@ public class WorkspacesServiceTests
         var collaboratorInfo = await _apiFixture.GetCollaboratorUserInfoAsync();
 
         // Step 1: Join workspace from collaborator account.
-        var joinResult = await _apiFixture.CollaborationClient.Workspaces.JoinByCodeAsync(workspace.InviteCode, _cancellationToken);
+        var joinResult =
+            await _apiFixture.CollaborationClient.Workspaces.JoinByCodeAsync(workspace.InviteCode, _cancellationToken);
 
         Assert.NotNull(joinResult);
         Assert.Equal(workspace.Id, joinResult.WorkspaceId);
@@ -173,16 +183,23 @@ public class WorkspacesServiceTests
         // Step 2: Change user role and get users.
         var parsedWorkspaceId = long.Parse(workspace.Id.PersistentId);
 
-        await _apiFixture.Client.Workspaces.ChangeUserRoleAsync(new(workspace.Id, collaboratorInfo.Email, WorkspaceRole.Admin), _cancellationToken);
+        await _apiFixture.Client.Workspaces.ChangeUserRoleAsync(
+            new(workspace.Id, collaboratorInfo.Email, WorkspaceRole.Admin),
+            _cancellationToken);
 
-        var usersResponse = await _apiFixture.Client.Workspaces.GetUsersAsync(new(parsedWorkspaceId), _cancellationToken);
+        var usersResponse =
+            await _apiFixture.Client.Workspaces.GetUsersAsync(new(parsedWorkspaceId), _cancellationToken);
 
         Assert.NotNull(usersResponse);
-        Assert.Contains(usersResponse.WorkspaceUsers, u => u.UserEmail == collaboratorInfo.Email && u.Role == WorkspaceRole.Admin);
+        Assert.Contains(
+            usersResponse.WorkspaceUsers,
+            u => u.UserEmail == collaboratorInfo.Email && u.Role == WorkspaceRole.Admin);
 
 
         // Step 3: Delete user from workspace and get users.
-        await _apiFixture.Client.Workspaces.DeleteUserAsync(new(workspace.Id, collaboratorInfo.Email), _cancellationToken);
+        await _apiFixture.Client.Workspaces.DeleteUserAsync(
+            new(workspace.Id, collaboratorInfo.Email),
+            _cancellationToken);
 
         usersResponse = await _apiFixture.Client.Workspaces.GetUsersAsync(new(parsedWorkspaceId), _cancellationToken);
 
@@ -195,13 +212,15 @@ public class WorkspacesServiceTests
     public async Task InviteCollaborator_GetInvitations_Succeeds()
     {
         var workspace = await _apiFixture.GetPlaygroundWorkspaceAsync();
-        
+
         const string invitationEmail = "example@example.com";
         var parsedWorkspaceId = long.Parse(workspace.Id.PersistentId);
 
         // Step 1: Invite collaborator to workspace.
         var syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
-            t => t.Workspaces.InviteUsersAsync(new(workspace.Id, [invitationEmail], WorkspaceRole.Admin), _cancellationToken),
+            t => t.Workspaces.InviteUsersAsync(
+                new(workspace.Id, [invitationEmail], WorkspaceRole.Admin),
+                _cancellationToken),
             [ResourceType.Workspaces],
             cancellationToken: _cancellationToken);
         await using var invitationTracker = _apiFixture.TrackForCleanup(
@@ -214,10 +233,13 @@ public class WorkspacesServiceTests
 
 
         // Step 2: Get invitation details.
-        var invitations = await _apiFixture.Client.Workspaces.GetInvitationDetailsAsync(parsedWorkspaceId, _cancellationToken);
+        var invitations =
+            await _apiFixture.Client.Workspaces.GetInvitationDetailsAsync(parsedWorkspaceId, _cancellationToken);
 
         Assert.NotNull(invitations);
-        Assert.Contains(invitations, i => i.UserEmail == invitationEmail && i.WorkspaceId == workspace.Id && i.Role == WorkspaceRole.Admin);
+        Assert.Contains(
+            invitations,
+            i => i.UserEmail == invitationEmail && i.WorkspaceId == workspace.Id && i.Role == WorkspaceRole.Admin);
     }
 
     [Fact]
@@ -246,14 +268,18 @@ public class WorkspacesServiceTests
 
 
         // Step 2: Get active projects in workspace.
-        var projectsResponse = await _apiFixture.Client.Workspaces.GetActiveProjectsAsync(parsedWorkspaceId, cancellationToken: _cancellationToken);
+        var projectsResponse = await _apiFixture.Client.Workspaces.GetActiveProjectsAsync(
+            parsedWorkspaceId,
+            cancellationToken: _cancellationToken);
 
         Assert.NotNull(projectsResponse);
         Assert.DoesNotContain(projectsResponse.WorkspaceProjects, p => p.Id == project.Id);
 
 
         // Step 3: Get archived projects in workspace.
-        projectsResponse = await _apiFixture.Client.Workspaces.GetArchivedProjectsAsync(parsedWorkspaceId, cancellationToken: _cancellationToken);
+        projectsResponse = await _apiFixture.Client.Workspaces.GetArchivedProjectsAsync(
+            parsedWorkspaceId,
+            cancellationToken: _cancellationToken);
 
         Assert.NotNull(projectsResponse);
         Assert.Contains(projectsResponse.WorkspaceProjects, p => p.Id == project.Id);
