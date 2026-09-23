@@ -103,10 +103,15 @@ namespace Todoist.Net
             {
                 if (_cachedRefreshTask?.IsCompleted ?? true)
                 {
-                    _cachedRefreshTask = RefreshTokensCoreAsync(cancellationToken);
+                    _cachedRefreshTask = RefreshTokensCoreAsync(CancellationToken.None);
                 }
             }
-            return _cachedRefreshTask;
+
+            // The shared refresh task runs without cancellation so one caller cancelling does not abort
+            // the refresh for the others, but each caller can still cancel its own wait on that task.
+            return cancellationToken.CanBeCanceled
+                ? _cachedRefreshTask.WithCancellationAsync(cancellationToken)
+                : _cachedRefreshTask;
         }
 
         /// <inheritdoc/>
