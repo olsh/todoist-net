@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
@@ -6,7 +8,7 @@ namespace Todoist.Net.Models
     /// Class Reminder.
     /// </summary>
     /// <seealso cref="Todoist.Net.Models.BaseEntity" />
-    public class Reminder : BaseEntity
+    public class Reminder : BaseEntity, IWithRelationsArgument
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Reminder" /> class.
@@ -115,5 +117,17 @@ namespace Todoist.Net.Models
         /// <value><c>true</c> if this reminder is urgent; otherwise, <c>false</c>.</value>
         [JsonPropertyName("is_urgent")]
         public bool? IsUrgent { get; internal set; }
+
+        /// <summary>
+        /// Updates the related temporary ids.
+        /// </summary>
+        /// <param name="map">The map.</param>
+        void IWithRelationsArgument.UpdateRelatedTempIds(IDictionary<Guid, string> map)
+        {
+            if (map.TryGetValue(TaskId.TempId, out var persistentTaskId))
+            {
+                TaskId = new ComplexId(persistentTaskId);
+            }
+        }
     }
 }

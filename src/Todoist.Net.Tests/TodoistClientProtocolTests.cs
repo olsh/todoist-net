@@ -509,4 +509,63 @@ public class TodoistClientProtocolTests
 
         Assert.Equal("6X7rM8997g3RQmvh", actualId.PersistentId);
     }
+
+    [Fact]
+    public async Task CommitTransaction_ReferencingEntitiesAddedInTheSameTransaction_ReplacesTheirTempIds()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+        var restClient = new StubTodoistRestClient();
+        using var todoistClient = new TodoistClient(restClient);
+        var transaction = todoistClient.CreateTransaction();
+
+
+        // Step 1: Queue entities which reference other entities added in the same transaction.
+        var parentProjectId = await transaction.Projects.AddAsync(new AddProject("Parent"), cancellationToken);
+        var workspaceId = await transaction.Workspaces.AddAsync(new AddWorkspace("Workspace"), cancellationToken);
+        var folder = new WorkspaceFolder("Folder");
+        var folderId = await transaction.Workspaces.AddFolderAsync(workspaceId, folder, cancellationToken);
+        var taskId = await transaction.Tasks.AddAsync(new AddTask("Task", parentProjectId), cancellationToken);
+
+        var childProject = new AddProject("Child") { ParentId = parentProjectId };
+        var workspaceProject = new AddProject("Workspace project") { WorkspaceId = workspaceId, FolderId = folderId };
+        var reminder = new AddReminder(taskId, ReminderType.Relative);
+        var viewOptions = new ViewOptions(parentProjectId, ViewOptionsType.Project);
+        var projectViewOptionsDefaults = new ProjectViewOptionsDefaults(parentProjectId);
+
+        await transaction.Projects.AddAsync(childProject, cancellationToken);
+        await transaction.Projects.AddAsync(workspaceProject, cancellationToken);
+        await transaction.Reminders.AddAsync(reminder, cancellationToken);
+        await transaction.ViewOptions.SetAsync(viewOptions, cancellationToken);
+        await transaction.ViewOptions.SetProjectDefaultsAsync(projectViewOptionsDefaults, cancellationToken);
+
+
+        // Step 2: Commit the transaction, which the API answers with the persistent IDs.
+        restClient.RespondToPostJson(
+            HttpStatusCode.OK,
+            $$"""
+              {
+                  "sync_status": {},
+                  "temp_id_mapping": {
+                      "{{parentProjectId.TempId}}": "parent-project",
+                      "{{workspaceId.TempId}}": "workspace",
+                      "{{folderId.TempId}}": "folder",
+                      "{{taskId.TempId}}": "task"
+                  },
+                  "sync_token": "sync-token-1",
+                  "full_sync": false
+              }
+              """);
+
+        await transaction.CommitAsync(cancellationToken);
+
+
+        // Step 3: Assert every reference now holds the persistent ID, so the entities can be reused in later requests.
+        Assert.Equal("parent-project", childProject.ParentId?.PersistentId);
+        Assert.Equal("workspace", workspaceProject.WorkspaceId?.PersistentId);
+        Assert.Equal("folder", workspaceProject.FolderId?.PersistentId);
+        Assert.Equal("workspace", folder.WorkspaceId.PersistentId);
+        Assert.Equal("task", reminder.TaskId.PersistentId);
+        Assert.Equal("parent-project", viewOptions.ObjectId.PersistentId);
+        Assert.Equal("parent-project", projectViewOptionsDefaults.ProjectId.PersistentId);
+    }
 }
