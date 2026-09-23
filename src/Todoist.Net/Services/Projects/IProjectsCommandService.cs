@@ -59,7 +59,9 @@ namespace Todoist.Net.Services
         /// <exception cref="ArgumentNullException"><paramref name="moveArgument" /> is <see langword="null" /></exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="TodoistException">Command execution exception.</exception>
-        Task MoveToWorkspaceAsync(MoveProjectToWorkspaceArgument moveArgument, CancellationToken cancellationToken = default);
+        Task MoveToWorkspaceAsync(
+            MoveProjectToWorkspaceArgument moveArgument,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Moves a project to personal projects asynchronous.
@@ -130,6 +132,8 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="T:System.ArgumentException">Value cannot be an empty collection.</exception>
+        [Obsolete(
+            "Todoist has deprecated the project_reorder command. Set UpdateProject.OrderKey and call UpdateAsync instead.")]
         Task ReorderAsync(ReorderProjectsArgument reorderArgument, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -152,6 +156,8 @@ namespace Todoist.Net.Services
         /// <exception cref="ArgumentNullException"><paramref name="viewDefaults" /> is <see langword="null" />.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="TodoistException">Command execution exception.</exception>
-        Task SetViewOptionsDefaultsAsync(ProjectViewOptionsDefaults viewDefaults, CancellationToken cancellationToken = default);
+        Task SetViewOptionsDefaultsAsync(
+            ProjectViewOptionsDefaults viewDefaults,
+            CancellationToken cancellationToken = default);
     }
 }
