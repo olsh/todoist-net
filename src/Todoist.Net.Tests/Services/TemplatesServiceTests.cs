@@ -94,6 +94,8 @@ public class TemplatesServiceTests
             new(sourceProject.Id, workspace.Id),
             _cancellationToken);
 
+        sourceProjectTracker.StopTracking();
+
         var seedTask = TestData.Tasks.AddTask(sourceProject.Id, expectedTaskContent);
         await _apiFixture.PremiumClient.Tasks.AddAsync(seedTask, _cancellationToken);
 
@@ -120,10 +122,6 @@ public class TemplatesServiceTests
         Assert.False(string.IsNullOrWhiteSpace(createResult.ProjectId));
 
         var actualProject = Assert.Single(createResult.Projects, p => p.Id.PersistentId == createResult.ProjectId);
-        await using var createdProjectTracker = _apiFixture.TrackForCleanup(
-            (c, ct) => c.Projects.DeleteAsync(actualProject.Id, ct),
-            $"Project with ID {actualProject.Id}",
-            isPremium: true);
 
         Assert.Equal(newProjectName, actualProject.Name);
         Assert.Contains(createResult.Tasks, t => t.Content == expectedTaskContent);

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
@@ -5,7 +7,7 @@ namespace Todoist.Net.Models
     /// <summary>
     /// Represents a project payload for add requests.
     /// </summary>
-    public class AddProject : BaseProject
+    public class AddProject : BaseProject, IWithRelationsArgument
     {
         internal AddProject()
             : base()
@@ -52,5 +54,28 @@ namespace Todoist.Net.Models
         /// </summary>
         [JsonPropertyName("is_invite_only")]
         public bool? IsInviteOnly { get; set; }
+        
+        
+        /// <summary>
+        /// Updates the related temporary ids.
+        /// </summary>
+        /// <param name="map">The map.</param>
+        void IWithRelationsArgument.UpdateRelatedTempIds(IDictionary<Guid, string> map)
+        {
+            if (ParentId.HasValue && map.TryGetValue(ParentId.Value.TempId, out var persistentParentId))
+            {
+                ParentId = new ComplexId(persistentParentId);
+            }
+            
+            if (FolderId.HasValue && map.TryGetValue(FolderId.Value.TempId, out var persistentFolderId))
+            {
+                FolderId = new ComplexId(persistentFolderId);
+            }
+
+            if (WorkspaceId.HasValue && map.TryGetValue(WorkspaceId.Value.TempId, out var persistentWorkspaceId))
+            {
+                WorkspaceId = new ComplexId(persistentWorkspaceId);
+            }
+        }
     }
 }

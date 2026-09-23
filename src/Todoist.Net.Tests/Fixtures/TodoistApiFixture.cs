@@ -104,13 +104,17 @@ public sealed class TodoistApiFixture : IAsyncLifetime
         }
     }
 
-    public async Task<ProjectInfo> GetPlaygroundProjectAsync()
+    public async Task<ProjectInfo> GetPlaygroundProjectAsync(bool freshInstance = false)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
 
         await _creationGate.WaitAsync(TestContext.Current.CancellationToken);
         try
         {
+            if (freshInstance)
+            {
+                await DeletePlaygroundProjectAsync(throwWhenFailed: true);
+            }
             return _playgroundProject ??= await CreatePlaygroundProjectAsync();
         }
         finally
@@ -119,19 +123,68 @@ public sealed class TodoistApiFixture : IAsyncLifetime
         }
     }
 
-    public async Task<WorkspaceInfo> GetPlaygroundWorkspaceAsync()
+    public async Task<WorkspaceInfo> GetPlaygroundWorkspaceAsync(bool freshInstance = false)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
 
         await _creationGate.WaitAsync(TestContext.Current.CancellationToken);
         try
         {
+            if (freshInstance)
+            {
+                await DeletePlaygroundWorkspaceAsync(throwWhenFailed: true);
+            }
             return _playgroundWorkspace ??= await CreatePlaygroundWorkspaceAsync();
         }
         finally
         {
             _creationGate.Release();
         }
+    }
+
+    public async Task<bool> DeletePlaygroundProjectAsync(bool throwWhenFailed = false)
+    {
+        if (string.IsNullOrEmpty(_playgroundProject?.Id.PersistentId))
+        {
+            return false;
+        }
+        try
+        {
+            await Client.Projects.DeleteAsync(_playgroundProject.Id.PersistentId, TestContext.Current.CancellationToken);
+        }
+        catch (Exception ex)
+        {
+            TestContext.Current.TestOutputHelper?.WriteLine($"Failed to delete playground project with ID {_playgroundProject.Id.PersistentId}: {ex}");
+            if (throwWhenFailed)
+            {
+                throw;
+            }
+        }
+        _playgroundProject = null;
+        return true;
+    }
+
+    public async Task<bool> DeletePlaygroundWorkspaceAsync(bool throwWhenFailed = false)
+    {
+        if (string.IsNullOrEmpty(_playgroundWorkspace?.Id.PersistentId))
+        {
+            return false;
+        }
+
+        try
+        {
+            await Client.Workspaces.DeleteAsync(_playgroundWorkspace.Id.PersistentId, TestContext.Current.CancellationToken);
+        }
+        catch (Exception ex)
+        {
+            TestContext.Current.TestOutputHelper?.WriteLine($"Failed to delete playground workspace with ID {_playgroundWorkspace.Id.PersistentId}: {ex}");
+            if (throwWhenFailed)
+            {
+                throw;
+            }
+        }
+        _playgroundWorkspace = null;
+        return true;
     }
 
     public TodoistTracker TrackForCleanup<T>(
@@ -176,6 +229,8 @@ public sealed class TodoistApiFixture : IAsyncLifetime
             t => t.Projects.AddAsync(playgroundProject, TestContext.Current.CancellationToken),
             resourceTypes: [ResourceType.Projects],
             cancellationToken: TestContext.Current.CancellationToken);
+            
+        Assert.All(response.SyncStatus.Values, cr => cr.AssertSuccess());
 
         return response.Projects.First(p => p.Id == playgroundProject.Id);
     }
@@ -189,27 +244,9 @@ public sealed class TodoistApiFixture : IAsyncLifetime
             resourceTypes: [ResourceType.Workspaces],
             cancellationToken: TestContext.Current.CancellationToken);
 
+        Assert.All(response.SyncStatus.Values, cr => cr.AssertSuccess());
+
         return response.Workspaces.First(w => w.Id == playgroundWorkspace.Id);
-    }
-
-    private async Task DeletePlaygroundProjectAsync()
-    {
-        if (string.IsNullOrEmpty(_playgroundProject?.Id.PersistentId))
-        {
-            return;
-        }
-        await Client.Projects.DeleteAsync(_playgroundProject.Id.PersistentId, TestContext.Current.CancellationToken);
-        _playgroundProject = null;
-    }
-
-    private async Task DeletePlaygroundWorkspaceAsync()
-    {
-        if (string.IsNullOrEmpty(_playgroundWorkspace?.Id.PersistentId))
-        {
-            return;
-        }
-        await Client.Workspaces.DeleteAsync(_playgroundWorkspace.Id.PersistentId, TestContext.Current.CancellationToken);
-        _playgroundWorkspace = null;
     }
 
 
@@ -240,8 +277,7 @@ public sealed class TodoistApiFixture : IAsyncLifetime
             }
             catch (Exception ex)
             {
-                // Log the exception or handle it as needed. For now, we'll just write to the console.
-                Console.WriteLine($"Failed to clean up {_trackedResourceDescription}: {ex}");
+                TestContext.Current.TestOutputHelper?.WriteLine($"Failed to clean up {_trackedResourceDescription}: {ex}");
             }
         }
 
