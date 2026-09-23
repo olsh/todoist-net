@@ -11,7 +11,7 @@ namespace Todoist.Net.Services
     /// <summary>
     /// Contains operations for Todoist workspace filters APIs.
     /// </summary>
-    public interface IWorkspaceFiltersService
+    public interface IWorkspaceFiltersService : IWorkspaceFiltersCommandService
     {
         /// <summary>
         /// Gets a read-only collection of workspace filters that were synchronized with the specified sync token.
@@ -21,6 +21,8 @@ namespace Todoist.Net.Services
         /// <returns>
         /// A task that represents the asynchronous operation. The task result contains a read-only collection of workspace filters that were synchronized.
         /// </returns>
-        Task<SyncResponse<WorkspaceFilterInfo>> SyncAsync(string syncToken = "*", CancellationToken cancellationToken = default);
+        Task<SyncResponse<WorkspaceFilterInfo>> SyncAsync(
+            string syncToken = "*",
+            CancellationToken cancellationToken = default);
     }
 }
