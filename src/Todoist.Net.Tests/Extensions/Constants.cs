@@ -11,4 +11,9 @@ internal static class Constants
     public const string IntegrationPremiumTraitValue = "integration-premium";
 
     public const string IntegrationCollaborationTraitValue = "integration-collaboration";
+
+    /// <summary>
+    /// These tests need a person to authorize a Todoist OAuth application in a browser, so they are explicit.
+    /// </summary>
+    public const string OAuthInteractiveTraitValue = "oauth-interactive";
 }
