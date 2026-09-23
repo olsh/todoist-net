@@ -87,9 +87,9 @@ public class WorkspacesServiceTests
     [Trait(Constants.TraitName, Constants.IntegrationFreeTraitValue)]
     public async Task AddFolder_UpdateFolder_DeleteFolder_Succeeds()
     {
-        // Step 1: Create workspace folder
+        // Step 1: Create workspace folder, placed by an order key.
         var workspace = await _apiFixture.GetPlaygroundWorkspaceAsync();
-        var folder = new WorkspaceFolder("Test Folder", 3);
+        var folder = new WorkspaceFolder("Test Folder") { DefaultOrderKey = TestData.OrderKeys.Create(0) };
 
         var syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
             t => t.Workspaces.AddFolderAsync(workspace.Id, folder, _cancellationToken),
@@ -104,22 +104,49 @@ public class WorkspacesServiceTests
         var actualFolder = Assert.Single(syncResponse.WorkspaceFolders, f => f.Id == folder.Id);
         Assert.Equal(folder.WorkspaceId, actualFolder.WorkspaceId);
         Assert.Equal(folder.Name, actualFolder.Name);
-        Assert.Equal(folder.DefaultOrder, actualFolder.DefaultOrder);
+        Assert.Equal(folder.DefaultOrderKey, actualFolder.DefaultOrderKey);
 
 
-        // Step 2: Update folder.
+        // Step 2: Rename the folder, and move a workspace project added in the same transaction into it.
+        var project = new AddProject($"FolderProject_{Guid.NewGuid():N}") { WorkspaceId = workspace.Id };
         folder.Name = "Updated Test Folder";
 
         syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
-            t => t.Workspaces.UpdateFolderAsync(folder.Id, workspace.Id, folder, _cancellationToken),
-            [ResourceType.WorkspaceFolders],
+            async t =>
+            {
+                var projectId = await t.Projects.AddAsync(project, _cancellationToken);
+                folder.AddProjectIds = [projectId];
+                await t.Workspaces.UpdateFolderAsync(folder.Id, workspace.Id, folder, _cancellationToken);
+            },
+            [ResourceType.WorkspaceFolders, ResourceType.Projects],
             syncResponse.SyncToken,
             _cancellationToken);
+        await using var projectTracker = _apiFixture.TrackForCleanup(project, c => c.Projects.DeleteAsync);
 
         Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
         actualFolder = Assert.Single(syncResponse.WorkspaceFolders, f => f.Id == folder.Id);
         Assert.Equal(folder.WorkspaceId, actualFolder.WorkspaceId);
         Assert.Equal(folder.Name, actualFolder.Name);
+
+        var actualProject = Assert.Single(syncResponse.Projects, p => p.Id == project.Id);
+        Assert.Equal(folder.Id, actualProject.FolderId);
+        Assert.NotNull(actualProject.DefaultOrderKey);
+        Assert.Equal([project.Id], folder.AddProjectIds);
+
+
+        // Step 3: Move the project out of the folder.
+        folder.AddProjectIds = null;
+        folder.RemoveProjectIds = [project.Id];
+
+        syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
+            t => t.Workspaces.UpdateFolderAsync(folder.Id, workspace.Id, folder, _cancellationToken),
+            [ResourceType.Projects],
+            syncResponse.SyncToken,
+            _cancellationToken);
+
+        Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
+        actualProject = Assert.Single(syncResponse.Projects, p => p.Id == project.Id);
+        Assert.Null(actualProject.FolderId);
 
 
         // Step 4: Delete folder.

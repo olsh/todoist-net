@@ -22,7 +22,7 @@ namespace Todoist.Net.Models
             ProjectId = projectId;
             SectionOrder = sectionOrder;
         }
-        
+
         [JsonConstructor]
         internal AddSection()
         {
@@ -62,7 +62,18 @@ namespace Todoist.Net.Models
         [JsonPropertyName("order")]
         internal int? Order => SectionOrder;
 
-        
+        /// <summary>
+        /// Gets or sets the fractional-indexing key which orders the section in its project.
+        /// </summary>
+        /// <remarks>
+        /// Keys sort as ordinal strings. A section added without a key goes to the bottom.
+        /// If another section already uses the key, Todoist stores a key right after it instead, which a sync returns.
+        /// Todoist returns <c>null</c> for sections it hasn't migrated to keys yet.
+        /// </remarks>
+        /// <value>The order key.</value>
+        [JsonPropertyName("order_key")]
+        public string OrderKey { get; set; }
+
         /// <summary>
         /// Updates the related temporary ids.
         /// </summary>

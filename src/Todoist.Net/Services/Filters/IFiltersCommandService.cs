@@ -56,6 +56,8 @@ namespace Todoist.Net.Services
         /// <exception cref="ArgumentNullException"><paramref name="orderMapping"/> is <see langword="null"/></exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="TodoistException">Command execution exception.</exception>
+        [Obsolete(
+            "Todoist has deprecated the filter_update_orders command. Set Filter.OrderKey and call UpdateAsync instead.")]
         Task UpdateOrderAsync(IdToOrderMappingArgument orderMapping, CancellationToken cancellationToken = default);
     }
 }

@@ -5,7 +5,20 @@ public static class TestData
     public static class Files
     {
         public static byte[] GreenPng10x10 =>
-            Convert.FromBase64String("iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNk+M9Qz0AEYBxVSF+FAAhKDveksOjmAAAAAElFTkSuQmCC");
+            Convert.FromBase64String(
+                "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNk+M9Qz0AEYBxVSF+FAAhKDveksOjmAAAAAElFTkSuQmCC");
+    }
+
+    public static class OrderKeys
+    {
+        /// <summary>
+        /// Creates a fractional-indexing key, such as "a1" followed by a random fraction, which sorts by <paramref name="integerPart" />.
+        /// </summary>
+        /// <remarks>
+        /// The random fraction keeps the key from colliding with the key of another entity, which Todoist would replace with an adjusted one.
+        /// It ends with "1" because a fraction mustn't end with "0".
+        /// </remarks>
+        public static string Create(int integerPart) => $"a{integerPart}{Guid.NewGuid().ToString("N")[..8]}1";
     }
 
     public static class Projects
@@ -98,14 +111,15 @@ public static class TestData
 
     public static class ViewOptions
     {
-        public static Todoist.Net.Models.ViewOptions ProjectViewOptions(ComplexId projectId) => new(projectId, ViewOptionsType.Project)
-        {
-            FilteredBy = "!assigned",
-            GroupedBy = ViewOptionsGrouping.Priority,
-            SortedBy = ViewOptionsSorting.AddedDate,
-            SortOrder = SortingOrder.Desc,
-            ShowCompletedTasks = true
-        };
+        public static Todoist.Net.Models.ViewOptions ProjectViewOptions(ComplexId projectId) =>
+            new(projectId, ViewOptionsType.Project)
+            {
+                FilteredBy = "!assigned",
+                GroupedBy = ViewOptionsGrouping.Priority,
+                SortedBy = ViewOptionsSorting.AddedDate,
+                SortOrder = SortingOrder.Desc,
+                ShowCompletedTasks = true
+            };
 
         public static object ExpectedProjectViewOptions(ComplexId projectId)
         {
@@ -174,10 +188,11 @@ public static class TestData
 
     public static class Reminders
     {
-        public static AddReminder AddAbsoluteReminder(ComplexId taskId, DateTime dateTime) => new(taskId, ReminderType.Absolute)
-        {
-            DueDate = DueDate.CreateFloating(dateTime)
-        };
+        public static AddReminder AddAbsoluteReminder(ComplexId taskId, DateTime dateTime) =>
+            new(taskId, ReminderType.Absolute)
+            {
+                DueDate = DueDate.CreateFloating(dateTime)
+            };
 
         public static AddReminder AddLocationReminder(
             ComplexId taskId,
@@ -239,12 +254,13 @@ public static class TestData
 
     public static class Filters
     {
-        public static Filter AddFilter(string name = "Test Filter", string query = "today", int? itemOrder = 15) => new(name, query)
-        {
-            Color = Color.BerryRed,
-            ItemOrder = itemOrder,
-            IsFavorite = true
-        };
+        public static Filter AddFilter(string name = "Test Filter", string query = "today", int? itemOrder = 15) =>
+            new(name, query)
+            {
+                Color = Color.BerryRed,
+                ItemOrder = itemOrder,
+                IsFavorite = true
+            };
 
         public static object ExpectedAddFilter(string name = "Test Filter", string query = "today", int? itemOrder = 15)
         {
@@ -260,7 +276,11 @@ public static class TestData
             };
         }
 
-        public static Filter UpdateFilter(ComplexId id, string name = "Updated Filter", string query = "overdue", int? itemOrder = 5) => new(name, query)
+        public static Filter UpdateFilter(
+            ComplexId id,
+            string name = "Updated Filter",
+            string query = "overdue",
+            int? itemOrder = 5) => new(name, query)
         {
             Id = id,
             Color = Color.Grape,
@@ -268,7 +288,11 @@ public static class TestData
             IsFavorite = true
         };
 
-        public static object ExpectedUpdateFilter(ComplexId id, string name = "Updated Filter", string query = "overdue", int? itemOrder = 5)
+        public static object ExpectedUpdateFilter(
+            ComplexId id,
+            string name = "Updated Filter",
+            string query = "overdue",
+            int? itemOrder = 5)
         {
             var updated = UpdateFilter(id, name, query, itemOrder);
             return new
@@ -316,30 +340,26 @@ public static class TestData
         public static UpdateWorkspaceFilter UpdateWorkspaceFilter(
             ComplexId id,
             string name = "Updated Workspace Filter",
-            string query = "overdue",
-            int? itemOrder = 5) => new(id)
+            string query = "overdue") => new(id)
         {
             Name = name,
             Query = query,
             Color = Color.Grape,
-            ItemOrder = itemOrder,
             IsFavorite = true
         };
 
         public static object ExpectedUpdateWorkspaceFilter(
             ComplexId id,
             string name = "Updated Workspace Filter",
-            string query = "overdue",
-            int? itemOrder = 5)
+            string query = "overdue")
         {
-            var updated = UpdateWorkspaceFilter(id, name, query, itemOrder);
+            var updated = UpdateWorkspaceFilter(id, name, query);
             return new
             {
                 updated.Id,
                 updated.Name,
                 updated.Query,
                 updated.Color,
-                updated.ItemOrder,
                 updated.IsFavorite
             };
         }
@@ -347,10 +367,16 @@ public static class TestData
 
     public static class Sections
     {
-        public static AddSection AddSection(ComplexId projectId, string name = "Test Section", int? sectionOrder = null) =>
+        public static AddSection AddSection(
+            ComplexId projectId,
+            string name = "Test Section",
+            int? sectionOrder = null) =>
             new(name, projectId, sectionOrder);
 
-        public static object ExpectedAddSection(ComplexId projectId, string name = "Test Section", int? sectionOrder = null)
+        public static object ExpectedAddSection(
+            ComplexId projectId,
+            string name = "Test Section",
+            int? sectionOrder = null)
         {
             var added = AddSection(projectId, name, sectionOrder);
             return new
@@ -364,10 +390,16 @@ public static class TestData
             };
         }
 
-        public static UpdateSection UpdateSection(ComplexId id, string name = "Updated Section", bool? isCollapsed = true) =>
+        public static UpdateSection UpdateSection(
+            ComplexId id,
+            string name = "Updated Section",
+            bool? isCollapsed = true) =>
             new(id, name, isCollapsed);
 
-        public static object ExpectedUpdateSection(ComplexId id, string name = "Updated Section", bool? isCollapsed = true)
+        public static object ExpectedUpdateSection(
+            ComplexId id,
+            string name = "Updated Section",
+            bool? isCollapsed = true)
         {
             var updated = UpdateSection(id, name, isCollapsed);
             return new

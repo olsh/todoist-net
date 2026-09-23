@@ -35,7 +35,7 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="TodoistException">Command execution exception.</exception>
         Task UpdateAsync(UpdateWorkspaceFilter workspaceFilter, CancellationToken cancellationToken = default);
-    
+
         /// <summary>
         /// Deletes a workspace filter.
         /// </summary>
@@ -54,6 +54,10 @@ namespace Todoist.Net.Services
         /// <returns>The asynchronous operation.</returns>
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="TodoistException">Command execution exception.</exception>
-        Task UpdateOrdersAsync(UpdateWorkspaceFilterOrders workspaceFilterOrders, CancellationToken cancellationToken = default);
+        [Obsolete(
+            "Todoist has deprecated the workspace_filter_update_orders command. Set UpdateWorkspaceFilter.OrderKey and call UpdateAsync instead.")]
+        Task UpdateOrdersAsync(
+            UpdateWorkspaceFilterOrders workspaceFilterOrders,
+            CancellationToken cancellationToken = default);
     }
 }

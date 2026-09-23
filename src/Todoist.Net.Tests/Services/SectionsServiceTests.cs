@@ -4,6 +4,7 @@ namespace Todoist.Net.Tests.Services;
 public class SectionsServiceTests
 {
     private readonly TodoistApiFixture _apiFixture;
+
     private readonly CancellationToken _cancellationToken;
 
     public SectionsServiceTests(TodoistApiFixture apiFixture)
@@ -19,9 +20,15 @@ public class SectionsServiceTests
         var project = await _apiFixture.GetPlaygroundProjectAsync();
 
         var newSection = TestData.Sections.AddSection(project.Id, $"NewSection_{Guid.NewGuid():N}", 10);
-        var expectedNewSection = TestData.Sections.ExpectedAddSection(project.Id, newSection.Name, newSection.SectionOrder);
+        var expectedNewSection = TestData.Sections.ExpectedAddSection(
+            project.Id,
+            newSection.Name,
+            newSection.SectionOrder);
         var siblingSection = TestData.Sections.AddSection(project.Id, $"SiblingSection_{Guid.NewGuid():N}", 20);
-        var expectedSiblingSection = TestData.Sections.ExpectedAddSection(project.Id, siblingSection.Name, siblingSection.SectionOrder);
+        var expectedSiblingSection = TestData.Sections.ExpectedAddSection(
+            project.Id,
+            siblingSection.Name,
+            siblingSection.SectionOrder);
 
 
         // Step 1: Create sections.
@@ -34,7 +41,8 @@ public class SectionsServiceTests
             [ResourceType.Sections],
             cancellationToken: _cancellationToken);
         await using var newSectionTracker = _apiFixture.TrackForCleanup(newSection, c => c.Sections.DeleteAsync);
-        await using var siblingSectionTracker = _apiFixture.TrackForCleanup(siblingSection, c => c.Sections.DeleteAsync);
+        await using var siblingSectionTracker =
+            _apiFixture.TrackForCleanup(siblingSection, c => c.Sections.DeleteAsync);
 
         Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
 
@@ -45,19 +53,25 @@ public class SectionsServiceTests
         Assert.Equivalent(expectedSiblingSection, actualSiblingSection);
 
 
-        // Step 2: Update one section and reorder both sections.
-        var updateSection = TestData.Sections.UpdateSection(newSection.Id, $"UpdatedSection_{Guid.NewGuid():N}", isCollapsed: true);
-        var expectedUpdatedSection = TestData.Sections.ExpectedUpdateSection(newSection.Id, updateSection.Name, updateSection.IsCollapsed);
+        // Step 2: Update one section and reorder both sections, so the sibling comes first.
+        var updateSection = TestData.Sections.UpdateSection(
+            newSection.Id,
+            $"UpdatedSection_{Guid.NewGuid():N}",
+            isCollapsed: true);
+        updateSection.OrderKey = TestData.OrderKeys.Create(2);
+        var expectedUpdatedSection = TestData.Sections.ExpectedUpdateSection(
+            newSection.Id,
+            updateSection.Name,
+            updateSection.IsCollapsed);
+        var siblingSectionOrderKey = TestData.OrderKeys.Create(1);
 
         syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
             async t =>
             {
                 await t.Sections.UpdateAsync(updateSection, _cancellationToken);
-                await t.Sections.ReorderAsync(new(new Dictionary<ComplexId, int>
-                {
-                    { newSection.Id, 30 },
-                    { siblingSection.Id, 10 }
-                }), _cancellationToken);
+                await t.Sections.UpdateAsync(
+                    new UpdateSection(siblingSection.Id, siblingSection.Name) { OrderKey = siblingSectionOrderKey },
+                    _cancellationToken);
             },
             [ResourceType.Sections],
             syncResponse.SyncToken,
@@ -67,10 +81,11 @@ public class SectionsServiceTests
 
         actualNewSection = Assert.Single(syncResponse.Sections, s => s.Id == newSection.Id);
         Assert.Equivalent(expectedUpdatedSection, actualNewSection);
-        Assert.Equal(30, actualNewSection.SectionOrder);
+        Assert.Equal(updateSection.OrderKey, actualNewSection.OrderKey);
 
         actualSiblingSection = Assert.Single(syncResponse.Sections, s => s.Id == siblingSection.Id);
-        Assert.Equal(10, actualSiblingSection.SectionOrder);
+        Assert.Equal(siblingSectionOrderKey, actualSiblingSection.OrderKey);
+        Assert.True(actualSiblingSection.SectionOrder < actualNewSection.SectionOrder);
 
 
         // Step 3: Get section by id.
@@ -78,7 +93,7 @@ public class SectionsServiceTests
 
         Assert.Equivalent(expectedUpdatedSection, actualSection);
         Assert.Equal(project.Id, actualSection.ProjectId);
-        Assert.Equal(30, actualSection.SectionOrder);
+        Assert.Equal(updateSection.OrderKey, actualSection.OrderKey);
 
 
         // Step 4: Get project sections and search for the updated section.
@@ -125,7 +140,10 @@ public class SectionsServiceTests
         var inboxProjectId = new ComplexId(mainUserInfo.InboxProjectId);
 
         var newSection = TestData.Sections.AddSection(project.Id, $"InboxMoveSection_{Guid.NewGuid():N}", 10);
-        var expectedNewSection = TestData.Sections.ExpectedAddSection(project.Id, newSection.Name, newSection.SectionOrder);
+        var expectedNewSection = TestData.Sections.ExpectedAddSection(
+            project.Id,
+            newSection.Name,
+            newSection.SectionOrder);
 
 
         // Step 1: Create section.

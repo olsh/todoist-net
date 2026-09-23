@@ -61,6 +61,8 @@ namespace Todoist.Net.Services
         /// <exception cref="ArgumentNullException"><paramref name="reorderArgument" /> is <see langword="null" /></exception>
         /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
+        [Obsolete(
+            "Todoist has deprecated the item_reorder command. Set BaseTask.OrderKey and call UpdateAsync instead.")]
         Task ReorderAsync(ReorderTasksArgument reorderArgument, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -99,7 +101,9 @@ namespace Todoist.Net.Services
         /// <exception cref="HttpRequestException">API exception.</exception>
         /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="completeArgument"/> is <see langword="null"/></exception>
-        Task CompleteRecurringAsync(CompleteRecurringTaskArgument completeArgument, CancellationToken cancellationToken = default);
+        Task CompleteRecurringAsync(
+            CompleteRecurringTaskArgument completeArgument,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Completes tasks and optionally move them to history. See also <see cref="CloseAsync" /> for a simplified version of the command.

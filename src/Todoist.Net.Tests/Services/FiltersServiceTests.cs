@@ -4,6 +4,7 @@ namespace Todoist.Net.Tests.Services;
 public class FiltersServiceTests
 {
     private readonly TodoistApiFixture _apiFixture;
+
     private readonly CancellationToken _cancellationToken;
 
     public FiltersServiceTests(TodoistApiFixture apiFixture)
@@ -19,8 +20,14 @@ public class FiltersServiceTests
         var newFilter = TestData.Filters.AddFilter($"NewFilter_{Guid.NewGuid():N}", "today & !p4");
         var expectedNewFilter = TestData.Filters.ExpectedAddFilter(newFilter.Name, newFilter.Query);
 
-        var siblingFilter = TestData.Filters.AddFilter($"SiblingFilter_{Guid.NewGuid():N}", "overdue & !recurring", itemOrder: 20);
-        var expectedSiblingFilter = TestData.Filters.ExpectedAddFilter(siblingFilter.Name, siblingFilter.Query, siblingFilter.ItemOrder);
+        var siblingFilter = TestData.Filters.AddFilter(
+            $"SiblingFilter_{Guid.NewGuid():N}",
+            "overdue & !recurring",
+            itemOrder: 20);
+        var expectedSiblingFilter = TestData.Filters.ExpectedAddFilter(
+            siblingFilter.Name,
+            siblingFilter.Query,
+            siblingFilter.ItemOrder);
 
 
         // Step 1: Create filters.
@@ -32,8 +39,14 @@ public class FiltersServiceTests
             },
             [ResourceType.Filters],
             cancellationToken: _cancellationToken);
-        await using var newFilterTracker = _apiFixture.TrackForCleanup(newFilter, c => c.Filters.DeleteAsync, isPremium: true);
-        await using var siblingFilterTracker = _apiFixture.TrackForCleanup(siblingFilter, c => c.Filters.DeleteAsync, isPremium: true);
+        await using var newFilterTracker = _apiFixture.TrackForCleanup(
+            newFilter,
+            c => c.Filters.DeleteAsync,
+            isPremium: true);
+        await using var siblingFilterTracker = _apiFixture.TrackForCleanup(
+            siblingFilter,
+            c => c.Filters.DeleteAsync,
+            isPremium: true);
 
         Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
 
@@ -44,20 +57,19 @@ public class FiltersServiceTests
         Assert.Equivalent(expectedSiblingFilter, actualSiblingFilter);
 
 
-        // Step 2: Update one filter and reorder both filters.
-        var updateFilter = TestData.Filters.UpdateFilter(newFilter.Id, $"UpdatedFilter_{Guid.NewGuid():N}", "(today | overdue) & !p4");
-        var expectedUpdatedFilter = TestData.Filters.ExpectedUpdateFilter(newFilter.Id, updateFilter.Name, updateFilter.Query, itemOrder: 30);
+        // Step 2: Update one filter, including its order key.
+        var updateFilter = TestData.Filters.UpdateFilter(
+            newFilter.Id,
+            $"UpdatedFilter_{Guid.NewGuid():N}",
+            "(today | overdue) & !p4");
+        updateFilter.OrderKey = TestData.OrderKeys.Create(1);
+        var expectedUpdatedFilter = TestData.Filters.ExpectedUpdateFilter(
+            newFilter.Id,
+            updateFilter.Name,
+            updateFilter.Query);
 
         syncResponse = await _apiFixture.PremiumClient.ExecuteTransactionAndSyncAsync(
-            async t =>
-            {
-                await t.Filters.UpdateAsync(updateFilter, _cancellationToken);
-                await t.Filters.UpdateOrderAsync(new(new Dictionary<ComplexId, int>
-                {
-                    { newFilter.Id, 30 },
-                    { siblingFilter.Id, 10 }
-                }), _cancellationToken);
-            },
+            t => t.Filters.UpdateAsync(updateFilter, _cancellationToken),
             [ResourceType.Filters],
             syncResponse.SyncToken,
             _cancellationToken);
@@ -66,10 +78,7 @@ public class FiltersServiceTests
 
         actualNewFilter = Assert.Single(syncResponse.Filters, f => f.Id == newFilter.Id);
         Assert.Equivalent(expectedUpdatedFilter, actualNewFilter);
-        Assert.Equal(30, actualNewFilter.ItemOrder);
-
-        actualSiblingFilter = Assert.Single(syncResponse.Filters, f => f.Id == siblingFilter.Id);
-        Assert.Equal(10, actualSiblingFilter.ItemOrder);
+        Assert.Equal(updateFilter.OrderKey, actualNewFilter.OrderKey);
 
 
         // Step 3: Delete filters.
@@ -132,7 +141,9 @@ public class FiltersServiceTests
             (c, ct) => c.ExecuteTransactionAsync(t => t.WorkspaceFilters.DeleteAsync(newWorkspaceFilter.Id, ct), ct),
             $"Workspace filter with ID {newWorkspaceFilter.Id}");
         await using var siblingWorkspaceFilterTracker = _apiFixture.TrackForCleanup(
-            (c, ct) => c.ExecuteTransactionAsync(t => t.WorkspaceFilters.DeleteAsync(siblingWorkspaceFilter.Id, ct), ct),
+            (c, ct) => c.ExecuteTransactionAsync(
+                t => t.WorkspaceFilters.DeleteAsync(siblingWorkspaceFilter.Id, ct),
+                ct),
             $"Workspace filter with ID {siblingWorkspaceFilter.Id}");
 
         Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
@@ -140,31 +151,31 @@ public class FiltersServiceTests
         var actualNewWorkspaceFilter = Assert.Single(syncResponse.WorkspaceFilters, f => f.Id == newWorkspaceFilter.Id);
         Assert.Equivalent(expectedNewWorkspaceFilter, actualNewWorkspaceFilter);
 
-        var actualSiblingWorkspaceFilter = Assert.Single(syncResponse.WorkspaceFilters, f => f.Id == siblingWorkspaceFilter.Id);
+        var actualSiblingWorkspaceFilter = Assert.Single(
+            syncResponse.WorkspaceFilters,
+            f => f.Id == siblingWorkspaceFilter.Id);
         Assert.Equivalent(expectedSiblingWorkspaceFilter, actualSiblingWorkspaceFilter);
 
 
-        // Step 2: Update one workspace filter and reorder both workspace filters.
+        // Step 2: Update one workspace filter and reorder both workspace filters, so the sibling comes first.
         var updateWorkspaceFilter = TestData.WorkspaceFilters.UpdateWorkspaceFilter(
             newWorkspaceFilter.Id,
             $"UpdatedWorkspaceFilter_{Guid.NewGuid():N}",
-            "(priority 1 | overdue) & assigned to: team",
-            itemOrder: 30);
+            "(priority 1 | overdue) & assigned to: team");
+        updateWorkspaceFilter.OrderKey = TestData.OrderKeys.Create(2);
         var expectedUpdatedWorkspaceFilter = TestData.WorkspaceFilters.ExpectedUpdateWorkspaceFilter(
             newWorkspaceFilter.Id,
             updateWorkspaceFilter.Name,
-            updateWorkspaceFilter.Query,
-            itemOrder: 30);
+            updateWorkspaceFilter.Query);
+        var siblingWorkspaceFilterOrderKey = TestData.OrderKeys.Create(1);
 
         syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
             async t =>
             {
                 await t.WorkspaceFilters.UpdateAsync(updateWorkspaceFilter, _cancellationToken);
-                await t.WorkspaceFilters.UpdateOrdersAsync(new(new Dictionary<ComplexId, int>
-                {
-                    { newWorkspaceFilter.Id, 30 },
-                    { siblingWorkspaceFilter.Id, 10 }
-                }), _cancellationToken);
+                await t.WorkspaceFilters.UpdateAsync(
+                    new UpdateWorkspaceFilter(siblingWorkspaceFilter.Id) { OrderKey = siblingWorkspaceFilterOrderKey },
+                    _cancellationToken);
             },
             [ResourceType.WorkspaceFilters],
             syncResponse.SyncToken,
@@ -174,9 +185,13 @@ public class FiltersServiceTests
 
         actualNewWorkspaceFilter = Assert.Single(syncResponse.WorkspaceFilters, f => f.Id == newWorkspaceFilter.Id);
         Assert.Equivalent(expectedUpdatedWorkspaceFilter, actualNewWorkspaceFilter);
+        Assert.Equal(updateWorkspaceFilter.OrderKey, actualNewWorkspaceFilter.OrderKey);
 
-        actualSiblingWorkspaceFilter = Assert.Single(syncResponse.WorkspaceFilters, f => f.Id == siblingWorkspaceFilter.Id);
-        Assert.Equal(10, actualSiblingWorkspaceFilter.ItemOrder);
+        actualSiblingWorkspaceFilter = Assert.Single(
+            syncResponse.WorkspaceFilters,
+            f => f.Id == siblingWorkspaceFilter.Id);
+        Assert.Equal(siblingWorkspaceFilterOrderKey, actualSiblingWorkspaceFilter.OrderKey);
+        Assert.True(actualSiblingWorkspaceFilter.ItemOrder < actualNewWorkspaceFilter.ItemOrder);
 
 
         // Step 3: Delete workspace filters.

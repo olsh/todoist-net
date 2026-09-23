@@ -20,7 +20,7 @@ namespace Todoist.Net.Models
             Name = name;
             IsCollapsed = isCollapsed;
         }
-        
+
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
@@ -38,5 +38,16 @@ namespace Todoist.Net.Models
         /// </value>
         [JsonPropertyName("is_collapsed")]
         public bool? IsCollapsed { get; set; }
+
+        /// <summary>
+        /// Gets or sets the fractional-indexing key which orders the section in its project.
+        /// </summary>
+        /// <remarks>
+        /// Keys sort as ordinal strings. Without a key, the section keeps its current one.
+        /// If another section already uses the key, Todoist stores a key right after it instead, which a sync returns.
+        /// </remarks>
+        /// <value>The order key.</value>
+        [JsonPropertyName("order_key")]
+        public string OrderKey { get; set; }
     }
 }

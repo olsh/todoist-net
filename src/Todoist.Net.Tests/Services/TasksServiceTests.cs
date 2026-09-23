@@ -5,6 +5,7 @@ namespace Todoist.Net.Tests.Services;
 public class TasksServiceTests
 {
     private readonly TodoistApiFixture _apiFixture;
+
     private readonly CancellationToken _cancellationToken;
 
     public TasksServiceTests(TodoistApiFixture apiFixture)
@@ -120,45 +121,67 @@ public class TasksServiceTests
             [ResourceType.Tasks],
             cancellationToken: _cancellationToken);
         await using var parentTaskTracker = _apiFixture.TrackForCleanup(parentTask, c => c.Tasks.DeleteAsync);
-        await using var firstSiblingTaskTracker = _apiFixture.TrackForCleanup(firstSiblingTask, c => c.Tasks.DeleteAsync);
-        await using var secondSiblingTaskTracker = _apiFixture.TrackForCleanup(secondSiblingTask, c => c.Tasks.DeleteAsync);
+        await using var firstSiblingTaskTracker =
+            _apiFixture.TrackForCleanup(firstSiblingTask, c => c.Tasks.DeleteAsync);
+        await using var secondSiblingTaskTracker =
+            _apiFixture.TrackForCleanup(secondSiblingTask, c => c.Tasks.DeleteAsync);
 
         Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
         Assert.Contains(syncResponse.Tasks, t => t.Id == parentTask.Id && t.ProjectId == project.Id.PersistentId);
         Assert.Contains(syncResponse.Tasks, t => t.Id == firstSiblingTask.Id && t.ProjectId == project.Id.PersistentId);
-        Assert.Contains(syncResponse.Tasks, t => t.Id == secondSiblingTask.Id && t.ProjectId == project.Id.PersistentId);
+        Assert.Contains(
+            syncResponse.Tasks,
+            t => t.Id == secondSiblingTask.Id && t.ProjectId == project.Id.PersistentId);
 
 
         // Step 2: Move sibling tasks under the parent task.
         syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
             async t =>
             {
-                await t.Tasks.MoveAsync(MoveTaskArgument.CreateMoveToParent(firstSiblingTask.Id, parentTask.Id), _cancellationToken);
-                await t.Tasks.MoveAsync(MoveTaskArgument.CreateMoveToParent(secondSiblingTask.Id, parentTask.Id), _cancellationToken);
+                await t.Tasks.MoveAsync(
+                    MoveTaskArgument.CreateMoveToParent(firstSiblingTask.Id, parentTask.Id),
+                    _cancellationToken);
+                await t.Tasks.MoveAsync(
+                    MoveTaskArgument.CreateMoveToParent(secondSiblingTask.Id, parentTask.Id),
+                    _cancellationToken);
             },
             [ResourceType.Tasks],
             syncResponse.SyncToken,
             _cancellationToken);
 
         Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
-        Assert.Contains(syncResponse.Tasks, t => t.Id == firstSiblingTask.Id && t.ParentId == parentTask.Id.PersistentId);
-        Assert.Contains(syncResponse.Tasks, t => t.Id == secondSiblingTask.Id && t.ParentId == parentTask.Id.PersistentId);
+        Assert.Contains(
+            syncResponse.Tasks,
+            t => t.Id == firstSiblingTask.Id && t.ParentId == parentTask.Id.PersistentId);
+        Assert.Contains(
+            syncResponse.Tasks,
+            t => t.Id == secondSiblingTask.Id && t.ParentId == parentTask.Id.PersistentId);
 
 
-        // Step 3: Reorder sibling tasks under the parent task.
+        // Step 3: Reorder sibling tasks under the parent task, so the second one comes first.
+        var firstSiblingOrderKey = TestData.OrderKeys.Create(2);
+        var secondSiblingOrderKey = TestData.OrderKeys.Create(1);
+
         syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
-            t => t.Tasks.ReorderAsync(new(new Dictionary<ComplexId, int>
+            async t =>
             {
-                { firstSiblingTask.Id, 20 },
-                { secondSiblingTask.Id, 10 }
-            }), _cancellationToken),
+                await t.Tasks.UpdateAsync(
+                    new UpdateTask(firstSiblingTask.Id) { OrderKey = firstSiblingOrderKey },
+                    _cancellationToken);
+                await t.Tasks.UpdateAsync(
+                    new UpdateTask(secondSiblingTask.Id) { OrderKey = secondSiblingOrderKey },
+                    _cancellationToken);
+            },
             [ResourceType.Tasks],
             syncResponse.SyncToken,
             _cancellationToken);
 
         Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
-        Assert.Contains(syncResponse.Tasks, t => t.Id == firstSiblingTask.Id && t.ChildOrder == 20);
-        Assert.Contains(syncResponse.Tasks, t => t.Id == secondSiblingTask.Id && t.ChildOrder == 10);
+        var actualFirstSiblingTask = Assert.Single(syncResponse.Tasks, t => t.Id == firstSiblingTask.Id);
+        var actualSecondSiblingTask = Assert.Single(syncResponse.Tasks, t => t.Id == secondSiblingTask.Id);
+        Assert.Equal(firstSiblingOrderKey, actualFirstSiblingTask.OrderKey);
+        Assert.Equal(secondSiblingOrderKey, actualSecondSiblingTask.OrderKey);
+        Assert.True(actualSecondSiblingTask.ChildOrder < actualFirstSiblingTask.ChildOrder);
 
 
         // Step 4: Delete the task hierarchy.
@@ -195,7 +218,8 @@ public class TasksServiceTests
             _cancellationToken);
 
         var actualQuickAddedTask = Assert.Single(filterResponse.Results, t => t.Content == quickAddTaskContent);
-        await using var quickAddedTaskTracker = _apiFixture.TrackForCleanup(actualQuickAddedTask, c => c.Tasks.DeleteAsync);
+        await using var quickAddedTaskTracker =
+            _apiFixture.TrackForCleanup(actualQuickAddedTask, c => c.Tasks.DeleteAsync);
 
 
         // Step 3: Close task and assert synced state.
@@ -222,7 +246,9 @@ public class TasksServiceTests
 
 
         // Step 5: Get task by id.
-        actualQuickAddedTask = await _apiFixture.Client.Tasks.GetAsync(actualQuickAddedTask.Id.PersistentId, _cancellationToken);
+        actualQuickAddedTask = await _apiFixture.Client.Tasks.GetAsync(
+            actualQuickAddedTask.Id.PersistentId,
+            _cancellationToken);
 
         Assert.Equal(quickAddTaskContent, actualQuickAddedTask.Content);
         Assert.False(actualQuickAddedTask.IsChecked ?? true);

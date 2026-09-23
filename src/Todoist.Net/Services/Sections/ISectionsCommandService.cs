@@ -59,6 +59,8 @@ namespace Todoist.Net.Services
         /// <exception cref="ArgumentNullException"><paramref name="reorderArgument" /> is <see langword="null" /></exception>
         /// <exception cref="TodoistException">Command execution exception.</exception>
         /// <exception cref="HttpRequestException">API exception.</exception>
+        [Obsolete(
+            "Todoist has deprecated the section_reorder command. Set UpdateSection.OrderKey and call UpdateAsync instead.")]
         Task ReorderAsync(ReorderSectionsArgument reorderArgument, CancellationToken cancellationToken = default);
 
         /// <summary>

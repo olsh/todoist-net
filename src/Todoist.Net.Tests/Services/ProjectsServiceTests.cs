@@ -5,6 +5,7 @@ namespace Todoist.Net.Tests.Services;
 public class ProjectsServiceTests
 {
     private readonly TodoistApiFixture _apiFixture;
+
     private readonly CancellationToken _cancellationToken;
 
     public ProjectsServiceTests(TodoistApiFixture apiFixture)
@@ -46,16 +47,16 @@ public class ProjectsServiceTests
         Assert.Null(actualChildProject.ParentId);
 
 
-        // Step 3: Reorder child and parent projects to make child come first.
-        var newOrderMap = new Dictionary<ComplexId, int> { { childProject.Id, 20 } };
+        // Step 3: Reorder the former child project among the root projects.
+        var orderKey = TestData.OrderKeys.Create(1);
         response = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
-            t => t.Projects.ReorderAsync(new(newOrderMap), _cancellationToken),
+            t => t.Projects.UpdateAsync(new UpdateProject(childProject.Id) { OrderKey = orderKey }, _cancellationToken),
             [ResourceType.Projects],
             response.SyncToken,
             _cancellationToken);
 
         Assert.All(response.SyncStatus.Values, cr => cr.AssertSuccess());
-        Assert.Contains(response.Projects, p => p.Id == childProject.Id && p.ChildOrder == 20);
+        Assert.Contains(response.Projects, p => p.Id == childProject.Id && p.OrderKey == orderKey);
 
 
         // Step 4: Delete child project.
@@ -201,7 +202,9 @@ public class ProjectsServiceTests
 
 
         // Step 2: Search for the project by part of it's name.
-        var searchResponse = await _apiFixture.Client.Projects.SearchAsync(new("New*1"), cancellationToken: _cancellationToken);
+        var searchResponse = await _apiFixture.Client.Projects.SearchAsync(
+            new("New*1"),
+            cancellationToken: _cancellationToken);
 
         Assert.Contains(searchResponse.Results, p => p.Id == newProject.Id);
 
@@ -217,7 +220,9 @@ public class ProjectsServiceTests
             cancellationToken: _cancellationToken);
 
         Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
-        Assert.Contains(syncResponse.Projects, p => p.Id == newProject.Id && p.WorkspaceId == workspace.Id && p.FolderId == tempFolder.Id);
+        Assert.Contains(
+            syncResponse.Projects,
+            p => p.Id == newProject.Id && p.WorkspaceId == workspace.Id && p.FolderId == tempFolder.Id);
 
 
         // Step 4: Move project out of workspace.
@@ -228,6 +233,8 @@ public class ProjectsServiceTests
             _cancellationToken);
 
         Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
-        Assert.Contains(syncResponse.Projects, p => p.Id == newProject.Id && p.WorkspaceId == null && p.FolderId == null);
+        Assert.Contains(
+            syncResponse.Projects,
+            p => p.Id == newProject.Id && p.WorkspaceId == null && p.FolderId == null);
     }
 }
