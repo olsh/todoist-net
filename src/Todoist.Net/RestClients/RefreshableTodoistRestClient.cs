@@ -16,7 +16,7 @@ namespace Todoist.Net
 {
     internal class RefreshableTodoistRestClient : TodoistRestClient, IRefreshableTodoistRestClient
     {
-        private Task<HttpResponseMessage> _cachedRefreshTask = null;
+        private Task<TokenRefreshResponseMessage> _cachedRefreshTask = null;
         private readonly object _refreshLock = new object();
 
         private readonly TodoistAuthenticationContext _authContext;
@@ -97,7 +97,7 @@ namespace Todoist.Net
 
 
         /// <inheritdoc/>
-        public Task<HttpResponseMessage> RefreshTokensAsync(CancellationToken cancellationToken = default)
+        public Task<TokenRefreshResponseMessage> RefreshTokensAsync(CancellationToken cancellationToken = default)
         {
             lock (_refreshLock)
             {
@@ -156,15 +156,14 @@ namespace Todoist.Net
             var refreshResponse = await RefreshTokensAsync(cancellationToken).ConfigureAwait(false);
             if (!refreshResponse.IsSuccessStatusCode)
             {
-                return refreshResponse;
+                return new HttpResponseMessage(refreshResponse.StatusCode);
             }
-            refreshResponse.Dispose();
 
             return await action().ConfigureAwait(false);
         }
 
 
-        private async Task<HttpResponseMessage> RefreshTokensCoreAsync(CancellationToken cancellationToken)
+        private async Task<TokenRefreshResponseMessage> RefreshTokensCoreAsync(CancellationToken cancellationToken)
         {
             var formParams = new Dictionary<string, string>
             {
@@ -175,60 +174,41 @@ namespace Todoist.Net
             };
             using (var content = new FormUrlEncodedContent(formParams))
             {
-                var response = await HttpClient.PostAsync(ApiConstants.TokenRefreshEndpoint, content, cancellationToken)
-                    .ConfigureAwait(false);
+                using (var response = await HttpClient.PostAsync(ApiConstants.TokenRefreshEndpoint, content, cancellationToken).ConfigureAwait(false))
+                {
+                    var parsedResponse = await TokenRefreshResponseMessage.FromHttpResponseMessageAsync(response, cancellationToken)
+                        .ConfigureAwait(false);
 
-                await HandleTokenRefreshResponseAsync(response, cancellationToken)
-                    .ConfigureAwait(false);
+                    await HandleTokenRefreshResponseAsync(parsedResponse, cancellationToken)
+                        .ConfigureAwait(false);
 
-                return response;
+                    return parsedResponse;
+                }
             }
         }
 
-        private async Task<bool> HandleTokenRefreshResponseAsync(HttpResponseMessage refreshResponse, CancellationToken cancellationToken)
+        private async Task<bool> HandleTokenRefreshResponseAsync(TokenRefreshResponseMessage response, CancellationToken cancellationToken)
         {
-            if (!refreshResponse.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
                 return false;
             }
-            var jsonResponse = await GetJsonAndResetContentAsync<TokenRefreshResponse>(refreshResponse)
-                .ConfigureAwait(false);
-
-            var expirationTimeUtc = jsonResponse.ExpiresIn > 0
-                ? DateTime.UtcNow.AddSeconds(jsonResponse.ExpiresIn)
+            var expirationTimeUtc = response.Content.ExpiresIn > 0
+                ? DateTime.UtcNow.AddSeconds(response.Content.ExpiresIn)
                 : (DateTime?)null;
 
-            AccessToken = jsonResponse.AccessToken;
+            AccessToken = response.Content.AccessToken;
             _authContext.Tokens = new TodoistTokens(
-                jsonResponse.AccessToken,
-                jsonResponse.RefreshToken,
+                response.Content.AccessToken,
+                response.Content.RefreshToken,
                 expirationTimeUtc);
 
             if (_authContext.OnRefresh != null)
             {
-                await _authContext.OnRefresh(jsonResponse, _authContext.RefreshState, cancellationToken)
+                await _authContext.OnRefresh(response.Content, _authContext.RefreshState, cancellationToken)
                     .ConfigureAwait(false);
             }
             return true;
-        }
-
-
-        private static async Task<T> GetJsonAndResetContentAsync<T>(HttpResponseMessage response)
-        {
-            using (var originalContent = response.Content)
-            {
-                var responseBody = await originalContent.ReadAsByteArrayAsync()
-                    .ConfigureAwait(false);
-
-                var bufferedContent = new ByteArrayContent(responseBody);
-                foreach (var header in originalContent.Headers)
-                {
-                    bufferedContent.Headers.TryAddWithoutValidation(header.Key, header.Value);
-                }
-
-                response.Content = bufferedContent;
-                return JsonSerializer.Deserialize<T>(responseBody);
-            }
         }
     }
 }

@@ -267,11 +267,14 @@ namespace Todoist.Net
 
 
         /// <inheritdoc/>
-        public Task<TokenRefreshResponse> RefreshTokensAsync(CancellationToken cancellationToken = default)
+        public async Task<TokenRefreshResponse> RefreshTokensAsync(CancellationToken cancellationToken = default)
         {
             if (_restClient is IRefreshableTodoistRestClient refreshableClient)
             {
-                return ProcessRequestAsync<TokenRefreshResponse>(ct => refreshableClient.RefreshTokensAsync(ct), cancellationToken);
+                var refreshResponse = await refreshableClient.RefreshTokensAsync(cancellationToken);
+
+                refreshResponse.EnsureSuccessStatusCode();
+                return refreshResponse.Content;
             }
             throw new NotSupportedException(
                 "Token refresh is not supported by the underlying REST client. " +
