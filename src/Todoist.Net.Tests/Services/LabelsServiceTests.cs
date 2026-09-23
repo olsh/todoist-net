@@ -4,6 +4,7 @@ namespace Todoist.Net.Tests.Services;
 public class LabelsServiceTests
 {
     private readonly TodoistApiFixture _apiFixture;
+
     private readonly CancellationToken _cancellationToken;
 
     public LabelsServiceTests(TodoistApiFixture apiFixture)
@@ -26,10 +27,9 @@ public class LabelsServiceTests
             [ResourceType.Labels],
             cancellationToken: _cancellationToken);
         // Track the created entity for cleanup if assertions fail before deletion step, otherwise stop tracking after deletion step.
-        await using var tracker = _apiFixture.TrackForCleanup(newLabel, c =>
-        {
-            return (id, ct) => c.Labels.DeleteAsync(id, cancellationToken: ct);
-        });
+        await using var tracker = _apiFixture.TrackForCleanup(
+            newLabel,
+            c => { return (id, ct) => c.Labels.DeleteAsync(id, cancellationToken: ct); });
 
         Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
         var actualNewLabel = Assert.Single(syncResponse.Labels, l => l.Id == newLabel.Id);
@@ -38,17 +38,11 @@ public class LabelsServiceTests
 
         // Step 2: Update label and reorder it.
         var updateLabel = TestData.Labels.UpdateLabel(newLabel.Id, $"UpdatedLabel_{Guid.NewGuid():N}");
+        updateLabel.OrderKey = TestData.OrderKeys.Create(1);
         var expectedUpdatedLabel = TestData.Labels.ExpectedUpdatedLabel(newLabel.Id, updateLabel.Name);
 
         syncResponse = await _apiFixture.Client.ExecuteTransactionAndSyncAsync(
-            async t =>
-            {
-                await t.Labels.UpdateAsync(updateLabel, _cancellationToken);
-                await t.Labels.UpdateOrderAsync(new(new Dictionary<ComplexId, int>
-                {
-                    { newLabel.Id, updateLabel.ItemOrder!.Value }
-                }), _cancellationToken);
-            },
+            t => t.Labels.UpdateAsync(updateLabel, _cancellationToken),
             [ResourceType.Labels],
             syncResponse.SyncToken,
             _cancellationToken);
@@ -56,6 +50,7 @@ public class LabelsServiceTests
         Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
         var actualUpdatedLabel = Assert.Single(syncResponse.Labels, l => l.Id == newLabel.Id);
         Assert.Equivalent(expectedUpdatedLabel, actualUpdatedLabel);
+        Assert.Equal(updateLabel.OrderKey, actualUpdatedLabel.OrderKey);
 
 
         // Step 3: Get label by id, get all labels, and search labels.
@@ -103,10 +98,9 @@ public class LabelsServiceTests
             },
             [ResourceType.Labels, ResourceType.Tasks],
             cancellationToken: _cancellationToken);
-        await using var labelTracker = _apiFixture.TrackForCleanup(newLabel, c =>
-        {
-            return (id, ct) => c.Labels.DeleteAsync(id, cancellationToken: ct);
-        });
+        await using var labelTracker = _apiFixture.TrackForCleanup(
+            newLabel,
+            c => { return (id, ct) => c.Labels.DeleteAsync(id, cancellationToken: ct); });
         await using var taskTracker = _apiFixture.TrackForCleanup(newTask, c => c.Tasks.DeleteAsync);
 
         Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());

@@ -568,4 +568,65 @@ public class TodoistClientProtocolTests
         Assert.Equal("parent-project", viewOptions.ObjectId.PersistentId);
         Assert.Equal("parent-project", projectViewOptionsDefaults.ProjectId.PersistentId);
     }
+
+    [Fact]
+    public async Task CommitTransaction_MovingProjectsAddedInTheSameTransaction_ReplacesTheirTempIds()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+        var restClient = new StubTodoistRestClient();
+        using var todoistClient = new TodoistClient(restClient);
+        var transaction = todoistClient.CreateTransaction();
+
+
+        // Step 1: Queue projects, a folder update which moves them by their temporary IDs, and a folder without any moves.
+        var addedProjectId = await transaction.Projects.AddAsync(new AddProject("Added"), cancellationToken);
+        var removedProjectId = await transaction.Projects.AddAsync(new AddProject("Removed"), cancellationToken);
+        var folder = new WorkspaceFolder("Folder")
+        {
+            AddProjectIds = [addedProjectId],
+            // An array can't be changed in place, so the collection has to be replaced.
+            RemoveProjectIds = new ComplexId[] { removedProjectId, "6X7rM8997g3RQmvh" }
+        };
+        await transaction.Workspaces.UpdateFolderAsync(
+            "6X8jVQXxpwv56VQ9",
+            "6X6WMMqgq2PWxjCX",
+            folder,
+            cancellationToken);
+        await transaction.Workspaces.DeleteFolderAsync("6X8jVQXxpwv56VQ8", "6X6WMMqgq2PWxjCX", cancellationToken);
+
+
+        // Step 2: Commit the transaction, which the API answers with the persistent IDs.
+        restClient.RespondToPostJson(
+            HttpStatusCode.OK,
+            $$"""
+              {
+                  "sync_status": {},
+                  "temp_id_mapping": {
+                      "{{addedProjectId.TempId}}": "added-project",
+                      "{{removedProjectId.TempId}}": "removed-project"
+                  },
+                  "sync_token": "sync-token-1",
+                  "full_sync": false
+              }
+              """);
+
+        await transaction.CommitAsync(cancellationToken);
+
+
+        // Step 3: Assert the temporary IDs were sent, and replaced with the persistent ones afterwards.
+        using var commands = JsonDocument.Parse(restClient.LastFormParams["commands"]);
+        var folderUpdate = Assert.Single(
+            commands.RootElement.EnumerateArray(),
+            command => command.GetProperty("type")
+                .GetString() == "folder_update");
+        var addProjectIds = folderUpdate.GetProperty("args")
+            .GetProperty("add_project_ids");
+        Assert.Equal(
+            addedProjectId.TempId.ToString(),
+            Assert.Single(addProjectIds.EnumerateArray())
+                .GetString());
+
+        Assert.Equal(["added-project"], folder.AddProjectIds.Select(id => id.PersistentId));
+        Assert.Equal(["removed-project", "6X7rM8997g3RQmvh"], folder.RemoveProjectIds.Select(id => id.PersistentId));
+    }
 }
