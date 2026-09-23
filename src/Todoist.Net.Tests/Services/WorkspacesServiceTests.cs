@@ -121,7 +121,7 @@ public class WorkspacesServiceTests
             [ResourceType.WorkspaceFolders, ResourceType.Projects],
             syncResponse.SyncToken,
             _cancellationToken);
-        await using var projectTracker = _apiFixture.TrackForCleanup(project, c => c.Projects.DeleteAsync);
+        await using var projectTracker = _apiFixture.TrackWorkspaceProjectForCleanup(project);
 
         Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
         actualFolder = Assert.Single(syncResponse.WorkspaceFolders, f => f.Id == folder.Id);

@@ -482,6 +482,7 @@ fabric.properties
 
 # Claude
 .claude/
+CLAUDE.local.md
 
 # Local files
 .local/

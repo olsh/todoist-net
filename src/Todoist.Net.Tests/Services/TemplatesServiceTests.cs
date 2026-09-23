@@ -7,6 +7,7 @@ namespace Todoist.Net.Tests.Services;
 public class TemplatesServiceTests
 {
     private readonly TodoistApiFixture _apiFixture;
+
     private readonly CancellationToken _cancellationToken;
 
     public TemplatesServiceTests(TodoistApiFixture apiFixture)
@@ -25,7 +26,10 @@ public class TemplatesServiceTests
 
         // Step 1: Create source project and seed it with a task.
         await _apiFixture.PremiumClient.Projects.AddAsync(sourceProject, _cancellationToken);
-        await using var sourceProjectTracker = _apiFixture.TrackForCleanup(sourceProject, c => c.Projects.DeleteAsync, isPremium: true);
+        await using var sourceProjectTracker = _apiFixture.TrackForCleanup(
+            sourceProject,
+            c => c.Projects.DeleteAsync,
+            isPremium: true);
 
         var seedTask = TestData.Tasks.AddTask(sourceProject.Id, expectedTaskContent);
         await _apiFixture.PremiumClient.Tasks.AddAsync(seedTask, _cancellationToken);
@@ -42,7 +46,10 @@ public class TemplatesServiceTests
 
         // Step 3: Create the destination project.
         await _apiFixture.PremiumClient.Projects.AddAsync(destinationProject, _cancellationToken);
-        await using var destinationProjectTracker = _apiFixture.TrackForCleanup(destinationProject, c => c.Projects.DeleteAsync, isPremium: true);
+        await using var destinationProjectTracker = _apiFixture.TrackForCleanup(
+            destinationProject,
+            c => c.Projects.DeleteAsync,
+            isPremium: true);
 
 
         // Step 4: Import the exported template file into the destination project.
@@ -81,14 +88,18 @@ public class TemplatesServiceTests
             t => t.Workspaces.AddAsync(workspace, _cancellationToken),
             [ResourceType.Workspaces],
             cancellationToken: _cancellationToken);
-        await using var workspaceTracker = _apiFixture.TrackForCleanup(workspace, c => c.Workspaces.DeleteAsync, isPremium: true);
+        await using var workspaceTracker = _apiFixture.TrackForCleanup(
+            workspace,
+            c => c.Workspaces.DeleteAsync,
+            isPremium: true);
 
         Assert.All(syncResponse.SyncStatus.Values, cr => cr.AssertSuccess());
         var actualWorkspace = Assert.Single(syncResponse.Workspaces, w => w.Id == workspace.Id);
         Assert.Equal(workspace.Name, actualWorkspace.Name);
 
         await _apiFixture.PremiumClient.Projects.AddAsync(sourceProject, _cancellationToken);
-        await using var sourceProjectTracker = _apiFixture.TrackForCleanup(sourceProject, c => c.Projects.DeleteAsync, isPremium: true);
+        await using var sourceProjectTracker =
+            _apiFixture.TrackWorkspaceProjectForCleanup(sourceProject, isPremium: true);
 
         await _apiFixture.PremiumClient.Projects.MoveToWorkspaceAsync(
             new(sourceProject.Id, workspace.Id),
@@ -120,10 +131,8 @@ public class TemplatesServiceTests
         Assert.False(string.IsNullOrWhiteSpace(createResult.ProjectId));
 
         var actualProject = Assert.Single(createResult.Projects, p => p.Id.PersistentId == createResult.ProjectId);
-        await using var createdProjectTracker = _apiFixture.TrackForCleanup(
-            (c, ct) => c.Projects.DeleteAsync(actualProject.Id, ct),
-            $"Project with ID {actualProject.Id}",
-            isPremium: true);
+        await using var createdProjectTracker =
+            _apiFixture.TrackWorkspaceProjectForCleanup(actualProject, isPremium: true);
 
         Assert.Equal(newProjectName, actualProject.Name);
         Assert.Contains(createResult.Tasks, t => t.Content == expectedTaskContent);
