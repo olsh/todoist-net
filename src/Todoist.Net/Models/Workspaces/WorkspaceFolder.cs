@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 using Todoist.Net.Exceptions;
@@ -8,7 +10,7 @@ namespace Todoist.Net.Models
     /// <summary>
     /// Represents a workspace folder.
     /// </summary>
-    public class WorkspaceFolder : BaseEntity
+    public class WorkspaceFolder : BaseEntity, IWithRelationsArgument
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="WorkspaceFolder"/> class.
@@ -93,5 +95,42 @@ namespace Todoist.Net.Models
         /// <value>The workspace project IDs to move out of the folder.</value>
         [JsonPropertyName("remove_project_ids")]
         public ICollection<ComplexId> RemoveProjectIds { get; set; }
+        
+        
+        /// <summary>
+        /// Updates the related temporary ids.
+        /// </summary>
+        /// <param name="map">The map.</param>
+        void IWithRelationsArgument.UpdateRelatedTempIds(IDictionary<Guid, string> map)
+        {
+            if (map.TryGetValue(WorkspaceId.TempId, out var persistentWorkspaceId))
+            {
+                WorkspaceId = new ComplexId(persistentWorkspaceId);
+            }
+
+            var mappedAddProjectIds = AddProjectIds
+                .Join(map, addProjectId => addProjectId.TempId, kvp => kvp.Key, (addProjectId, kvp) => new
+                {
+                    Original = addProjectId,
+                    Persistent = new ComplexId(kvp.Value)
+                });
+            foreach (var item in mappedAddProjectIds)
+            {
+                AddProjectIds.Remove(item.Original);
+                AddProjectIds.Add(item.Persistent);
+            }
+            
+            var mappedRemoveProjectIds = RemoveProjectIds
+                .Join(map, removeProjectId => removeProjectId.TempId, kvp => kvp.Key, (removeProjectId, kvp) => new
+                {
+                    Original = removeProjectId,
+                    Persistent = new ComplexId(kvp.Value)
+                });
+            foreach (var item in mappedRemoveProjectIds)
+            {
+                RemoveProjectIds.Remove(item.Original);
+                RemoveProjectIds.Add(item.Persistent);
+            }
+        }
     }
 }
