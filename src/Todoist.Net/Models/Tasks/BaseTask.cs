@@ -100,5 +100,17 @@ namespace Todoist.Net.Models
         /// <value>The day order.</value>
         [JsonPropertyName("day_order")]
         public int? DayOrder { get; set; }
+
+        /// <summary>
+        /// Gets or sets the fractional-indexing key which orders the task among its siblings.
+        /// </summary>
+        /// <remarks>
+        /// Keys sort as ordinal strings. A task added without a key goes to the bottom, and an update without one keeps the current key.
+        /// If a sibling already uses the key, Todoist stores a key right after it instead, which a sync returns.
+        /// Todoist returns <c>null</c> for tasks it hasn't migrated to keys yet.
+        /// </remarks>
+        /// <value>The order key.</value>
+        [JsonPropertyName("order_key")]
+        public string OrderKey { get; set; }
     }
 }

@@ -75,5 +75,18 @@ namespace Todoist.Net.Models
         /// </summary>
         [JsonPropertyName("access")]
         public SharedProjectAccess Access { get; set; }
+
+        /// <summary>
+        /// Gets or sets the fractional-indexing key which orders a personal project among its siblings.
+        /// </summary>
+        /// <remarks>
+        /// Keys sort as ordinal strings. A project added without a key goes to the bottom, and an update without one keeps the current key.
+        /// If a sibling already uses the key, Todoist stores a key right after it instead, which a sync returns.
+        /// Todoist returns <c>null</c> for workspace projects, which are ordered by their default order key instead,
+        /// and for projects it hasn't migrated to keys yet.
+        /// </remarks>
+        /// <value>The order key.</value>
+        [JsonPropertyName("order_key")]
+        public string OrderKey { get; set; }
     }
 }

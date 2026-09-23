@@ -13,7 +13,7 @@ namespace Todoist.Net.Models
         /// </summary>
         [JsonPropertyName("is_collapsed")]
         public bool? IsCollapsed { get; set; }
-        
+
         /// <summary>
         /// Gets a value indicating whether this project is archived.
         /// </summary>
@@ -73,6 +73,13 @@ namespace Todoist.Net.Models
         /// </summary>
         [JsonPropertyName("default_order")]
         public int? DefaultOrder { get; set; }
+
+        /// <summary>
+        /// Gets the fractional-indexing key which orders a workspace project among the workspace's projects and folders.
+        /// </summary>
+        /// <value>The default order key, or <c>null</c> for personal projects.</value>
+        [JsonPropertyName("default_order_key")]
+        public string DefaultOrderKey { get; internal set; }
 
         /// <summary>
         /// Gets the user role in the project.

@@ -20,7 +20,7 @@ namespace Todoist.Net.Models
         public Label(string name, Color color = null, int? itemOrder = null, bool isFavorite = false)
         {
             ThrowHelper.ThrowIfNullOrEmpty(name, nameof(name));
-            
+
             Name = name;
             Color = color;
             ItemOrder = itemOrder;
@@ -60,6 +60,18 @@ namespace Todoist.Net.Models
             get => null;
             set => ItemOrder = value;
         }
+
+        /// <summary>
+        /// Gets or sets the fractional-indexing key which orders the label in the label list.
+        /// </summary>
+        /// <remarks>
+        /// Keys sort as ordinal strings. A label added without a key goes to the bottom, and an update without one keeps the current key.
+        /// If another label already uses the key, Todoist stores a key right after it instead, which a sync returns.
+        /// Only a sync returns the key: labels read through the REST endpoints don't have it.
+        /// </remarks>
+        /// <value>The order key.</value>
+        [JsonPropertyName("order_key")]
+        public string OrderKey { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance is favorite.

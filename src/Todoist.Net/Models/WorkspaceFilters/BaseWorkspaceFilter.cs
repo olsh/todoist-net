@@ -40,5 +40,16 @@ namespace Todoist.Net.Models
         /// </summary>
         [JsonPropertyName("item_order")]
         public int? ItemOrder { get; set; }
+
+        /// <summary>
+        /// Gets or sets the fractional-indexing key which orders the filter in the workspace's filter list.
+        /// </summary>
+        /// <remarks>
+        /// Keys sort as ordinal strings. An update without a key keeps the current one.
+        /// If another filter already uses the key, Todoist stores a key right after it instead, which a sync returns.
+        /// </remarks>
+        /// <value>The order key.</value>
+        [JsonPropertyName("order_key")]
+        public string OrderKey { get; set; }
     }
 }
