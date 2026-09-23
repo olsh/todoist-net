@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Todoist.Net.Models
@@ -5,7 +7,7 @@ namespace Todoist.Net.Models
     /// <summary>
     /// Represents view options.
     /// </summary>
-    public class ViewOptions : BaseViewOptions
+    public class ViewOptions : BaseViewOptions, IWithRelationsArgument
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ViewOptions"/> class.
@@ -40,5 +42,17 @@ namespace Todoist.Net.Models
         /// </summary>
         [JsonPropertyName("is_deleted")]
         public bool? IsDeleted { get; set; }
+
+        /// <summary>
+        /// Updates the related temporary ids.
+        /// </summary>
+        /// <param name="map">The map.</param>
+        void IWithRelationsArgument.UpdateRelatedTempIds(IDictionary<Guid, string> map)
+        {
+            if (map.TryGetValue(ObjectId.TempId, out var persistentObjectId))
+            {
+                ObjectId = new ComplexId(persistentObjectId);
+            }
+        }
     }
 }

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 using Todoist.Net.Exceptions;
@@ -7,7 +9,7 @@ namespace Todoist.Net.Models
     /// <summary>
     /// Represents a workspace folder.
     /// </summary>
-    public class WorkspaceFolder : BaseEntity
+    public class WorkspaceFolder : BaseEntity, IWithRelationsArgument
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="WorkspaceFolder"/> class.
@@ -61,5 +63,17 @@ namespace Todoist.Net.Models
         /// <value>Indicates whether the folder is deleted.</value>
         [JsonPropertyName("is_deleted")]
         public bool IsDeleted { get; internal set; }
+
+        /// <summary>
+        /// Updates the related temporary ids.
+        /// </summary>
+        /// <param name="map">The map.</param>
+        void IWithRelationsArgument.UpdateRelatedTempIds(IDictionary<Guid, string> map)
+        {
+            if (map.TryGetValue(WorkspaceId.TempId, out var persistentWorkspaceId))
+            {
+                WorkspaceId = new ComplexId(persistentWorkspaceId);
+            }
+        }
     }
 }
