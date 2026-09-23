@@ -8,7 +8,7 @@ Todoist.Net is a .NET client library for the **Todoist unified API v1** (`https:
 
 The repo is mid-migration from the old Sync API v9 (`11.0.0-beta.1`; see the "API v1 Migration - Phase 1/2" commits). Public naming was moved to v1 vocabulary (`Item` -> `Task`, `Note` -> `Comment`) while the sync wire protocol kept the legacy names — see [Naming: C# vs. wire](#naming-c-vs-wire) before touching models or commands.
 
-Library targets `netstandard2.0` and `net462`; the test project targets `net8.0`.
+Library targets `netstandard2.0` and `net462`; the test project targets `net10.0`.
 
 ## Build and Test Commands
 
@@ -17,7 +17,7 @@ NUKE is the build system. Targets are invoked in **kebab-case** on the CLI:
 ```bash
 .\build.cmd                                    # default chain: compile, unit-test, nuget-pack
 .\build.cmd unit-test                          # trait=unit only (no API token needed)
-.\build.cmd test                               # everything except trait!=mfa-required (hits the live API)
+.\build.cmd test                               # every test, unit and integration (hits the live API)
 .\build.cmd nuget-pack --configuration Release # package into artifacts/
 ```
 
@@ -33,7 +33,11 @@ dotnet test src/Todoist.Net.Tests/Todoist.Net.Tests.csproj --filter "FullyQualif
 
 `dotnet test` only builds the `netstandard2.0` leg. Run `dotnet build Todoist.Net.slnx` to compile `net462` too — a change can pass tests and still break that target framework.
 
-Integration tests read the token from the **`todoist:token`** environment variable (`Settings/SettingsProvider.cs`) and mutate a real Todoist account.
+Integration tests mutate real Todoist accounts and read their tokens from environment variables (`Settings/SettingsProvider.cs`). Each also works in colon form (`todoist:token`, `todoist:token:secondary`, …):
+
+- **`todoist_token`** — the primary account, required. Premium tests run on it, so it needs a paid plan.
+- **`todoist_token_secondary`** — a second account. Collaboration tests need it, and it takes the free-tier tests and the shared playground workspace off the primary account. Without it, the playground workspace sits on the primary account and the two premium tests that create their own workspace fail with `MAX_FREE_WORKSPACES_CREATED`.
+- **`todoist_token_tertiary`** — optional, spreads the free-tier load further.
 
 ## Architecture
 
@@ -125,15 +129,15 @@ The v1 migration renamed the .NET surface but **not** the sync protocol. Never a
 
 ## Testing
 
-xUnit, traits under the key `trait`:
+xUnit, traits under the key `trait` (values in `Extensions/Constants.cs`):
 
-- `unit` — 15 tests, no network: serialization resolvers, `DueDate`, `Duration`, `StringEnum`, timezone helper. This is the only suite CI gates on.
-- `integration-free` / `integration-premium` — hit a live account; premium ones need a paid plan.
-- `mfa-required` — excluded from the `test` target because MFA breaks them.
+- `unit` — no network: serialization and resolvers, the client's request/response handling against `StubTodoistRestClient`, `DueDate`, `Duration`, `StringEnum`, the timezone helper. This is the only suite CI gates on.
+- `integration-free` / `integration-premium` — hit a live account; premium ones run on the primary token and need a paid plan.
+- `integration-collaboration` — need a second account (`todoist_token_secondary`) and fail with `Secondary client is not available` without it.
 
-Integration test classes share `[Collection(Constants.TodoistApiTestCollectionName)]`, which serializes them so they do not race on shared account state. They create clients through `TodoistClientFactory.Create(outputHelper)`, which wraps `TodoistRestClient` in `RateLimitAwareRestClient` — it retries 429s and 5xx up to 60 times, honoring `retry_after` (Todoist allows ~450 requests / 15 min). Long, quiet test runs are usually a rate-limit backoff, not a hang.
+Integration test classes share `[Collection(TodoistApiTestCollection.Name)]`, which serializes them so they do not race on shared account state, and one `TodoistApiFixture`. The fixture holds the clients — `Client` (secondary or tertiary account, falling back to the primary), `PremiumClient` (primary) and `CollaborationClient` — and lazily creates a playground project and workspace that it deletes when the run ends. Clients come from `TodoistClientFactory.CreatePrimary` / `CreateSecondary` / `CreateTertiary`, which wrap `TodoistRestClient` in `RateLimitAwareRestClient` — it retries 429s and 5xx up to 60 times, honoring `retry_after` (Todoist allows ~450 requests / 15 min). Long, quiet test runs are usually a rate-limit backoff, not a hang.
 
-New integration tests must clean up after themselves in a `finally` block; the account is shared and persistent.
+New integration tests must clean up after themselves; the accounts are shared and persistent. Register each created entity with `await using var tracker = _apiFixture.TrackForCleanup(...)` right after creating it, and call `tracker.StopTracking()` once the test deletes it itself. Use `TrackWorkspaceProjectForCleanup` for a project in a workspace: the API only deletes a workspace project once it is archived.
 
 ## Constraints when editing
 

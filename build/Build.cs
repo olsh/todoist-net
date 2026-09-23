@@ -6,7 +6,7 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 class Build : NukeBuild
 {
-    public static int Main () => Execute<Build>(x => x.Compile, x => x.UnitTest, x => x.NugetPack);
+    public static int Main() => Execute<Build>(x => x.Compile, x => x.UnitTest, x => x.NugetPack);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
@@ -40,7 +40,6 @@ class Build : NukeBuild
                 .SetProjectFile(Solution.src.Todoist_Net_Tests)
                 .SetConfiguration(Configuration)
                 .SetLoggers("console;verbosity=detailed")
-                .SetFilter("trait!=mfa-required")
                 .SetNoBuild(true));
         });
 

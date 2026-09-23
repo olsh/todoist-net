@@ -176,6 +176,20 @@ public sealed class TodoistApiFixture : IAsyncLifetime
             ct => cleanupAction(client, ct));
     }
 
+    public TodoistTracker TrackWorkspaceProjectForCleanup<T>(T project, bool isPremium = false)
+        where T : BaseEntity
+    {
+        // The API refuses to delete a workspace project that is not archived.
+        return TrackForCleanup(
+            async (client, ct) =>
+            {
+                await client.Projects.ArchiveAsync(project.Id, ct);
+                await client.Projects.DeleteAsync(project.Id, ct);
+            },
+            $"Workspace project with ID {project.Id}",
+            isPremium);
+    }
+
     private async Task<ProjectInfo> CreatePlaygroundProjectAsync()
     {
         var playgroundProject = new AddProject($"PlaygroundProject_{_instanceNumber}");

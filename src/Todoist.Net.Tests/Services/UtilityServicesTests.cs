@@ -4,6 +4,7 @@ namespace Todoist.Net.Tests.Services;
 public class UtilityServicesTests
 {
     private readonly TodoistApiFixture _apiFixture;
+
     private readonly CancellationToken _cancellationToken;
 
     public UtilityServicesTests(TodoistApiFixture apiFixture)
@@ -21,7 +22,10 @@ public class UtilityServicesTests
 
         // Step 1: Create project.
         await _apiFixture.PremiumClient.Projects.AddAsync(newProject, _cancellationToken);
-        await using var projectTracker = _apiFixture.TrackForCleanup(newProject, c => c.Projects.DeleteAsync, isPremium: true);
+        await using var projectTracker = _apiFixture.TrackForCleanup(
+            newProject,
+            c => c.Projects.DeleteAsync,
+            isPremium: true);
 
 
         // Step 2: Get or create project email.
@@ -51,7 +55,10 @@ public class UtilityServicesTests
 
         // Step 1: Create project and task.
         await _apiFixture.PremiumClient.Projects.AddAsync(newProject, _cancellationToken);
-        await using var projectTracker = _apiFixture.TrackForCleanup(newProject, c => c.Projects.DeleteAsync, isPremium: true);
+        await using var projectTracker = _apiFixture.TrackForCleanup(
+            newProject,
+            c => c.Projects.DeleteAsync,
+            isPremium: true);
 
         await _apiFixture.PremiumClient.Tasks.AddAsync(newTask, _cancellationToken);
         await using var taskTracker = _apiFixture.TrackForCleanup(newTask, c => c.Tasks.DeleteAsync, isPremium: true);
@@ -77,36 +84,35 @@ public class UtilityServicesTests
 
     [Fact]
     [Trait(Constants.TraitName, Constants.IntegrationPremiumTraitValue)]
-    public async Task CreateTask_GetIdMappings_Succeeds()
+    public async Task GetInboxIdMapping_MapLegacyIdBack_Succeeds()
     {
-        var newProject = TestData.Projects.AddProject($"UtilityActivityProject_{Guid.NewGuid():N}");
-        var newTask = TestData.Tasks.AddTask(newProject.Id, $"UtilityTask_{Guid.NewGuid():N}");
+        // Objects created since mid-September 2026 have no legacy ID, so the API returns no mapping for them.
+        // The Inbox is as old as the account, which has to predate that change for this test to pass.
+        var user = await _apiFixture.PremiumClient.User.GetInfoAsync(_cancellationToken);
 
 
-        // Step 1: Create project and task.
-        await _apiFixture.PremiumClient.Projects.AddAsync(newProject, _cancellationToken);
-        await using var projectTracker = _apiFixture.TrackForCleanup(newProject, c => c.Projects.DeleteAsync, isPremium: true);
-
-        await _apiFixture.PremiumClient.Tasks.AddAsync(newTask, _cancellationToken);
-        await using var taskTracker = _apiFixture.TrackForCleanup(newTask, c => c.Tasks.DeleteAsync, isPremium: true);
-
-
-        // Step 2: Update task to generate additional activity.
-        var updateTask = TestData.Tasks.UpdateTask(newTask.Id, $"UtilityTaskUpdated_{Guid.NewGuid():N}");
-
-        await _apiFixture.PremiumClient.Tasks.UpdateAsync(updateTask, _cancellationToken);
-
-
-        // Step 3: Get ID mappings for the created task.
+        // Step 1: Map the Inbox ID to its legacy ID.
         var actualMappings = await _apiFixture.PremiumClient.Ids.GetMappingsAsync(
-            MappingObjectName.Tasks,
-            [newTask.Id.PersistentId],
+            MappingObjectName.Projects,
+            [user.InboxProjectId],
             _cancellationToken);
 
         var actualMapping = Assert.Single(actualMappings);
-        Assert.True(
-            actualMapping.OldId == newTask.Id.PersistentId || actualMapping.NewId == newTask.Id.PersistentId,
-            $"Expected one side of the ID mapping to match task ID '{newTask.Id.PersistentId}', but got old_id='{actualMapping.OldId}' and new_id='{actualMapping.NewId}'.");
+        Assert.Equal(user.InboxProjectId, actualMapping.NewId);
+        Assert.False(string.IsNullOrWhiteSpace(actualMapping.OldId));
+
+
+        // Step 2: Map the legacy ID back to the Inbox ID.
+        var legacyId = actualMapping.OldId;
+
+        actualMappings = await _apiFixture.PremiumClient.Ids.GetMappingsAsync(
+            MappingObjectName.Projects,
+            [legacyId],
+            _cancellationToken);
+
+        actualMapping = Assert.Single(actualMappings);
+        Assert.Equal(legacyId, actualMapping.OldId);
+        Assert.Equal(user.InboxProjectId, actualMapping.NewId);
     }
 
     [Fact]
@@ -128,13 +134,12 @@ public class UtilityServicesTests
         Assert.Contains(
             activityLogs.Results,
             l => !string.IsNullOrWhiteSpace(l.ObjectId)
-                && !string.IsNullOrWhiteSpace(l.ObjectType.ToString())
-                && !string.IsNullOrWhiteSpace(l.EventType.ToString()));
+                 && !string.IsNullOrWhiteSpace(l.ObjectType.ToString())
+                 && !string.IsNullOrWhiteSpace(l.EventType.ToString()));
 
-        var actualActivityLog = activityLogs.Results.First(
-            l => !string.IsNullOrWhiteSpace(l.ObjectId)
-                && !string.IsNullOrWhiteSpace(l.ObjectType.ToString())
-                && !string.IsNullOrWhiteSpace(l.EventType.ToString()));
+        var actualActivityLog = activityLogs.Results.First(l => !string.IsNullOrWhiteSpace(l.ObjectId)
+                                                                && !string.IsNullOrWhiteSpace(l.ObjectType.ToString())
+                                                                && !string.IsNullOrWhiteSpace(l.EventType.ToString()));
 
         Assert.NotEqual(default, actualActivityLog.EventDate);
     }
