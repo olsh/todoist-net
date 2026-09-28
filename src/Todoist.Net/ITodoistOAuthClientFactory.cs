@@ -20,7 +20,7 @@ namespace Todoist.Net
         /// so the tokens passed to it replace the stored ones. It is required when <paramref name="tokens" /> include a refresh token.
         /// </param>
         /// <returns>The created <see cref="TodoistClient"/></returns>
-        /// <exception cref="InvalidOperationException">The OAuth client ID of the application is not configured.</exception>
-        TodoistClient CreateClient(TodoistTokens tokens, Func<TodoistTokens, Task> onTokensRefreshed);
+        /// <exception cref="InvalidOperationException">The OAuth client ID or client secret of the application is not configured.</exception>
+        TodoistClient CreateClient(TodoistTokens tokens, Func<TodoistTokens, Task> onTokensRefreshed = null);
     }
 }

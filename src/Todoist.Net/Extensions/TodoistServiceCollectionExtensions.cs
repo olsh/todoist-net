@@ -19,17 +19,17 @@ namespace Todoist.Net.Extensions
         /// Adds todoist client services to the specified <see cref="IServiceCollection" />.
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection" /> to add services to.</param>
-        /// <returns>The <see cref="IServiceCollection" /> so that additional calls can be chained.</returns>
-        public static IServiceCollection AddTodoistClient(this IServiceCollection services)
+        /// <returns>An <see cref="IHttpClientBuilder" /> that can be used to configure the todoist http client.</returns>
+        public static IHttpClientBuilder AddTodoistClient(this IServiceCollection services)
         {
-            services.AddHttpClient();
             services.TryAddSingleton<TodoistClientFactory>();
+            
             services.TryAddSingleton<ITodoistClientFactory>(provider =>
                 provider.GetRequiredService<TodoistClientFactory>());
             services.TryAddSingleton<ITodoistOAuthClientFactory>(provider =>
                 provider.GetRequiredService<TodoistClientFactory>());
 
-            return services;
+            return services.AddHttpClient(TodoistClientFactory.HttpClientName);
         }
 
         /// <summary>
@@ -38,8 +38,8 @@ namespace Todoist.Net.Extensions
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection" /> to add services to.</param>
         /// <param name="configureOAuth">Configures the credentials of the application the OAuth tokens were issued to.</param>
-        /// <returns>The <see cref="IServiceCollection" /> so that additional calls can be chained.</returns>
-        public static IServiceCollection AddTodoistClient(
+        /// <returns>An <see cref="IHttpClientBuilder" /> that can be used to configure the todoist http client.</returns>
+        public static IHttpClientBuilder AddTodoistClient(
             this IServiceCollection services,
             Action<TodoistOAuthOptions> configureOAuth)
         {

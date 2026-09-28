@@ -3,17 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.Json.Serialization.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Todoist.Net.Exceptions;
 using Todoist.Net.Models;
 using Todoist.Net.OAuth;
-using Todoist.Net.Serialization.Converters;
-using Todoist.Net.Serialization.Resolvers;
 using Todoist.Net.Services;
 
 namespace Todoist.Net
@@ -34,31 +29,15 @@ namespace Todoist.Net
 
         private const string CommandsParameterName = "commands";
 
-        internal static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
-        {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            NumberHandling = JsonNumberHandling.AllowReadingFromString,
-            TypeInfoResolver = new DefaultJsonTypeInfoResolver
-            {
-                Modifiers =
-                {
-                    JsonResolverModifiers.SerializeInternalSetters,
-                    JsonResolverModifiers.FilterSerializationByType,
-                    JsonResolverModifiers.IncludeUnsetProperties
-                }
-            },
-            Converters =
-            {
-                new StringEnumTypeConverter(),
-                new ComplexIdConverter(),
-                new CommandResultConverter(),
-                new CommandArgumentConverter()
-            }
-        };
-
         private readonly ITodoistRestClient _restClient;
 
-        private readonly TodoistOAuthHandler _oauthHandler;
+        private readonly TodoistOAuthHandler _oAuthHandler;
+
+        internal TodoistClient(TodoistOAuthHandler oauthHandler, Action<HttpClient> configureHttpClient = null)
+            : this(new TodoistRestClient(oauthHandler, configureHttpClient))
+        {
+            _oAuthHandler = oauthHandler;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TodoistClient" /> class.
@@ -77,9 +56,8 @@ namespace Todoist.Net
         /// <param name="proxy">The proxy.</param>
         /// <exception cref="ArgumentException">Value cannot be null or empty - token</exception>
         public TodoistClient(string token, IWebProxy proxy)
-            : this(new TodoistRestClient(token, proxy))
+            : this(CreateOAuthHandler(new TodoistTokens(token), webProxy: proxy))
         {
-            ThrowHelper.ThrowIfNullOrEmpty(token, nameof(token));
         }
 
         /// <summary>
@@ -90,18 +68,18 @@ namespace Todoist.Net
         /// <param name="tokens">The OAuth tokens of the user.</param>
         /// <param name="onTokensRefreshed">
         /// The callback which stores the refreshed tokens. Todoist rotates the refresh token on every refresh,
-        /// so the tokens passed to it replace the stored ones. It is required when <paramref name="tokens" /> include a refresh token.
+        /// so the tokens passed to it replace the stored ones.
         /// </param>
-        /// <exception cref="ArgumentNullException"><paramref name="options" />, <paramref name="tokens" /> or a required <paramref name="onTokensRefreshed" /> is null.</exception>
-        /// <exception cref="ArgumentException">The client ID in <paramref name="options" /> is null or empty.</exception>
+        /// <param name="configureHttpClient">An optional action to configure the underlying HttpClient.</param>
         public TodoistClient(
             TodoistOAuthOptions options,
             TodoistTokens tokens,
-            Func<TodoistTokens, Task> onTokensRefreshed)
-            : this(options, tokens, onTokensRefreshed, null)
+            Func<TodoistTokens, Task> onTokensRefreshed, 
+            Action<HttpClient> configureHttpClient = null)
+            : this(CreateOAuthHandler(tokens, options, onTokensRefreshed), configureHttpClient)
         {
         }
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="TodoistClient" /> class which authorizes with OAuth tokens
         /// and refreshes them when they expire or get rejected.
@@ -110,33 +88,20 @@ namespace Todoist.Net
         /// <param name="tokens">The OAuth tokens of the user.</param>
         /// <param name="onTokensRefreshed">
         /// The callback which stores the refreshed tokens. Todoist rotates the refresh token on every refresh,
-        /// so the tokens passed to it replace the stored ones. It is required when <paramref name="tokens" /> include a refresh token.
+        /// so the tokens passed to it replace the stored ones.
         /// </param>
         /// <param name="proxy">The proxy.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="options" />, <paramref name="tokens" /> or a required <paramref name="onTokensRefreshed" /> is null.</exception>
-        /// <exception cref="ArgumentException">The client ID in <paramref name="options" /> is null or empty.</exception>
+        /// <param name="configureHttpClient">An optional action to configure the underlying HttpClient.</param>
         public TodoistClient(
             TodoistOAuthOptions options,
             TodoistTokens tokens,
             Func<TodoistTokens, Task> onTokensRefreshed,
-            IWebProxy proxy)
-            : this(
-                new TodoistOAuthHandler(options, tokens, onTokensRefreshed)
-                    { InnerHandler = TodoistRestClient.CreateHttpClientHandler(proxy) })
+            IWebProxy proxy, 
+            Action<HttpClient> configureHttpClient = null)
+            : this(CreateOAuthHandler(tokens, options, onTokensRefreshed, proxy), configureHttpClient)
         {
         }
-
-        private TodoistClient(TodoistOAuthHandler oauthHandler)
-            : this(new TodoistRestClient(null, new HttpClient(oauthHandler), disposeHttpClient: true), oauthHandler)
-        {
-        }
-
-        internal TodoistClient(ITodoistRestClient restClient, TodoistOAuthHandler oauthHandler)
-            : this(restClient)
-        {
-            _oauthHandler = oauthHandler;
-        }
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="TodoistClient" /> class.
         /// </summary>
@@ -269,7 +234,7 @@ namespace Todoist.Net
                 resourceTypes = new[] { ResourceType.All };
             }
 
-            var serializedResourceTypes = JsonSerializer.Serialize(resourceTypes, SerializerOptions);
+            var serializedResourceTypes = TodoistSerializer.Serialize(resourceTypes);
             syncToken = syncToken ?? "*";
 
             var parameters = new Dictionary<string, string>
@@ -356,27 +321,30 @@ namespace Todoist.Net
         /// <summary>
         /// Gets the handler which authorizes requests with OAuth tokens, or <c>null</c> when the client was not created with OAuth tokens.
         /// </summary>
-        internal TodoistOAuthHandler OAuthHandler => _oauthHandler;
-
-        internal static TodoistClient CreateOAuthClient(
-            TodoistOAuthOptions options,
-            TodoistTokens tokens,
-            Func<TodoistTokens, Task> onTokensRefreshed,
-            HttpMessageHandler innerHandler,
-            Action<HttpClient> configureHttpClient = null)
-        {
-            var oauthHandler = new TodoistOAuthHandler(options, tokens, onTokensRefreshed)
-                { InnerHandler = innerHandler };
-            var httpClient = new HttpClient(oauthHandler);
-            configureHttpClient?.Invoke(httpClient);
-
-            return new TodoistClient(new TodoistRestClient(null, httpClient, disposeHttpClient: true), oauthHandler);
-        }
+        internal TodoistOAuthHandler OAuthHandler => _oAuthHandler;
 
         private TodoistOAuthHandler GetOAuthHandler()
         {
-            return _oauthHandler ??
-                   throw new InvalidOperationException("The client was not created with OAuth tokens.");
+            return _oAuthHandler ??
+                throw new InvalidOperationException("The client was not created with OAuth tokens.");
+        }
+
+        private static TodoistOAuthHandler CreateOAuthHandler(
+            TodoistTokens tokens,
+            TodoistOAuthOptions options = null,
+            Func<TodoistTokens, Task> onTokensRefreshed = null,
+            IWebProxy webProxy = null)
+        {
+            ThrowHelper.ThrowIfNull(tokens, nameof(tokens));
+
+            return new TodoistOAuthHandler(tokens, options, onTokensRefreshed)
+            { 
+                InnerHandler = new HttpClientHandler
+                {
+                    Proxy = webProxy,
+                    UseProxy = webProxy != null
+                }
+            };
         }
 
         #endregion
@@ -393,7 +361,7 @@ namespace Todoist.Net
         {
             ThrowHelper.ThrowIfNullOrEmpty(commands, nameof(commands));
 
-            var serializedCommands = JsonSerializer.Serialize(commands, SerializerOptions);
+            var serializedCommands = TodoistSerializer.Serialize(commands);
 
             var parameters = new Dictionary<string, string>
             {
@@ -402,7 +370,7 @@ namespace Todoist.Net
 
             if (includedResources != null && includedResources.Length > 0)
             {
-                parameters[ResourceTypesParameterName] = JsonSerializer.Serialize(includedResources, SerializerOptions);
+                parameters[ResourceTypesParameterName] = TodoistSerializer.Serialize(includedResources);
             }
 
             if (!string.IsNullOrEmpty(syncToken))
@@ -432,7 +400,9 @@ namespace Todoist.Net
             Dictionary<string, string> queryParams,
             CancellationToken cancellationToken)
         {
-            return ProcessRequestAsync(ct => _restClient.GetAsync(resource, queryParams, ct), cancellationToken);
+            return TodoistSerializer.ProcessRequestAsync(
+                ct => _restClient.GetAsync(resource, queryParams, ct), 
+                cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -441,7 +411,9 @@ namespace Todoist.Net
             Dictionary<string, string> queryParams,
             CancellationToken cancellationToken)
         {
-            return ProcessRequestAsync<T>(ct => _restClient.GetAsync(resource, queryParams, ct), cancellationToken);
+            return TodoistSerializer.ProcessRequestAsync<T>(
+                ct => _restClient.GetAsync(resource, queryParams, ct), 
+                cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -450,7 +422,9 @@ namespace Todoist.Net
             Dictionary<string, string> queryParams,
             CancellationToken cancellationToken)
         {
-            return ProcessTextRequestAsync(ct => _restClient.GetAsync(resource, queryParams, ct), cancellationToken);
+            return TodoistSerializer.ProcessTextRequestAsync(
+                ct => _restClient.GetAsync(resource, queryParams, ct), 
+                cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -459,7 +433,9 @@ namespace Todoist.Net
             Dictionary<string, string> formParams,
             CancellationToken cancellationToken)
         {
-            return ProcessRequestAsync(ct => _restClient.PostAsync(resource, formParams, ct), cancellationToken);
+            return TodoistSerializer.ProcessRequestAsync(
+                ct => _restClient.PostAsync(resource, formParams, ct), 
+                cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -468,7 +444,9 @@ namespace Todoist.Net
             Dictionary<string, string> formParams,
             CancellationToken cancellationToken)
         {
-            return ProcessRequestAsync<T>(ct => _restClient.PostAsync(resource, formParams, ct), cancellationToken);
+            return TodoistSerializer.ProcessRequestAsync<T>(
+                ct => _restClient.PostAsync(resource, formParams, ct), 
+                cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -478,7 +456,7 @@ namespace Todoist.Net
             Dictionary<string, string> formParams,
             CancellationToken cancellationToken)
         {
-            return ProcessRequestAsync(
+            return TodoistSerializer.ProcessRequestAsync(
                 ct => _restClient.PostFilesAsync(resource, files, formParams, ct),
                 cancellationToken);
         }
@@ -490,7 +468,7 @@ namespace Todoist.Net
             Dictionary<string, string> formParams,
             CancellationToken cancellationToken)
         {
-            return ProcessRequestAsync<T>(
+            return TodoistSerializer.ProcessRequestAsync<T>(
                 ct => _restClient.PostFilesAsync(resource, files, formParams, ct),
                 cancellationToken);
         }
@@ -501,7 +479,10 @@ namespace Todoist.Net
             TReq content,
             CancellationToken cancellationToken)
         {
-            return ProcessJsonRequestAsync(resource, content, _restClient.PostJsonAsync, cancellationToken);
+            return TodoistSerializer.ProcessJsonRequestAsync(
+                content, 
+                (json, ct) => _restClient.PostJsonAsync(resource, json, ct), 
+                cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -510,19 +491,26 @@ namespace Todoist.Net
             TReq content,
             CancellationToken cancellationToken)
         {
-            return ProcessJsonRequestAsync<TReq, TRes>(resource, content, _restClient.PostJsonAsync, cancellationToken);
+            return TodoistSerializer.ProcessJsonRequestAsync<TReq, TRes>(
+                content, 
+                (json, ct) => _restClient.PostJsonAsync(resource, json, ct), 
+                cancellationToken);
         }
 
         /// <inheritdoc/>
         Task IAdvancedTodoistClient.PutAsync(string resource, CancellationToken cancellationToken)
         {
-            return ProcessRequestAsync(ct => _restClient.PutAsync(resource, ct), cancellationToken);
+            return TodoistSerializer.ProcessRequestAsync(
+                ct => _restClient.PutAsync(resource, ct), 
+                cancellationToken);
         }
 
         /// <inheritdoc/>
         Task<T> IAdvancedTodoistClient.PutAsync<T>(string resource, CancellationToken cancellationToken)
         {
-            return ProcessRequestAsync<T>(ct => _restClient.PutAsync(resource, ct), cancellationToken);
+            return TodoistSerializer.ProcessRequestAsync<T>(
+                ct => _restClient.PutAsync(resource, ct), 
+                cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -531,7 +519,10 @@ namespace Todoist.Net
             TReq content,
             CancellationToken cancellationToken)
         {
-            return ProcessJsonRequestAsync(resource, content, _restClient.PutJsonAsync, cancellationToken);
+            return TodoistSerializer.ProcessJsonRequestAsync(
+                content, 
+                (json, ct) => _restClient.PutJsonAsync(resource, json, ct), 
+                cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -540,7 +531,10 @@ namespace Todoist.Net
             TReq content,
             CancellationToken cancellationToken)
         {
-            return ProcessJsonRequestAsync<TReq, TRes>(resource, content, _restClient.PutJsonAsync, cancellationToken);
+            return TodoistSerializer.ProcessJsonRequestAsync<TReq, TRes>(
+                content, 
+                (json, ct) => _restClient.PutJsonAsync(resource, json, ct), 
+                cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -549,7 +543,9 @@ namespace Todoist.Net
             Dictionary<string, string> queryParams,
             CancellationToken cancellationToken)
         {
-            return ProcessRequestAsync(ct => _restClient.DeleteAsync(resource, queryParams, ct), cancellationToken);
+            return TodoistSerializer.ProcessRequestAsync(
+                ct => _restClient.DeleteAsync(resource, queryParams, ct), 
+                cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -558,7 +554,9 @@ namespace Todoist.Net
             Dictionary<string, string> queryParams,
             CancellationToken cancellationToken)
         {
-            return ProcessRequestAsync<T>(ct => _restClient.DeleteAsync(resource, queryParams, ct), cancellationToken);
+            return TodoistSerializer.ProcessRequestAsync<T>(
+                ct => _restClient.DeleteAsync(resource, queryParams, ct), 
+                cancellationToken);
         }
 
         #endregion
@@ -567,133 +565,9 @@ namespace Todoist.Net
 
         private Task<T> ProcessSyncAsync<T>(Dictionary<string, string> parameters, CancellationToken cancellationToken)
         {
-            return ProcessRequestAsync<T>(ct => _restClient.PostAsync(SyncEndpoint, parameters, ct), cancellationToken);
-        }
-
-        private static async Task ProcessRequestAsync(
-            Func<CancellationToken, Task<HttpResponseMessage>> restCall,
-            CancellationToken cancellationToken)
-        {
-            var response = await restCall(cancellationToken)
-                .ConfigureAwait(false);
-
-            await EnsureSuccessResponseAsync(response, cancellationToken)
-                .ConfigureAwait(false);
-        }
-
-        private static async Task<T> ProcessRequestAsync<T>(
-            Func<CancellationToken, Task<HttpResponseMessage>> restCall,
-            CancellationToken cancellationToken)
-        {
-            var response = await restCall(cancellationToken)
-                .ConfigureAwait(false);
-
-            await EnsureSuccessResponseAsync(response, cancellationToken)
-                .ConfigureAwait(false);
-
-            return await DeserializeResponseAsync<T>(response, cancellationToken)
-                .ConfigureAwait(false);
-        }
-
-        private static async Task<string> ProcessTextRequestAsync(
-            Func<CancellationToken, Task<HttpResponseMessage>> restCall,
-            CancellationToken cancellationToken)
-        {
-            var response = await restCall(cancellationToken)
-                .ConfigureAwait(false);
-
-            await EnsureSuccessResponseAsync(response, cancellationToken)
-                .ConfigureAwait(false);
-
-            return await response.Content.ReadAsStringAsync()
-                .ConfigureAwait(false);
-        }
-
-        private static async Task ProcessJsonRequestAsync<TReq>(
-            string resource,
-            TReq content,
-            Func<string, string, CancellationToken, Task<HttpResponseMessage>> restCall,
-            CancellationToken cancellationToken)
-        {
-            var jsonContent = JsonSerializer.Serialize(content, SerializerOptions);
-
-            var response = await restCall(resource, jsonContent, cancellationToken)
-                .ConfigureAwait(false);
-
-            await EnsureSuccessResponseAsync(response, cancellationToken)
-                .ConfigureAwait(false);
-        }
-
-        private static async Task<TRes> ProcessJsonRequestAsync<TReq, TRes>(
-            string resource,
-            TReq content,
-            Func<string, string, CancellationToken, Task<HttpResponseMessage>> restCall,
-            CancellationToken cancellationToken)
-        {
-            var jsonContent = JsonSerializer.Serialize(content, SerializerOptions);
-
-            var response = await restCall(resource, jsonContent, cancellationToken)
-                .ConfigureAwait(false);
-
-            await EnsureSuccessResponseAsync(response, cancellationToken)
-                .ConfigureAwait(false);
-
-            return await DeserializeResponseAsync<TRes>(response, cancellationToken)
-                .ConfigureAwait(false);
-        }
-
-        internal static async Task EnsureSuccessResponseAsync(
-            HttpResponseMessage response,
-            CancellationToken cancellationToken)
-        {
-            if (response.IsSuccessStatusCode)
-            {
-                return;
-            }
-
-            TodoistError errorContent;
-            try
-            {
-                errorContent = await DeserializeResponseAsync<TodoistError>(response, cancellationToken)
-                    .ConfigureAwait(false);
-            }
-            catch
-            {
-                // If deserialization fails, we can still throw a generic exception with status code and reason.
-                errorContent = null;
-            }
-
-            // Any JSON object deserializes into a `TodoistError` instance, so a body which is not an
-            // actual Todoist error would produce an exception without a single populated property.
-            if (errorContent != null && HasErrorDetails(errorContent))
-            {
-                errorContent.HttpCode = errorContent.HttpCode ?? (int)response.StatusCode;
-
-                throw new TodoistException(errorContent);
-            }
-
-            response.EnsureSuccessStatusCode();
-        }
-
-        private static bool HasErrorDetails(TodoistError error)
-        {
-            return error.Error != null
-                   || error.ErrorCode.HasValue
-                   || error.ErrorTag != null
-                   || error.HttpCode.HasValue
-                   || error.ErrorExtra != null;
-        }
-
-        internal static async Task<T> DeserializeResponseAsync<T>(
-            HttpResponseMessage response,
-            CancellationToken cancellationToken)
-        {
-            using (var responseStream = await response.Content.ReadAsStreamAsync()
-                       .ConfigureAwait(false))
-            {
-                return await JsonSerializer.DeserializeAsync<T>(responseStream, SerializerOptions, cancellationToken)
-                    .ConfigureAwait(false);
-            }
+            return TodoistSerializer.ProcessRequestAsync<T>(
+                ct => _restClient.PostAsync(SyncEndpoint, parameters, ct), 
+                cancellationToken);
         }
 
         private static void ThrowIfErrors(SyncTransactionResponse syncResponse)

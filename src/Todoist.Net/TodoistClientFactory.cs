@@ -13,63 +13,76 @@ namespace Todoist.Net
 {
     internal sealed class TodoistClientFactory : ITodoistClientFactory, ITodoistOAuthClientFactory
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        public const string HttpClientName = "Todoist.Net.HttpClient";
+
 
         private readonly IHttpMessageHandlerFactory _httpMessageHandlerFactory;
 
         private readonly IOptionsMonitor<HttpClientFactoryOptions> _httpClientFactoryOptions;
-
-        private readonly IOptions<TodoistOAuthOptions> _oauthOptions;
+        
+        private readonly IOptions<TodoistOAuthOptions> _oAuthOptions;
 
         public TodoistClientFactory(
-            IHttpClientFactory httpClientFactory,
             IHttpMessageHandlerFactory httpMessageHandlerFactory,
             IOptionsMonitor<HttpClientFactoryOptions> httpClientFactoryOptions,
-            IOptions<TodoistOAuthOptions> oauthOptions)
+            IOptions<TodoistOAuthOptions> oAuthOptions)
         {
-            _httpClientFactory = httpClientFactory;
             _httpMessageHandlerFactory = httpMessageHandlerFactory;
             _httpClientFactoryOptions = httpClientFactoryOptions;
-            _oauthOptions = oauthOptions;
+            _oAuthOptions = oAuthOptions;
         }
 
         /// <inheritdoc/>
         public TodoistClient CreateClient(string token)
         {
-            var httpClient = _httpClientFactory.CreateClient();
-            var todoistRestClient = new TodoistRestClient(token, httpClient);
+            var innerHandler = _httpMessageHandlerFactory.CreateHandler(HttpClientName);
+            var oAuthHandler = new TodoistOAuthHandler(new TodoistTokens(token))
+            {
+                InnerHandler = innerHandler
+            };
 
-            return new TodoistClient(todoistRestClient);
+            var httpClientActions = _httpClientFactoryOptions
+                .Get(HttpClientName)
+                .HttpClientActions;
+
+            return new TodoistClient(oAuthHandler, client =>
+            {
+                foreach (var action in httpClientActions)
+                {
+                    action(client);
+                }
+            });
         }
 
         /// <inheritdoc/>
         public TodoistClient CreateClient(TodoistTokens tokens, Func<TodoistTokens, Task> onTokensRefreshed)
         {
-            var options = _oauthOptions.Value;
-            if (string.IsNullOrEmpty(options.ClientId))
+            var options = _oAuthOptions.Value;
+            if (string.IsNullOrEmpty(options.ClientId) || string.IsNullOrEmpty(options.ClientSecret))
             {
                 throw new InvalidOperationException(
-                    "The OAuth client ID is not configured. Pass it to the AddTodoistClient overload which configures TodoistOAuthOptions.");
+                    "The OAuth client ID or client secret is not configured. Pass it to the AddTodoistClient overload which configures TodoistOAuthOptions.");
             }
 
             // The OAuth handler holds the tokens of a single user, so it wraps the pooled handlers instead of joining them.
             // That means creating the HttpClient here, so it gets the configuration IHttpClientFactory applies to the clients it creates.
-            var innerHandler = _httpMessageHandlerFactory.CreateHandler();
-            var httpClientActions = _httpClientFactoryOptions.Get(Options.DefaultName)
+            var innerHandler = _httpMessageHandlerFactory.CreateHandler(HttpClientName);
+            var oAuthHandler = new TodoistOAuthHandler(tokens, options, onTokensRefreshed)
+            {
+                InnerHandler = innerHandler
+            };
+
+            var httpClientActions = _httpClientFactoryOptions
+                .Get(HttpClientName)
                 .HttpClientActions;
 
-            return TodoistClient.CreateOAuthClient(
-                options,
-                tokens,
-                onTokensRefreshed,
-                innerHandler,
-                httpClient =>
+            return new TodoistClient(oAuthHandler, client =>
+            {
+                foreach (var action in httpClientActions)
                 {
-                    foreach (var configureHttpClient in httpClientActions)
-                    {
-                        configureHttpClient(httpClient);
-                    }
-                });
+                    action(client);
+                }
+            });
         }
     }
 }
