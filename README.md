@@ -24,6 +24,80 @@ Install-Package Todoist.Net
 ITodoistClient client = new TodoistClient("API token");
 ```
 
+### OAuth with refresh tokens
+
+Applications authorized through [Todoist OAuth](https://developer.todoist.com/api/v1/#tag/Authorization/OAuth) get
+an access token which expires after an hour, and a refresh token to get a new one. The client refreshes the tokens on
+its own before they expire, or when Todoist rejects the access token, and sends the request again.
+
+Todoist rotates the refresh token on every refresh, so the previous one stops working. Store the tokens passed to
+the callback every time it is called, or the user will have to authorize the application again.
+The OAuth types live in the `Todoist.Net.OAuth` namespace.
+
+```csharp
+var options = new TodoistOAuthOptions
+{
+    ClientId = "CLIENT_ID",
+    ClientSecret = "CLIENT_SECRET"
+};
+var tokens = new TodoistTokens(accessToken, refreshToken, expiresAt);
+
+using var client = new TodoistClient(options, tokens, refreshedTokens => tokenStore.SaveAsync(userId, refreshedTokens));
+```
+
+When two clients of the same user refresh with the same refresh token at once, Todoist gives the new refresh token to
+the first one only. The second one gets the access token alone and does not call the callback, so it never overwrites
+the stored refresh token.
+
+Create clients from the stored tokens when you need them instead of keeping several long-lived clients for the same
+user. A client holding a refresh token another client has already used, which refreshes more than a minute later,
+looks like a replay attack to Todoist: it revokes all the tokens of the user, who has to authorize the application again.
+
+The tokens can also be refreshed ahead of time, and the access token revoked (revoking requires the client secret):
+
+```csharp
+var refreshedTokens = await client.RefreshTokensAsync();
+
+await client.RevokeTokensAsync();
+```
+
+Todoist can revoke access tokens only, so the refresh token keeps working after `RevokeTokensAsync`. Delete the stored
+tokens to give up the access for good; the authorization ends when the user removes the application in the Todoist settings.
+
+### Dependency injection
+
+`AddTodoistClient` registers `ITodoistClientFactory`, which creates clients on top of `IHttpClientFactory`.
+Configure the OAuth application to create clients with the tokens of each user through `ITodoistOAuthClientFactory`:
+
+```csharp
+services.AddTodoistClient(options =>
+{
+    options.ClientId = configuration["Todoist:ClientId"];
+    options.ClientSecret = configuration["Todoist:ClientSecret"];
+});
+```
+
+```csharp
+public class TodoistSync(ITodoistOAuthClientFactory clientFactory, ITokenStore tokenStore)
+{
+    public async Task SyncAsync(string userId)
+    {
+        var tokens = await tokenStore.GetAsync(userId);
+
+        // The callback captures the user, so the refreshed tokens are stored for the right one.
+        using var client = clientFactory.CreateClient(tokens, refreshedTokens => tokenStore.SaveAsync(userId, refreshedTokens));
+
+        var projects = await client.Projects.GetAsync();
+    }
+}
+```
+
+Clients created with an API token keep working as before:
+
+```csharp
+using var client = serviceProvider.GetRequiredService<ITodoistClientFactory>().CreateClient("API token");
+```
+
 ### Quick add
 
 Implementation of the Quick Add Task available in the official clients.

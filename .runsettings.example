@@ -22,6 +22,14 @@
       <!-- Optional: Set this token in order to further distribute the load of integration tests across multiple accounts to avoid hitting rate limits on any single account. -->
       <!-- It should be set to a valid token of a different account than the ones used in `todoist_token` and `todoist_token_secondary`. -->
       <!-- <todoist_token_tertiary></todoist_token_tertiary> -->
+
+      <!-- Optional: Set these values in order to run the explicit "oauth-interactive" test, which walks through the OAuth flow in a browser. -->
+      <!-- They are the credentials of a Todoist application with refresh tokens enabled, created in the App Management Console (https://developer.todoist.com/appconsole.html). -->
+      <!-- <todoist_oauth_client_id></todoist_oauth_client_id> -->
+      <!-- <todoist_oauth_client_secret></todoist_oauth_client_secret> -->
+
+      <!-- Optional: The redirect URI configured for the application above; it must point to a free port on this machine. Defaults to http://localhost:8765/callback. -->
+      <!-- <todoist_oauth_redirect_uri></todoist_oauth_redirect_uri> -->
     </EnvironmentVariables>
   </RunConfiguration>
 </RunSettings>

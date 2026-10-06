@@ -14,8 +14,8 @@ public static class SettingsProvider
     public static string GetPrimaryToken()
     {
         return Environment.GetEnvironmentVariable("todoist_token")
-            ?? Environment.GetEnvironmentVariable("todoist:token")
-            ?? throw new InvalidOperationException("Required `todoist_token` environment variable is not set.");
+               ?? Environment.GetEnvironmentVariable("todoist:token")
+               ?? throw new InvalidOperationException("Required `todoist_token` environment variable is not set.");
     }
 
     /// <summary>
@@ -36,7 +36,7 @@ public static class SettingsProvider
     public static string? GetSecondaryToken()
     {
         return Environment.GetEnvironmentVariable("todoist_token_secondary")
-            ?? Environment.GetEnvironmentVariable("todoist:token:secondary");
+               ?? Environment.GetEnvironmentVariable("todoist:token:secondary");
     }
 
     /// <summary>
@@ -50,6 +50,41 @@ public static class SettingsProvider
     public static string? GetTertiaryToken()
     {
         return Environment.GetEnvironmentVariable("todoist_token_tertiary")
-            ?? Environment.GetEnvironmentVariable("todoist:token:tertiary");
+               ?? Environment.GetEnvironmentVariable("todoist:token:tertiary");
+    }
+
+    /// <summary>
+    /// Gets the client ID of the Todoist OAuth application used by the interactive OAuth tests, if available.
+    /// </summary>
+    /// <returns>A string containing the client ID if the environment variable is set; otherwise, <c>null</c>.</returns>
+    public static string? GetOAuthClientId()
+    {
+        return Environment.GetEnvironmentVariable("todoist_oauth_client_id")
+               ?? Environment.GetEnvironmentVariable("todoist:oauth:client_id");
+    }
+
+    /// <summary>
+    /// Gets the client secret of the Todoist OAuth application used by the interactive OAuth tests, if available.
+    /// </summary>
+    /// <returns>A string containing the client secret if the environment variable is set; otherwise, <c>null</c>.</returns>
+    public static string? GetOAuthClientSecret()
+    {
+        return Environment.GetEnvironmentVariable("todoist_oauth_client_secret")
+               ?? Environment.GetEnvironmentVariable("todoist:oauth:client_secret");
+    }
+
+    /// <summary>
+    /// Gets the redirect URI of the Todoist OAuth application used by the interactive OAuth tests.
+    /// </summary>
+    /// <remarks>
+    /// It must match a redirect URI configured for the application exactly, and point to a free port on the local machine.
+    /// </remarks>
+    /// <returns>The redirect URI if the environment variable is set; otherwise, <c>http://localhost:8765/callback</c>.</returns>
+    public static Uri GetOAuthRedirectUri()
+    {
+        return new Uri(
+            Environment.GetEnvironmentVariable("todoist_oauth_redirect_uri")
+            ?? Environment.GetEnvironmentVariable("todoist:oauth:redirect_uri")
+            ?? "http://localhost:8765/callback");
     }
 }
