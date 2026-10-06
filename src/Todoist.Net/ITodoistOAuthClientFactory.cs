@@ -21,6 +21,6 @@ namespace Todoist.Net
         /// </param>
         /// <returns>The created <see cref="TodoistClient"/></returns>
         /// <exception cref="InvalidOperationException">The OAuth client ID or client secret of the application is not configured.</exception>
-        TodoistClient CreateClient(TodoistTokens tokens, Func<TodoistTokens, Task> onTokensRefreshed = null);
+        TodoistClient CreateClient(TodoistTokens tokens, Func<TodoistTokens, Task> onTokensRefreshed);
     }
 }
