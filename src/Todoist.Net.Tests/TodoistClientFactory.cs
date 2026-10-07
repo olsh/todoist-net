@@ -18,24 +18,30 @@ public static class TodoistClientFactory
     public static ITodoistClient? CreateSecondary(ITestOutputHelper? outputHelper = null)
     {
         var token = SettingsProvider.GetSecondaryToken();
+        if (token is null)
+        {
+            return null;
+        }
+
         var todoistOAuthHandler = new TodoistOAuthHandler(new TodoistTokens(token))
         {
             InnerHandler = new HttpClientHandler()
         }; 
-        return token is null
-            ? null
-            : new TodoistClient(new RateLimitAwareRestClient(todoistOAuthHandler, outputHelper));
+        return new TodoistClient(new RateLimitAwareRestClient(todoistOAuthHandler, outputHelper));
     }
 
     public static ITodoistClient? CreateTertiary(ITestOutputHelper? outputHelper = null)
     {
         var token = SettingsProvider.GetTertiaryToken();
+        if (token is null)
+        {
+            return null;
+        }
+        
         var todoistOAuthHandler = new TodoistOAuthHandler(new TodoistTokens(token))
         {
             InnerHandler = new HttpClientHandler()
         }; 
-        return token is null
-            ? null
-            : new TodoistClient(new RateLimitAwareRestClient(todoistOAuthHandler, outputHelper));
+        return new TodoistClient(new RateLimitAwareRestClient(todoistOAuthHandler, outputHelper));
     }
 }
