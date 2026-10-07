@@ -5,6 +5,7 @@
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
     <File Path=".runsettings" />
+    <File Path=".runsettings.example" />
     <File Path="README.md" />
   </Folder>
   <Folder Name="/src/">

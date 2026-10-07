@@ -5,7 +5,7 @@ namespace Todoist.Net.Tests;
 [Trait(Constants.TraitName, Constants.UnitTraitValue)]
 public class SerializationTests
 {
-    private static readonly JsonSerializerOptions SerializerOptions = TodoistClient.SerializerOptions;
+    private static readonly JsonSerializerOptions SerializerOptions = TodoistSerializer.SerializerOptions;
 
     [Fact]
     public void AddSection_WithSectionOrder_WritesTheRestApiOrderAlias()
