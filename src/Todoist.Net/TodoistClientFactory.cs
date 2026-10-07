@@ -58,10 +58,10 @@ namespace Todoist.Net
         public TodoistClient CreateClient(TodoistTokens tokens, Func<TodoistTokens, Task> onTokensRefreshed)
         {
             var options = _oAuthOptions.Value;
-            if (string.IsNullOrEmpty(options.ClientId) || string.IsNullOrEmpty(options.ClientSecret))
+            if (string.IsNullOrEmpty(options.ClientId))
             {
                 throw new InvalidOperationException(
-                    "The OAuth client ID or client secret is not configured. Pass it to the AddTodoistClient overload which configures TodoistOAuthOptions.");
+                    "The OAuth client ID is not configured. Pass it to the AddTodoistClient overload which configures TodoistOAuthOptions.");
             }
 
             // The OAuth handler holds the tokens of a single user, so it wraps the pooled handlers instead of joining them.

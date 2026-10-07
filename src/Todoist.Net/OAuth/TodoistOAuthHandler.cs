@@ -48,17 +48,12 @@ namespace Todoist.Net.OAuth
                 ThrowHelper.ThrowIfNull(
                     options, 
                     nameof(options), 
-                    "Todoist Client ID and Client Secret must be provided when using a refresh token.");
+                    "Todoist Client ID must be provided when using a refresh token.");
 
                 ThrowHelper.ThrowIfNullOrEmpty(
                     options.ClientId,
                     nameof(options.ClientId),
                     "Todoist Client ID must be provided when using a refresh token.");
-
-                ThrowHelper.ThrowIfNullOrEmpty(
-                    options.ClientSecret,
-                    nameof(options.ClientSecret),
-                    "Todoist Client Secret must be provided when using a refresh token.");
             }
 
             _onTokensRefreshed = onTokensRefreshed;
@@ -93,7 +88,7 @@ namespace Todoist.Net.OAuth
             if (!CanRevoke(_options))
             {
                 throw new InvalidOperationException(
-                    "Revoking the tokens requires the client ID and client secret of the application.");
+                    "Revoking the tokens requires the client ID of the application.");
             }
 
             return SafelyRevokeTokensAsync(cancellationToken);
@@ -167,7 +162,7 @@ namespace Todoist.Net.OAuth
                 // Create a timeout source for the token request. The cancellation token is set to None
                 // because we want the refresh operation to complete even if the original request is canceled.
                 using (var timeoutSource = CreateTokenRequestTimeoutSource(CancellationToken.None))
-                using (var request = ApiRequestBuilder.BuildRefreshTokensRequest(_options.ClientId, _options.ClientSecret, currentTokens.RefreshToken))
+                using (var request = ApiRequestBuilder.BuildRefreshTokensRequest(currentTokens.RefreshToken, _options.ClientId, _options.ClientSecret))
                 {
                     // The timeout keeps running while the response is read, since a body can stall after the headers arrived.
                     tokenResponse = await TodoistSerializer
@@ -206,7 +201,7 @@ namespace Todoist.Net.OAuth
                 var tokens = Volatile.Read(ref _tokens);
 
                 using (var timeoutSource = CreateTokenRequestTimeoutSource(cancellationToken))
-                using (var request = ApiRequestBuilder.BuildRevokeTokenRequest(_options.ClientId, _options.ClientSecret, tokens.AccessToken))
+                using (var request = ApiRequestBuilder.BuildRevokeTokenRequest(tokens.AccessToken, _options.ClientId, _options.ClientSecret))
                 {
                     await TodoistSerializer
                         .ProcessRequestAsync(ct => base.SendAsync(request, ct), timeoutSource.Token)
@@ -235,8 +230,7 @@ namespace Todoist.Net.OAuth
 
         private static bool CanRevoke(TodoistOAuthOptions options)
         {
-            return !string.IsNullOrEmpty(options?.ClientId) 
-                && !string.IsNullOrEmpty(options?.ClientSecret);
+            return !string.IsNullOrEmpty(options?.ClientId);
         }
 
         private static bool CanRefresh(TodoistTokens tokens)

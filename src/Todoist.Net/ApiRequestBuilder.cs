@@ -17,15 +17,18 @@ namespace Todoist.Net
         public const string NonReplayableRequestKey = "Todoist.Net.NonReplayableRequest";
 
         
-        public static HttpRequestMessage BuildRefreshTokensRequest(string clientId, string clientSecret, string refreshToken)
+        public static HttpRequestMessage BuildRefreshTokensRequest(string refreshToken, string clientId, string clientSecret = null)
         {
             var formParams = new Dictionary<string, string>
             {
                 { "client_id", clientId },
-                { "client_secret", clientSecret },
                 { "refresh_token", refreshToken },
                 { "grant_type", "refresh_token" }
             };
+            if (clientSecret != null)
+            {
+                formParams.Add("client_secret", clientSecret);
+            }
 
             return new HttpRequestMessage(HttpMethod.Post, TokenRefreshUri)
             {
@@ -33,7 +36,7 @@ namespace Todoist.Net
             };
         }
 
-        public static HttpRequestMessage BuildRevokeTokenRequest(string clientId, string clientSecret, string accessToken)
+        public static HttpRequestMessage BuildRevokeTokenRequest(string accessToken, string clientId, string clientSecret = null)
         {
             var formParams = new Dictionary<string, string>
             {
@@ -47,7 +50,7 @@ namespace Todoist.Net
             };
             request.Headers.Authorization = new AuthenticationHeaderValue(
                 "Basic",
-                Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientId}:{clientSecret}")));
+                Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientId}:{clientSecret ?? string.Empty}")));
                     
             return request;
         }

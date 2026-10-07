@@ -85,6 +85,31 @@ public class TodoistOAuthTests
     }
 
     [Fact]
+    public async Task RefreshTokens_OfPublicClient_OmitsTheClientSecret()
+    {
+        var server = new FakeOAuthServer("access-0");
+        var recorder = new TokensRecorder();
+        var options = new TodoistOAuthOptions { ClientId = "client-id" };
+        using var client = CreateOAuthTodoistClient(
+            options,
+            new TodoistTokens("access-0", "refresh-0"),
+            recorder.StoreAsync,
+            server);
+
+
+        // Step 1: Refresh the tokens of an application without a client secret.
+        var refreshedTokens = await client.RefreshTokensAsync(TestContext.Current.CancellationToken);
+
+
+        // Step 2: Assert the token request carried the client ID alone, and the refreshed tokens were reported.
+        var tokenRequest = Assert.Single(server.TokenRequests);
+        Assert.Equal("client-id", tokenRequest.Form["client_id"]);
+        Assert.Null(tokenRequest.Form["client_secret"]);
+        Assert.Equal("access-1", refreshedTokens.AccessToken);
+        Assert.Same(refreshedTokens, Assert.Single(recorder.Tokens));
+    }
+
+    [Fact]
     public async Task SendRequest_WhenAccessTokenIsRejected_RefreshesTokensAndSendsTheRequestAgain()
     {
         var server = new FakeOAuthServer("revoked-elsewhere");
@@ -474,22 +499,6 @@ public class TodoistOAuthTests
 
         Assert.Equal("access-1", refreshedTokens.AccessToken);
         Assert.Equal(2, server.TokenRequests.Count);
-    }
-
-    [Fact]
-    public async Task RevokeTokens_WithoutClientSecret_Throws()
-    {
-        var server = new FakeOAuthServer("access-0");
-        var options = new TodoistOAuthOptions { ClientId = "client-id" };
-        using var client = CreateOAuthTodoistClient(
-            options,
-            new TodoistTokens("access-0"),
-            _ => Task.CompletedTask,
-            server);
-
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            client.RevokeTokensAsync(TestContext.Current.CancellationToken));
-        Assert.Empty(server.Requests);
     }
 
     [Fact]
