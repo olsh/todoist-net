@@ -9,7 +9,7 @@ using Todoist.Net.Models;
 
 namespace Todoist.Net
 {
-    internal interface IAdvancedTodoistClient : ITodoistClient
+    internal interface IAdvancedTodoistClient : ITodoistClient, ITodoistOAuthClient
     {
         /// <summary>
         /// Sends a <c>GET</c> request, and handles response asynchronously.

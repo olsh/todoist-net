@@ -542,10 +542,10 @@ public class TodoistOAuthTests
     {
         var server = new FakeOAuthServer("access-0");
         var services = new ServiceCollection();
-        services.AddTodoistClient(options => options.ClientId = "client-id");
-        services.ConfigureHttpClientDefaults(builder => builder
+        services
+            .AddTodoistClient(options => options.ClientId = "client-id")
             .ConfigurePrimaryHttpMessageHandler(() => server)
-            .ConfigureHttpClient(httpClient => httpClient.DefaultRequestHeaders.Add("X-Configured", "yes")));
+            .ConfigureHttpClient(httpClient => httpClient.DefaultRequestHeaders.Add("X-Configured", "yes"));
         await using var serviceProvider = services.BuildServiceProvider();
 
         using var oauthClient = serviceProvider.GetRequiredService<ITodoistOAuthClientFactory>()
@@ -613,7 +613,7 @@ public class TodoistOAuthTests
             "access-1",
             Assert.Single(recorderB.Tokens)
                 .AccessToken);
-        Assert.Equal("access-a", clientA.OAuthHandler?.Tokens.AccessToken);
+        Assert.Equal("access-a", ((TodoistClient)clientA).OAuthHandler?.Tokens.AccessToken);
     }
 
     [Fact]
