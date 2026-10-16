@@ -70,35 +70,15 @@ namespace Todoist.Net
         /// The callback which stores the refreshed tokens. Todoist rotates the refresh token on every refresh,
         /// so the tokens passed to it replace the stored ones. It is required when <paramref name="tokens" /> include a refresh token.
         /// </param>
-        /// <exception cref="ArgumentNullException"><paramref name="tokens" /> is null, or <paramref name="tokens" /> include a refresh token and <paramref name="options" /> or <paramref name="onTokensRefreshed" /> is null.</exception>
-        /// <exception cref="ArgumentException"><paramref name="tokens" /> include a refresh token and the client ID in <paramref name="options" /> is null or empty.</exception>
-        public TodoistClient(
-            TodoistOAuthOptions options,
-            TodoistTokens tokens,
-            Func<TodoistTokens, Task> onTokensRefreshed)
-            : this(options, tokens, onTokensRefreshed, null)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TodoistClient" /> class which authorizes with OAuth tokens
-        /// and refreshes them when they expire or get rejected.
-        /// </summary>
-        /// <param name="options">The credentials of the application the tokens were issued to.</param>
-        /// <param name="tokens">The OAuth tokens of the user.</param>
-        /// <param name="onTokensRefreshed">
-        /// The callback which stores the refreshed tokens. Todoist rotates the refresh token on every refresh,
-        /// so the tokens passed to it replace the stored ones. It is required when <paramref name="tokens" /> include a refresh token.
-        /// </param>
-        /// <param name="proxy">The proxy.</param>
+        /// <param name="configureHttpClient">The action which configures the underlying <see cref="HttpClient" />, or <c>null</c>.</param>
         /// <exception cref="ArgumentNullException"><paramref name="tokens" /> is null, or <paramref name="tokens" /> include a refresh token and <paramref name="options" /> or <paramref name="onTokensRefreshed" /> is null.</exception>
         /// <exception cref="ArgumentException"><paramref name="tokens" /> include a refresh token and the client ID in <paramref name="options" /> is null or empty.</exception>
         public TodoistClient(
             TodoistOAuthOptions options,
             TodoistTokens tokens,
             Func<TodoistTokens, Task> onTokensRefreshed,
-            IWebProxy proxy)
-            : this(options, tokens, onTokensRefreshed, proxy, null)
+            Action<HttpClient> configureHttpClient = null)
+            : this(CreateOAuthHandler(tokens, options, onTokensRefreshed), configureHttpClient)
         {
         }
 
@@ -121,7 +101,7 @@ namespace Todoist.Net
             TodoistTokens tokens,
             Func<TodoistTokens, Task> onTokensRefreshed,
             IWebProxy proxy,
-            Action<HttpClient> configureHttpClient)
+            Action<HttpClient> configureHttpClient = null)
             : this(CreateOAuthHandler(tokens, options, onTokensRefreshed, proxy), configureHttpClient)
         {
         }
