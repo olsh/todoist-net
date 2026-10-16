@@ -4,6 +4,9 @@
 
 A [Todoist API](https://developer.todoist.com) client for .NET.
 
+> **Upgrading from 11.x?** Version 12.0.0 changes the dependency-injection and OAuth client APIs. See the
+> [release notes](https://github.com/olsh/todoist-net/releases) for the breaking changes.
+>
 > **Upgrading from 10.x?** Version 11.0.0 moves to the unified Todoist API v1 and renames much of
 > the public surface (`Items` -> `Tasks`, `Notes` -> `Comments`, and more). See the
 > [11.0.0 release notes](https://github.com/olsh/todoist-net/releases/tag/11.0.0) for the full
@@ -97,6 +100,15 @@ Clients created with an API token keep working as before:
 
 ```csharp
 using var client = serviceProvider.GetRequiredService<ITodoistClientFactory>().CreateClient("API token");
+```
+
+`AddTodoistClient` returns the `IHttpClientBuilder` of the HTTP client the factories use, so it can be configured
+like any other named client, e.g. with your own message handlers:
+
+```csharp
+services.AddTodoistClient()
+    .ConfigureHttpClient(httpClient => httpClient.Timeout = TimeSpan.FromSeconds(30))
+    .AddHttpMessageHandler(() => new LoggingHandler());
 ```
 
 ### Quick add
