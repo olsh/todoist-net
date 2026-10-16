@@ -15,7 +15,7 @@ namespace Todoist.Net.OAuth
         /// Gets or sets the client secret of the application.
         /// </summary>
         /// <value>
-        /// The client secret of the application. Public clients have none, but revoking tokens requires it.
+        /// The client secret of the application, or <c>null</c> for a public client, which has none.
         /// </value>
         public string ClientSecret { get; set; }
     }

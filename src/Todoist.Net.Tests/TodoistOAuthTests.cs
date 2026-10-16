@@ -522,6 +522,35 @@ public class TodoistOAuthTests
     }
 
     [Fact]
+    public void Constructors_WithoutProxy_KeepTheSystemProxy()
+    {
+        using var tokenClient = new TodoistClient("access-0");
+        using var oAuthClient = new TodoistClient(Options, new TodoistTokens("access-0"), null);
+
+        foreach (var client in new[] { tokenClient, oAuthClient })
+        {
+            var httpClientHandler = Assert.IsType<HttpClientHandler>(client.OAuthHandler?.InnerHandler);
+            Assert.True(httpClientHandler.UseProxy);
+            Assert.Null(httpClientHandler.Proxy);
+        }
+    }
+
+    [Fact]
+    public void Constructors_WithProxy_UseTheProxy()
+    {
+        var proxy = new WebProxy("http://localhost:8888");
+        using var tokenClient = new TodoistClient("access-0", proxy);
+        using var oAuthClient = new TodoistClient(Options, new TodoistTokens("access-0"), null, proxy);
+
+        foreach (var client in new[] { tokenClient, oAuthClient })
+        {
+            var httpClientHandler = Assert.IsType<HttpClientHandler>(client.OAuthHandler?.InnerHandler);
+            Assert.True(httpClientHandler.UseProxy);
+            Assert.Same(proxy, httpClientHandler.Proxy);
+        }
+    }
+
+    [Fact]
     public async Task CreateOAuthClient_FromServiceProvider_AppliesTheConfiguredHttpClientOptions()
     {
         var server = new FakeOAuthServer("access-0");
@@ -614,7 +643,6 @@ public class TodoistOAuthTests
         Assert.Same(factory, serviceProvider.GetRequiredService<ITodoistClientFactory>());
     }
 
-
     private static async Task WaitUntilAsync(Func<bool> condition)
     {
         using var timeoutSource =
@@ -629,8 +657,8 @@ public class TodoistOAuthTests
 
     private static TodoistClient CreateOAuthTodoistClient(
         TodoistOAuthOptions options,
-        TodoistTokens tokens, 
-        Func<TodoistTokens, Task>? onTokensRefreshed, 
+        TodoistTokens tokens,
+        Func<TodoistTokens, Task>? onTokensRefreshed,
         HttpMessageHandler innerHandler)
     {
         var oAuthMessageHandler = new TodoistOAuthHandler(tokens, options, onTokensRefreshed)

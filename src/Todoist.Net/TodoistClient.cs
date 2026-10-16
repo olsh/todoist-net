@@ -68,18 +68,18 @@ namespace Todoist.Net
         /// <param name="tokens">The OAuth tokens of the user.</param>
         /// <param name="onTokensRefreshed">
         /// The callback which stores the refreshed tokens. Todoist rotates the refresh token on every refresh,
-        /// so the tokens passed to it replace the stored ones.
+        /// so the tokens passed to it replace the stored ones. It is required when <paramref name="tokens" /> include a refresh token.
         /// </param>
-        /// <param name="configureHttpClient">An optional action to configure the underlying HttpClient.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="tokens" /> is null, or <paramref name="tokens" /> include a refresh token and <paramref name="options" /> or <paramref name="onTokensRefreshed" /> is null.</exception>
+        /// <exception cref="ArgumentException"><paramref name="tokens" /> include a refresh token and the client ID in <paramref name="options" /> is null or empty.</exception>
         public TodoistClient(
             TodoistOAuthOptions options,
             TodoistTokens tokens,
-            Func<TodoistTokens, Task> onTokensRefreshed, 
-            Action<HttpClient> configureHttpClient = null)
-            : this(CreateOAuthHandler(tokens, options, onTokensRefreshed), configureHttpClient)
+            Func<TodoistTokens, Task> onTokensRefreshed)
+            : this(options, tokens, onTokensRefreshed, null)
         {
         }
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TodoistClient" /> class which authorizes with OAuth tokens
         /// and refreshes them when they expire or get rejected.
@@ -88,20 +88,44 @@ namespace Todoist.Net
         /// <param name="tokens">The OAuth tokens of the user.</param>
         /// <param name="onTokensRefreshed">
         /// The callback which stores the refreshed tokens. Todoist rotates the refresh token on every refresh,
-        /// so the tokens passed to it replace the stored ones.
+        /// so the tokens passed to it replace the stored ones. It is required when <paramref name="tokens" /> include a refresh token.
         /// </param>
         /// <param name="proxy">The proxy.</param>
-        /// <param name="configureHttpClient">An optional action to configure the underlying HttpClient.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="tokens" /> is null, or <paramref name="tokens" /> include a refresh token and <paramref name="options" /> or <paramref name="onTokensRefreshed" /> is null.</exception>
+        /// <exception cref="ArgumentException"><paramref name="tokens" /> include a refresh token and the client ID in <paramref name="options" /> is null or empty.</exception>
         public TodoistClient(
             TodoistOAuthOptions options,
             TodoistTokens tokens,
             Func<TodoistTokens, Task> onTokensRefreshed,
-            IWebProxy proxy, 
-            Action<HttpClient> configureHttpClient = null)
+            IWebProxy proxy)
+            : this(options, tokens, onTokensRefreshed, proxy, null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TodoistClient" /> class which authorizes with OAuth tokens
+        /// and refreshes them when they expire or get rejected.
+        /// </summary>
+        /// <param name="options">The credentials of the application the tokens were issued to.</param>
+        /// <param name="tokens">The OAuth tokens of the user.</param>
+        /// <param name="onTokensRefreshed">
+        /// The callback which stores the refreshed tokens. Todoist rotates the refresh token on every refresh,
+        /// so the tokens passed to it replace the stored ones. It is required when <paramref name="tokens" /> include a refresh token.
+        /// </param>
+        /// <param name="proxy">The proxy, or <c>null</c> to use the default one.</param>
+        /// <param name="configureHttpClient">The action which configures the underlying <see cref="HttpClient" />, or <c>null</c>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="tokens" /> is null, or <paramref name="tokens" /> include a refresh token and <paramref name="options" /> or <paramref name="onTokensRefreshed" /> is null.</exception>
+        /// <exception cref="ArgumentException"><paramref name="tokens" /> include a refresh token and the client ID in <paramref name="options" /> is null or empty.</exception>
+        public TodoistClient(
+            TodoistOAuthOptions options,
+            TodoistTokens tokens,
+            Func<TodoistTokens, Task> onTokensRefreshed,
+            IWebProxy proxy,
+            Action<HttpClient> configureHttpClient)
             : this(CreateOAuthHandler(tokens, options, onTokensRefreshed, proxy), configureHttpClient)
         {
         }
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TodoistClient" /> class.
         /// </summary>
@@ -303,7 +327,7 @@ namespace Todoist.Net
         /// Revokes the OAuth access token, and stops the client from refreshing the tokens.
         /// </summary>
         /// <remarks>
-        /// <para>Revoking requires the client secret of the application.</para>
+        /// <para>Revoking requires the client ID of the application, and its client secret unless it is a public client, which has none.</para>
         /// <para>
         /// Todoist can revoke access tokens only, so the refresh token keeps working: delete the stored tokens to give up
         /// the access for good. The authorization itself ends when the user removes the application in the Todoist settings.
@@ -311,7 +335,7 @@ namespace Todoist.Net
         /// </remarks>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        /// <exception cref="InvalidOperationException">The client was not created with OAuth tokens, or without the client secret.</exception>
+        /// <exception cref="InvalidOperationException">The client was not created with OAuth tokens, or without the client ID of the application.</exception>
         public Task RevokeTokensAsync(CancellationToken cancellationToken = default)
         {
             return GetOAuthHandler()
@@ -326,7 +350,7 @@ namespace Todoist.Net
         private TodoistOAuthHandler GetOAuthHandler()
         {
             return _oAuthHandler ??
-                throw new InvalidOperationException("The client was not created with OAuth tokens.");
+                   throw new InvalidOperationException("The client was not created with OAuth tokens.");
         }
 
         private static TodoistOAuthHandler CreateOAuthHandler(
@@ -338,13 +362,22 @@ namespace Todoist.Net
             ThrowHelper.ThrowIfNull(tokens, nameof(tokens));
 
             return new TodoistOAuthHandler(tokens, options, onTokensRefreshed)
-            { 
-                InnerHandler = new HttpClientHandler
-                {
-                    Proxy = webProxy,
-                    UseProxy = webProxy != null
-                }
+            {
+                InnerHandler = CreateHttpClientHandler(webProxy)
             };
+        }
+
+        private static HttpClientHandler CreateHttpClientHandler(IWebProxy proxy)
+        {
+            var httpClientHandler = new HttpClientHandler();
+            if (proxy != null)
+            {
+                // Without a proxy the handler keeps its default, which uses the system proxy.
+                httpClientHandler.Proxy = proxy;
+                httpClientHandler.UseProxy = true;
+            }
+
+            return httpClientHandler;
         }
 
         #endregion
@@ -401,7 +434,7 @@ namespace Todoist.Net
             CancellationToken cancellationToken)
         {
             return TodoistSerializer.ProcessRequestAsync(
-                ct => _restClient.GetAsync(resource, queryParams, ct), 
+                ct => _restClient.GetAsync(resource, queryParams, ct),
                 cancellationToken);
         }
 
@@ -412,7 +445,7 @@ namespace Todoist.Net
             CancellationToken cancellationToken)
         {
             return TodoistSerializer.ProcessRequestAsync<T>(
-                ct => _restClient.GetAsync(resource, queryParams, ct), 
+                ct => _restClient.GetAsync(resource, queryParams, ct),
                 cancellationToken);
         }
 
@@ -423,7 +456,7 @@ namespace Todoist.Net
             CancellationToken cancellationToken)
         {
             return TodoistSerializer.ProcessTextRequestAsync(
-                ct => _restClient.GetAsync(resource, queryParams, ct), 
+                ct => _restClient.GetAsync(resource, queryParams, ct),
                 cancellationToken);
         }
 
@@ -434,7 +467,7 @@ namespace Todoist.Net
             CancellationToken cancellationToken)
         {
             return TodoistSerializer.ProcessRequestAsync(
-                ct => _restClient.PostAsync(resource, formParams, ct), 
+                ct => _restClient.PostAsync(resource, formParams, ct),
                 cancellationToken);
         }
 
@@ -445,7 +478,7 @@ namespace Todoist.Net
             CancellationToken cancellationToken)
         {
             return TodoistSerializer.ProcessRequestAsync<T>(
-                ct => _restClient.PostAsync(resource, formParams, ct), 
+                ct => _restClient.PostAsync(resource, formParams, ct),
                 cancellationToken);
         }
 
@@ -480,8 +513,8 @@ namespace Todoist.Net
             CancellationToken cancellationToken)
         {
             return TodoistSerializer.ProcessJsonRequestAsync(
-                content, 
-                (json, ct) => _restClient.PostJsonAsync(resource, json, ct), 
+                content,
+                (json, ct) => _restClient.PostJsonAsync(resource, json, ct),
                 cancellationToken);
         }
 
@@ -492,8 +525,8 @@ namespace Todoist.Net
             CancellationToken cancellationToken)
         {
             return TodoistSerializer.ProcessJsonRequestAsync<TReq, TRes>(
-                content, 
-                (json, ct) => _restClient.PostJsonAsync(resource, json, ct), 
+                content,
+                (json, ct) => _restClient.PostJsonAsync(resource, json, ct),
                 cancellationToken);
         }
 
@@ -501,7 +534,7 @@ namespace Todoist.Net
         Task IAdvancedTodoistClient.PutAsync(string resource, CancellationToken cancellationToken)
         {
             return TodoistSerializer.ProcessRequestAsync(
-                ct => _restClient.PutAsync(resource, ct), 
+                ct => _restClient.PutAsync(resource, ct),
                 cancellationToken);
         }
 
@@ -509,7 +542,7 @@ namespace Todoist.Net
         Task<T> IAdvancedTodoistClient.PutAsync<T>(string resource, CancellationToken cancellationToken)
         {
             return TodoistSerializer.ProcessRequestAsync<T>(
-                ct => _restClient.PutAsync(resource, ct), 
+                ct => _restClient.PutAsync(resource, ct),
                 cancellationToken);
         }
 
@@ -520,8 +553,8 @@ namespace Todoist.Net
             CancellationToken cancellationToken)
         {
             return TodoistSerializer.ProcessJsonRequestAsync(
-                content, 
-                (json, ct) => _restClient.PutJsonAsync(resource, json, ct), 
+                content,
+                (json, ct) => _restClient.PutJsonAsync(resource, json, ct),
                 cancellationToken);
         }
 
@@ -532,8 +565,8 @@ namespace Todoist.Net
             CancellationToken cancellationToken)
         {
             return TodoistSerializer.ProcessJsonRequestAsync<TReq, TRes>(
-                content, 
-                (json, ct) => _restClient.PutJsonAsync(resource, json, ct), 
+                content,
+                (json, ct) => _restClient.PutJsonAsync(resource, json, ct),
                 cancellationToken);
         }
 
@@ -544,7 +577,7 @@ namespace Todoist.Net
             CancellationToken cancellationToken)
         {
             return TodoistSerializer.ProcessRequestAsync(
-                ct => _restClient.DeleteAsync(resource, queryParams, ct), 
+                ct => _restClient.DeleteAsync(resource, queryParams, ct),
                 cancellationToken);
         }
 
@@ -555,7 +588,7 @@ namespace Todoist.Net
             CancellationToken cancellationToken)
         {
             return TodoistSerializer.ProcessRequestAsync<T>(
-                ct => _restClient.DeleteAsync(resource, queryParams, ct), 
+                ct => _restClient.DeleteAsync(resource, queryParams, ct),
                 cancellationToken);
         }
 
@@ -566,7 +599,7 @@ namespace Todoist.Net
         private Task<T> ProcessSyncAsync<T>(Dictionary<string, string> parameters, CancellationToken cancellationToken)
         {
             return TodoistSerializer.ProcessRequestAsync<T>(
-                ct => _restClient.PostAsync(SyncEndpoint, parameters, ct), 
+                ct => _restClient.PostAsync(SyncEndpoint, parameters, ct),
                 cancellationToken);
         }
 
