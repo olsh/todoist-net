@@ -27,13 +27,15 @@ Direct dotnet CLI:
 
 ```bash
 dotnet build Todoist.Net.slnx
-dotnet test src/Todoist.Net.Tests/Todoist.Net.Tests.csproj --filter "trait=unit"
-dotnet test src/Todoist.Net.Tests/Todoist.Net.Tests.csproj --filter "FullyQualifiedName~TransactionTests"
+dotnet test --project src/Todoist.Net.Tests/Todoist.Net.Tests.csproj --filter "trait=unit"
+dotnet test --project src/Todoist.Net.Tests/Todoist.Net.Tests.csproj --filter "FullyQualifiedName~TransactionTests"
 ```
+
+The tests run on Microsoft.Testing.Platform (`global.json` switches `dotnet test` to it), so `dotnet test` takes the project through `--project`, not as a positional argument. xUnit's `--filter` accepts the VSTest filter syntax; its other options (`--filter-trait`, `--explicit`, `--show-live-output`, …) are listed by `dotnet test --project src/Todoist.Net.Tests/Todoist.Net.Tests.csproj --help`.
 
 `dotnet test` only builds the `netstandard2.0` leg. Run `dotnet build Todoist.Net.slnx` to compile `net462` too — a change can pass tests and still break that target framework.
 
-Integration tests mutate real Todoist accounts and read their tokens from environment variables (`Settings/SettingsProvider.cs`). Each also works in colon form (`todoist:token`, `todoist:token:secondary`, …):
+Integration tests mutate real Todoist accounts and read their tokens from environment variables (`Settings/SettingsProvider.cs`). Set them in the environment, or copy `src/Todoist.Net.Tests/Properties/launchSettings.example.json` to `launchSettings.json` next to it (git-ignored), whose `environmentVariables` `dotnet test` passes to the tests. Each also works in colon form (`todoist:token`, `todoist:token:secondary`, …):
 
 - **`todoist_token`** — the primary account, required. Premium tests run on it, so it needs a paid plan.
 - **`todoist_token_secondary`** — a second account. Collaboration tests need it, and it takes the free-tier tests and the shared playground workspace off the primary account. Without it, the playground workspace sits on the primary account and the two premium tests that create their own workspace fail with `MAX_FREE_WORKSPACES_CREATED`.
@@ -134,7 +136,7 @@ xUnit, traits under the key `trait` (values in `Extensions/Constants.cs`):
 - `unit` — no network: serialization and resolvers, the client's request/response handling against `StubTodoistRestClient`, `DueDate`, `Duration`, `StringEnum`, the timezone helper. This is the only suite CI gates on.
 - `integration-free` / `integration-premium` — hit a live account; premium ones run on the primary token and need a paid plan.
 - `integration-collaboration` — need a second account (`todoist_token_secondary`) and fail with `Secondary client is not available` without it.
-- `oauth-interactive` — `TodoistOAuthInteractiveTests`, an explicit test (`[Fact(Explicit = true)]`) which walks through the OAuth flow against the live API: a person authorizes a Todoist application in the browser, and the test catches the redirect on a localhost listener, so no tokens are stored between runs. Todoist cannot revoke refresh tokens (its revoke endpoint answers 403 for them), so the test ends the authorization in a `finally` block by replaying a consumed refresh token after the 60-second grace window, which Todoist documents as revoking every token of the user for the application; a run therefore takes over a minute. It needs `todoist_oauth_client_id` / `todoist_oauth_client_secret` (see `.runsettings.example`) and runs only on request: `dotnet test src/Todoist.Net.Tests/Todoist.Net.Tests.csproj --filter "trait=oauth-interactive" -- xUnit.Explicit=only xUnit.ShowLiveOutput=true`. The OAuth refresh logic itself is covered by `unit` tests against `FakeOAuthServer`.
+- `oauth-interactive` — `TodoistOAuthInteractiveTests`, an explicit test (`[Fact(Explicit = true)]`) which walks through the OAuth flow against the live API: a person authorizes a Todoist application in the browser, and the test catches the redirect on a localhost listener, so no tokens are stored between runs. Todoist cannot revoke refresh tokens (its revoke endpoint answers 403 for them), so the test ends the authorization in a `finally` block by replaying a consumed refresh token after the 60-second grace window, which Todoist documents as revoking every token of the user for the application; a run therefore takes over a minute. It needs `todoist_oauth_client_id` / `todoist_oauth_client_secret`, set like the tokens, and runs only on request: `dotnet test --project src/Todoist.Net.Tests/Todoist.Net.Tests.csproj -- --filter "trait=oauth-interactive" --explicit only --show-live-output on`. The OAuth refresh logic itself is covered by `unit` tests against `FakeOAuthServer`.
 
 Integration test classes share `[Collection(TodoistApiTestCollection.Name)]`, which serializes them so they do not race on shared account state, and one `TodoistApiFixture`. The fixture holds the clients — `Client` (secondary or tertiary account, falling back to the primary), `PremiumClient` (primary) and `CollaborationClient` — and lazily creates a playground project and workspace that it deletes when the run ends. Clients come from `TodoistClientFactory.CreatePrimary` / `CreateSecondary` / `CreateTertiary`, which wrap `TodoistRestClient` in `RateLimitAwareRestClient` — it retries 429s and 5xx up to 60 times, honoring `retry_after` (Todoist allows ~450 requests / 15 min). Long, quiet test runs are usually a rate-limit backoff, not a hang.
 

@@ -25,22 +25,17 @@ class Build : NukeBuild
         .DependsOn(Compile)
         .Executes(() =>
         {
-            DotNetTest(s => s
-                .SetProjectFile(Solution.src.Todoist_Net_Tests)
-                .SetConfiguration(Configuration)
-                .SetFilter("trait=unit")
-                .SetNoBuild(true));
+            // DotNetTest speaks the VSTest command line, so the Microsoft Testing Platform mode of dotnet test is called directly.
+            DotNet(
+                $"test --project {Solution.src.Todoist_Net_Tests.Path} --configuration {Configuration} --no-build -- --filter trait=unit");
         });
 
     Target Test => _ => _
         .DependsOn(Compile)
         .Executes(() =>
         {
-            DotNetTest(s => s
-                .SetProjectFile(Solution.src.Todoist_Net_Tests)
-                .SetConfiguration(Configuration)
-                .SetLoggers("console;verbosity=detailed")
-                .SetNoBuild(true));
+            DotNet(
+                $"test --project {Solution.src.Todoist_Net_Tests.Path} --configuration {Configuration} --no-build --output Detailed");
         });
 
     Target NugetPack => _ => _

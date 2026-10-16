@@ -4,8 +4,7 @@
     <File Path=".github/workflows/publish.yml" />
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
-    <File Path=".runsettings" />
-    <File Path=".runsettings.example" />
+    <File Path="global.json" />
     <File Path="README.md" />
   </Folder>
   <Folder Name="/src/">

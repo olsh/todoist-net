@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Todoist.Net.Tests": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "todoist_token": "YOUR_TODOIST_TOKEN"
+      }
+    }
+  }
+}

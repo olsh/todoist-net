@@ -14,7 +14,7 @@ namespace Todoist.Net.Tests;
 /// Needs a Todoist application with refresh tokens enabled (the default for new applications) whose redirect URIs include
 /// the one from <see cref="SettingsProvider.GetOAuthRedirectUri" />, and its credentials in the <c>todoist_oauth_client_id</c>
 /// and <c>todoist_oauth_client_secret</c> environment variables. Run it with
-/// <c>dotnet test --filter "trait=oauth-interactive" -- xUnit.Explicit=only xUnit.ShowLiveOutput=true</c>.
+/// <c>dotnet test --project src/Todoist.Net.Tests/Todoist.Net.Tests.csproj -- --filter "trait=oauth-interactive" --explicit only --show-live-output on</c>.
 /// </remarks>
 [Trait(Constants.TraitName, Constants.OAuthInteractiveTraitValue)]
 public class TodoistOAuthInteractiveTests

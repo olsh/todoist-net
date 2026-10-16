@@ -491,7 +491,7 @@ CLAUDE.local.md
 .vscode/
 
 # Local Test Running Settings
-.runsettings
+src/Todoist.Net.Tests/Properties/launchSettings.json
 
 # JetBrains Rider
 .idea/
