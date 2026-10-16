@@ -53,7 +53,8 @@ Create clients from the stored tokens when you need them instead of keeping seve
 user. A client holding a refresh token another client has already used, which refreshes more than a minute later,
 looks like a replay attack to Todoist: it revokes all the tokens of the user, who has to authorize the application again.
 
-The tokens can also be refreshed ahead of time, and the access token revoked (revoking requires the client secret):
+The tokens can also be refreshed ahead of time, and the access token revoked (both need the client secret, unless the
+application is a public client, which has none):
 
 ```csharp
 var refreshedTokens = await client.RefreshTokensAsync();

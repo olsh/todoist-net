@@ -1,5 +1,7 @@
 using System.Net;
 
+using Todoist.Net.OAuth;
+
 namespace Todoist.Net.Tests;
 
 [Trait(Constants.TraitName, Constants.UnitTraitValue)]
@@ -8,9 +10,12 @@ public class TodoistRestClientTests
     [Fact]
     public async Task PostFiles_SendingTheSameFileTwice_KeepsTheCallerOwnedStreamUsable()
     {
-        var messageHandler = new RecordingHttpMessageHandler();
-        using var httpClient = new HttpClient(messageHandler);
-        using var restClient = new TodoistRestClient("token", httpClient);
+        var recordingMessageHandler = new RecordingHttpMessageHandler();
+        var oAuthMessageHandler = new TodoistOAuthHandler(new TodoistTokens("token"))
+        {
+            InnerHandler = recordingMessageHandler
+        };
+        using var restClient = new TodoistRestClient(oAuthMessageHandler);
 
         var file = new UploadFile(TestData.Files.GreenPng10x10, "green.png");
 
@@ -22,10 +27,10 @@ public class TodoistRestClientTests
 
         // Step 2: Assert the stream outlived the requests and the whole file was sent every time.
         Assert.True(file.ContentStream.CanRead);
-        Assert.Equal(2, messageHandler.RequestBodies.Count);
-        Assert.Equal(messageHandler.RequestBodies[0].Length, messageHandler.RequestBodies[1].Length);
+        Assert.Equal(2, recordingMessageHandler.RequestBodies.Count);
+        Assert.Equal(recordingMessageHandler.RequestBodies[0].Length, recordingMessageHandler.RequestBodies[1].Length);
         Assert.All(
-            messageHandler.RequestBodies,
+            recordingMessageHandler.RequestBodies,
             body => Assert.True(body.Length > TestData.Files.GreenPng10x10.Length));
     }
 

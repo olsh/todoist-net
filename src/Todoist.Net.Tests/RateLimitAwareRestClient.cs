@@ -2,9 +2,11 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 
+using Todoist.Net.OAuth;
+
 namespace Todoist.Net.Tests
 {
-    public sealed class RateLimitAwareRestClient : ITodoistRestClient
+    internal sealed class RateLimitAwareRestClient : ITodoistRestClient
     {
         private const int MaxRetryCount = 60;
         private const string RateLimitResetHeaderName = "x-ratelimit-reset";
@@ -14,10 +16,10 @@ namespace Todoist.Net.Tests
         private readonly ITestOutputHelper? _outputHelper;
         private readonly TodoistRestClient _restClient;
 
-        public RateLimitAwareRestClient(string token, ITestOutputHelper? outputHelper = null)
+        public RateLimitAwareRestClient(TodoistOAuthHandler todoistOAuthHandler, ITestOutputHelper? outputHelper = null)
         {
             _outputHelper = outputHelper;
-            _restClient = new TodoistRestClient(token);
+            _restClient = new TodoistRestClient(todoistOAuthHandler);
         }
 
         public void Dispose()

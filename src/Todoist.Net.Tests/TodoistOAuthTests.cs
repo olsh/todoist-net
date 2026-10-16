@@ -27,7 +27,7 @@ public class TodoistOAuthTests
             "access-0",
             "refresh-0",
             knownExpiration ? DateTimeOffset.UtcNow.AddHours(1) : null);
-        using var client = TodoistClient.CreateOAuthClient(Options, tokens, recorder.StoreAsync, server);
+        using var client = CreateOAuthTodoistClient(Options, tokens, recorder.StoreAsync, server);
 
 
         // Step 1: Send a request.
@@ -49,7 +49,7 @@ public class TodoistOAuthTests
         var server = new FakeOAuthServer("access-0");
         var recorder = new TokensRecorder();
         var tokens = new TodoistTokens("access-0", "refresh-0", DateTimeOffset.UtcNow.AddSeconds(30));
-        using var client = TodoistClient.CreateOAuthClient(Options, tokens, recorder.StoreAsync, server);
+        using var client = CreateOAuthTodoistClient(Options, tokens, recorder.StoreAsync, server);
 
 
         // Step 1: Send a request with tokens which expire in less than a minute.
@@ -90,7 +90,7 @@ public class TodoistOAuthTests
         var server = new FakeOAuthServer("access-0");
         var recorder = new TokensRecorder();
         var options = new TodoistOAuthOptions { ClientId = "client-id" };
-        using var client = TodoistClient.CreateOAuthClient(
+        using var client = CreateOAuthTodoistClient(
             options,
             new TodoistTokens("access-0", "refresh-0"),
             recorder.StoreAsync,
@@ -114,7 +114,7 @@ public class TodoistOAuthTests
     {
         var server = new FakeOAuthServer("revoked-elsewhere");
         var recorder = new TokensRecorder();
-        using var client = TodoistClient.CreateOAuthClient(
+        using var client = CreateOAuthTodoistClient(
             Options,
             new TodoistTokens("access-0", "refresh-0"),
             recorder.StoreAsync,
@@ -146,7 +146,7 @@ public class TodoistOAuthTests
     public async Task SendRequest_WhenAccessTokenIsRejectedWithoutRefreshToken_ThrowsWithoutRefreshing()
     {
         var server = new FakeOAuthServer("revoked-elsewhere");
-        using var client = TodoistClient.CreateOAuthClient(Options, new TodoistTokens("access-0"), null, server);
+        using var client = CreateOAuthTodoistClient(Options, new TodoistTokens("access-0"), null, server);
 
 
         // Step 1: Send a request while the API rejects the access token, which cannot be refreshed.
@@ -172,7 +172,7 @@ public class TodoistOAuthTests
         };
         var recorder = new TokensRecorder();
         var tokens = new TodoistTokens("access-0", "refresh-0", DateTimeOffset.UtcNow.AddSeconds(-1));
-        using var client = TodoistClient.CreateOAuthClient(Options, tokens, recorder.StoreAsync, server);
+        using var client = CreateOAuthTodoistClient(Options, tokens, recorder.StoreAsync, server);
 
 
         // Step 1: Send a request with expired tokens whose refresh token Todoist rejects.
@@ -196,7 +196,7 @@ public class TodoistOAuthTests
         server.TokenEndpointHandler = _ => Task.FromResult(server.IssueTokens(includeRefreshToken: false));
         var recorder = new TokensRecorder();
         var tokens = new TodoistTokens("access-0", "refresh-0", DateTimeOffset.UtcNow.AddSeconds(-1));
-        using var client = TodoistClient.CreateOAuthClient(Options, tokens, recorder.StoreAsync, server);
+        using var client = CreateOAuthTodoistClient(Options, tokens, recorder.StoreAsync, server);
 
 
         // Step 1: Send a request, which refreshes the tokens with a refresh token another client already used,
@@ -238,7 +238,7 @@ public class TodoistOAuthTests
             return server.IssueTokens();
         };
         var recorder = new TokensRecorder();
-        using var client = TodoistClient.CreateOAuthClient(
+        using var client = CreateOAuthTodoistClient(
             Options,
             new TodoistTokens("access-0", "refresh-0"),
             recorder.StoreAsync,
@@ -276,7 +276,7 @@ public class TodoistOAuthTests
                 : Task.CompletedTask
         };
         var recorder = new TokensRecorder();
-        using var client = TodoistClient.CreateOAuthClient(
+        using var client = CreateOAuthTodoistClient(
             Options,
             new TodoistTokens("access-0", "refresh-0"),
             recorder.StoreAsync,
@@ -314,7 +314,7 @@ public class TodoistOAuthTests
         };
         var recorder = new TokensRecorder();
         var tokens = new TodoistTokens("access-0", "refresh-0", DateTimeOffset.UtcNow.AddSeconds(-1));
-        using var client = TodoistClient.CreateOAuthClient(Options, tokens, recorder.StoreAsync, server);
+        using var client = CreateOAuthTodoistClient(Options, tokens, recorder.StoreAsync, server);
         using var cancellationSource =
             CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
 
@@ -352,7 +352,7 @@ public class TodoistOAuthTests
     {
         var server = new FakeOAuthServer("revoked-elsewhere");
         var recorder = new TokensRecorder();
-        using var client = TodoistClient.CreateOAuthClient(
+        using var client = CreateOAuthTodoistClient(
             Options,
             new TodoistTokens("access-0", "refresh-0"),
             recorder.StoreAsync,
@@ -379,7 +379,7 @@ public class TodoistOAuthTests
     {
         var server = new FakeOAuthServer("revoked-elsewhere");
         var recorder = new TokensRecorder();
-        using var client = TodoistClient.CreateOAuthClient(
+        using var client = CreateOAuthTodoistClient(
             Options,
             new TodoistTokens("access-0", "refresh-0"),
             recorder.StoreAsync,
@@ -406,7 +406,7 @@ public class TodoistOAuthTests
     public async Task RefreshTokens_WhenStoringThemFails_ThrowsButKeepsUsingTheRefreshedTokens()
     {
         var server = new FakeOAuthServer("access-0");
-        using var client = TodoistClient.CreateOAuthClient(
+        using var client = CreateOAuthTodoistClient(
             Options,
             new TodoistTokens("access-0", "refresh-0"),
             _ => throw new InvalidOperationException("The storage is down."),
@@ -436,7 +436,7 @@ public class TodoistOAuthTests
     {
         var server = new FakeOAuthServer("access-0");
         var recorder = new TokensRecorder();
-        using var client = TodoistClient.CreateOAuthClient(
+        using var client = CreateOAuthTodoistClient(
             Options,
             new TodoistTokens("access-0", "refresh-0"),
             recorder.StoreAsync,
@@ -480,7 +480,7 @@ public class TodoistOAuthTests
                 ? new HttpResponseMessage(HttpStatusCode.OK) { Content = new StreamContent(new StallingStream()) }
                 : server.IssueTokens());
         var recorder = new TokensRecorder();
-        using var client = TodoistClient.CreateOAuthClient(
+        using var client = CreateOAuthTodoistClient(
             Options,
             new TodoistTokens("access-0", "refresh-0"),
             recorder.StoreAsync,
@@ -502,22 +502,6 @@ public class TodoistOAuthTests
     }
 
     [Fact]
-    public async Task RevokeTokens_WithoutClientSecret_Throws()
-    {
-        var server = new FakeOAuthServer("access-0");
-        var options = new TodoistOAuthOptions { ClientId = "client-id" };
-        using var client = TodoistClient.CreateOAuthClient(
-            options,
-            new TodoistTokens("access-0", "refresh-0"),
-            _ => Task.CompletedTask,
-            server);
-
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            client.RevokeTokensAsync(TestContext.Current.CancellationToken));
-        Assert.Empty(server.Requests);
-    }
-
-    [Fact]
     public async Task RefreshAndRevokeTokens_OfClientWithoutOAuth_Throw()
     {
         using var client = new TodoistClient(new StubTodoistRestClient());
@@ -535,6 +519,35 @@ public class TodoistOAuthTests
             new TodoistClient(Options, new TodoistTokens("access-0", "refresh-0"), null));
 
         Assert.Equal("onTokensRefreshed", exception.ParamName);
+    }
+
+    [Fact]
+    public void Constructors_WithoutProxy_KeepTheSystemProxy()
+    {
+        using var tokenClient = new TodoistClient("access-0");
+        using var oAuthClient = new TodoistClient(Options, new TodoistTokens("access-0"), null);
+
+        foreach (var client in new[] { tokenClient, oAuthClient })
+        {
+            var httpClientHandler = Assert.IsType<HttpClientHandler>(client.OAuthHandler?.InnerHandler);
+            Assert.True(httpClientHandler.UseProxy);
+            Assert.Null(httpClientHandler.Proxy);
+        }
+    }
+
+    [Fact]
+    public void Constructors_WithProxy_UseTheProxy()
+    {
+        var proxy = new WebProxy("http://localhost:8888");
+        using var tokenClient = new TodoistClient("access-0", proxy);
+        using var oAuthClient = new TodoistClient(Options, new TodoistTokens("access-0"), null, proxy);
+
+        foreach (var client in new[] { tokenClient, oAuthClient })
+        {
+            var httpClientHandler = Assert.IsType<HttpClientHandler>(client.OAuthHandler?.InnerHandler);
+            Assert.True(httpClientHandler.UseProxy);
+            Assert.Same(proxy, httpClientHandler.Proxy);
+        }
     }
 
     [Fact]
@@ -640,6 +653,19 @@ public class TodoistOAuthTests
         {
             await Task.Delay(10, timeoutSource.Token);
         }
+    }
+
+    private static TodoistClient CreateOAuthTodoistClient(
+        TodoistOAuthOptions options,
+        TodoistTokens tokens,
+        Func<TodoistTokens, Task>? onTokensRefreshed,
+        HttpMessageHandler innerHandler)
+    {
+        var oAuthMessageHandler = new TodoistOAuthHandler(tokens, options, onTokensRefreshed)
+        {
+            InnerHandler = innerHandler
+        };
+        return new TodoistClient(oAuthMessageHandler);
     }
 
     private sealed class NonSeekableStream(byte[] content) : MemoryStream(content)

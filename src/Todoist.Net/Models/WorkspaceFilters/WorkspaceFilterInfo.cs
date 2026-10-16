@@ -12,7 +12,7 @@ namespace Todoist.Net.Models
         /// Gets or sets the ID of the workspace this filter belongs to.
         /// </summary>
         [JsonPropertyName("workspace_id")]
-        public ComplexId WorkspaceId { get; set; }
+        public string WorkspaceId { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the filter is a favorite for the requesting user.

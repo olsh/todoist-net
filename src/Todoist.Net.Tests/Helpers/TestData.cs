@@ -328,7 +328,7 @@ public static class TestData
             var added = AddWorkspaceFilter(workspaceId, name, query, itemOrder);
             return new
             {
-                added.WorkspaceId,
+                WorkspaceId = added.WorkspaceId.PersistentId,
                 added.Name,
                 added.Query,
                 added.Color,
