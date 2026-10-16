@@ -13,10 +13,12 @@ namespace Todoist.Net
 {
     internal sealed class TodoistClientFactory : ITodoistClientFactory, ITodoistOAuthClientFactory
     {
+        public const string HttpClientName = "Todoist.Net.HttpClient";
+
         private readonly IHttpMessageHandlerFactory _httpMessageHandlerFactory;
 
         private readonly IOptionsMonitor<HttpClientFactoryOptions> _httpClientFactoryOptions;
-        
+
         private readonly IOptions<TodoistOAuthOptions> _oAuthOptions;
 
         public TodoistClientFactory(
@@ -30,29 +32,31 @@ namespace Todoist.Net
         }
 
         /// <inheritdoc/>
-        public TodoistClient CreateClient(string token)
+        public ITodoistClient CreateClient(string token)
         {
-            var innerHandler = _httpMessageHandlerFactory.CreateHandler();
+            var innerHandler = _httpMessageHandlerFactory.CreateHandler(HttpClientName);
             var oAuthHandler = new TodoistOAuthHandler(new TodoistTokens(token))
             {
                 InnerHandler = innerHandler
             };
 
             var httpClientActions = _httpClientFactoryOptions
-                .Get(Options.DefaultName)
+                .Get(HttpClientName)
                 .HttpClientActions;
 
-            return new TodoistClient(oAuthHandler, client =>
-            {
-                foreach (var action in httpClientActions)
+            return new TodoistClient(
+                oAuthHandler,
+                client =>
                 {
-                    action(client);
-                }
-            });
+                    foreach (var action in httpClientActions)
+                    {
+                        action(client);
+                    }
+                });
         }
 
         /// <inheritdoc/>
-        public TodoistClient CreateClient(TodoistTokens tokens, Func<TodoistTokens, Task> onTokensRefreshed)
+        public ITodoistOAuthClient CreateClient(TodoistTokens tokens, Func<TodoistTokens, Task> onTokensRefreshed)
         {
             var options = _oAuthOptions.Value;
             if (string.IsNullOrEmpty(options.ClientId))
@@ -63,23 +67,25 @@ namespace Todoist.Net
 
             // The OAuth handler holds the tokens of a single user, so it wraps the pooled handlers instead of joining them.
             // That means creating the HttpClient here, so it gets the configuration IHttpClientFactory applies to the clients it creates.
-            var innerHandler = _httpMessageHandlerFactory.CreateHandler();
+            var innerHandler = _httpMessageHandlerFactory.CreateHandler(HttpClientName);
             var oAuthHandler = new TodoistOAuthHandler(tokens, options, onTokensRefreshed)
             {
                 InnerHandler = innerHandler
             };
 
             var httpClientActions = _httpClientFactoryOptions
-                .Get(Options.DefaultName)
+                .Get(HttpClientName)
                 .HttpClientActions;
 
-            return new TodoistClient(oAuthHandler, client =>
-            {
-                foreach (var action in httpClientActions)
+            return new TodoistClient(
+                oAuthHandler,
+                client =>
                 {
-                    action(client);
-                }
-            });
+                    foreach (var action in httpClientActions)
+                    {
+                        action(client);
+                    }
+                });
         }
     }
 }
