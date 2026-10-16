@@ -492,3 +492,6 @@ CLAUDE.local.md
 
 # Local Test Running Settings
 .runsettings
+
+# JetBrains Rider
+.idea/
